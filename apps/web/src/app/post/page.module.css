@@ -1,0 +1,113 @@
+/** Post, step one — choose the outcome. Wireframe artboard: `PostType`. */
+
+.intro {
+  margin-top: var(--snt-space-4);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  margin-top: var(--snt-space-10);
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-7);
+  padding: var(--snt-space-8);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-surface);
+  color: var(--snt-ink);
+  text-align: left;
+  width: 100%;
+  transition:
+    border-color var(--snt-transition),
+    background var(--snt-transition);
+}
+
+.option:hover {
+  border-color: var(--snt-ink);
+  color: var(--snt-ink);
+}
+
+/**
+ * The swap option is emphasised: it is the platform's distinctive feature and
+ * the one most likely to be new to whoever is reading it.
+ */
+.optionFeatured {
+  border: 2px solid var(--snt-accent);
+  background: var(--snt-accent-tint);
+}
+
+.optionFeatured:hover {
+  border-color: var(--snt-accent);
+  background: var(--snt-bg-surface);
+}
+
+.glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-app);
+  color: var(--snt-ink);
+}
+
+.glyphFeatured {
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+}
+
+.optionBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.optionHead {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  flex-wrap: wrap;
+}
+
+.optionTitle {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.ourThing {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--snt-space-3);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-2xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-label);
+  text-transform: uppercase;
+}
+
+.optionDescription {
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-snug);
+  margin-top: var(--snt-space-2);
+}
+
+.chevron {
+  flex-shrink: 0;
+  margin-top: var(--snt-space-6);
+  color: var(--snt-ink-muted);
+  display: flex;
+}
+
+.dealerNote {
+  margin-top: var(--snt-space-12);
+}

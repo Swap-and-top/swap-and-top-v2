@@ -1,0 +1,87 @@
+/**
+ * A lead, as a dealer sees it.
+ *
+ * This is the screen that sells the platform, so it carries everything needed
+ * to act without opening anything else: what they want, what is coming back in
+ * trade, the cash, and which of the dealer's own items matches.
+ */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+}
+
+.age {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.title {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-semibold);
+  line-height: var(--snt-leading-tight);
+  margin-top: var(--snt-space-4);
+}
+
+.sub {
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-2);
+}
+
+/** What is coming back in trade, and the cash on top. */
+.tradeIn {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-4);
+  padding: var(--snt-space-4) var(--snt-space-5);
+  background: var(--snt-bg-app);
+  border-radius: var(--snt-radius-md);
+}
+
+.tradeInBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.tradeInName {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-medium);
+  margin-top: var(--snt-space-1);
+}
+
+/**
+ * The match line. This is what turns a notification into a tool: it closes the
+ * gap between "somebody wants something" and "here is what you should offer".
+ */
+.match {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  margin-top: var(--snt-space-4);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-success);
+}
+
+/** No match in stock. Said plainly rather than hidden. */
+.noMatch {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  margin-top: var(--snt-space-4);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.actions {
+  display: flex;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+.actions > :first-child {
+  flex-grow: 1;
+}

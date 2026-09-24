@@ -1,0 +1,96 @@
+/**
+ * Image placeholders and avatars.
+ *
+ * Every image in the wireframes is a grey box. Real listing photographs arrive
+ * from object storage as URLs; until then this stands in, and it keeps the
+ * layout honest about how much room a photo takes.
+ */
+
+.image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--snt-bg-placeholder);
+  color: var(--snt-ink-faint);
+  border-radius: var(--snt-radius-md);
+  overflow: hidden;
+}
+
+/** Square corners, for a full-bleed card header image. */
+.flush {
+  border-radius: 0;
+}
+
+/** On a tinted panel, e.g. inside the swap detail header. */
+.onTint {
+  background: var(--snt-bg-placeholder-strong);
+  border-radius: var(--snt-radius-lg);
+}
+
+/**
+ * Dashed outline: the poster does not own this yet.
+ * This is what makes the swap card readable in a second — the right-hand tile
+ * is visibly a wish rather than a possession.
+ */
+.wanted {
+  border: 2px dashed var(--snt-accent-border);
+}
+
+/** Dashed neutral outline, for a draft with no photo yet. */
+.empty {
+  background: var(--snt-bg-app);
+  border: 1px dashed var(--snt-line);
+}
+
+/* --- carousel --- */
+
+.carousel {
+  position: relative;
+}
+
+.dots {
+  position: absolute;
+  bottom: var(--snt-space-6);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: var(--snt-space-3);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
+}
+
+.dotActive {
+  background: var(--snt-ink);
+}
+
+/* --- avatar --- */
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-placeholder);
+  color: var(--snt-ink-faint);
+}
+
+/** Shop mark: square, dark, initials. */
+.shopMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-xs);
+  background: var(--snt-dark);
+  color: var(--snt-ink-on-dark);
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  line-height: 1;
+}

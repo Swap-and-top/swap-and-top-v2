@@ -108,7 +108,7 @@ Not rules so much as settled direction.
 | Layout | Mobile-first at 390px, one-thumb reach, bottom navigation |
 | Feed density | Large image, bold price, minimal chrome — scannable at speed |
 | Signature element | The swap card's have-⇄-wants split with the cash amount between. This is the brand. |
-| Trust cues | Verified dealer, verified student, member since, reply time — visible wherever a decision is made |
+| Trust cues | Verified dealer, confirmed deals, member since, reply time — visible wherever a decision is made. Behaviour, never status or occupation. |
 | Tone | Plain and transactional. This is a business tool, not a social feed. |
 | Never | Fake status bars, emoji as interface elements, gradient decoration |
 

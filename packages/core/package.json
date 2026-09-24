@@ -1,0 +1,27 @@
+{
+  "name": "@snt/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Platform-agnostic core: types, design tokens, mock data and Zustand stores. Safe to import from a future React Native / Expo app — contains no DOM and no CSS.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types/index.ts",
+    "./tokens": "./src/tokens/index.ts",
+    "./mock": "./src/mock/index.ts",
+    "./stores": "./src/stores/index.ts"
+  },
+  "scripts": {
+    "lint": "echo \"@snt/core: no linter configured yet\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo node_modules *.tsbuildinfo"
+  },
+  "dependencies": {
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

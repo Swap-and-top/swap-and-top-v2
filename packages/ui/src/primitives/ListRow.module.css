@@ -1,0 +1,101 @@
+/**
+ * The tappable menu row: icon, label, optional value, chevron.
+ *
+ * Used for the account hub's groups and for the console's shop section. Always
+ * a real link or button, never a div with a handler — Tab has to reach it.
+ */
+
+.group {
+  background: var(--snt-bg-surface);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-lg);
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  width: 100%;
+  min-height: var(--snt-touch);
+  padding: var(--snt-space-7) var(--snt-space-6);
+  color: var(--snt-ink);
+  text-align: left;
+  transition: background var(--snt-transition);
+}
+
+.row + .row {
+  border-top: 1px solid var(--snt-line-subtle);
+}
+
+.row:hover {
+  background: var(--snt-bg-app);
+  color: var(--snt-ink);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--snt-ink-muted);
+  display: flex;
+}
+
+.label {
+  flex-grow: 1;
+  min-width: 0;
+  font-size: var(--snt-text-lg);
+}
+
+.value {
+  flex-shrink: 0;
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+}
+
+/** A value that carries meaning, e.g. "Phone verified". */
+.valueStrong {
+  color: var(--snt-ink);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--snt-ink-muted);
+  display: flex;
+}
+
+/* --- dark variant: the console entry row --- */
+
+.dark {
+  background: var(--snt-dark);
+  border: none;
+  border-radius: var(--snt-radius-lg);
+  color: var(--snt-ink-on-dark);
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  width: 100%;
+  padding: var(--snt-space-7) var(--snt-space-6);
+  transition: background var(--snt-transition);
+}
+
+.dark:hover {
+  background: var(--snt-dark-raised);
+  color: var(--snt-ink-on-dark);
+}
+
+.dark .icon,
+.dark .chevron {
+  color: var(--snt-ink-on-dark);
+}
+
+.darkTitle {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.darkSubtitle {
+  display: block;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-on-dark-subtle);
+  margin-top: var(--snt-space-1);
+}

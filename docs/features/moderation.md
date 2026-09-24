@@ -41,7 +41,7 @@ Four reasons, each sufficient on its own.
 
 4. **The real risks are not caught by pre-approval anyway.** Stolen devices and misrepresented condition do not announce themselves in a form. They surface when a buyer meets a seller, which is a report, not a review.
 
-**What makes this safe:** scarce identity. Phone-anchored accounts and student verification mean a bad actor cannot simply reappear. Accountability after the fact substitutes for permission before it. See [../product/trust-and-safety.md](../product/trust-and-safety.md).
+**What makes this safe:** scarce identity. Phone-anchored accounts mean a bad actor cannot simply reappear with a fresh email address. Accountability after the fact substitutes for permission before it. See [../product/trust-and-safety.md](../product/trust-and-safety.md).
 
 ---
 

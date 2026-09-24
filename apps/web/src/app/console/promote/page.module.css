@@ -1,0 +1,129 @@
+/** Console promote. Wireframe artboard: `ConsolePromoteM`. */
+
+.stats {
+  margin-top: var(--snt-space-7);
+  max-width: 520px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-7);
+  background: var(--snt-bg-surface);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-lg);
+}
+
+.glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-md);
+}
+
+.glyphActive {
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+}
+
+.glyphAccent {
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent-strong);
+}
+
+.glyphDark {
+  background: var(--snt-dark);
+  color: var(--snt-ink-on-dark);
+}
+
+.body {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  flex-wrap: wrap;
+}
+
+.name {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.description {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+  margin-top: var(--snt-space-2);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  flex-wrap: wrap;
+  margin-top: var(--snt-space-5);
+}
+
+.meta {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+/* --- best performer --- */
+
+.performer {
+  padding: var(--snt-space-7);
+  background: var(--snt-bg-surface);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-lg);
+}
+
+.performerRow {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  margin-top: var(--snt-space-5);
+}
+
+.performerBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.performerName {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+}
+
+.performerMeta {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-1);
+}
+
+@media (min-width: 1024px) {
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--snt-space-7);
+  }
+
+  .performer {
+    margin-top: var(--snt-space-7);
+    max-width: 520px;
+  }
+}

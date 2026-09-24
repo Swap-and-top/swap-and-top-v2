@@ -1,0 +1,83 @@
+/** The white rounded box that almost every group of content sits in. */
+
+.panel {
+  background: var(--snt-bg-surface);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-lg);
+}
+
+.panelXl {
+  border-radius: var(--snt-radius-xl);
+}
+
+/** Clips a full-bleed image at the top of the panel. */
+.clip {
+  overflow: hidden;
+}
+
+/** Inner padding. Omit for panels whose children pad themselves, like ListRows. */
+.padded {
+  padding: var(--snt-space-6);
+}
+
+.paddedLg {
+  padding: var(--snt-space-7);
+}
+
+/** Tinted panel: the swap detail header. */
+.tinted {
+  background: var(--snt-accent-tint);
+  border: none;
+  border-radius: 0;
+}
+
+/** Accent outline: a new lead, or the emphasised swap option. */
+.accent {
+  border-color: var(--snt-accent);
+}
+
+/** Dark panel: the console entry row on the account hub. */
+.dark {
+  background: var(--snt-dark);
+  border: none;
+  color: var(--snt-ink-on-dark);
+}
+
+/** A section separated by a rule above it. */
+.section {
+  border-top: 1px solid var(--snt-line);
+  padding-top: var(--snt-space-8);
+  margin-top: var(--snt-space-9);
+}
+
+.divider {
+  height: 1px;
+  background: var(--snt-line-subtle);
+  border: none;
+  margin: 0;
+}
+
+/** Vertical stack with a consistent gap. The workhorse layout of the app. */
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap2 {
+  gap: var(--snt-space-2);
+}
+.gap4 {
+  gap: var(--snt-space-4);
+}
+.gap5 {
+  gap: var(--snt-space-5);
+}
+.gap6 {
+  gap: var(--snt-space-6);
+}
+.gap8 {
+  gap: var(--snt-space-8);
+}
+.gap10 {
+  gap: var(--snt-space-10);
+}

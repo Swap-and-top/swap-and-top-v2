@@ -83,7 +83,8 @@ A described device. Referenced by listings rather than embedded, because a swap 
 | Field group | Contents |
 | --- | --- |
 | **Identity** | Identifier, phone number (the anchor), optional email, display name |
-| **Verification** | Phone verified, student verified, dealer verified, with timestamps |
+| **Verification** | Phone verified, dealer verified, with timestamps. No occupation or student status is collected or stored. |
+| **Reputation** | Confirmed deal count, median reply time, both derived rather than stored raw |
 | **Role** | Role, which cascades — see [auth-and-identity.md](./auth-and-identity.md) |
 | **Standing** | Account standing, suspension end, violation count, last violation |
 | **Profile** | Image, location, campus, joined date, last seen |
@@ -112,6 +113,24 @@ The platform's most important record.
 Made against a swap or a request. References the demand listing, the offering user, optionally an offered item, the proposed cash amount, a message, and a state.
 
 **Not binding and not escrowed.** A structured way to start a conversation.
+
+### Deal confirmation
+
+One record per reveal that is followed up. References the reveal event, the listing, both parties, each side's answer with its timestamp, and an overall state.
+
+| Field group | Contents |
+| --- | --- |
+| **Subject** | Reveal event reference, listing reference |
+| **Parties** | Buyer reference, seller reference |
+| **Answers** | Buyer answer and time, seller answer and time — each yes, no, not yet, or unanswered |
+| **State** | Pending, confirmed, closed, lapsed |
+| **Timing** | Prompted at, deferred at, resolved at, lapses at |
+
+**Counted only when both sides answer yes.** A "no" is never shown to the other party and never carries a disciplinary consequence.
+
+The **confirmed deal count** on a user or shop is derived from these records, not stored as a mutable counter — the same reasoning as reveal events. A count can be recomputed and audited; a counter can only be trusted.
+
+See [../features/deal-confirmation.md](../features/deal-confirmation.md).
 
 ### Report, disciplinary action, appeal
 
@@ -147,7 +166,7 @@ Append-only record of every callback received from the payment provider. Provide
        │            │           │          │                  └► Item (trade-in)
        │            │           │          └──► AuctionDetail ──► Bid (many)
        │            │           │
-       │            │           ├──► RevealEvent (many)
+       │            │           ├──► RevealEvent (many) ──► DealConfirmation
        │            │           ├──► Offer (many)
        │            │           └──► Report (many)
        │            │
@@ -211,6 +230,8 @@ Driven by the actual queries, not added speculatively.
 | Dealer matching | Category plus specification ranges on live sale listings |
 | Report queue | Moderation state plus severity plus age |
 | Reveal analytics | Listing plus time; device hash plus time for rate limiting |
+| Confirmed deal counts | Seller plus state; buyer plus state for repeat-pair detection |
+| Confirmation prompt sweep | State plus prompt time, and state plus lapse time |
 | Expiry sweep | Status plus expiry time |
 
 ---
@@ -229,6 +250,7 @@ This is one of the few genuine advantages of not having launched.
 - [Auth & Identity](./auth-and-identity.md) — users, roles, verification
 - [Search & Discovery](../product/search-and-discovery.md) — what the specification fields must support
 - [Contact & Reveals](../product/contact-and-reveals.md) — the reveal event's purpose
+- [Deal Confirmation](../features/deal-confirmation.md) — the confirmation record
 - [Payments & Invoicing](../operations/payments-and-invoicing.md) — payment state and idempotency
 - [v1 Lessons](../reference/v1-lessons.md) — the discarded-field failure
 

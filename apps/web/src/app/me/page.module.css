@@ -1,0 +1,43 @@
+/** Account hub. Wireframe artboard: `Me`. */
+
+.identity {
+  background: var(--snt-bg-surface);
+  padding: var(--snt-space-9) var(--snt-gutter) var(--snt-space-8);
+  flex-shrink: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-7);
+}
+
+.headBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-3xl);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-display);
+}
+
+/**
+ * The trust line under the name. Confirmed deals, and nothing else — no
+ * occupation, no institution, no status badge.
+ */
+.trust {
+  margin-top: var(--snt-space-1);
+}
+
+.stats {
+  margin-top: var(--snt-space-8);
+}
+
+@media (min-width: 768px) {
+  .identity {
+    padding-inline: var(--snt-space-10);
+  }
+}

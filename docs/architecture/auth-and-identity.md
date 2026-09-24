@@ -158,11 +158,12 @@ Authentication proves control of a phone number. Verification asserts something 
 
 | Tier | Method | Cost | Unlocks |
 | --- | --- | --- | --- |
-| Phone verified | One-time code | Free, automatic | Posting; raises the listing cap |
-| Verified student | Student ID reviewed by staff | Free | Trust badge; scarce campus identity |
+| Phone verified | One-time code | Free, automatic | Posting; raises the listing cap. **Not displayed.** |
 | Verified dealer | Business registration reviewed by staff | Paid | Shopfront, badge, console |
 
-Student verification is free deliberately. It is an identity anchor, and a badge that can be bought is worthless.
+**Verify businesses, not people.** There is no student or occupation tier. A private seller's trustworthiness is shown through behaviour — confirmed deals, reply time, account age, clean record — not through a status badge. The reasoning, including the data-protection and personal-safety arguments, is in [../product/trust-and-safety.md](../product/trust-and-safety.md).
+
+Phone verification is required but never shown, because a badge everyone holds carries no information.
 
 ---
 

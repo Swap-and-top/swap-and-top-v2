@@ -1,0 +1,81 @@
+/**
+ * The five-item bottom navigation.
+ *
+ * Wanted gets a top-level slot on purpose: it is the dealer product and the
+ * platform's structural difference from a supply-only board. Burying it inside
+ * search would hide the thing that makes the business work.
+ */
+
+.nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  height: var(--snt-bottom-nav-h);
+  flex-shrink: 0;
+  background: var(--snt-bg-surface);
+  border-top: 1px solid var(--snt-line);
+  /* Clear the home indicator on a phone. */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.item {
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-1);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-medium);
+  color: var(--snt-ink-muted);
+  position: relative;
+  transition: color var(--snt-transition);
+}
+
+.item:hover {
+  color: var(--snt-ink);
+}
+
+.itemActive {
+  color: var(--snt-accent);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.itemActive:hover {
+  color: var(--snt-accent);
+}
+
+/** The centre post action. Always available, whatever screen you are on. */
+.post {
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.postCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+  transition: background var(--snt-transition);
+}
+
+.post:hover .postCircle {
+  background: var(--snt-accent-strong);
+}
+
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  margin-left: 4px;
+}

@@ -1,0 +1,86 @@
+/**
+ * Sale card — the baseline. Everything else is a variation on it.
+ *
+ * The dealer variant adds a shop row. The absence of that row on a private
+ * seller's card is itself the signal: a buyer knows immediately what kind of
+ * transaction they are entering.
+ */
+
+.card {
+  display: block;
+  color: var(--snt-ink);
+}
+
+.card:hover {
+  color: var(--snt-ink);
+}
+
+.imageWrap {
+  position: relative;
+}
+
+.body {
+  padding: var(--snt-space-5) var(--snt-space-6) var(--snt-space-6);
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--snt-space-4);
+  flex-wrap: wrap;
+}
+
+.specLine {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  margin-top: var(--snt-space-1);
+  line-height: var(--snt-leading-tight);
+}
+
+/** Private seller: one meta line. */
+.sellerLine {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  flex-wrap: wrap;
+  margin-top: var(--snt-space-4);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.sellerName {
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+}
+
+/** Dealer: a shop row separated by a rule. */
+.shopRow {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  margin-top: var(--snt-space-4);
+  padding-top: var(--snt-space-4);
+  border-top: 1px solid var(--snt-line-subtle);
+}
+
+.shopName {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.stock {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+  white-space: nowrap;
+}
+
+/* From tablet up, cards sit in a grid and the image gets taller. */
+@media (min-width: 768px) {
+  .body {
+    padding: var(--snt-space-6) var(--snt-space-7) var(--snt-space-7);
+  }
+}

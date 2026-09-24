@@ -1,0 +1,124 @@
+/** Small typographic pieces that repeat across every screen. */
+
+/** Uppercase section label, e.g. PROCESSOR, WANTED, YOUR RECORD. */
+.eyebrow {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-label);
+  text-transform: uppercase;
+  color: var(--snt-ink-muted);
+}
+
+/** The smallest eyebrow, used inside cards for HAS / WANTS. */
+.eyebrowTight {
+  font-size: var(--snt-text-2xs);
+  letter-spacing: var(--snt-tracking-label);
+}
+
+.eyebrowAccent {
+  color: var(--snt-accent);
+}
+
+/** Price. Display face, because it is the number people scan for. */
+.price {
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-ink);
+}
+
+.priceSm {
+  font-size: var(--snt-text-lg);
+}
+
+.priceMd {
+  font-size: var(--snt-text-2xl);
+}
+
+.priceLg {
+  font-size: var(--snt-text-5xl);
+}
+
+/** The swap cash amount. Always clay, because it is the swap mechanic. */
+.cash {
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent);
+}
+
+/** Secondary line: location, age, seller. */
+.meta {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.metaXs {
+  font-size: var(--snt-text-xs);
+}
+
+/** Screen title. */
+.screenTitle {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-3xl);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-display);
+  color: var(--snt-ink);
+}
+
+/** Page heading inside a flow, e.g. "Did the deal go through?". */
+.pageHeading {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-4xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: 1.25;
+  color: var(--snt-ink);
+}
+
+/** Body copy inside an explanatory block. */
+.body {
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+/** A note with an icon, used for safety guidance and disclosures. */
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-6);
+  border-radius: var(--snt-radius-lg);
+  font-size: var(--snt-text-sm);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+.noteSurface {
+  background: var(--snt-bg-surface);
+  border: 1px solid var(--snt-line);
+}
+
+.noteSubtle {
+  background: var(--snt-bg-subtle);
+}
+
+.noteAccent {
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent-strong);
+}
+
+.noteIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--snt-ink-muted);
+}
+
+.noteAccent .noteIcon {
+  color: var(--snt-accent);
+}
+
+/** Centred caption under a primary action, e.g. the safety line. */
+.caption {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+  text-align: center;
+}

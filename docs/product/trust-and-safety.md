@@ -33,30 +33,52 @@ This has a technical consequence — the authentication system must support phon
 
 ## 2. Verification tiers
 
+Two tiers, not three. The governing rule: **verify businesses, not people.**
+
 ```ascii
-VERIFICATION LADDER:
-┌────────────────────┬──────────────┬───────────────────────────┐
-│       TIER         │    COST      │      WHAT IT UNLOCKS      │
-├────────────────────┼──────────────┼───────────────────────────┤
-│ Phone verified     │ Free, auto   │ Posting at all            │
-│                    │              │ Raises the listing cap    │
-├────────────────────┼──────────────┼───────────────────────────┤
-│ Verified student   │ Free, manual │ Trust badge               │
-│                    │ (student ID) │ Scarce identity on campus │
-├────────────────────┼──────────────┼───────────────────────────┤
-│ Verified dealer    │ Paid, manual │ Shopfront, badge, stock   │
-│                    │ (business    │ count, console            │
-│                    │  registration)│                          │
-└────────────────────┴──────────────┴───────────────────────────┘
+VERIFICATION:
+┌────────────────────┬───────────────┬───────────────────────────┐
+│       TIER         │     COST      │      WHAT IT UNLOCKS      │
+├────────────────────┼───────────────┼───────────────────────────┤
+│ Phone verified     │ Free, auto    │ Posting at all            │
+│                    │               │ Raises the listing cap    │
+│                    │               │ NOT shown as a badge      │
+├────────────────────┼───────────────┼───────────────────────────┤
+│ Verified dealer    │ Paid, manual  │ Shopfront, badge, stock   │
+│                    │ (business     │ count, console            │
+│                    │  registration)│                           │
+└────────────────────┴───────────────┴───────────────────────────┘
 ```
+
+Phone verification is required but **not displayed**. A badge that everyone holds is noise.
+
+### Why there is no "verified student" tier
+
+An earlier version of this specification had one. It was removed, and the reasoning is worth keeping so it is not reintroduced:
+
+- **It duplicated phone verification.** Its only structural job was making identity scarce, and the phone anchor already does that.
+- **It is an occupation marker, not a trust signal.** A mechanic of forty-five selling a laptop is not less trustworthy than a student of twenty. The platform is nationwide by design, so a badge that only a small fraction of the population can ever obtain creates a two-tier system in which most legitimate users are permanently second class.
+- **It created a data-protection liability for very little.** Verifying students means collecting identity documents — photograph, full name, institution, student number — and accepting the retention and protection obligations that follow under Zimbabwe's Cyber and Data Protection Act. That is a poor trade for a weak signal.
+- **It arguably reduced safety.** A public listing reading *"first name · verified student · named campus · area"* narrows a young person's identity for a stranger they are about to meet in person. It sat in this document as a safety feature while working against one.
+
+Recorded as a reversal in [../reference/decisions-log.md](../reference/decisions-log.md), decision P11.
 
 ### The badge must mean something specific
 
-A badge that means "paid us a dollar" gets discovered and destroys the trust it was meant to create. So:
+A badge that means "paid us a dollar" gets discovered and destroys the trust it was meant to create. Verified dealer is the only badge, and it asserts something checkable: a registered business stands behind this listing.
 
-- **Verified student is free.** It is an identity anchor, not a product. Charging for it would make it worthless.
-- **Verified dealer is paid** because it involves checking business registration, which is real work, and because it comes bundled with the console.
-- Each badge has a stated meaning, visible to any user who taps it.
+### What replaces it: trust from behaviour
+
+Status says who someone is. Behaviour says how they have acted. The second is both fairer and more useful.
+
+| Signal | Where it comes from |
+| --- | --- |
+| **Confirmed deals** | Both parties confirming a deal completed — see [../features/deal-confirmation.md](../features/deal-confirmation.md) |
+| **Typical reply time** | Measured from contact to response |
+| **Member since** | Account age |
+| **Clean record** | No upheld reports |
+
+Anyone can earn all four regardless of who they are, what they do, or where they study. That is the point.
 
 ### Business verification, kept realistic
 
@@ -72,7 +94,7 @@ The specific fraud risk in this category. A gadget swap market on a university c
 
 | Mitigation | How |
 | --- | --- |
-| **Scarce identity** | Phone-anchored accounts and student verification make a seller traceable |
+| **Scarce identity** | Phone-anchored accounts make a seller traceable and make a ban cost something |
 | **Guidance at the point of contact** | Check the device is not activation-locked before any money changes hands |
 | **Reporting** | One tap on any listing, with "possibly stolen" as an explicit reason |
 | **Duplicate image detection** | The same photograph appearing across accounts is a strong signal |
@@ -154,7 +176,8 @@ Stale listings destroy buyer trust faster than almost anything, and stale pages 
 | --- | --- |
 | Holding money in escrow | Different business entirely; drags in refunds, disputes, chargebacks |
 | Verifying every device | Does not scale without a physical location and staff |
-| Identity documents for ordinary users | Too much friction for a free marketplace; phone is enough |
+| Identity documents for ordinary users | Too much friction, a data-protection liability, and phone is enough |
+| Verifying anyone's occupation or student status | Not the platform's business, and a poor trust signal — see above |
 | Pre-approving every listing | Creates an outage whenever nobody is available to approve |
 | Buying a background-check service | No budget, and phone-anchored identity covers most of the value |
 
@@ -164,6 +187,7 @@ Stale listings destroy buyer trust faster than almost anything, and stale pages 
 
 - [Target Users](../business/target-users.md) — verification tiers per group
 - [Contact & Reveals](./contact-and-reveals.md) — where safety guidance appears
+- [Deal Confirmation](../features/deal-confirmation.md) — the behavioural trust signal
 - [Moderation](../features/moderation.md) — the reporting and discipline system in detail
 - [Auth & Identity](../architecture/auth-and-identity.md) — phone-anchored accounts
 - [Roadmap](./roadmap.md) — when the swap point becomes real

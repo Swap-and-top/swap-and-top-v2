@@ -128,6 +128,12 @@ That last field is what makes it possible to say "sponsored listings got three t
 
 **Privacy stance:** device hashes, not identities. No cross-site tracking. Reveal counts shown to sellers are aggregate only — a seller never learns who looked.
 
+### The reveal also starts the deal confirmation clock
+
+Three days after a reveal, both parties are asked whether the deal went through. When both say yes it becomes a **confirmed deal**, which is the public trust signal for private sellers and the platform's only view of settlement.
+
+This is why the reveal is worth recording as an event rather than incrementing a counter: it is the hook everything downstream hangs on. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
+
 ---
 
 ## What sellers see
@@ -173,6 +179,7 @@ The placement matters. Safety advice buried in a help page is decoration; advice
 - [Post Flow](./post-flow.md) — where contact preferences are set
 - [Trust & Safety](./trust-and-safety.md) — the guidance shown at contact
 - [Wanted & Leads](../features/wanted-and-leads.md) — how consent shapes the lead product
+- [Deal Confirmation](../features/deal-confirmation.md) — what a reveal triggers three days later
 - [Metrics](../operations/metrics.md) — what reveal data is used for
 - [v1 Lessons](../reference/v1-lessons.md) — the contact leak this replaces
 

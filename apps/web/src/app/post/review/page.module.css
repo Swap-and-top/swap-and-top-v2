@@ -1,0 +1,99 @@
+/** Post, step three — review. Wireframe artboard: `PostReview`. */
+
+.previewLabel {
+  margin-bottom: var(--snt-space-4);
+}
+
+/* --- the live card preview --- */
+
+.card {
+  overflow: hidden;
+}
+
+.strip {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  padding: var(--snt-space-4) var(--snt-space-6);
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.tiles {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-6);
+}
+
+.tile {
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+}
+
+.tileName {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-medium);
+  line-height: var(--snt-leading-tight);
+}
+
+.tileEyebrow {
+  margin-top: var(--snt-space-3);
+}
+
+.middle {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-2);
+}
+
+.arrows {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+}
+
+.saleBody {
+  padding: var(--snt-space-5) var(--snt-space-6) var(--snt-space-6);
+}
+
+.saleTitle {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  margin-top: var(--snt-space-1);
+}
+
+/* --- contact block --- */
+
+.contact {
+  margin-top: var(--snt-space-8);
+}
+
+.checks {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--snt-space-4);
+}
+
+.disclosure {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+  margin-top: var(--snt-space-5);
+}
+
+.lifecycle {
+  margin-top: var(--snt-space-7);
+}

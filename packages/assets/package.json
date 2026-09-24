@@ -1,0 +1,22 @@
+{
+  "name": "@snt/assets",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared static assets: brand marks, images, fonts. Platform-neutral files plus a manifest, so the web app and a future native app reference the same things.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./brand/*": "./brand/*",
+    "./images/*": "./images/*"
+  },
+  "scripts": {
+    "lint": "echo \"@snt/assets: no linter configured yet\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo node_modules *.tsbuildinfo"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

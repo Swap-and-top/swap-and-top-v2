@@ -96,6 +96,8 @@ A LEAD AS THE DEALER SEES IT:
 
 **Tabs:** matching requests, number reveals, offers sent.
 
+The requester's own record is shown on the lead — confirmed deals, account age, clean report history — so a dealer can judge who they are dealing with. No occupation or status markers; see [trust-and-safety.md](./trust-and-safety.md).
+
 **When nothing matches**, say so plainly and offer "I can source this" — dealers routinely source to order, and that is still a lead.
 
 **Desktop version is two-pane:** the request list on the left, the selected request's detail on the right with the trade-in, the matching stock item, and an offer composer — price plus a short message. Reviewing a queue of leads is much faster this way.
@@ -113,7 +115,9 @@ Where money is spent. Four blocks:
 | **Friday Drop** | Next drop time, slots remaining, price, action to apply |
 | **Best performer** | The dealer's top item this week by reveals, and whether it was sponsored |
 
-The header carries two numbers: **reveals this week** and **sponsored versus normal performance**. That second number is the entire argument for buying promotion, shown continuously rather than in a sales conversation.
+The header carries three numbers: **reveals this week**, **confirmed deals**, and **sponsored versus normal performance**.
+
+The middle one is the renewal argument. *"At least twelve confirmed deals last month"* is a far stronger reason to keep paying than a count of people who saw a phone number. The third is the argument for buying promotion, shown continuously rather than in a sales conversation. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
 
 ---
 
@@ -142,7 +146,7 @@ A dealer is a normal user with an extra surface, not a separate account type. Th
 
 The dealer's outward face, at `/shop/<slug>`. Server-rendered and indexable — a dealer's shopfront ranking in Google is a reason for them to value the account.
 
-Contains: shop identity and verified badge, a short description, location and hours, trust statistics (items in stock, typical reply time, year joined), a **Show number** action, a follow action, and a stock grid with category tabs.
+Contains: shop identity and verified badge, a short description, location and hours, trust statistics (items in stock, **confirmed deals**, typical reply time), a **Show number** action, a follow action, and a stock grid with category tabs.
 
 Wireframe frame: `Shopfront`.
 
@@ -161,6 +165,7 @@ If validation shows dealers will pay for the stock system, the console becomes t
 ## Definition of done — first real version
 
 - [ ] Stock list with add, edit, mark sold, and per-item reveal counts
+- [ ] Confirmed deal count in the header and on the shopfront
 - [ ] Leads feed with trade-in detail and explicit stock matching
 - [ ] Offer sending against a lead
 - [ ] Promote screen with subscription state and sponsored slot purchase

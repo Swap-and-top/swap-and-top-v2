@@ -1,0 +1,79 @@
+/**
+ * Component reference — the card system.
+ *
+ * Mirrors the `Cards` artboard. Not a user-facing screen: it exists so the four
+ * card types can be compared side by side while working on them.
+ */
+
+.page {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: var(--snt-space-12) var(--snt-gutter) var(--snt-space-16);
+}
+
+.title {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-4xl);
+  font-weight: var(--snt-weight-bold);
+}
+
+.intro {
+  font-size: var(--snt-text-md);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+  margin-top: var(--snt-space-5);
+  max-width: 62ch;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-14);
+  margin-top: var(--snt-space-14);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+}
+
+.label {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--snt-ink-muted);
+}
+
+.labelAccent {
+  color: var(--snt-accent);
+}
+
+.sample {
+  max-width: 360px;
+}
+
+.note {
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+  max-width: 44ch;
+}
+
+@media (min-width: 900px) {
+  .row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--snt-space-12);
+  }
+
+  .sampleCol {
+    width: 360px;
+    flex-shrink: 0;
+  }
+
+  .note {
+    padding-top: var(--snt-space-8);
+  }
+}

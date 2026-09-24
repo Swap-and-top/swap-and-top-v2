@@ -1,0 +1,147 @@
+.base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-4);
+  border-radius: var(--snt-radius-md);
+  font-family: var(--snt-font-body);
+  font-weight: var(--snt-weight-semibold);
+  text-align: center;
+  white-space: nowrap;
+  transition:
+    background var(--snt-transition),
+    border-color var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.base:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* --- sizes. Never below the 44px touch target for a real action. --- */
+
+.sm {
+  height: 40px;
+  padding: 0 var(--snt-space-7);
+  font-size: var(--snt-text-md);
+}
+
+.md {
+  height: var(--snt-touch);
+  padding: 0 var(--snt-space-8);
+  font-size: var(--snt-text-lg);
+}
+
+.lg {
+  height: 50px;
+  padding: 0 var(--snt-space-8);
+  font-size: var(--snt-text-xl);
+}
+
+/* --- variants --- */
+
+.primary {
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+  border: none;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--snt-accent-strong);
+  color: var(--snt-ink-on-dark);
+}
+
+.secondary {
+  background: var(--snt-bg-surface);
+  color: var(--snt-ink);
+  border: 1px solid var(--snt-line);
+}
+
+.secondary:hover:not(:disabled) {
+  border-color: var(--snt-ink);
+  color: var(--snt-ink);
+}
+
+/** Outlined in ink — a secondary action with more weight, e.g. Bulk import. */
+.outline {
+  background: var(--snt-bg-surface);
+  color: var(--snt-ink);
+  border: 1px solid var(--snt-ink);
+}
+
+.outline:hover:not(:disabled) {
+  background: var(--snt-bg-subtle);
+  color: var(--snt-ink);
+}
+
+.subtle {
+  background: var(--snt-bg-app);
+  color: var(--snt-ink-muted);
+  border: 1px solid var(--snt-line);
+  font-weight: var(--snt-weight-normal);
+}
+
+.subtle:hover:not(:disabled) {
+  color: var(--snt-ink);
+}
+
+.dark {
+  background: var(--snt-dark);
+  color: var(--snt-ink-on-dark);
+  border: none;
+}
+
+.dark:hover:not(:disabled) {
+  background: var(--snt-dark-raised);
+  color: var(--snt-ink-on-dark);
+}
+
+/** Confirming a deal. Green, because it is a completion not a call to action. */
+.success {
+  background: var(--snt-success);
+  color: var(--snt-ink-on-dark);
+  border: none;
+}
+
+.success:hover:not(:disabled) {
+  background: var(--snt-success-strong);
+  color: var(--snt-ink-on-dark);
+}
+
+/** Dashed, for an invitation to create something. */
+.dashed {
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent);
+  border: 1px dashed var(--snt-accent);
+}
+
+.dashed:hover:not(:disabled) {
+  background: var(--snt-bg-surface);
+  color: var(--snt-accent-strong);
+}
+
+/* --- modifiers --- */
+
+.block {
+  display: flex;
+  width: 100%;
+}
+
+/** Icon-only. Square, so the touch target stays honest. */
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+.iconOnly.sm {
+  width: 40px;
+}
+
+.iconOnly.md {
+  width: var(--snt-touch);
+}
+
+.iconOnly.lg {
+  width: 50px;
+}

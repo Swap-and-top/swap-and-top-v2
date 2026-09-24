@@ -1,0 +1,60 @@
+/** Dealer shopfront. Wireframe artboard: `Shopfront`. */
+
+.identity {
+  background: var(--snt-bg-surface);
+  padding: var(--snt-space-2) var(--snt-gutter) var(--snt-space-8);
+  flex-shrink: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+}
+
+.headBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-3xl);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-display);
+}
+
+.badgeRow {
+  margin-top: var(--snt-space-1);
+}
+
+.description {
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+  margin-top: var(--snt-space-6);
+}
+
+.stats {
+  margin-top: var(--snt-space-7);
+}
+
+.actions {
+  display: flex;
+  gap: var(--snt-space-5);
+  margin-top: var(--snt-space-7);
+}
+
+.actions > :first-child {
+  flex-grow: 1;
+}
+
+.grid {
+  padding-top: var(--snt-space-6);
+}
+
+@media (min-width: 768px) {
+  .identity {
+    padding-inline: var(--snt-space-10);
+  }
+}

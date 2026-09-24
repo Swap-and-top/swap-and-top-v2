@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 24" width="132" height="24" role="img" aria-label="Swap and Top">
+  <title>Swap &amp; Top</title>
+  <g fill="none" stroke="#A8482A" stroke-width="2.1" stroke-linecap="round">
+    <path d="M3 9h13M13 6l3 3-3 3" />
+    <path d="M21 15H8M11 18l-3-3 3-3" />
+  </g>
+  <text x="30" y="17" font-family="'Space Grotesk', 'Helvetica Neue', sans-serif" font-size="15" font-weight="700" letter-spacing="-0.2" fill="#1A1A18">Swap &amp; Top</text>
+</svg>

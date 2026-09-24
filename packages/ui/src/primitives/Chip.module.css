@@ -1,0 +1,89 @@
+/**
+ * Filter chips.
+ *
+ * Two rows of these sit above the feed: category, then listing type. They
+ * filter one stream — there are no separate pages per type.
+ */
+
+.row {
+  display: flex;
+  gap: var(--snt-space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* Bleed to the screen edge so the last chip does not look clipped. */
+  padding-inline: var(--snt-gutter);
+  margin-inline: calc(var(--snt-gutter) * -1);
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--snt-space-7);
+  border-radius: var(--snt-radius-pill);
+  border: 1px solid var(--snt-line);
+  background: var(--snt-bg-surface);
+  color: var(--snt-ink);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-normal);
+  white-space: nowrap;
+  transition:
+    background var(--snt-transition),
+    border-color var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.chip:hover {
+  border-color: var(--snt-ink);
+}
+
+/** Category chips, selected. Clay. */
+.selectedAccent {
+  background: var(--snt-accent);
+  border-color: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.selectedAccent:hover {
+  background: var(--snt-accent-strong);
+  border-color: var(--snt-accent-strong);
+}
+
+/** Type chips, selected. Ink, so the two rows stay visually distinct. */
+.selectedInk {
+  background: var(--snt-ink);
+  border-color: var(--snt-ink);
+  color: var(--snt-ink-on-dark);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/** Smaller variant used by the type row. */
+.small {
+  height: 30px;
+  padding: 0 var(--snt-space-6);
+  font-size: var(--snt-text-sm);
+}
+
+/**
+ * Square multi-select chip, used by the specification filters on Search.
+ * Square rather than pill so a spec value reads as a toggle, not a category.
+ */
+.square {
+  border-radius: var(--snt-radius-sm);
+  height: 30px;
+  padding: 0 var(--snt-space-6);
+  font-size: var(--snt-text-base);
+}
+
+.squareWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-3);
+}

@@ -1,0 +1,100 @@
+/**
+ * Status and label badges.
+ *
+ * Small, square-ish, always carrying a word rather than only a colour — colour
+ * alone is not a signal people can rely on.
+ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-1);
+  height: 18px;
+  padding: 0 var(--snt-space-3);
+  border-radius: var(--snt-radius-xs);
+  font-size: var(--snt-text-2xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/** Slightly larger, for a badge sitting beside a price. */
+.lg {
+  height: 20px;
+  padding: 0 var(--snt-space-4);
+  font-size: var(--snt-text-xs);
+}
+
+/** Pill shape with normal casing — used for a condition label. */
+.pill {
+  height: 22px;
+  padding: 0 var(--snt-space-4);
+  border-radius: var(--snt-radius-pill);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-normal);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* --- tones --- */
+
+.neutral {
+  background: var(--snt-bg-subtle);
+  color: #3d3d38;
+}
+
+.outline {
+  background: var(--snt-bg-app);
+  border: 1px solid var(--snt-line);
+  color: var(--snt-ink);
+}
+
+/** Live, and confirmed deals. */
+.success {
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+}
+
+/** Sponsored, in the console where it sits on a light row. */
+.accent {
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent-strong);
+}
+
+/** New lead. Solid, because it is the one thing a dealer must not miss. */
+.accentSolid {
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+}
+
+/** Sponsored, overlaid on a listing image. Must read on any photograph. */
+.dark {
+  background: var(--snt-dark);
+  color: var(--snt-ink-on-dark);
+}
+
+/* --- placement --- */
+
+/** Top-left of a card image. */
+.onImage {
+  position: absolute;
+  top: var(--snt-space-4);
+  left: var(--snt-space-4);
+}
+
+/** Count bubble, e.g. unread leads on a nav item. */
+.count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--snt-space-2);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

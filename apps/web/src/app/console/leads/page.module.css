@@ -1,0 +1,285 @@
+/**
+ * Console leads — the screen that sells the platform.
+ *
+ * Phone: a feed of lead cards, which is how dealers already read WhatsApp.
+ * Desktop from `lg`: two panes, the request list beside the selected request's
+ * detail and an offer composer. Reviewing a queue is much faster that way.
+ */
+
+.alertPill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  height: 28px;
+  padding: 0 var(--snt-space-6);
+  margin-top: var(--snt-space-5);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--snt-space-9);
+  margin-top: var(--snt-space-5);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex-shrink: 0;
+  height: 40px;
+  border-bottom: 2px solid transparent;
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+  white-space: nowrap;
+}
+
+.tabActive {
+  border-bottom-color: var(--snt-accent);
+  color: var(--snt-ink);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/* --- phone: a feed of cards --- */
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+/* --- desktop: two panes --- */
+
+.panes {
+  display: none;
+}
+
+.placeholder {
+  font-size: var(--snt-text-md);
+  color: var(--snt-ink-muted);
+}
+
+@media (min-width: 1024px) {
+  .feed {
+    display: none;
+  }
+
+  .panes {
+    display: grid;
+    grid-template-columns: 382px minmax(0, 1fr);
+    background: var(--snt-bg-surface);
+    border: 1px solid var(--snt-line);
+    border-radius: var(--snt-radius-xl);
+    overflow: hidden;
+    min-height: 560px;
+  }
+
+  .list {
+    border-right: 1px solid var(--snt-line);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .listItem {
+    display: block;
+    width: 100%;
+    padding: var(--snt-space-6) var(--snt-space-8);
+    border-bottom: 1px solid var(--snt-line-subtle);
+    border-left: 3px solid transparent;
+    text-align: left;
+    transition: background var(--snt-transition);
+  }
+
+  .listItem:hover {
+    background: var(--snt-bg-app);
+  }
+
+  .listItemActive {
+    background: var(--snt-bg-highlight);
+    border-left-color: var(--snt-accent);
+  }
+
+  .listHead {
+    display: flex;
+    align-items: center;
+    gap: var(--snt-space-4);
+  }
+
+  /* These are spans inside a button, so they need to be made block. */
+  .listTitle,
+  .listSub {
+    display: block;
+  }
+
+  .listAge {
+    font-size: var(--snt-text-xs);
+    color: var(--snt-ink-muted);
+  }
+
+  .listTitle {
+    font-size: var(--snt-text-lg);
+    font-weight: var(--snt-weight-semibold);
+    margin-top: var(--snt-space-3);
+  }
+
+  .listSub {
+    font-size: var(--snt-text-sm);
+    color: var(--snt-ink-muted);
+    margin-top: var(--snt-space-2);
+  }
+
+  /* --- detail pane --- */
+
+  .detail {
+    padding: var(--snt-space-10) var(--snt-space-12);
+  }
+
+  .detailTitle {
+    font-family: var(--snt-font-display);
+    font-size: var(--snt-text-4xl);
+    font-weight: var(--snt-weight-bold);
+    margin-top: var(--snt-space-4);
+  }
+
+  .detailMeta {
+    font-size: var(--snt-text-base);
+    color: var(--snt-ink-muted);
+    margin-top: var(--snt-space-2);
+  }
+
+  .detailCards {
+    display: flex;
+    gap: var(--snt-space-7);
+    margin-top: var(--snt-space-9);
+  }
+
+  .tradeInCard {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: 0;
+    padding: var(--snt-space-7);
+    border: 1px solid var(--snt-line);
+    border-radius: var(--snt-radius-lg);
+  }
+
+  .tradeInName {
+    font-size: var(--snt-text-lg);
+    font-weight: var(--snt-weight-semibold);
+    margin-top: var(--snt-space-4);
+  }
+
+  .tradeInSpecs {
+    font-size: var(--snt-text-base);
+    color: var(--snt-ink-muted);
+    line-height: var(--snt-leading-normal);
+    margin-top: var(--snt-space-3);
+  }
+
+  .cashCard {
+    width: 168px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--snt-space-7);
+    border: 1px solid var(--snt-accent);
+    border-radius: var(--snt-radius-lg);
+    background: var(--snt-accent-tint);
+  }
+
+  .cashValue {
+    font-family: var(--snt-font-display);
+    font-size: 30px;
+    font-weight: var(--snt-weight-bold);
+    color: var(--snt-accent);
+    margin-top: var(--snt-space-2);
+  }
+
+  .cashNote {
+    font-size: var(--snt-text-xs);
+    color: var(--snt-ink-muted);
+    margin-top: var(--snt-space-1);
+  }
+
+  /* --- match --- */
+
+  .matchPanel {
+    margin-top: var(--snt-space-9);
+    border: 1px solid var(--snt-line);
+    border-radius: var(--snt-radius-lg);
+    overflow: hidden;
+  }
+
+  .matchHead {
+    display: flex;
+    align-items: center;
+    gap: var(--snt-space-3);
+    padding: var(--snt-space-5) var(--snt-space-7);
+    background: var(--snt-bg-app);
+    border-bottom: 1px solid var(--snt-line);
+    font-size: var(--snt-text-sm);
+    font-weight: var(--snt-weight-bold);
+    letter-spacing: var(--snt-tracking-label);
+    text-transform: uppercase;
+    color: var(--snt-success);
+  }
+
+  .matchBody {
+    display: flex;
+    align-items: center;
+    gap: var(--snt-space-6);
+    padding: var(--snt-space-6) var(--snt-space-7);
+  }
+
+  .matchInfo {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .matchName {
+    font-size: var(--snt-text-md);
+    font-weight: var(--snt-weight-medium);
+  }
+
+  .matchSpecs {
+    font-size: var(--snt-text-sm);
+    color: var(--snt-ink-muted);
+    margin-top: var(--snt-space-1);
+  }
+
+  .matchCovers {
+    font-size: var(--snt-text-base);
+    color: var(--snt-ink-muted);
+  }
+
+  /* --- offer composer --- */
+
+  .composer {
+    display: flex;
+    gap: var(--snt-space-7);
+    align-items: flex-end;
+    margin-top: var(--snt-space-9);
+  }
+
+  .composerPrice {
+    width: 178px;
+    flex-shrink: 0;
+  }
+
+  .composerMessage {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .requester {
+    margin-top: var(--snt-space-9);
+  }
+}

@@ -1,0 +1,99 @@
+/**
+ * Search — the highest-priority screen in the product.
+ *
+ * A dedicated screen rather than a bar with a dropdown, because specification
+ * search is the promise ("find gadgets easily") and the one thing a
+ * title-and-photo board cannot do.
+ */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  flex-shrink: 0;
+  padding: var(--snt-space-4) var(--snt-space-3) var(--snt-space-6);
+  background: var(--snt-bg-surface);
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: var(--snt-touch);
+  flex-shrink: 0;
+  color: var(--snt-ink);
+}
+
+.queryField {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.categoryRow {
+  background: var(--snt-bg-surface);
+  padding: 0 var(--snt-gutter) var(--snt-space-6);
+  flex-shrink: 0;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-7);
+  padding-top: var(--snt-space-7);
+}
+
+.group {
+  min-width: 0;
+}
+
+.groupLabel {
+  margin-bottom: var(--snt-space-4);
+}
+
+.priceRow {
+  display: flex;
+  gap: var(--snt-space-5);
+}
+
+.priceRow > * {
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+}
+
+/** Sticky footer: clear, and the live result count. */
+.footer {
+  position: sticky;
+  bottom: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-6) var(--snt-gutter) var(--snt-space-8);
+  background: var(--snt-bg-surface);
+  border-top: 1px solid var(--snt-line);
+  padding-bottom: calc(var(--snt-space-8) + env(safe-area-inset-bottom, 0px));
+}
+
+.footer > :last-child {
+  flex-grow: 1;
+}
+
+/** Results, shown under the filters once a query or filter is active. */
+.results {
+  padding-top: var(--snt-space-8);
+  border-top: 1px solid var(--snt-line);
+  margin-top: var(--snt-space-9);
+}
+
+.resultsLabel {
+  margin-bottom: var(--snt-space-5);
+}
+
+@media (min-width: 768px) {
+  .categoryRow,
+  .footer {
+    padding-inline: var(--snt-space-10);
+  }
+}

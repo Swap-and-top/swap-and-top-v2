@@ -55,6 +55,7 @@
 | **Reveal** | The event recorded when someone taps to see a seller's contact details. **An event, not a UI state.** The platform's most important metric. |
 | **Reveal count** | How many reveals a listing has received. What a seller comes back for. |
 | **Response rate** | The share of listings receiving at least one reveal or offer within seven days. The clearest measure of whether the marketplace is alive. |
+| **Confirmation rate** | The share of reveals that produce a mutually confirmed deal. Expected to be a minority; the count is a floor, not a total. |
 | **Device hash** | A hashed device identifier used for rate limiting. Not an identity. |
 | **Slot type** | Whether a listing was organic, sponsored or in a drop at the moment of a reveal. What makes promotion sellable with evidence. |
 
@@ -90,9 +91,11 @@
 
 | Term | Means |
 | --- | --- |
-| **Phone verified** | Control of a phone number proven by one-time code. Free and automatic. Required to post. |
-| **Verified student** | Student identity checked by staff. Free, because it is an identity anchor, not a product. |
-| **Verified dealer** | Business registration checked by staff. Paid, and bundled with the console. |
+| **Phone verified** | Control of a phone number proven by one-time code. Free, automatic, required to post, and **never displayed as a badge**. |
+| **Verified dealer** | Business registration checked by staff. Paid, bundled with the console, and the **only badge on the platform**. |
+| **Verify businesses, not people** | The governing rule. A business has a registration number and makes public claims; a private individual's occupation is not the platform's concern. |
+| **Confirmed deal** | A deal both parties confirmed went through. The public trust signal for private sellers, earnable by anyone. |
+| **Deal confirmation** | The prompt sent to both parties a few days after a reveal, asking whether the deal went through. Not a review, and not a complaint channel. |
 | **Identity anchor** | The scarce thing an account is tied to. Here, a phone number — because a suspended user must not be able to reappear cheaply. |
 | **Account standing** | Good, warned, limited, suspended or banned. Enforced in queries, not filtered in clients. |
 | **Swap point** | A future physical counter where two people complete a swap safely and a device is checked. The strongest long-term moat. |
@@ -149,6 +152,8 @@
 | "Pending" | Draft | Nothing waits for review before going live |
 | "Message" for platform notices | Notification | There is no messaging system |
 | "Contact details" in a listing payload | — | They are never there. Only the reveal action serves them. |
+| "Verified student" | Confirmed deals | Removed. Occupation is not a trust signal — see [decisions-log.md](./decisions-log.md) P11. |
+| "Rating" or "review" | Confirmed deals | There are no stars and no written reviews |
 
 ---
 

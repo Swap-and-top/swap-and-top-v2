@@ -1,0 +1,158 @@
+/**
+ * The page scaffold.
+ *
+ * Mobile-first: a single column at the width the wireframes were drawn to. On a
+ * larger screen the column is centred and allowed to grow to a comfortable
+ * reading width rather than stretching — the marketplace wireframes only define
+ * phone layouts, so inventing a desktop grid here would be guessing.
+ *
+ * ── Where to add a desktop layout ──────────────────────────────────────────
+ * The media query at the bottom of this file is the place. A two-column feed at
+ * `md` and a three-column at `lg` is the obvious next step; the cards already
+ * handle being narrower.
+ */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  max-width: var(--snt-mobile-max);
+  margin-inline: auto;
+  background: var(--snt-bg-app);
+}
+
+/** White background, for screens that are one continuous surface. */
+.screenSurface {
+  background: var(--snt-bg-surface);
+}
+
+/** Scrolling content region. */
+.body {
+  flex-grow: 1;
+  padding-inline: var(--snt-gutter);
+  padding-bottom: var(--snt-space-10);
+}
+
+/** No horizontal padding — for a body whose children bleed to the edge. */
+.bodyFlush {
+  padding-inline: 0;
+}
+
+.bodyTop {
+  padding-top: var(--snt-space-6);
+}
+
+/**
+ * Sticky action bar at the bottom of a detail screen. Sits above the bottom
+ * nav where both are present.
+ */
+.footer {
+  position: sticky;
+  bottom: 0;
+  flex-shrink: 0;
+  padding: var(--snt-space-5) var(--snt-gutter) var(--snt-space-7);
+  background: var(--snt-bg-surface);
+  border-top: 1px solid var(--snt-line);
+}
+
+.footerActions {
+  display: flex;
+  gap: var(--snt-space-5);
+}
+
+.footerActions > :first-child {
+  flex-grow: 1;
+}
+
+.footerCaption {
+  margin-top: var(--snt-space-4);
+}
+
+/** A white band, e.g. the header area of Wanted or Saved. */
+.band {
+  background: var(--snt-bg-surface);
+  padding: var(--snt-space-7) var(--snt-gutter) var(--snt-space-5);
+  flex-shrink: 0;
+}
+
+.bandTight {
+  padding-bottom: 0;
+}
+
+/** Tabs along the bottom of a white band. */
+.tabs {
+  display: flex;
+  gap: var(--snt-space-9);
+  padding-inline: var(--snt-gutter);
+  background: var(--snt-bg-surface);
+  border-bottom: 1px solid var(--snt-line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex-shrink: 0;
+  height: 44px;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+  white-space: nowrap;
+}
+
+.tabActive {
+  border-bottom-color: var(--snt-accent);
+  color: var(--snt-ink);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/** Empty state, e.g. an over-filtered feed. Never a blank screen. */
+.empty {
+  padding: var(--snt-space-16) var(--snt-space-6);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-ink);
+}
+
+.emptyBody {
+  font-size: var(--snt-text-md);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-4);
+  line-height: var(--snt-leading-normal);
+}
+
+.emptyAction {
+  margin-top: var(--snt-space-8);
+  display: flex;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .screen {
+    /* Grow modestly rather than stretching to the viewport. */
+    max-width: 560px;
+    box-shadow: 0 0 0 1px var(--snt-line);
+  }
+
+  .body {
+    padding-inline: var(--snt-space-10);
+  }
+
+  .band,
+  .footer {
+    padding-inline: var(--snt-space-10);
+  }
+
+  .tabs {
+    padding-inline: var(--snt-space-10);
+  }
+}

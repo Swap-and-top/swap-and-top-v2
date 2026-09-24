@@ -1,0 +1,146 @@
+/** Form fields. Every input has a real, associated label. */
+
+.field {
+  display: block;
+  min-width: 0;
+}
+
+.label {
+  display: block;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-label);
+  text-transform: uppercase;
+  color: var(--snt-ink-muted);
+  margin-bottom: var(--snt-space-4);
+}
+
+.hint {
+  display: block;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-normal);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--snt-ink-muted);
+  margin-bottom: var(--snt-space-3);
+}
+
+.input {
+  width: 100%;
+  height: var(--snt-touch);
+  padding: 0 var(--snt-space-6);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-surface);
+  color: var(--snt-ink);
+  font-size: var(--snt-text-lg);
+  transition: border-color var(--snt-transition);
+}
+
+.input::placeholder {
+  color: var(--snt-ink-muted);
+}
+
+.input:hover {
+  border-color: var(--snt-ink-muted);
+}
+
+.input:focus {
+  border-color: var(--snt-ink);
+  outline: none;
+}
+
+/** Smaller input, used inside two-column rows. */
+.inputSm {
+  height: 40px;
+  font-size: var(--snt-text-md);
+}
+
+/** Large emphasised value, e.g. a swap top-up amount. */
+.inputStrong {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+}
+
+/** Search field in a header — pill shaped, ink border when it holds a query. */
+.inputPill {
+  border-radius: var(--snt-radius-pill);
+  border-color: var(--snt-ink);
+}
+
+/** Filled, for a search box that sits on a white header. */
+.inputFilled {
+  background: var(--snt-bg-app);
+}
+
+/* --- rows --- */
+
+.row {
+  display: flex;
+  gap: var(--snt-space-5);
+}
+
+.row > * {
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+}
+
+/* --- checkbox --- */
+
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  min-height: var(--snt-touch);
+}
+
+.checkbox {
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  accent-color: var(--snt-accent);
+  flex-shrink: 0;
+}
+
+.checkLabel {
+  font-size: var(--snt-text-md);
+  color: var(--snt-ink);
+}
+
+/** A checkbox group separated from the one above it, e.g. dealer offers. */
+.checkRowDivided {
+  border-top: 1px solid var(--snt-line-subtle);
+  padding-top: var(--snt-space-5);
+  margin-top: var(--snt-space-2);
+}
+
+/* --- segmented control --- */
+
+.segmented {
+  display: flex;
+  gap: var(--snt-space-4);
+}
+
+.segment {
+  flex-grow: 1;
+  flex-basis: 0;
+  height: 38px;
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-surface);
+  color: var(--snt-ink);
+  font-size: var(--snt-text-base);
+  transition:
+    background var(--snt-transition),
+    border-color var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.segmentActive {
+  background: var(--snt-ink);
+  border-color: var(--snt-ink);
+  color: var(--snt-ink-on-dark);
+  font-weight: var(--snt-weight-semibold);
+}

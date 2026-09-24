@@ -58,6 +58,19 @@ The clearest measure of whether the marketplace is alive. A feed of unanswered p
 | Offers per swap listing | Offers received on swap posts | Rising |
 | Unanswered swap rate | Swap posts with no response after 7 days | Falling |
 
+### Confirmed deals — the closest thing to settlement
+
+As a contact broker the platform cannot see money change hands, so reveals were previously the last observable event. Mutual deal confirmation opens a partial window. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
+
+| Metric | Definition | Good |
+| --- | --- | --- |
+| **Confirmed deals** | Deals both parties confirmed completed | Growing; treat the number as a floor |
+| Confirmation rate | Share of reveals producing a mutual confirmation | A minority is expected. Watch the trend, not the level. |
+| Prompt response rate | Share of prompts answered at all | If very low, the prompt's timing or wording is wrong |
+| Confirmed deals per dealer | Per paying dealer, per month | **The renewal number.** Far stronger than reveals alone. |
+
+**Read these as a floor, never a total.** Prompts lapse, and only deals that went well enough for both parties to bother answering get counted. The honest phrasing to a dealer is *"at least twelve confirmed deals"*.
+
 ### The trade-up ratio — a diagnostic
 
 | Metric | Why |
@@ -161,6 +174,7 @@ Stated explicitly, because they are tempting and they mislead.
 Not negotiable, because the validation test cannot run without them.
 
 - [ ] Reveal events with listing, device hash, role, timestamp and slot type
+- [ ] Deal confirmations, with each side's answer and the resulting state
 - [ ] Listing views
 - [ ] Response rate — derivable from reveals and offers per listing
 - [ ] Returning visitors, which requires retention-capable analytics
@@ -178,7 +192,7 @@ Everything else can follow.
 | --- | --- | --- |
 | **Weekly** | Founder | The four questions, one number each |
 | **Weekly** | Sellers with activity | Their reveal summary |
-| **Continuous** | Dealers | Reveals per item in the console |
+| **Continuous** | Dealers | Reveals per item, and confirmed deals, in the console |
 | **Monthly** | Partners | Revenue, paying dealers, growth |
 
 The weekly four-number check is the discipline that matters. If it takes more than a glance, it will not get done.
@@ -189,6 +203,7 @@ The weekly four-number check is the discipline that matters. If it takes more th
 
 - [Validation Test](./validation-test.md) — the pass thresholds these feed
 - [Contact & Reveals](../product/contact-and-reveals.md) — the reveal event
+- [Deal Confirmation](../features/deal-confirmation.md) — the settlement window
 - [Monetization](../business/monetization.md) — selling promotion with evidence
 - [Swap & Top](../features/swap-and-top.md) — the trade-up ratio
 - [Deployment & Hosting](../architecture/deployment-and-hosting.md) — analytics and monitoring setup

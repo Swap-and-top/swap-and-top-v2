@@ -1,0 +1,100 @@
+/**
+ * Reduced card forms.
+ *
+ * `row` — a horizontal line item, used by Saved and by console stock.
+ * `grid` — a small vertical card, used by the shopfront's stock grid.
+ *
+ * The listing type must stay identifiable even at this size, which is why the
+ * swap variant keeps its cash chip.
+ */
+
+.row {
+  display: flex;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-5);
+  color: var(--snt-ink);
+}
+
+.row:hover {
+  color: var(--snt-ink);
+}
+
+/** Sold or withdrawn: dimmed, so it reads as unavailable without being hidden. */
+.rowGone {
+  opacity: 0.55;
+}
+
+.thumb {
+  flex-shrink: 0;
+}
+
+.rowBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.rowTop {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  flex-wrap: wrap;
+}
+
+.swapAmount {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  color: var(--snt-accent);
+}
+
+.rowTitle {
+  font-size: var(--snt-text-base);
+  margin-top: var(--snt-space-1);
+  line-height: var(--snt-leading-tight);
+}
+
+.rowMeta {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-2);
+}
+
+/* --- grid card --- */
+
+.gridWrap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-5);
+  align-content: start;
+}
+
+.grid {
+  display: block;
+  color: var(--snt-ink);
+}
+
+.grid:hover {
+  color: var(--snt-ink);
+}
+
+.gridBody {
+  padding: var(--snt-space-4) var(--snt-space-4) var(--snt-space-5);
+}
+
+.gridTitle {
+  font-size: var(--snt-text-sm);
+  margin-top: var(--snt-space-1);
+  line-height: var(--snt-leading-tight);
+}
+
+@media (min-width: 640px) {
+  .gridWrap {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .gridWrap {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

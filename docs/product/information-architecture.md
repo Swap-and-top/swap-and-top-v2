@@ -75,6 +75,7 @@ Each row maps to a frame on the wireframe canvas. Names match exactly.
 | Dealer shopfront | `Shopfront` | Shop identity, trust stats, stock grid, reveal | Guest |
 | Saved | `Saved` | Watchlist with availability and price-drop badges | Account |
 | Me | `Me` | Account hub and console entry | Account |
+| Deal confirmation | `DealConfirm` | *Did the deal go through?* Sent to both parties three days after a reveal | Account |
 
 ### Reference board
 
@@ -113,6 +114,7 @@ Flat and human-readable. The v1 prefix (`/swapandtop/...`) is removed — it was
 | `/post` | Posting flow | Client-rendered |
 | `/saved` | Saved | Client-rendered |
 | `/me` | Account hub | Client-rendered |
+| `/deals/<id>/confirm` | Deal confirmation | Client-rendered |
 | `/console/...` | Dealer console | Client-rendered |
 | `/admin/...` | Staff tools | Client-rendered |
 
@@ -138,8 +140,8 @@ Driven by one question: does a search engine or a link scraper need to see it?
 | Browse feed | Posting flow |
 | Search results | Saved |
 | Listing detail | Account hub |
-| Shopfront | Dealer console |
-| Category and location landing pages (later) | Staff tools |
+| Shopfront | Deal confirmation |
+| Category and location landing pages (later) | Dealer console, staff tools |
 
 Public pages need no authentication at all, which means the entire SEO benefit can be delivered without solving server-side authenticated rendering. That is deliberate: it removes the hardest problem from the critical path. See [../architecture/auth-and-identity.md](../architecture/auth-and-identity.md).
 

@@ -1,0 +1,44 @@
+/**
+ * Trust signals.
+ *
+ * Two, and only two:
+ *  - verified dealer, in clay, asserting a checked business
+ *  - confirmed deals, in green, earned by behaviour
+ *
+ * There is no status or occupation marker anywhere in this file, and there
+ * should never be one. See docs/product/trust-and-safety.md.
+ */
+
+.signal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  white-space: nowrap;
+}
+
+.md {
+  font-size: var(--snt-text-sm);
+}
+
+/** Verified dealer. */
+.verified {
+  color: var(--snt-accent);
+}
+
+/** Confirmed deals. Green, and differs from clay in lightness as well as hue. */
+.deals {
+  color: var(--snt-success);
+}
+
+/** Large version for a profile header. */
+.lg {
+  gap: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+}
+
+.count {
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+}

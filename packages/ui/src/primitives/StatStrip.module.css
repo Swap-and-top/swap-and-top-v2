@@ -1,0 +1,44 @@
+/**
+ * The bordered strip of two to four numbers.
+ *
+ * Used on the account hub, the shopfront's trust statistics, and the console's
+ * promote header. Numbers in the display face, label underneath.
+ */
+
+.strip {
+  display: flex;
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-lg);
+  overflow: hidden;
+  background: var(--snt-bg-surface);
+}
+
+.stat {
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+  padding: var(--snt-space-4) var(--snt-space-5);
+}
+
+.stat + .stat {
+  border-left: 1px solid var(--snt-line-subtle);
+}
+
+.value {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-ink);
+  line-height: 1.2;
+}
+
+/** Confirmed deals, so the number reads as the trust signal it is. */
+.valueSuccess {
+  color: var(--snt-success);
+}
+
+.label {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-1);
+}

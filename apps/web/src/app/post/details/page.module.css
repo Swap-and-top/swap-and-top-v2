@@ -1,0 +1,105 @@
+/** Post, step two — details. Wireframe artboard: `PostDetails`. */
+
+.kindStrip {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  padding: var(--snt-space-4) var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.kindLabel {
+  flex-grow: 1;
+}
+
+.change {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.group {
+  margin-top: var(--snt-space-8);
+}
+
+.groupLabel {
+  margin-bottom: var(--snt-space-4);
+}
+
+/* --- photos --- */
+
+.photos {
+  display: flex;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-4);
+}
+
+.addPhoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+  border: 1px dashed var(--snt-accent);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-surface);
+  color: var(--snt-accent);
+  transition: background var(--snt-transition);
+}
+
+.addPhoto:hover {
+  background: var(--snt-accent-tint);
+}
+
+.addPhoto:disabled {
+  border-color: var(--snt-line);
+  color: var(--snt-ink-muted);
+  cursor: not-allowed;
+}
+
+.photoThumb {
+  position: relative;
+}
+
+.removePhoto {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-ink);
+  color: var(--snt-ink-on-dark);
+}
+
+/* --- the cash block --- */
+
+.cash {
+  margin-top: var(--snt-space-8);
+  padding: var(--snt-space-7);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-surface);
+}
+
+.cashSegments {
+  margin-top: var(--snt-space-5);
+}
+
+.cashAmount {
+  margin-top: var(--snt-space-7);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  margin-top: var(--snt-space-6);
+}

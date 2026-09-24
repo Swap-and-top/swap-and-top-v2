@@ -27,7 +27,8 @@ Revenue comes from dealers.
 - Sharing a listing
 - Posting sale, swap and request listings
 - Saving listings
-- Phone verification and student verification
+- Phone verification
+- Building a confirmed-deal record
 
 ---
 
@@ -111,7 +112,8 @@ See [go-to-market.md](./go-to-market.md) for what the drop is and why it exists.
 | **Consumer tiers (pro, platinum)** | Billing complexity built before knowing anyone will pay |
 | **Subscriptions for ordinary users** | Recurring billing is hard on local payment rails |
 | **Success fees on completed sales** | Uncollectible — we are a contact broker and cannot see whether a sale happened |
-| **Verified student badge** | Trust should not be purchasable by users; it is an identity anchor |
+| **Any trust signal for private sellers** | Trust must be earned through behaviour, never bought. Confirmed deals, reply time and account age are all free. |
+| **Student or occupation verification** | Not the platform's business, a data-protection liability, and a weak signal |
 
 ---
 

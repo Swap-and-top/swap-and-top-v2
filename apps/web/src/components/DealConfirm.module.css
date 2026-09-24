@@ -1,0 +1,133 @@
+/** Deal confirmation. Wireframe artboard: `DealConfirm`. */
+
+.intro {
+  margin-top: var(--snt-space-4);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-5);
+  color: var(--snt-ink);
+  margin-top: var(--snt-space-7);
+}
+
+.summary:hover {
+  color: var(--snt-ink);
+}
+
+.summaryBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.summaryTitle {
+  display: block;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  line-height: var(--snt-leading-tight);
+}
+
+.summaryMeta {
+  display: block;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-2);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--snt-ink-muted);
+  display: flex;
+}
+
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+  margin-top: var(--snt-space-9);
+}
+
+.privacy {
+  margin-top: var(--snt-space-8);
+}
+
+.report {
+  margin-top: var(--snt-space-6);
+  text-align: center;
+}
+
+.reportLink {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/* --- your record --- */
+
+.record {
+  border-top: 1px solid var(--snt-line);
+  padding-top: var(--snt-space-8);
+  margin-top: var(--snt-space-9);
+}
+
+.recordRow {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  margin-top: var(--snt-space-5);
+}
+
+.recordCount {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  color: var(--snt-success);
+}
+
+.recordNumber {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-4xl);
+  font-weight: var(--snt-weight-bold);
+}
+
+.recordLabel {
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+}
+
+.recordNote {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+  margin-top: var(--snt-space-5);
+}
+
+/* --- answered state --- */
+
+.answered {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-7);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+  margin-top: var(--snt-space-9);
+}
+
+.answeredBody {
+  flex-grow: 1;
+}
+
+.answeredTitle {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.answeredNote {
+  font-size: var(--snt-text-sm);
+  margin-top: var(--snt-space-2);
+  opacity: 0.9;
+}

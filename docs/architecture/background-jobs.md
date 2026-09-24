@@ -50,6 +50,9 @@ Using the existing database rather than a separate queue service is deliberate: 
 | --- | --- | --- |
 | **Expiry sweep** | Hourly | Moves listings past 30 days to expired; clears them from feed, search and sitemap |
 | **Expiry nudge** | Daily | Asks owners of listings expiring in three days whether they are still available |
+| **Confirmation prompt** | Hourly | Sends the deal confirmation prompt to both parties three days after a reveal |
+| **Confirmation lapse sweep** | Daily | Closes unanswered confirmations after fourteen days, silently |
+| **Repeat-pair check** | Weekly | Flags account pairs repeatedly confirming each other's deals |
 | **Reveal digest** | Weekly | Sends sellers with activity their reveal summary |
 | **Orphan sweep** | Daily | Removes uploaded images belonging to abandoned drafts |
 | **Queue threshold check** | Hourly | Alerts staff when the report queue exceeds a threshold |
@@ -149,6 +152,7 @@ Get this wrong and a sold listing keeps ranking in Google and keeps appearing in
 
 - [System Overview](./system-overview.md) — where the queue sits
 - [Notifications](../features/notifications.md) — what gets sent
+- [Deal Confirmation](../features/deal-confirmation.md) — the prompt and lapse jobs
 - [Wanted & Leads](../features/wanted-and-leads.md) — the matching job
 - [SEO & Rendering](./seo-and-rendering.md) — why revalidation matters
 - [Payments & Invoicing](../operations/payments-and-invoicing.md) — idempotent reconciliation

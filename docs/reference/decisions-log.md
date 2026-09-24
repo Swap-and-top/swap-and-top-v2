@@ -25,7 +25,7 @@
 | O1 | **Exact relocation date** | How much of the validation test fits while the founder is in Zimbabwe | Three months means dealer-only; six allows the campus programme too |
 | O2 | **Who operates Zimbabwe after relocation** | Whether Swap & Top continues at all | A deliverable of the validation test. Candidates: a dealer, a campus ambassador, the existing API collaborator |
 | O3 | **Will dealers pay, and for which product** | Whether the rewrite is justified, and whether this is a marketplace or a software business | The primary gate |
-| O4 | **First campus confirmed** | Seeding plan, student verification design | Assumed to be the University of Zimbabwe |
+| O4 | **First campus confirmed** | The seeding plan only | Assumed to be the University of Zimbabwe. No longer affects verification design, since student verification was removed. |
 | O5 | **Is the $2,000 runway or investment capital** | How long the platform can run without revenue | Cannot be both |
 | O6 | **Live-update approach for auctions** | Nothing now — deferred with auctions | Database-backed subscription, or a per-auction process. Decide when building |
 
@@ -67,7 +67,11 @@
 | P8 | **Both swap directions supported, with an explicit control** | ✅ | The direction ratio is also a diagnostic for how much dealer capacity is needed. |
 | P9 | **Dealer-offers consent, defaulting on** | ✅ | Keeps the student side from feeling like a dealer channel, and makes the lead product defensible. |
 | P10 | **Phone number is the identity anchor** | ✅ | Suspension only means something if identity is scarce. SIMs are registered against identity documents locally. |
-| P11 | **Student verification free, dealer verification paid** | ✅ | A badge that can be bought is worthless. Student verification is an identity anchor. |
+| P11 | **Verify businesses, not people — no student or occupation verification** | ✅ | **Reversed from an earlier position.** A student badge duplicated phone verification's only structural job; it is an occupation marker rather than a trust signal; it created a data-protection liability by requiring identity documents; and on a platform where strangers meet in person it narrowed a young person's identity publicly, working against the safety it claimed to provide. The platform is nationwide, so a badge reachable by a small fraction of users creates a permanent second class. |
+| P20 | **Deal confirmation replaces status-based trust** | ✅ | Both parties confirm a deal went through; the count is public. Earnable by anyone regardless of age, occupation or location. It also gives the platform its only view of settlement, which a contact broker otherwise cannot see, and a far stronger dealer renewal number than reveals alone. |
+| P21 | **No ratings or written reviews** | ✅ | Ratings need volume to mean anything and reviews need moderation, invite retaliation and become a dispute surface. A binary confirmed count is robust, cheap and cannot be review-bombed. Revisit at volume. |
+| P22 | **Confirmation is not a complaint channel** | ✅ | A "no" means no deal happened, not that anyone behaved badly, and carries no consequence. Complaints go through reporting, which has reasons, review and appeal. A prompt that can punish people is a prompt nobody answers. |
+| P23 | **Phone verification is required but not displayed** | ✅ | A badge everyone holds carries no information. |
 | P12 | **Auto-approve, take down on report** | ✅ | A human gate is an outage. It also gated nothing in v1 anyway. |
 | P13 | **Listings expire after 30 days with a nudge** | ✅ | Stale listings destroy trust and hurt rankings. The nudge doubles as re-engagement. |
 | P14 | **Mobile console is primary, desktop second** | ✅ | Shops are run from a phone behind a counter. |
@@ -137,6 +141,8 @@ Worth recording so the reasoning is not rediscovered.
 | Sort promoted listings to the top | Interleave labelled slots | Five dealers would own the first screen |
 | Start the rewrite immediately | Validate on the existing app first | The rewrite is the reward for passing |
 | Cookieless page analytics | Retention-capable product analytics | Cannot otherwise measure return visits |
+| Verified student badge as the trust signal for private sellers | Confirmed deals, reply time, account age | An occupation marker is not a trust signal; it duplicated phone verification, added a data-protection liability, and narrowed a young person's identity for strangers |
+| Reveals as the last observable event | Mutual deal confirmation | Left the platform unable to answer whether any deal ever completed |
 
 ---
 

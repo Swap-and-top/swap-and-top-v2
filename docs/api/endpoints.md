@@ -105,6 +105,17 @@ The reveal endpoint is the only route through which contact details are ever ser
 
 ---
 
+## Deal confirmation
+
+| Endpoint | Access | Purpose |
+| --- | --- | --- |
+| List own pending confirmations | User | Prompts awaiting an answer |
+| Get confirmation | Party to it | The listing and the counterparty's display name only — never their answer |
+| Answer confirmation | Party to it | Yes, no, or not yet. Idempotent per party. |
+| Get confirmed deal count | Public | Aggregate only, for a user or a shop. Never per-deal detail. |
+
+A "no" answer is stored and never returned to the other party. Answering carries no disciplinary consequence — complaints go through the reporting endpoints instead. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
+
 ## Saved listings
 
 | Endpoint | Access | Purpose |
@@ -142,7 +153,7 @@ Administrative user listing and role changes are under [Administration](#adminis
 | Bulk import stock | Dealer | The fastest way to onboard a dealer |
 | List leads | Dealer | Matching demand, with trade-in detail and named stock matches |
 | List reveals received | Dealer | |
-| Get performance | Dealer | Reveals over time, sponsored versus organic |
+| Get performance | Dealer | Reveals over time, confirmed deals, sponsored versus organic |
 
 ---
 

@@ -125,9 +125,10 @@ Identity is what makes suspension meaningful. If a banned user can register agai
 
 | Tier | How | Cost to user | What it unlocks |
 | --- | --- | --- | --- |
-| **Phone verified** | One-time code | Free, automatic | Posting at all; raises the soft listing cap |
-| **Verified student** | Student ID check | Free | A trust badge; makes identity scarce on campus |
+| **Phone verified** | One-time code | Free, automatic | Posting at all; raises the soft listing cap. Not shown as a badge. |
 | **Verified dealer** | Business registration plus verified phone | Paid | Shopfront, badge, stock count, console |
+
+**Verify businesses, not people.** There is no student or occupation verification. A private seller's trust comes from behaviour instead — confirmed deals, reply time, account age, clean record. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
 
 Phone number is the identity anchor rather than email: SIMs are registered against ID locally, and everyone uses WhatsApp. See [../architecture/auth-and-identity.md](../architecture/auth-and-identity.md).
 

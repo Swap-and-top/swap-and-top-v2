@@ -1,0 +1,21 @@
+{
+  "name": "swap-and-top",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Swap & Top — gadget trading marketplace. Monorepo: web app, shared UI, shared core.",
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  }
+}

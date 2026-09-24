@@ -1,0 +1,52 @@
+/**
+ * Who you are dealing with.
+ *
+ * Two rows: a private poster, and a shop. Both show behaviour rather than
+ * status — confirmed deals, reply time, account age, clean record. There is no
+ * occupation or affiliation anywhere in here.
+ */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-6);
+  color: var(--snt-ink);
+}
+
+.row:hover {
+  color: var(--snt-ink);
+}
+
+.body {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.nameLine {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  flex-wrap: wrap;
+}
+
+.name {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.meta {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-1);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--snt-ink-muted);
+  display: flex;
+}
+
+.trailing {
+  flex-shrink: 0;
+}

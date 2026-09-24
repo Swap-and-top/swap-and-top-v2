@@ -1,0 +1,51 @@
+/** Sale listing detail. Wireframe artboard: `DetailDealer`. */
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--snt-space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-semibold);
+  line-height: var(--snt-leading-tight);
+  margin-top: var(--snt-space-3);
+}
+
+.meta {
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+  margin-top: var(--snt-space-2);
+}
+
+.specs {
+  margin-top: var(--snt-space-7);
+}
+
+/**
+ * The trade-in prompt. One line that turns a plain purchase intent into swap
+ * demand, which is the platform's more valuable object.
+ */
+.tradePrompt {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-5);
+  padding: var(--snt-space-6);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.tradePrompt:hover {
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+}
+
+.identity {
+  margin-top: var(--snt-space-6);
+}

@@ -1,0 +1,109 @@
+/**
+ * Reset and base styles.
+ *
+ * Small on purpose. Anything decorative belongs in a component's CSS Module.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--snt-font-body);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink);
+  background: var(--snt-bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Links and buttons inherit type; each component styles its own. */
+a {
+  color: var(--snt-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--snt-accent-strong);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+/* Visible focus for keyboard users, suppressed for pointer users. */
+:focus-visible {
+  outline: 2px solid var(--snt-accent);
+  outline-offset: 2px;
+}
+
+/** Accessible label that is not shown. Used on icon-only inputs. */
+.snt-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

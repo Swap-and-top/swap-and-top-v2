@@ -1,0 +1,239 @@
+/**
+ * The dealer console shell.
+ *
+ * One responsive surface, not two pages. At phone width it is a dark header, a
+ * stacked list and a bottom nav. From `lg` up the nav becomes a sidebar and the
+ * content area gains room for a real table.
+ *
+ * Mobile is the primary build: most small shops are run from a phone behind a
+ * counter, and nobody opens a laptop to add one item.
+ */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--snt-bg-app);
+}
+
+/* --- mobile header --- */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  flex-shrink: 0;
+  padding: var(--snt-space-6) var(--snt-space-7);
+  background: var(--snt-dark);
+  color: var(--snt-ink-on-dark);
+}
+
+.headerBody {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.shopName {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.shopKicker {
+  display: block;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-on-dark-muted);
+}
+
+.headerLink {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-medium);
+  color: var(--snt-ink-on-dark-subtle);
+  white-space: nowrap;
+}
+
+.headerLink:hover {
+  color: var(--snt-ink-on-dark);
+}
+
+/* --- content --- */
+
+.main {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.titleBand {
+  background: var(--snt-bg-surface);
+  border-bottom: 1px solid var(--snt-line);
+  padding: var(--snt-space-6) var(--snt-gutter) var(--snt-space-7);
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--snt-space-5);
+  flex-wrap: wrap;
+}
+
+.titleMeta {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.content {
+  padding: var(--snt-space-6) var(--snt-gutter) var(--snt-space-10);
+}
+
+/* --- mobile bottom nav --- */
+
+.bottomNav {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  height: var(--snt-console-nav-h);
+  flex-shrink: 0;
+  background: var(--snt-bg-surface);
+  border-top: 1px solid var(--snt-line);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.navItem {
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-1);
+  position: relative;
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-medium);
+  color: var(--snt-ink-muted);
+}
+
+.navItemActive {
+  color: var(--snt-accent);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.navBadge {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  margin-left: 4px;
+}
+
+/* --- sidebar, from lg up --- */
+
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .shell {
+    flex-direction: row;
+  }
+
+  /* The dark header becomes the sidebar's own heading. */
+  .header {
+    display: none;
+  }
+
+  .bottomNav {
+    display: none;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: var(--snt-console-sidebar-w);
+    padding: var(--snt-space-9) 0 var(--snt-space-10);
+    background: var(--snt-dark);
+    color: var(--snt-ink-on-dark);
+  }
+
+  .sidebarHead {
+    display: flex;
+    align-items: center;
+    gap: var(--snt-space-5);
+    padding: 0 var(--snt-space-9) var(--snt-space-8);
+    border-bottom: 1px solid var(--snt-line-dark);
+  }
+
+  .sidebarNav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--snt-space-7) var(--snt-space-5) 0;
+  }
+
+  .sidebarItem {
+    display: flex;
+    align-items: center;
+    gap: var(--snt-space-5);
+    height: 42px;
+    padding: 0 var(--snt-space-6);
+    border-radius: var(--snt-radius-md);
+    color: var(--snt-ink-on-dark-muted);
+    font-size: var(--snt-text-md);
+    transition:
+      background var(--snt-transition),
+      color var(--snt-transition);
+  }
+
+  .sidebarItem:hover {
+    color: var(--snt-ink-on-dark);
+  }
+
+  .sidebarItemActive {
+    background: var(--snt-dark-raised);
+    color: var(--snt-ink-on-dark);
+    font-weight: var(--snt-weight-semibold);
+  }
+
+  .sidebarLabel {
+    flex-grow: 1;
+  }
+
+  .sidebarCount {
+    font-size: var(--snt-text-sm);
+    color: var(--snt-ink-on-dark-muted);
+  }
+
+  .sidebarFoot {
+    margin-top: auto;
+    padding: 0 var(--snt-space-5);
+  }
+
+  .sidebarBack {
+    display: flex;
+    align-items: center;
+    gap: var(--snt-space-4);
+    height: 40px;
+    padding: 0 var(--snt-space-6);
+    border-radius: var(--snt-radius-md);
+    color: var(--snt-ink-on-dark-muted);
+    font-size: var(--snt-text-base);
+  }
+
+  .sidebarBack:hover {
+    color: var(--snt-ink-on-dark);
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    max-width: var(--snt-content-max);
+  }
+
+  .titleBand {
+    padding: var(--snt-space-9) var(--snt-space-12) var(--snt-space-9);
+  }
+
+  .content {
+    padding: var(--snt-space-10) var(--snt-space-12) var(--snt-space-12);
+  }
+}

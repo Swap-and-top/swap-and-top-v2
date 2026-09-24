@@ -1,0 +1,45 @@
+/** Browse — the feed. */
+
+/** The white block holding the search entry and both chip rows. */
+.filters {
+  background: var(--snt-bg-surface);
+  padding: 0 var(--snt-gutter) var(--snt-space-6);
+  flex-shrink: 0;
+}
+
+/** Tapping this opens the full search screen. Specification search is the
+ *  product's main advantage, so it gets a screen rather than a dropdown. */
+.searchEntry {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  height: var(--snt-touch);
+  padding: 0 var(--snt-space-7);
+  margin-bottom: var(--snt-space-5);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-app);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+}
+
+.searchEntry:hover {
+  border-color: var(--snt-ink);
+  color: var(--snt-ink);
+}
+
+.categoryRow {
+  margin-bottom: var(--snt-space-6);
+}
+
+/** The type row sits on the page background, below the white filter block. */
+.typeRow {
+  padding: var(--snt-space-5) var(--snt-gutter);
+}
+
+@media (min-width: 768px) {
+  .filters,
+  .typeRow {
+    padding-inline: var(--snt-space-10);
+  }
+}

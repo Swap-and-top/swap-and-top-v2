@@ -73,7 +73,7 @@ The most important visual element in the product.
 │  HAS                          WANTS             │
 │  MacBook Air 2017             Any i7, 16GB, SSD │
 ├─────────────────────────────────────────────────┤
-│  Tarisai M. · Verified student · UZ · 5h ago     │
+│  Tarisai M. · 3 deals · Mt Pleasant · 5h ago     │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -109,8 +109,10 @@ The only card with no photograph, because the poster does not have the item.
 
 - Age of the listing, always
 - Location, always
-- Poster identity at whatever level of verification exists
+- Poster's first name, and their **confirmed deal count** where they have one
 - A single tap target covering the whole card
+
+**No status or occupation markers.** A card never says what someone does for a living or where they study. Trust is shown as behaviour — confirmed deals — which anyone can earn. The only badge on the platform is verified dealer, which asserts a checkable fact about a business. New accounts show no deal count rather than a zero, because a zero reads as a warning while an absence reads as new. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
 
 ### What no card carries
 

@@ -1,0 +1,93 @@
+/** App header, screen header and the posting flow's step header. */
+
+/* --- app header: wordmark and alerts --- */
+
+.app {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  height: var(--snt-app-header-h);
+  flex-shrink: 0;
+  padding-left: var(--snt-gutter);
+  padding-right: var(--snt-space-3);
+  background: var(--snt-bg-surface);
+}
+
+.wordmark {
+  flex-grow: 1;
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-display);
+  color: var(--snt-ink);
+}
+
+.wordmark:hover {
+  color: var(--snt-ink);
+}
+
+/* --- screen header: back, title, actions --- */
+
+.screen {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-1);
+  height: var(--snt-screen-header-h);
+  flex-shrink: 0;
+  padding-inline: var(--snt-space-3);
+  background: var(--snt-bg-surface);
+  border-bottom: 1px solid var(--snt-line-subtle);
+}
+
+.title {
+  flex-grow: 1;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+  min-width: 0;
+}
+
+.titleCentre {
+  text-align: center;
+}
+
+/** A title that names the mechanic, e.g. "Swap & Top" on a swap detail. */
+.titleAccent {
+  color: var(--snt-accent);
+}
+
+/** Icon button in a header. Full touch target, no visible chrome. */
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--snt-touch);
+  height: var(--snt-touch);
+  flex-shrink: 0;
+  color: var(--snt-ink);
+  border-radius: var(--snt-radius-md);
+}
+
+.iconButton:hover {
+  color: var(--snt-accent);
+}
+
+/** Balances a back button so a centred title stays centred. */
+.spacer {
+  width: var(--snt-touch);
+  flex-shrink: 0;
+}
+
+/* --- step header: progress through the posting flow --- */
+
+.progressTrack {
+  height: 3px;
+  flex-shrink: 0;
+  background: var(--snt-line-subtle);
+}
+
+.progressFill {
+  height: 3px;
+  background: var(--snt-accent);
+  transition: width var(--snt-transition);
+}

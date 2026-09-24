@@ -1,0 +1,29 @@
+{
+  "name": "@snt/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Swap & Top marketplace and dealer console — Next.js App Router.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .next .turbo node_modules *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@snt/assets": "workspace:*",
+    "@snt/core": "workspace:*",
+    "@snt/ui": "workspace:*",
+    "next": "^15.1.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "^5.7.2"
+  }
+}

@@ -53,6 +53,10 @@ The matching demand alert is the one that must be fast and reliable. If it is la
 | **Offer received** | Someone offers on their swap or request | In-app, WhatsApp | Requires a decision |
 | **Listing expiring** | Three days before the 30-day expiry | In-app, WhatsApp | *"Is this still available?"* — doubles as re-engagement |
 | **Listing expired** | On expiry | In-app | With a one-tap relist |
+| **Deal confirmation prompt** | Three days after a reveal, to both parties | In-app, WhatsApp | *"Did the deal go through?"* Builds the seller's public record and gives the platform its only view of settlement. |
+| **Deal confirmed** | Both parties answered yes | In-app | Confirms the count went up. The reward that makes the next prompt worth answering. |
+
+The confirmation prompt is sent to **both** parties, and is re-asked once if someone answers "not yet". It lapses silently after fourteen days — never chased, because a prompt that nags is a prompt people learn to ignore. A "no" is never relayed to the other side. See [deal-confirmation.md](./deal-confirmation.md).
 
 ### Buyer — habit
 
@@ -138,6 +142,7 @@ No separate messaging system. Users contact each other on WhatsApp or by phone �
 ## Related documentation
 
 - [Wanted & Leads](./wanted-and-leads.md) — what the lead alert delivers
+- [Deal Confirmation](./deal-confirmation.md) — the confirmation prompt
 - [Moderation](./moderation.md) — the disciplinary messages
 - [Contact & Reveals](../product/contact-and-reveals.md) — the reveal data behind summaries
 - [Background Jobs](../architecture/background-jobs.md) — queueing and retries

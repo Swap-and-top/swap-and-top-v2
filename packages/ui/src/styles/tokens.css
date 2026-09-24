@@ -1,0 +1,156 @@
+/**
+ * Design tokens.
+ *
+ * This file is the source of truth for the web app. `@snt/core/tokens` mirrors
+ * these values as TypeScript for a future native app and for the rare case
+ * where TS needs a colour. Change one, change the other.
+ *
+ * Every value from the wireframes lives here. Components reference tokens and
+ * never hard-code a colour, radius or font.
+ */
+
+:root {
+  /* --- surfaces ------------------------------------------------------ */
+
+  /** Page background behind cards. */
+  --snt-bg-app: #f6f5f3;
+  /** Cards, headers, navigation. */
+  --snt-bg-surface: #ffffff;
+  /** Muted fill with more weight than a line. */
+  --snt-bg-subtle: #eceae5;
+  /** Image placeholder fill. */
+  --snt-bg-placeholder: #e8e6e1;
+  /** Image placeholder sitting on a tinted background. */
+  --snt-bg-placeholder-strong: #e1dbd4;
+  /** Row highlight, e.g. the selected lead in the console table. */
+  --snt-bg-highlight: #fdfaf8;
+
+  /* --- text ---------------------------------------------------------- */
+
+  --snt-ink: #1a1a18;
+  /** Captions and secondary text. 4.5:1 on white. */
+  --snt-ink-muted: #5c5c57;
+  /** Decorative only — placeholder icons. Never body text. */
+  --snt-ink-faint: #7a786f;
+  --snt-ink-on-dark: #ffffff;
+  --snt-ink-on-dark-muted: #aba8a2;
+  --snt-ink-on-dark-subtle: #c9c6be;
+
+  /* --- lines --------------------------------------------------------- */
+
+  --snt-line: #dcdad5;
+  --snt-line-subtle: #eceae5;
+  --snt-line-dark: #34332f;
+
+  /* --- accent: clay -------------------------------------------------- */
+  /* Primary actions, the swap mechanic, verified dealer.                */
+  /* 5.7:1 against white, so it is safe for text and for fills.          */
+
+  --snt-accent: #a8482a;
+  --snt-accent-strong: #8a3a1f;
+  --snt-accent-tint: #f7ebe5;
+  --snt-accent-border: #c99b84;
+
+  /* --- success: green ------------------------------------------------ */
+  /* Confirmed deals and live status. Differs from accent in lightness   */
+  /* as well as hue, so the two are distinguishable without colour.      */
+
+  --snt-success: #1f5133;
+  --snt-success-strong: #174027;
+  --snt-success-tint: #e3efe6;
+
+  /* --- dark surfaces ------------------------------------------------- */
+  /* The dealer console chrome.                                          */
+
+  --snt-dark: #1a1a18;
+  --snt-dark-raised: #33322e;
+
+  /* --- typography ---------------------------------------------------- */
+  /* The `--font-*` variables come from next/font in apps/web.           */
+
+  --snt-font-display: var(--font-space-grotesk), 'Space Grotesk',
+    'Helvetica Neue', sans-serif;
+  --snt-font-body: var(--font-ibm-plex-sans), 'IBM Plex Sans', system-ui,
+    sans-serif;
+
+  --snt-text-2xs: 0.5625rem; /* 9px  — eyebrow labels on cards */
+  --snt-text-xs: 0.625rem; /* 10px — meta, badges */
+  --snt-text-sm: 0.6875rem; /* 11px — captions */
+  --snt-text-base: 0.75rem; /* 12px — secondary body */
+  --snt-text-md: 0.8125rem; /* 13px — body */
+  --snt-text-lg: 0.875rem; /* 14px — emphasised body */
+  --snt-text-xl: 0.9375rem; /* 15px — buttons */
+  --snt-text-2xl: 1.0625rem; /* 17px — card price */
+  --snt-text-3xl: 1.1875rem; /* 19px — screen title */
+  --snt-text-4xl: 1.375rem; /* 22px — page heading */
+  --snt-text-5xl: 1.625rem; /* 26px — detail price */
+
+  --snt-weight-normal: 400;
+  --snt-weight-medium: 500;
+  --snt-weight-semibold: 600;
+  --snt-weight-bold: 700;
+
+  --snt-leading-tight: 1.3;
+  --snt-leading-snug: 1.45;
+  --snt-leading-normal: 1.55;
+
+  --snt-tracking-label: 0.5px;
+  --snt-tracking-eyebrow: 0.6px;
+  --snt-tracking-display: -0.2px;
+
+  /* --- spacing ------------------------------------------------------- */
+
+  --snt-space-1: 2px;
+  --snt-space-2: 4px;
+  --snt-space-3: 6px;
+  --snt-space-4: 8px;
+  --snt-space-5: 10px;
+  --snt-space-6: 12px;
+  --snt-space-7: 14px;
+  --snt-space-8: 16px;
+  --snt-space-9: 18px;
+  --snt-space-10: 20px;
+  --snt-space-12: 24px;
+  --snt-space-14: 28px;
+  --snt-space-16: 32px;
+
+  /** Horizontal page gutter. */
+  --snt-gutter: 16px;
+
+  /* --- radii --------------------------------------------------------- */
+
+  --snt-radius-xs: 4px;
+  --snt-radius-sm: 6px;
+  --snt-radius-md: 8px;
+  --snt-radius-lg: 10px;
+  --snt-radius-xl: 12px;
+  --snt-radius-pill: 999px;
+
+  /* --- sizes --------------------------------------------------------- */
+
+  /** Minimum touch target. Never go below this. */
+  --snt-touch: 44px;
+  --snt-app-header-h: 54px;
+  --snt-screen-header-h: 48px;
+  --snt-bottom-nav-h: 64px;
+  --snt-console-nav-h: 62px;
+  --snt-console-sidebar-w: 226px;
+  /** The phone-frame width the wireframes were drawn at. */
+  --snt-mobile-max: 430px;
+  --snt-content-max: 1360px;
+
+  /* --- motion -------------------------------------------------------- */
+
+  --snt-transition: 120ms ease;
+}
+
+/**
+ * Dark mode is not designed yet — there are no dark wireframes. The structure
+ * is here so it can be added without touching a single component: redefine the
+ * surface and ink tokens inside this block.
+ *
+ *  @media (prefers-color-scheme: dark) {
+ *    :root:not([data-theme='light']) { ... }
+ *  }
+ *  :root[data-theme='dark'] { ... }
+ */

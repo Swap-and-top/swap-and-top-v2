@@ -1,0 +1,40 @@
+/**
+ * The contact reveal.
+ *
+ * A button rather than a number printed on the page, for three reasons:
+ * attribution (the reveal event is the platform's core metric), seller retention
+ * ("your listing got 47 contacts" is why a seller comes back), and scraper
+ * defence. No account is needed — the only friction is a per-device rate limit
+ * a real buyer never notices.
+ */
+
+.revealed {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-5) var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+  flex-grow: 1;
+}
+
+.number {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: 0.2px;
+}
+
+.label {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  letter-spacing: var(--snt-tracking-label);
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.body {
+  flex-grow: 1;
+  min-width: 0;
+}

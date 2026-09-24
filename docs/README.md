@@ -58,6 +58,7 @@ Behaviour specifications, one per feature area.
 - **[Swap & Top](./features/swap-and-top.md)** — the signature feature in detail
 - **[Sell](./features/sell.md)** — straightforward sale listings
 - **[Wanted & Leads](./features/wanted-and-leads.md)** — requests, matching, and the dealer lead product
+- **[Deal Confirmation](./features/deal-confirmation.md)** — mutual confirmation that a deal completed; the trust signal, and the only view of settlement
 - **[Moderation](./features/moderation.md)** — auto-approve, reports, takedowns, discipline
 - **[Notifications](./features/notifications.md)** — alerts, lead pushes, drop announcements
 - **[Auctions](./features/auctions.md)** — deferred, but specified so nothing blocks it later

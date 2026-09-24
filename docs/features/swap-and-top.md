@@ -110,7 +110,7 @@ Wireframe frame: `DetailSwap`.
 │  Storage      │ Condition            │
 │  Defects noted                       │
 ├──────────────────────────────────────┤
-│  Tarisai M. ✓ Verified student       │
+│  Tarisai M. · 3 confirmed deals      │
 │  University of Zimbabwe · joined...  │
 ├──────────────────────────────────────┤
 │  7 viewed today · 2 offers made      │

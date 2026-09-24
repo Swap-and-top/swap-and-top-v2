@@ -1,0 +1,105 @@
+/**
+ * The swap card — the signature element of the whole product.
+ *
+ * Three things make it unmistakable at a glance, and none of them are optional:
+ *  1. the two-tile split
+ *  2. the cash amount in the middle, in clay
+ *  3. the dashed border on the right tile — they do not own that yet
+ *
+ * It has to survive being screenshotted into WhatsApp and viewed small, out of
+ * context. Change it carefully.
+ */
+
+.card {
+  display: block;
+  color: var(--snt-ink);
+}
+
+.card:hover {
+  color: var(--snt-ink);
+}
+
+/** The tinted strip that names the mechanic. */
+.strip {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  padding: var(--snt-space-4) var(--snt-space-6);
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: var(--snt-tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.tiles {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-6);
+}
+
+.tile {
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+}
+
+.tileName {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-medium);
+  line-height: var(--snt-leading-tight);
+}
+
+.tileEyebrow {
+  margin-top: var(--snt-space-3);
+}
+
+/** The middle column: arrows, then the amount. */
+.middle {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-2);
+}
+
+.arrows {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  flex-wrap: wrap;
+  padding: 0 var(--snt-space-6) var(--snt-space-6);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.name {
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+}
+
+/* Larger tiles from tablet up, where a card is wider. */
+@media (min-width: 768px) {
+  .tiles {
+    gap: var(--snt-space-5);
+    padding: var(--snt-space-7);
+  }
+
+  .arrows {
+    width: 38px;
+    height: 38px;
+  }
+}

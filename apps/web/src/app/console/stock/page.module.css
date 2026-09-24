@@ -1,0 +1,209 @@
+/**
+ * Console stock — one responsive layout, not two pages.
+ *
+ * At phone width each item is a card: thumbnail, title, then a meta line of
+ * price, status and reveals. From `lg` the same elements become columns in a
+ * real table, which is what the extra width is for — pricing a dozen machines
+ * in one pass.
+ *
+ * The trick that avoids duplicating the markup is `display: contents` on the
+ * meta wrapper: at desktop it stops being a box and its children join the row's
+ * grid directly.
+ */
+
+.toolbar {
+  display: flex;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+.search {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.toolbarActions {
+  display: none;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+.headerRow {
+  display: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'thumb title action'
+    'thumb meta meta';
+  align-items: center;
+  gap: var(--snt-space-2) var(--snt-space-5);
+  padding: var(--snt-space-5);
+  background: var(--snt-bg-surface);
+  border: 1px solid var(--snt-line);
+  border-radius: var(--snt-radius-lg);
+}
+
+/** A draft has no photo and no price yet. */
+.rowDraft {
+  border-style: dashed;
+}
+
+/** The sponsored row is tinted, so paid placement is visible to the dealer too. */
+.rowSponsored {
+  background: var(--snt-bg-highlight);
+}
+
+.thumb {
+  grid-area: thumb;
+}
+
+.title {
+  grid-area: title;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  line-height: var(--snt-leading-tight);
+  min-width: 0;
+}
+
+.specs {
+  display: none;
+}
+
+.meta {
+  grid-area: meta;
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  flex-wrap: wrap;
+}
+
+.views {
+  display: none;
+}
+
+.reveals {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.revealsValue {
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+}
+
+.action {
+  grid-area: action;
+}
+
+.noPrice {
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+}
+
+.addBar {
+  margin-top: var(--snt-space-6);
+}
+
+/* ---------------------------------------------------- desktop, from lg --- */
+
+@media (min-width: 1024px) {
+  .toolbar {
+    margin-top: var(--snt-space-7);
+    align-items: center;
+  }
+
+  .search {
+    flex-grow: 0;
+    width: 260px;
+  }
+
+  .toolbarActions {
+    display: flex;
+    gap: var(--snt-space-4);
+    margin-left: auto;
+  }
+
+  /* The list becomes a bordered table. */
+  .list {
+    gap: 0;
+    background: var(--snt-bg-surface);
+    border: 1px solid var(--snt-line);
+    border-radius: var(--snt-radius-xl);
+    overflow: hidden;
+  }
+
+  .headerRow,
+  .row {
+    display: grid;
+    grid-template-columns:
+      44px minmax(0, 2.4fr) minmax(0, 2fr) 90px 120px 74px 84px 80px;
+    grid-template-areas: none;
+    align-items: center;
+    gap: var(--snt-space-7);
+    padding: var(--snt-space-5) var(--snt-space-8);
+    border: none;
+    border-radius: 0;
+  }
+
+  .headerRow {
+    background: var(--snt-bg-app);
+    border-bottom: 1px solid var(--snt-line);
+    font-size: var(--snt-text-xs);
+    font-weight: var(--snt-weight-bold);
+    letter-spacing: var(--snt-tracking-label);
+    text-transform: uppercase;
+    color: var(--snt-ink-muted);
+  }
+
+  .row + .row {
+    border-top: 1px solid var(--snt-line-subtle);
+  }
+
+  .rowDraft {
+    border-style: solid;
+  }
+
+  .thumb,
+  .title,
+  .action {
+    grid-area: auto;
+  }
+
+  .specs {
+    display: block;
+    font-size: var(--snt-text-base);
+    color: var(--snt-ink-muted);
+    min-width: 0;
+  }
+
+  /* The meta wrapper dissolves and its children become table cells. */
+  .meta {
+    display: contents;
+  }
+
+  .views {
+    display: block;
+    font-size: var(--snt-text-md);
+    text-align: right;
+  }
+
+  .reveals {
+    font-size: var(--snt-text-md);
+    text-align: right;
+  }
+
+  .alignRight {
+    text-align: right;
+  }
+
+  .addBar {
+    display: none;
+  }
+}

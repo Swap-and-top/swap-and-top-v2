@@ -21,6 +21,7 @@ This folder says what each feature does, in enough detail to build from. [../pro
 
 ### Protective and supporting
 
+- **[deal-confirmation.md](./deal-confirmation.md)** — mutual confirmation that a deal completed; the trust signal and the only view of settlement
 - **[moderation.md](./moderation.md)** — reporting, takedowns, discipline and appeals
 - **[notifications.md](./notifications.md)** — lead alerts, drop announcements, listing lifecycle
 

@@ -80,7 +80,7 @@ Being "less cluttered than Facebook" is not a reason to switch. These are:
 
 **Google and WhatsApp.** Facebook Marketplace listings barely show up in Google searches. Ours will. And every listing shared into WhatsApp will show a proper preview with a photo and a price — which the old version of the app did not.
 
-**Trust signals.** Verified dealers, verified students, and eventually a physical place to meet and check a device.
+**Trust signals.** Verified dealers, a public count of deals both parties confirmed went through, and eventually a physical place to meet and check a device.
 
 ---
 
@@ -93,7 +93,7 @@ The first version is deliberately small:
 - A three-way posting flow: sell something, swap something, or say what you want
 - Contact reveal behind a button, so we can count it
 - A dealer console for stock and leads
-- Verified dealer and verified student badges
+- Verified dealer badges, and confirmed-deal counts earned by anyone
 
 ---
 
