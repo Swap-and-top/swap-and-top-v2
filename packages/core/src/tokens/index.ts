@@ -46,9 +46,14 @@ export const colors = {
   onDarkSubtle: '#C9C6BE',
 } as const;
 
+/**
+ * Display and body are the same face. The two keys stay separate so the
+ * distinction survives if they ever diverge again — callers name the role,
+ * not the font. The files ship in `@snt/assets`.
+ */
 export const fonts = {
-  display: "'Space Grotesk', 'Helvetica Neue', sans-serif",
-  body: "'IBM Plex Sans', system-ui, sans-serif",
+  display: "'Poppins', system-ui, sans-serif",
+  body: "'Poppins', system-ui, sans-serif",
 } as const;
 
 export const radii = {

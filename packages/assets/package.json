@@ -9,6 +9,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./brand/*": "./brand/*",
+    "./fonts/*": "./fonts/*",
     "./images/*": "./images/*"
   },
   "scripts": {

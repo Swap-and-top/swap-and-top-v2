@@ -66,12 +66,16 @@
   --snt-dark-raised: #33322e;
 
   /* --- typography ---------------------------------------------------- */
-  /* The `--font-*` variables come from next/font in apps/web.           */
+  /* `--font-poppins` comes from next/font/local in apps/web, which serves  */
+  /* the woff2 files in `@snt/assets` from our own origin. Nothing is       */
+  /* fetched from a font CDN.                                              */
+  /*                                                                       */
+  /* Display and body are the same face. The two tokens stay separate so    */
+  /* the distinction survives if the two ever diverge again — components    */
+  /* keep naming the role, not the font.                                    */
 
-  --snt-font-display: var(--font-space-grotesk), 'Space Grotesk',
-    'Helvetica Neue', sans-serif;
-  --snt-font-body: var(--font-ibm-plex-sans), 'IBM Plex Sans', system-ui,
-    sans-serif;
+  --snt-font-display: var(--font-poppins), 'Poppins', system-ui, sans-serif;
+  --snt-font-body: var(--font-poppins), 'Poppins', system-ui, sans-serif;
 
   --snt-text-2xs: 0.5625rem; /* 9px  — eyebrow labels on cards */
   --snt-text-xs: 0.625rem; /* 10px — meta, badges */

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Sans, Space_Grotesk } from 'next/font/google';
+import localFont from 'next/font/local';
 
 // Order matters: tokens first, then the reset that uses them, then app styles.
 import '@snt/ui/styles/tokens.css';
@@ -7,22 +7,48 @@ import '@snt/ui/styles/reset.css';
 import './globals.css';
 
 /**
- * Two faces: a geometric display face for numbers and titles, a humanist sans
- * for everything else. Both are exposed as CSS variables that `tokens.css`
- * reads, so no component ever names a font directly.
+ * One face, four weights: Poppins, served from our own origin.
+ *
+ * The files live in `@snt/assets` so a future native app loads the same
+ * bytes. They are referenced by path rather than by package specifier
+ * because `next/font/local` resolves `src` against this file on disk.
+ *
+ * Nothing is fetched from a font CDN, and `adjustFontFallback` derives a
+ * metric-matched Arial fallback from the files themselves, so the line boxes
+ * are the right height before Poppins arrives and the swap does not reflow
+ * the page. Each weight is ~11 kB and preloaded, so in practice it lands
+ * before first paint.
+ *
+ * Exposed as a CSS variable that `tokens.css` reads — no component ever
+ * names a font directly.
  */
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '700'],
-  variable: '--font-space-grotesk',
+const poppins = localFont({
+  src: [
+    {
+      path: '../../../../packages/assets/fonts/poppins/poppins-400.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../../../packages/assets/fonts/poppins/poppins-500.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../../../packages/assets/fonts/poppins/poppins-600.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../../../../packages/assets/fonts/poppins/poppins-700.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-poppins',
   display: 'swap',
-});
-
-const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-ibm-plex-sans',
-  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'sans-serif'],
 });
 
 export const metadata: Metadata = {
@@ -44,10 +70,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${spaceGrotesk.variable} ${ibmPlexSans.variable}`}
-    >
+    <html lang="en" className={poppins.variable}>
       <body>{children}</body>
     </html>
   );
