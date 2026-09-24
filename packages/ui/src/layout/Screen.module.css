@@ -31,6 +31,7 @@
   flex-grow: 1;
   padding-inline: var(--snt-gutter);
   padding-bottom: var(--snt-space-10);
+  padding-top: var(--snt-gutter);
 }
 
 /** No horizontal padding — for a body whose children bleed to the edge. */
@@ -110,6 +111,28 @@
   font-weight: var(--snt-weight-semibold);
 }
 
+/**
+ * Full-width variant. The row spans edge to edge and each tab takes an equal
+ * share, so the underlines meet and the whole strip reads as one control.
+ * No gutter and no gap: an inset would leave the rule stopping short of the
+ * screen edge, which is what makes a tab row look like a stray chip row.
+ */
+.tabsFill {
+  gap: 0;
+  padding-inline: 0;
+  overflow-x: visible;
+}
+
+.tabFill {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: var(--snt-space-2);
+  /* Labels here are short and fixed. Clip rather than wrap if a translation
+     ever runs long, so the row keeps its single-line height. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /** Empty state, e.g. an over-filtered feed. Never a blank screen. */
 .empty {
   padding: var(--snt-space-16) var(--snt-space-6);
@@ -152,7 +175,10 @@
     padding-inline: var(--snt-space-10);
   }
 
-  .tabs {
+  /* The fill variant is deliberately exempt: it spans edge to edge at every
+     width, so the rule under it lines up with the screen, not with the body
+     gutter. */
+  .tabs:not(.tabsFill) {
     padding-inline: var(--snt-space-10);
   }
 }

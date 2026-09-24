@@ -3,9 +3,10 @@
 /**
  * Browse — the feed.
  *
- * One stream carrying every listing type, filtered by two chip rows: category,
- * then transaction type. There are no separate pages for sale, swap and wanted;
- * thin inventory split three ways produces three dead-looking feeds.
+ * One stream carrying every listing type, narrowed by a scrolling category chip
+ * row and then by a type tab bar. There are no separate pages for sale, swap
+ * and wanted; thin inventory split three ways produces three dead-looking
+ * feeds — the tabs switch the view over one feed, they do not switch route.
  *
  * Wireframe artboard: `Main`.
  */
@@ -32,6 +33,8 @@ import {
   Screen,
   ScreenBody,
   Stack,
+  Tabs,
+  type TabItem,
 } from '@snt/ui';
 import { SearchIcon } from '@snt/ui/icons';
 import styles from './page.module.css';
@@ -46,7 +49,7 @@ const CATEGORIES: (Category | 'all')[] = [
   'accessories',
 ];
 
-const TYPES: { value: TypeFilter; label: string }[] = [
+const TYPES: TabItem<TypeFilter>[] = [
   { value: 'all', label: 'All types' },
   { value: 'sale', label: 'For sale' },
   { value: 'swap', label: 'Swaps' },
@@ -70,36 +73,29 @@ export default function BrowsePage() {
           <span>Search phones, laptops, consoles, parts</span>
         </Link>
 
-        <div className={styles.categoryRow}>
-          <ChipRow label="Filter by category">
-            {CATEGORIES.map((value) => (
-              <Chip
-                key={value}
-                selected={category === value}
-                onClick={() => setCategory(value)}
-              >
-                {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
-              </Chip>
-            ))}
-          </ChipRow>
-        </div>
-      </div>
-
-      <div className={styles.typeRow}>
-        <ChipRow label="Filter by listing type">
-          {TYPES.map((item) => (
+        <ChipRow label="Filter by category">
+          {CATEGORIES.map((value) => (
             <Chip
-              key={item.value}
-              small
-              tone="ink"
-              selected={type === item.value}
-              onClick={() => setType(item.value)}
+              key={value}
+              selected={category === value}
+              onClick={() => setCategory(value)}
             >
-              {item.label}
+              {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
             </Chip>
           ))}
         </ChipRow>
       </div>
+
+      {/* Type is a tab bar, not a chip row: the four values are exhaustive and
+          mutually exclusive, so they should read as one control switching the
+          view rather than as four independent toggles. */}
+      <Tabs
+        fill
+        tabs={TYPES}
+        active={type}
+        onChange={setType}
+        label="Filter by listing type"
+      />
 
       <ScreenBody top={false}>
         {feed.length > 0 ? (

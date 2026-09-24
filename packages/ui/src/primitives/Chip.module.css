@@ -1,8 +1,9 @@
 /**
  * Filter chips.
  *
- * Two rows of these sit above the feed: category, then listing type. They
- * filter one stream — there are no separate pages per type.
+ * The category row above the feed and the specification filters on Search.
+ * Listing type is a `Tabs` row, not chips: its values are exhaustive and
+ * mutually exclusive.
  */
 
 .row {
@@ -56,7 +57,8 @@
   border-color: var(--snt-accent-strong);
 }
 
-/** Type chips, selected. Ink, so the two rows stay visually distinct. */
+/** Selected, ink. For a second chip row that must stay visually distinct
+ *  from an accent-toned one above it. */
 .selectedInk {
   background: var(--snt-ink);
   border-color: var(--snt-ink);
@@ -64,7 +66,7 @@
   font-weight: var(--snt-weight-semibold);
 }
 
-/** Smaller variant used by the type row. */
+/** Smaller variant, for a secondary row under a primary one. */
 .small {
   height: 30px;
   padding: 0 var(--snt-space-6);

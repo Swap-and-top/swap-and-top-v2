@@ -1,6 +1,7 @@
 /** Browse — the feed. */
 
-/** The white block holding the search entry and both chip rows. */
+/** The white block holding the search entry and the category chips.
+ *  Its bottom padding is the gap before the type tabs. */
 .filters {
   background: var(--snt-bg-surface);
   padding: 0 var(--snt-gutter) var(--snt-space-6);
@@ -28,18 +29,15 @@
   color: var(--snt-ink);
 }
 
-.categoryRow {
-  margin-bottom: var(--snt-space-6);
-}
-
-/** The type row sits on the page background, below the white filter block. */
-.typeRow {
-  padding: var(--snt-space-5) var(--snt-gutter);
-}
+/**
+ * The type filter below is a `Tabs` row from `@snt/ui`, which brings its own
+ * white surface, full-bleed rule and spacing. It is deliberately not inset to
+ * match this block on wide screens — a tab rule that stops short of the edge
+ * stops reading as a tab rule.
+ */
 
 @media (min-width: 768px) {
-  .filters,
-  .typeRow {
+  .filters {
     padding-inline: var(--snt-space-10);
   }
 }

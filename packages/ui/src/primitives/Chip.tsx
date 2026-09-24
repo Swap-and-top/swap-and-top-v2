@@ -4,9 +4,13 @@
  * Chip, ChipRow and ChipWrap.
  *
  * `ChipRow` scrolls horizontally and bleeds to the screen edge — used for the
- * category and type filters above the feed. `ChipWrap` wraps onto multiple
- * lines — used for the specification filters on Search, where every value must
- * be visible at once.
+ * category filter above the feed. `ChipWrap` wraps onto multiple lines — used
+ * for the specification filters on Search, where every value must be visible
+ * at once.
+ *
+ * A chip is a filter you switch on and off. Where the values are exhaustive
+ * and only one can hold at a time, use `Tabs` instead — that is what Browse
+ * does for listing type.
  */
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
@@ -17,9 +21,10 @@ export type ChipTone = 'accent' | 'ink';
 export interface ChipProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   selected?: boolean;
-  /** Which selected colour to use. Category rows use accent, type rows use ink. */
+  /** Which selected colour to use. Accent for a filter that narrows a feed,
+   *  ink where a second chip row needs to stay distinct from the first. */
   tone?: ChipTone;
-  /** Shorter height, for the secondary type row. */
+  /** Shorter height, for a secondary row under a primary one. */
   small?: boolean;
   /** Square corners, for multi-select specification values. */
   square?: boolean;
