@@ -12,8 +12,8 @@ import type { Condition, SaleListing, Shop, User } from '@snt/core';
 import { Badge } from '../primitives/Badge';
 import { ImagePlaceholder, ShopMark } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
-import { Meta, Price } from '../primitives/Text';
-import { specSummary } from '../primitives/SpecGrid';
+import { ItemName, Meta, Price } from '../primitives/Text';
+import { specParts } from '../primitives/SpecGrid';
 import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
 import styles from './SaleCard.module.css';
 
@@ -31,22 +31,27 @@ export interface SaleCardProps {
   shop?: Shop;
   /** Present for a private seller. Drives the trust line. */
   seller?: User;
-  /** Overrides the image height, which otherwise follows the variant. */
+  /** Fixes the photo height instead of the shared photo ratio. */
   imageHeight?: number;
 }
 
 export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) {
   const dropped =
     listing.previousPrice !== undefined && listing.previousPrice > listing.price;
+  const specs = specParts(listing.item);
 
   return (
     <Link
       href={`/listing/${listing.slug}`}
-      className={[styles.card, shop ? styles.dealer : ''].filter(Boolean).join(' ')}
+      className={styles.card}
     >
       <Panel xl clip>
         <div className={styles.imageWrap}>
-          <ImagePlaceholder height={imageHeight ?? 'var(--sale-image-h)'} flush />
+          <ImagePlaceholder
+            height={imageHeight ?? 'auto'}
+            flush
+            className={imageHeight ? undefined : styles.photo}
+          />
           {/* Paid placement is always labelled, never hidden. */}
           {listing.promotion === 'sponsored' ? (
             <Badge tone="dark" onImage>
@@ -73,13 +78,21 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
             ) : null}
           </div>
 
-          <div className={styles.specLine}>{specSummary(listing.item)}</div>
+          {/* Name on its own line, in the owned-item blue; specs under it. */}
+          <ItemName side="owned" className={styles.name}>
+            {listing.item.name}
+          </ItemName>
+          {specs.length > 0 ? (
+            <div className={styles.specs}>{specs.join(' · ')}</div>
+          ) : null}
 
           {shop ? (
             <div className={styles.shopRow}>
-              <ShopMark initials={shop.initials} size={39} />
-              <span className={styles.shopName}>{shop.name}</span>
-              {shop.verified ? <VerifiedDealerBadge /> : null}
+              <ShopMark initials={shop.initials} size={40} />
+              <span className={styles.shopIdentity}>
+                <span className={styles.shopName}>{shop.name}</span>
+                {shop.verified ? <VerifiedDealerBadge /> : null}
+              </span>
               <span className={styles.spacer} />
               {listing.stockCount && listing.stockCount > 1 ? (
                 <span className={styles.stock}>

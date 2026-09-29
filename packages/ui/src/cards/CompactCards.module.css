@@ -19,6 +19,17 @@
   color: var(--snt-ink);
 }
 
+/* The panel wrapping a row darkens under the pointer, like the feed cards. */
+.rowPanel:has(.row:hover) {
+  background: var(--snt-bg-card-hover);
+}
+
+/** A sale's specs, trailing its name in grey. */
+.specs {
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
 /** Sold or withdrawn: dimmed, so it reads as unavailable without being hidden. */
 .rowGone {
   opacity: 0.55;
@@ -53,6 +64,7 @@
 
 .rowTitle {
   font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-medium);
   margin-top: var(--snt-space-1);
   line-height: var(--snt-leading-tight);
 }
@@ -79,6 +91,14 @@
 
 .grid:hover {
   color: var(--snt-ink);
+}
+
+.grid:hover > div {
+  background: var(--snt-bg-card-hover);
+}
+
+.grid:active {
+  transform: scale(0.99);
 }
 
 .gridBody {

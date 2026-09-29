@@ -70,6 +70,34 @@ export function CashAmount({
   );
 }
 
+/**
+ * The name of an item, coloured by which side of a deal it is on: blue for
+ * something someone owns, green for something someone wants. The same rule as
+ * the swap card's two tiles, applied to text. Only the name — never specs.
+ */
+export function ItemName({
+  children,
+  side,
+  className,
+}: {
+  children: ReactNode;
+  side: 'owned' | 'wanted';
+  className?: string;
+}) {
+  return (
+    <span
+      className={[
+        side === 'owned' ? styles.owned : styles.wanted,
+        className ?? '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {children}
+    </span>
+  );
+}
+
 export function Meta({
   children,
   xs = false,

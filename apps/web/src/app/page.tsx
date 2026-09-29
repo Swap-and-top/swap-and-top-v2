@@ -12,6 +12,7 @@
  */
 
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import {
   CATEGORY_LABELS,
   filterFeed,
@@ -57,6 +58,7 @@ const TYPES: TabItem<TypeFilter>[] = [
 
 export default function BrowsePage() {
   const { category, type, setCategory, setType, reset } = useFeedStore();
+  const stickyTop = useStickyTabsOffset();
 
   const filtered = filterFeed(liveListings, { category, type });
   /** Sponsored listings are interleaved and labelled, never sorted to the top. */
@@ -64,36 +66,44 @@ export default function BrowsePage() {
 
   return (
     <Screen>
-      {/* Search, category and type all live in the brand header, as drawn. */}
-      <AppHeader>
-        <Link href="/search" className={styles.searchEntry}>
-          <SearchIcon size={18} />
-          <span>Search phone, laptops, consoles, parts, accessories</span>
-        </Link>
+      {/* Search, category and type all live in the brand header, as drawn.
+          On a phone the header sticks, pulled up so only the type tabs stay in
+          view while the feed scrolls. */}
+      <div
+        ref={stickyTop.ref}
+        className={styles.stickyHeader}
+        style={{ top: stickyTop.offset }}
+      >
+        <AppHeader>
+          <Link href="/search" className={styles.searchEntry}>
+            <SearchIcon size={18} />
+            <span>Search phone, laptops, consoles, parts, accessories</span>
+          </Link>
 
-        <ChipRow label="Filter by category">
-          {CATEGORIES.map((value) => (
-            <Chip
-              key={value}
-              selected={category === value}
-              onClick={() => setCategory(value)}
-            >
-              {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
-            </Chip>
-          ))}
-        </ChipRow>
+          <ChipRow label="Filter by category">
+            {CATEGORIES.map((value) => (
+              <Chip
+                key={value}
+                selected={category === value}
+                onClick={() => setCategory(value)}
+              >
+                {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
+              </Chip>
+            ))}
+          </ChipRow>
 
-        {/* Type is a tab bar, not a chip row: the four values are exhaustive
-            and mutually exclusive, so they should read as one control
-            switching the view rather than as four independent toggles. */}
-        <Tabs
-          fill
-          tabs={TYPES}
-          active={type}
-          onChange={setType}
-          label="Filter by listing type"
-        />
-      </AppHeader>
+          {/* Type is a tab bar, not a chip row: the four values are exhaustive
+              and mutually exclusive, so they should read as one control
+              switching the view rather than as four independent toggles. */}
+          <Tabs
+            fill
+            tabs={TYPES}
+            active={type}
+            onChange={setType}
+            label="Filter by listing type"
+          />
+        </AppHeader>
+      </div>
 
       <ScreenBody>
         {feed.length > 0 ? (
@@ -118,4 +128,34 @@ export default function BrowsePage() {
       <BottomNav pendingConfirmations={pendingConfirmationCount} />
     </Screen>
   );
+}
+
+/**
+ * How far to pull the sticky header up so that only its type tabs — and a
+ * little gradient above them — remain on screen. Re-measured whenever the
+ * header changes size, e.g. on rotation.
+ */
+function useStickyTabsOffset() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const wrapper = ref.current;
+    const tabs = wrapper?.querySelector<HTMLElement>('[role="tablist"]');
+    if (!wrapper || !tabs) return;
+
+    const measure = () => {
+      const breathingRoom = 8;
+      const tabsTop =
+        tabs.getBoundingClientRect().top - wrapper.getBoundingClientRect().top;
+      setOffset(-Math.max(0, tabsTop - breathingRoom));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, offset };
 }

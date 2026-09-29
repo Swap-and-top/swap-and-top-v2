@@ -1,6 +1,22 @@
 /** Browse — the feed. */
 
 /**
+ * On a phone the header sticks to the top of the screen. Its `top` is set in
+ * page.tsx so only the type tabs stay visible. From tablet up it scrolls away
+ * normally, as in the design.
+ */
+.stickyHeader {
+  position: sticky;
+  z-index: 3;
+}
+
+@media (min-width: 768px) {
+  .stickyHeader {
+    position: static;
+  }
+}
+
+/**
  * Tapping this opens the full search screen. Specification search is the
  * product's main advantage, so it gets a screen rather than a dropdown.
  * White pill on the brand gradient.
@@ -14,7 +30,7 @@
   border-radius: var(--snt-radius-pill);
   background: var(--snt-bg-surface);
   color: var(--snt-ink-muted);
-  font-size: var(--snt-text-xs);
+  font-size: var(--snt-text-base);
   transition: box-shadow var(--snt-transition);
 }
 

@@ -22,18 +22,23 @@ export const colors = {
   bgSurface: '#FFFFFF',
   /** Cards and panels. */
   bgCard: '#F2F2F2',
+  /** A tappable card under the pointer. */
+  bgCardHover: '#EAEAEA',
   /** Muted fills that need more weight than a line. */
   bgSubtle: '#E8E8E8',
   /** Image placeholder fill. */
   placeholder: '#CECECE',
 
   ink: '#434846',
-  inkMuted: '#8E8E8E',
+  inkMuted: '#6B6B6B',
   inkFaint: '#A8A8A8',
+
+  /** Item names: blue for something owned, green for something wanted. */
+  ownedInk: '#255DAB',
+  wantedInk: '#12875C',
 
   line: '#D9D9D9',
   lineSubtle: '#E6E6E6',
-  lineStrong: '#A1A3A2',
 
   /** Brand blue. Links, selected states, verified sellers, deal counts. */
   accent: '#255DAB',
@@ -72,7 +77,8 @@ export const fonts = {
 export const radii = {
   xs: 4,
   sm: 6,
-  md: 10,
+  /** Boxes nested inside a card. */
+  md: 12,
   lg: 14,
   /** Feed cards and the swap tiles. */
   xl: 18,

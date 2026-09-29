@@ -84,6 +84,11 @@ video {
   outline-offset: 2px;
 }
 
+/* On the brand gradient, blue would disappear — use white. */
+[data-surface='brand'] :focus-visible {
+  outline-color: var(--snt-ink-on-dark);
+}
+
 /** Accessible label that is not shown. Used on icon-only inputs. */
 .snt-visually-hidden {
   position: absolute;

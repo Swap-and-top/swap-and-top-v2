@@ -22,6 +22,7 @@ import {
   Caption,
   Eyebrow,
   HeaderIconButton,
+  ItemName,
   Note,
   Panel,
   PosterRow,
@@ -66,7 +67,9 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
         <Stack gap={6}>
           <div>
             <Eyebrow>Looking for</Eyebrow>
-            <Body>{listing.wants.name}</Body>
+            <Body>
+              <ItemName side="wanted">{listing.wants.name}</ItemName>
+            </Body>
           </div>
 
           <div>
@@ -77,7 +80,9 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
           {listing.tradeIn ? (
             <Panel padded>
               <Eyebrow tight>Has a trade-in</Eyebrow>
-              <Body>{listing.tradeIn.name}</Body>
+              <Body>
+                <ItemName side="owned">{listing.tradeIn.name}</ItemName>
+              </Body>
               <SpecGrid rows={specRowsFor(listing.tradeIn)} />
             </Panel>
           ) : null}

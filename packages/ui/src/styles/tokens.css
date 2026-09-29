@@ -34,6 +34,8 @@
   --snt-bg-surface: #ffffff;
   /** Cards and panels — the light grey box every group of content sits in. */
   --snt-bg-card: #f2f2f2;
+  /** A tappable card under the pointer. */
+  --snt-bg-card-hover: #eaeaea;
   /** Muted fill with more weight than a line. */
   --snt-bg-subtle: #e8e8e8;
   /** Image placeholder fill. */
@@ -44,20 +46,26 @@
   /* --- text ---------------------------------------------------------- */
 
   --snt-ink: #434846;
-  /** Captions and secondary text. */
-  --snt-ink-muted: #8e8e8e;
+  /** Captions and secondary text. 4.5:1 on the grey card. */
+  --snt-ink-muted: #6b6b6b;
   /** Decorative only — placeholder icons. Never body text. */
   --snt-ink-faint: #a8a8a8;
   --snt-ink-on-dark: #ffffff;
   --snt-ink-on-dark-muted: #aba8a2;
   --snt-ink-on-dark-subtle: #c9c6be;
 
+  /* --- item names: blue = owned, green = wanted ----------------------- */
+  /* The name of the thing, and only the name, takes the colour of its     */
+  /* side of a deal — the same rule as the swap card's two tiles. The      */
+  /* green is a shade deeper than the brand green so it reads as text.     */
+
+  --snt-owned-ink: #255dab;
+  --snt-wanted-ink: #12875c;
+
   /* --- lines --------------------------------------------------------- */
 
   --snt-line: #d9d9d9;
   --snt-line-subtle: #e6e6e6;
-  /** The rule between a dealer card's spec line and its shop row. */
-  --snt-line-strong: #a1a3a2;
   --snt-line-dark: #34332f;
 
   /* --- accent: brand blue -------------------------------------------- */
@@ -103,13 +111,13 @@
   --snt-font-body: var(--font-poppins), 'Poppins', system-ui, sans-serif;
 
   --snt-text-2xs: 0.5625rem; /* 9px  — smallest labels */
-  --snt-text-xs: 0.625rem; /* 10px — meta, labels, trust line */
+  --snt-text-xs: 0.6875rem; /* 11px — meta, labels, trust line */
   --snt-text-sm: 0.6875rem; /* 11px — captions */
   --snt-text-base: 0.75rem; /* 12px — chips, tabs, header button */
   --snt-text-md: 0.8125rem; /* 13px — body, spec line */
   --snt-text-lg: 0.875rem; /* 14px — emphasised body */
-  --snt-text-xl: 0.9375rem; /* 15px — card title, price, buttons */
-  --snt-text-2xl: 1.0625rem; /* 17px — large price */
+  --snt-text-xl: 0.9375rem; /* 15px — card title, buttons */
+  --snt-text-2xl: 1.0625rem; /* 17px — card price */
   --snt-text-3xl: 1.1875rem; /* 19px — screen title */
   --snt-text-4xl: 1.375rem; /* 22px — page heading */
   --snt-text-5xl: 1.625rem; /* 26px — detail price */
@@ -160,12 +168,15 @@
   --snt-card-pad: 16px;
   /** Vertical gap between feed cards. */
   --snt-card-gap: 16px;
+  /** Shape of a sale card's photo. One ratio for dealer and private alike. */
+  --snt-photo-ratio: 5 / 2;
 
   /* --- radii --------------------------------------------------------- */
 
   --snt-radius-xs: 4px;
   --snt-radius-sm: 6px;
-  --snt-radius-md: 10px;
+  /** Boxes nested inside a card: swap tiles, inputs, the trade-in strip. */
+  --snt-radius-md: 12px;
   --snt-radius-lg: 14px;
   /** Feed cards and the swap tiles. */
   --snt-radius-xl: 18px;
@@ -193,7 +204,7 @@
 /* From tablet up the design's desktop measurements apply. */
 @media (min-width: 768px) {
   :root {
-    --snt-card-pad: 25px;
+    --snt-card-pad: 24px;
     --snt-card-gap: 24px;
     --snt-header-curve: 40px;
   }

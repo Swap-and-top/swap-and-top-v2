@@ -106,10 +106,10 @@ Icon-only controls keep a 44px touch target. Colours that must be told apart
 also differ in lightness, not only hue, and the two trust signals are told apart
 by their words.
 
-**Known gap:** the v2 design's grey meta text (`#8E8E8E`) and white type on
-brand green (`#1CB67F`) sit below 4.5:1 contrast, and its buttons are 40px tall.
-They are implemented as drawn; darkening `--snt-ink-muted` and `--snt-action`
-in `tokens.css` fixes the contrast everywhere at once if that is preferred.
+**Known gap:** white type on brand green (`#1CB67F`) — the primary button and
+the "Looking for" tile — sits below 4.5:1 contrast. It is the brand colour, kept
+as drawn; darkening `--snt-action` in `tokens.css` fixes the buttons everywhere
+at once if that is preferred. Grey text was darkened to `#6B6B6B` and passes.
 
 ---
 

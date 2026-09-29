@@ -1,28 +1,42 @@
 /**
  * Sale card — the baseline. Everything else is a variation on it.
  *
- * The dealer variant adds a rule and a shop row, and a taller photo. The
- * absence of that row on a private seller's card is itself the signal: a buyer
- * knows immediately what kind of transaction they are entering.
+ * The dealer variant adds a rule and a shop row. The absence of that row on a
+ * private seller's card is itself the signal: a buyer knows immediately what
+ * kind of transaction they are entering.
+ *
+ * Spacing inside the card sits on a 4px grid: 4 between a line and its
+ * continuation, 12 between groups, the card padding around the whole.
  */
 
 .card {
   display: block;
+  border-radius: var(--snt-radius-xl);
   color: var(--snt-ink);
-  /* Photo height. The design draws the dealer photo taller. */
-  --sale-image-h: 128px;
-}
-
-.dealer {
-  --sale-image-h: 150px;
+  transition: transform var(--snt-transition);
 }
 
 .card:hover {
   color: var(--snt-ink);
 }
 
+/* Feedback: the card darkens under the pointer and gives a little on press. */
+.card:hover > div {
+  background: var(--snt-bg-card-hover);
+}
+
+.card:active {
+  transform: scale(0.99);
+}
+
 .imageWrap {
   position: relative;
+}
+
+/** One photo shape for every sale card, scaling with the card's width. */
+.photo {
+  width: 100%;
+  aspect-ratio: var(--snt-photo-ratio);
 }
 
 .body {
@@ -32,14 +46,25 @@
 .priceRow {
   display: flex;
   align-items: baseline;
-  gap: var(--snt-space-2);
+  gap: var(--snt-space-3);
   flex-wrap: wrap;
 }
 
-.specLine {
-  font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-normal);
+/** The item name: blue, a touch heavier than body, one line. */
+.name {
+  display: block;
+  margin-top: var(--snt-space-2);
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-medium);
+  line-height: var(--snt-leading-tight);
+}
+
+/** The specs, under the name, in grey. */
+.specs {
+  margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-base);
   line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
 }
 
 /** Private seller: one trust line. */
@@ -48,7 +73,7 @@
   align-items: center;
   gap: var(--snt-space-4);
   flex-wrap: wrap;
-  margin-top: var(--snt-space-7);
+  margin-top: var(--snt-space-6);
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
 }
@@ -58,19 +83,35 @@
   color: var(--snt-ink);
 }
 
-/** Dealer: a shop row under a rule. */
+/** Dealer: a shop row under a light rule. */
 .shopRow {
   display: flex;
   align-items: center;
   gap: var(--snt-space-4);
-  margin-top: var(--snt-space-3);
-  padding-top: var(--snt-space-7);
-  border-top: 1px solid var(--snt-line-strong);
+  margin-top: var(--snt-space-6);
+  padding-top: var(--snt-space-6);
+  border-top: 1px solid var(--snt-line);
+}
+
+/**
+ * Name and verified badge. Stacked on a phone, where one line would wrap the
+ * shop name; side by side from tablet up, as drawn.
+ */
+.shopIdentity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-1);
+  min-width: 0;
 }
 
 .shopName {
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-bold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .spacer {
@@ -83,17 +124,14 @@
   white-space: nowrap;
 }
 
-/* The design's desktop measurements. */
 @media (min-width: 768px) {
-  .card {
-    --sale-image-h: 142px;
-  }
-
-  .dealer {
-    --sale-image-h: 168px;
+  .shopIdentity {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--snt-space-4);
   }
 
   .body {
-    padding: var(--snt-space-9) var(--snt-card-pad) var(--snt-space-12);
+    padding: var(--snt-space-10) var(--snt-card-pad) var(--snt-space-12);
   }
 }

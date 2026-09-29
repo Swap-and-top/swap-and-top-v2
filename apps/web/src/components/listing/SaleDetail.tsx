@@ -24,6 +24,7 @@ import {
   Caption,
   HeaderIconButton,
   ImageCarousel,
+  ItemName,
   PosterRow,
   Price,
   Screen,
@@ -88,7 +89,9 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
           ) : null}
         </div>
 
-        <h1 className={styles.title}>{listing.item.name}</h1>
+        <h1 className={styles.title}>
+          <ItemName side="owned">{listing.item.name}</ItemName>
+        </h1>
         <div className={styles.meta}>
           {listing.location} · Listed {listing.postedLabel}
           {listing.negotiable ? ' · negotiable' : ''}

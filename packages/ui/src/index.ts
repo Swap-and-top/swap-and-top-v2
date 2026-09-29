@@ -68,6 +68,7 @@ export {
   Caption,
   CashAmount,
   Eyebrow,
+  ItemName,
   Meta,
   Note,
   PageHeading,

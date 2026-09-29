@@ -19,7 +19,8 @@
   cursor: not-allowed;
 }
 
-/* --- sizes. `md` is the design's "I have this": 40px tall, 15px type. --- */
+/* --- sizes. `md` is the design's "I have this": 15px type, 44px tall on a  */
+/* phone for a comfortable thumb target, 40px from tablet up as drawn.      */
 
 .sm {
   height: 36px;
@@ -28,7 +29,7 @@
 }
 
 .md {
-  height: 40px;
+  height: var(--snt-touch);
   padding: 0 var(--snt-space-12);
   font-size: var(--snt-text-xl);
 }
@@ -140,9 +141,19 @@
 }
 
 .iconOnly.md {
-  width: 40px;
+  width: var(--snt-touch);
 }
 
 .iconOnly.lg {
   width: 48px;
+}
+
+@media (min-width: 768px) {
+  .md {
+    height: 40px;
+  }
+
+  .iconOnly.md {
+    width: 40px;
+  }
 }

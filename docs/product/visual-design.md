@@ -62,10 +62,14 @@ THE FEED, AS DRAWN:
 | `--snt-bg-card` | `#F2F2F2` | Every card and panel |
 | `--snt-bg-placeholder` | `#CECECE` | Photo slots |
 | `--snt-ink` | `#434846` | Titles, prices, spec lines, names |
-| `--snt-ink-muted` | `#8E8E8E` | Condition, meta, ages, counts |
+| `--snt-ink-muted` | `#6B6B6B` | Condition, meta, ages, counts, specs under a name. Darkened from the PDF's `#8E8E8E` for readability |
+| `--snt-owned-ink` | `#255DAB` | The **name** of something owned or for sale |
+| `--snt-wanted-ink` | `#12875C` | The **name** of something wanted, and the WANTED label — a shade deeper than brand green so it reads as text |
 | `--snt-shop-mark` | `#2B2B2B` | A shop's initials mark |
 
 The gradient runs **left to right across the full viewport**, not across the content column: `linear-gradient(90deg, #255DAB, #1CB67F)`.
+
+**Blue means owned, green means wanted.** The swap card's blue "Has" tile and green "Looking for" tile set the rule, and the rest of the app follows it quietly: the name of an item — never its specs — is blue when someone has it and green when someone wants it. Cards themselves stay plain grey; there are no coloured stripes or outlines.
 
 **The accent is brand blue.** Links, selected states, the verified badge and the deal count all use it. **The action is brand green.** Primary buttons use it. Confirmed deals and live status are green as well.
 
@@ -75,18 +79,21 @@ The gradient runs **left to right across the full viewport**, not across the con
 
 ## 🔤 Type
 
-One face, Poppins, self-hosted at five weights. The PDF uses four sizes and nothing else on the feed:
+One face, Poppins, self-hosted at five weights. Sizes start from the PDF, with the smallest text raised from 10px to 11px and the price from 15px to 17px for readability:
 
 | Size | Weight | Used for |
 | --- | --- | --- |
-| 15px | Bold | Card title, price |
-| 15px | SemiBold | Button label, swap cash amount |
-| 13px | Regular | Spec line, swap tile item name |
+| 17px | Bold | Price and swap cash — fixed-width digits so prices line up |
+| 15px | Bold | Wanted card title |
+| 15px | SemiBold | Button label |
+| 14px | Medium | A sale card's item name (blue), on its own line |
+| 13px | Medium | Swap tile item name |
+| 12px | Regular | Specs under a name (grey), search placeholder |
 | 12px | Bold / Regular | Chips (selected / not), "Post New Item" |
 | 12px | ExtraBold / Regular | Type tabs (active / not) |
-| 10px | Bold | WANTED label, seller and shop names |
-| 10px | ExtraBold | "Has", "Looking for" |
-| 10px | Regular | Everything else: meta, condition, trust line, stock |
+| 11px | Bold | WANTED label, seller and shop names |
+| 11px | ExtraBold | "Has", "Looking for" |
+| 11px | Regular | Everything else: meta, condition, trust line, stock |
 
 ExtraBold (800) was added for the active tab and the tile labels.
 
@@ -104,13 +111,19 @@ ExtraBold (800) was added for the active tab and the tile labels.
 | Chips | 30px pills, 1px white outline, spread across the column | Scroll sideways |
 | Type tabs | Equal widths, 3px white underline on the header's edge | Same |
 | Card radius | 18px | 18px |
-| Card padding | 25px | 16px |
+| Radius of boxes inside a card (swap tiles, inputs, trade-in strip) | 12px | 12px |
+| Card padding | 24px | 16px |
+| Spacing inside a card | 4px grid: 4 within a group, 12 between groups | Same |
 | Gap between cards | 24px | 16px |
-| Dealer photo | 168px | 150px |
-| Private photo | 142px | 128px |
+| Sale photo (dealer and private alike) | 5 : 2 of the card width | 5 : 2 |
 | Swap tile photo | 163px | 108px |
+| Primary button height | 40px | 44px |
+
+These refine the PDF's own values (25–27px padding, fixed 168/142px photos, a dark divider) into one consistent set.
 
 **The header carries navigation on desktop.** The logo goes home, "Post New Item" opens the posting flow and the white circle opens Me. The bottom navigation bar is phone-only; from 768px up it is hidden, as the design shows no bar.
+
+**On a phone the feed's type tabs stay pinned** at the top while scrolling, so switching between All Types, Swaps, For Sale and Wanted never needs a scroll back up.
 
 ---
 
@@ -129,9 +142,11 @@ Every marketplace screen starts with the gradient.
 See [card-system.md](./card-system.md) for what each card means. Visually they share one shape: a `#F2F2F2` box with 18px corners and no border.
 
 - **Wanted** — green WANTED label, bold title, grey budget line, green "I have this" pill
-- **Dealer sale** — photo, price and condition, spec line, a thin rule, then the shop row: black initials square, bold name, blue tick "Verified Seller", "4 in Stock" at the far right
-- **Private sale** — photo, price and condition, spec line, then one trust line: bold first name, blue tick deal count, area and age
-- **Swap** — two rounded tiles, blue "Has" with the cash, green "Looking for", then the poster's trust line
+- **Dealer sale** — photo, price and condition, the item name in blue with its specs in grey beneath, a light rule, then the shop row: black initials square, bold name, blue tick "Verified Seller", "4 in Stock" at the far right. On a phone the name and badge stack
+- **Private sale** — photo, price and condition, name and specs, then one trust line: bold first name, blue tick deal count, area and age
+- **Swap** — two solid rounded tiles, blue "Has" with the cash, green "Looking for", then the poster's trust line
+
+Every tappable card darkens slightly under the pointer and gives a little when pressed. Keyboard focus shows a blue ring — white on the gradient.
 
 ### Trust signals
 
@@ -139,13 +154,13 @@ Both are a **white tick in a blue disc** followed by blue words — "Verified Se
 
 ### Buttons
 
-Pill-shaped everywhere. Primary is brand green with white type; secondary is white with a light outline.
+Pill-shaped everywhere. Primary is brand green with white type; secondary is white with a light outline. Primary buttons are 44px tall on a phone for an easy thumb target, 40px from tablet up.
 
 ---
 
 ## ✅ Checking a screen against the design
 
-1. Compare the feed at 1366px wide against the PDF. Positions should agree within a few pixels.
+1. Compare the feed at 1366px wide against the PDF. The layout should match; the refinements above account for the differences in size and spacing.
 2. Anything not in the PDF should use only the tokens above — no new colours, no new radii.
 3. At 375px wide, nothing should overflow sideways except the chip row, which scrolls on purpose.
 

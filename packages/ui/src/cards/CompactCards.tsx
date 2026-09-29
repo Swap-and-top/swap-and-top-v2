@@ -11,8 +11,8 @@ import { SwapIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
 import { ImagePlaceholder } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
-import { CashAmount, Price } from '../primitives/Text';
-import { specSummary } from '../primitives/SpecGrid';
+import { CashAmount, ItemName, Price } from '../primitives/Text';
+import { specParts } from '../primitives/SpecGrid';
 import styles from './CompactCards.module.css';
 
 function isGone(listing: Listing): boolean {
@@ -35,7 +35,7 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
     listing.previousPrice > listing.price;
 
   return (
-    <Panel>
+    <Panel className={styles.rowPanel}>
       <Link
         href={`/listing/${listing.slug}`}
         className={[styles.row, gone ? styles.rowGone : '']
@@ -81,11 +81,7 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
           </div>
 
           <div className={styles.rowTitle}>
-            {listing.type === 'swap'
-              ? `${listing.has.name} for ${listing.wants.name}`
-              : listing.type === 'request'
-                ? listing.wants.name
-                : specSummary(listing.item)}
+            <ListingName listing={listing} />
           </div>
 
           <div className={styles.rowMeta}>
@@ -127,12 +123,46 @@ export function GridCard({ listing }: { listing: Listing }) {
             <CashAmount amount={listing.cashAmount} />
           ) : null}
           <div className={styles.gridTitle}>
-            {listing.type === 'sale'
-              ? specSummary(listing.item, 2)
-              : listing.title}
+            <ListingName listing={listing} specLimit={2} />
           </div>
         </div>
       </Panel>
     </Link>
   );
+}
+
+/**
+ * A listing's name in a compact card, with the item names coloured by side —
+ * blue for owned, green for wanted — and a sale's specs trailing in grey.
+ */
+function ListingName({
+  listing,
+  specLimit = 3,
+}: {
+  listing: Listing;
+  specLimit?: number;
+}) {
+  switch (listing.type) {
+    case 'swap':
+      return (
+        <>
+          <ItemName side="owned">{listing.has.name}</ItemName> for{' '}
+          <ItemName side="wanted">{listing.wants.name}</ItemName>
+        </>
+      );
+    case 'request':
+      return <ItemName side="wanted">{listing.wants.name}</ItemName>;
+    case 'sale':
+    case 'auction': {
+      const specs = specParts(listing.item, specLimit);
+      return (
+        <>
+          <ItemName side="owned">{listing.item.name}</ItemName>
+          {specs.length > 0 ? (
+            <span className={styles.specs}> · {specs.join(' · ')}</span>
+          ) : null}
+        </>
+      );
+    }
+  }
 }

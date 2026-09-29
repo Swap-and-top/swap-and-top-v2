@@ -19,10 +19,14 @@
   color: var(--snt-accent);
 }
 
-/** Price. Display face, because it is the number people scan for. */
+/**
+ * Price. Display face, because it is the number people scan for. Fixed-width
+ * digits so prices line up down a list.
+ */
 .price {
   font-family: var(--snt-font-display);
   font-weight: var(--snt-weight-bold);
+  font-variant-numeric: tabular-nums;
   color: var(--snt-ink);
 }
 
@@ -31,7 +35,7 @@
 }
 
 .priceMd {
-  font-size: var(--snt-text-xl);
+  font-size: var(--snt-text-2xl);
 }
 
 .priceLg {
@@ -42,7 +46,17 @@
 .cash {
   font-family: var(--snt-font-display);
   font-weight: var(--snt-weight-bold);
+  font-variant-numeric: tabular-nums;
   color: var(--snt-accent);
+}
+
+/** Item names: blue for owned, green for wanted. */
+.owned {
+  color: var(--snt-owned-ink);
+}
+
+.wanted {
+  color: var(--snt-wanted-ink);
 }
 
 /** Secondary line: location, age, seller. */

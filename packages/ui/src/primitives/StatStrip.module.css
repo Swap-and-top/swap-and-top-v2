@@ -8,7 +8,7 @@
 .strip {
   display: flex;
   border: 1px solid var(--snt-line-subtle);
-  border-radius: var(--snt-radius-lg);
+  border-radius: var(--snt-radius-md);
   overflow: hidden;
   background: var(--snt-bg-surface);
 }

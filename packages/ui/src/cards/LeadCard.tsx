@@ -13,7 +13,7 @@ import { CheckIcon, InfoIcon, PhoneIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
 import { Button } from '../primitives/Button';
 import { Panel } from '../primitives/Surface';
-import { CashAmount, Eyebrow } from '../primitives/Text';
+import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
 import styles from './LeadCard.module.css';
 
 export function LeadCard({
@@ -39,7 +39,9 @@ export function LeadCard({
         </span>
       </div>
 
-      <div className={styles.title}>Wants {demand.wants.name}</div>
+      <div className={styles.title}>
+        Wants <ItemName side="wanted">{demand.wants.name}</ItemName>
+      </div>
 
       {budget !== undefined ? (
         <div className={styles.sub}>
@@ -51,7 +53,9 @@ export function LeadCard({
         <div className={styles.tradeIn}>
           <div className={styles.tradeInBody}>
             <Eyebrow tight>Trading in</Eyebrow>
-            <div className={styles.tradeInName}>{tradeIn.name}</div>
+            <ItemName side="owned" className={styles.tradeInName}>
+              {tradeIn.name}
+            </ItemName>
           </div>
           {cash ? <CashAmount amount={cash} /> : null}
         </div>

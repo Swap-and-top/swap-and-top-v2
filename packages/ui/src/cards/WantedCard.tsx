@@ -18,7 +18,7 @@ import type { DemandListing, User } from '@snt/core';
 import { SwapIcon } from '../icons';
 import { Button } from '../primitives/Button';
 import { Panel } from '../primitives/Surface';
-import { CashAmount, Eyebrow } from '../primitives/Text';
+import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import styles from './WantedCard.module.css';
 
@@ -77,7 +77,9 @@ export function WantedCard({
         <div className={styles.tradeIn}>
           <div className={styles.tradeInBody}>
             <Eyebrow tight>Trading in</Eyebrow>
-            <div className={styles.tradeInName}>{tradeIn.name}</div>
+            <ItemName side="owned" className={styles.tradeInName}>
+              {tradeIn.name}
+            </ItemName>
           </div>
           {cash ? <CashAmount amount={cash} /> : null}
         </div>
