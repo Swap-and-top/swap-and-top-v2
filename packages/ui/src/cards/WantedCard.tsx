@@ -52,10 +52,16 @@ export function WantedCard({
           {tradeIn ? 'Wanted — has a trade-in' : 'Wanted'}
         </span>
         <span className={styles.spacer} />
-        <span className={styles.age}>{listing.postedLabel}</span>
+        {/* The small grey facts sit together, top right. */}
+        <span className={styles.age}>
+          {responses > 0
+            ? `${responses} ${responses === 1 ? 'response' : 'responses'} · `
+            : ''}
+          {listing.postedLabel}
+        </span>
       </div>
 
-      {/* What they want on the left; the response on the right, where it
+      {/* What they want on the left; the button on the right, where it
           balances the text instead of sitting under it. */}
       <div className={styles.main}>
         <div className={styles.info}>
@@ -88,14 +94,9 @@ export function WantedCard({
           ) : null}
         </div>
 
-        <div className={styles.cta}>
-          <Button onClick={onRespond}>I have this</Button>
-          {responses > 0 ? (
-            <span className={styles.responses}>
-              {responses} {responses === 1 ? 'response' : 'responses'}
-            </span>
-          ) : null}
-        </div>
+        <Button onClick={onRespond} className={styles.cta}>
+          I have this
+        </Button>
       </div>
 
       {tradeIn ? (
