@@ -10,11 +10,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  BookmarkIcon,
   GridIcon,
   MegaphoneIcon,
   PersonIcon,
   PlusIcon,
+  SaveStarIcon,
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
 import styles from './BottomNav.module.css';
@@ -53,7 +53,7 @@ function iconFor(label: string, active: boolean) {
     case 'Wanted':
       return <MegaphoneIcon size={20} weight={active ? 1.9 : 1.7} />;
     case 'Saved':
-      return <BookmarkIcon size={20} filled={active} />;
+      return <SaveStarIcon size={20} filled={active} />;
     default:
       return <PersonIcon size={20} weight={active ? 1.9 : 1.7} />;
   }

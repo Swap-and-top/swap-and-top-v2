@@ -33,11 +33,11 @@ import {
   StatStrip,
 } from '@snt/ui';
 import {
-  BookmarkIcon,
   BoxIcon,
   CheckIcon,
   InfoIcon,
   ListIcon,
+  SaveStarIcon,
   SearchIcon,
   SettingsIcon,
   ShieldCheckIcon,
@@ -105,7 +105,7 @@ export default function MePage() {
             />
             <ListRow
               href="/saved"
-              icon={<BookmarkIcon size={19} />}
+              icon={<SaveStarIcon size={19} />}
               label="Saved"
               value={String(ids.length)}
             />

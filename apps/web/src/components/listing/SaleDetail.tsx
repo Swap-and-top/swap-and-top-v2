@@ -36,8 +36,8 @@ import {
   specRowsFor,
 } from '@snt/ui';
 import {
-  BookmarkIcon,
   MessageIcon,
+  SaveStarIcon,
   ShareIcon,
   SwapIcon,
 } from '@snt/ui/icons';
@@ -63,7 +63,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
               label={saved ? 'Remove from saved' : 'Save listing'}
               onClick={() => toggle(listing.id)}
             >
-              <BookmarkIcon size={20} filled={saved} />
+              <SaveStarIcon size={20} filled={saved} />
             </HeaderIconButton>
             <HeaderIconButton label="Share on WhatsApp">
               <ShareIcon size={20} />

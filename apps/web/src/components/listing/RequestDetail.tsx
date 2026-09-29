@@ -35,7 +35,7 @@ import {
   Stack,
   specRowsFor,
 } from '@snt/ui';
-import { BookmarkIcon, InfoIcon, ShareIcon } from '@snt/ui/icons';
+import { InfoIcon, SaveStarIcon, ShareIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
 
 export function RequestDetail({ listing }: { listing: RequestListing }) {
@@ -54,7 +54,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
               label={saved ? 'Remove from saved' : 'Save request'}
               onClick={() => toggle(listing.id)}
             >
-              <BookmarkIcon size={20} filled={saved} />
+              <SaveStarIcon size={20} filled={saved} />
             </HeaderIconButton>
             <HeaderIconButton label="Share on WhatsApp">
               <ShareIcon size={20} />

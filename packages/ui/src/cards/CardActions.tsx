@@ -9,7 +9,7 @@
  */
 
 import { useSavedStore } from '@snt/core';
-import { BookmarkIcon, ShareIcon } from '../icons';
+import { SaveStarIcon, ShareIcon } from '../icons';
 import styles from './CardActions.module.css';
 
 export function CardActions({
@@ -54,7 +54,7 @@ export function CardActions({
         aria-pressed={saved}
         onClick={() => toggle(listingId)}
       >
-        <BookmarkIcon size={18} filled={saved} />
+        <SaveStarIcon size={18} filled={saved} />
       </button>
       <button
         type="button"

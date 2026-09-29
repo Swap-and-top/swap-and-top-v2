@@ -33,7 +33,7 @@ import {
   specRowsFor,
   SwapTiles,
 } from '@snt/ui';
-import { BookmarkIcon, PhoneIcon, ShareIcon } from '@snt/ui/icons';
+import { PhoneIcon, SaveStarIcon, ShareIcon } from '@snt/ui/icons';
 import { useRevealStore } from '@snt/core';
 import styles from './SwapDetail.module.css';
 
@@ -64,7 +64,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
               label={saved ? 'Remove from saved' : 'Save listing'}
               onClick={() => toggle(listing.id)}
             >
-              <BookmarkIcon size={20} filled={saved} />
+              <SaveStarIcon size={20} filled={saved} />
             </HeaderIconButton>
             <HeaderIconButton label="Share on WhatsApp">
               <ShareIcon size={20} />

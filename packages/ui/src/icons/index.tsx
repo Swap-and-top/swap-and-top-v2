@@ -53,6 +53,35 @@ function Svg({
   );
 }
 
+/**
+ * For the few glyphs carried over from the v1 app, which are filled shapes on
+ * their own viewBox rather than 24×24 strokes. Rendered square at `size`,
+ * with the artwork centred.
+ */
+function FilledSvg({
+  size = 20,
+  title,
+  viewBox,
+  children,
+  ...rest
+}: Omit<IconProps, 'weight'> & { viewBox: string; children: React.ReactNode }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={viewBox}
+      fill="currentColor"
+      aria-hidden={title ? undefined : true}
+      role={title ? 'img' : undefined}
+      focusable="false"
+      {...rest}
+    >
+      {title ? <title>{title}</title> : null}
+      {children}
+    </svg>
+  );
+}
+
 /* --------------------------------------------------------- navigation --- */
 
 /** Browse. Four squares. */
@@ -70,12 +99,6 @@ export const MegaphoneIcon = (props: IconProps) => (
   <Svg {...props}>
     <path d="M3.5 10.5l13-5.5v13l-13-5.5z" />
     <path d="M7 12.5V18a2 2 0 0 0 4 0v-4" />
-  </Svg>
-);
-
-export const BookmarkIcon = ({ filled = false, ...props }: IconProps & { filled?: boolean }) => (
-  <Svg {...props} fill={filled ? 'currentColor' : 'none'}>
-    <path d="M6 3.5h12v17l-6-4.2-6 4.2z" />
   </Svg>
 );
 
@@ -151,13 +174,14 @@ export const MessageIcon = (props: IconProps) => (
   </Svg>
 );
 
-export const ShareIcon = (props: IconProps) => (
-  <Svg {...props}>
-    <path d="M8.5 13.5l7-4M8.5 10.5l7 4" />
-    <circle cx="18" cy="6.5" r="2.6" />
-    <circle cx="6" cy="12" r="2.6" />
-    <circle cx="18" cy="17.5" r="2.6" />
-  </Svg>
+/**
+ * Share. The v1 app's glyph — three joined dots, drawn as a filled shape —
+ * carried over so the icon people already know stays the same.
+ */
+export const ShareIcon = ({ size = 20, title, ...rest }: IconProps) => (
+  <FilledSvg size={size} title={title} viewBox="0 0 60.74 66.83" {...rest}>
+    <path d="M50.63,47.28h0c-2.45,0-4.81.93-6.61,2.59l-24.02-13.95c.19-.77.29-1.56.31-2.36-.02-.79-.12-1.58-.3-2.35l23.74-13.81c4.05,3.79,10.42,3.61,14.24-.41,1.78-1.88,2.76-4.37,2.74-6.95,0-5.55-4.52-10.04-10.11-10.04s-10.11,4.5-10.11,10.04c.02.79.12,1.58.3,2.35l-23.75,13.81c-4.09-3.81-10.51-3.6-14.34.47-3.83,4.07-3.62,10.45.47,14.25,3.9,3.63,9.97,3.63,13.87,0l23.99,13.98c-.17.72-.27,1.45-.27,2.19.02,5.4,4.44,9.76,9.88,9.74s9.82-4.42,9.8-9.81c-.02-5.38-4.42-9.74-9.84-9.74ZM50.72,5.79c2.42,0,4.38,1.96,4.38,4.38s-1.96,4.38-4.38,4.38-4.38-1.96-4.38-4.38,1.96-4.38,4.38-4.38ZM10.1,37.93c-2.42,0-4.38-1.96-4.38-4.38s1.96-4.38,4.38-4.38,4.38,1.96,4.38,4.38-1.96,4.38-4.38,4.38ZM50.72,61.31c-2.42,0-4.38-1.96-4.38-4.38s1.96-4.38,4.38-4.38,4.38,1.96,4.38,4.38-1.96,4.38-4.38,4.38Z" />
+  </FilledSvg>
 );
 
 /* ---------------------------------------------------------------- misc --- */
@@ -194,6 +218,24 @@ export const StarIcon = (props: IconProps) => (
   <Svg weight={1.9} {...props}>
     <path d="M12 4l2.3 4.9 5.2.7-3.8 3.6 1 5.3-4.7-2.6-4.7 2.6 1-5.3-3.8-3.6 5.2-.7z" />
   </Svg>
+);
+
+/**
+ * Save. The v1 app's star — an outline when not saved, solid when saved —
+ * carried over so saving looks the way it always has.
+ */
+export const SaveStarIcon = ({
+  size = 20,
+  title,
+  filled = false,
+  ...rest
+}: IconProps & { filled?: boolean }) => (
+  <FilledSvg size={size} title={title} viewBox="0 0 66.41 63.25" {...rest}>
+    {filled ? (
+      <path d="M21.66,40.55c.42-1.3-.04-2.71-1.14-3.51L4.82,25.64H24.22c1.37,0,2.57-.87,2.99-2.17l6-18.45,6,18.45c.42,1.3,1.62,2.17,2.99,2.17h19.4l-15.7,11.4c-1.1,.8-1.56,2.21-1.14,3.51l6,18.45-15.7-11.4c-.54-.39-1.18-.6-1.85-.6s-1.31,.21-1.85,.6l-15.7,11.4,6-18.45Z" />
+    ) : null}
+    <path d="M33.2,12.13l3.9,12.01c.72,2.21,2.76,3.69,5.08,3.69h12.63l-10.22,7.42c-1.88,1.36-2.66,3.76-1.94,5.97l3.9,12.01-10.22-7.42c-.92-.67-2-1.02-3.14-1.02s-2.22,.35-3.14,1.02l-10.22,7.42,3.9-12.01c.72-2.21-.06-4.61-1.94-5.97l-10.22-7.42h12.63c2.32,0,4.36-1.48,5.08-3.69l3.9-12.01m0-12.13c-.38,0-.75,.22-.9,.65l-7.19,22.14c-.13,.39-.49,.65-.9,.65H.94c-.91,0-1.29,1.17-.55,1.7l18.83,13.68c.33,.24,.47,.66,.34,1.05l-7.19,22.14c-.21,.66,.31,1.24,.9,1.24,.18,0,.37-.06,.55-.18l18.83-13.68c.16-.12,.36-.18,.55-.18s.39,.06,.55,.18l18.83,13.68c.18,.13,.37,.18,.55,.18,.59,0,1.11-.58,.9-1.24l-7.19-22.14c-.13-.39,.01-.81,.34-1.05l18.83-13.68c.74-.54,.36-1.7-.55-1.7h-23.28c-.41,0-.77-.26-.9-.65L34.1,.65c-.14-.43-.52-.65-.9-.65h0Z" />
+  </FilledSvg>
 );
 
 export const ClockIcon = (props: IconProps) => (
