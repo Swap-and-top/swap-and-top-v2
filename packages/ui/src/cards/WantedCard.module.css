@@ -106,12 +106,12 @@
   min-width: 0;
 }
 
-/** The button, with its response count centred beneath it. */
+/** The button, with its response count beneath it, both on the right edge. */
 .cta {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--snt-space-3);
 }
 
