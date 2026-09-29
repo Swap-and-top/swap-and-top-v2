@@ -85,7 +85,7 @@ This is the classic reason barter loses to money. The party who is happy to trad
 
 The most recognisable element in the product. Full specification in [../product/card-system.md](../product/card-system.md).
 
-Three things make it unmistakable: the two-tile split, the cash amount in the middle in the accent colour, and the dashed border on the right tile signalling "they do not own this yet."
+Two things make it unmistakable: the two-tile split, and the two brand colours — a blue "Has" tile carrying the cash amount, beside a green "Looking for" tile.
 
 It has to survive being screenshotted into WhatsApp and viewed small, out of context.
 

@@ -10,68 +10,18 @@
   overflow: hidden;
 }
 
-.strip {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-3);
-  padding: var(--snt-space-4) var(--snt-space-6);
-  background: var(--snt-accent-tint);
-  color: var(--snt-accent);
-  font-size: var(--snt-text-xs);
-  font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-eyebrow);
-  text-transform: uppercase;
-}
-
-.tiles {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-4);
-  padding: var(--snt-space-6);
-}
-
-.tile {
-  flex-grow: 1;
-  flex-basis: 0;
-  min-width: 0;
-}
-
-.tileName {
-  font-size: var(--snt-text-base);
-  font-weight: var(--snt-weight-medium);
-  line-height: var(--snt-leading-tight);
-}
-
-.tileEyebrow {
-  margin-top: var(--snt-space-3);
-}
-
-.middle {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--snt-space-2);
-}
-
-.arrows {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-accent);
-  color: var(--snt-ink-on-dark);
-}
-
 .saleBody {
-  padding: var(--snt-space-5) var(--snt-space-6) var(--snt-space-6);
+  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-10);
+}
+
+/* The swap tiles bring their own top and side padding; close the card. */
+.swapPreview {
+  padding-bottom: var(--snt-card-pad);
 }
 
 .saleTitle {
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-medium);
+  font-weight: var(--snt-weight-normal);
   margin-top: var(--snt-space-1);
 }
 

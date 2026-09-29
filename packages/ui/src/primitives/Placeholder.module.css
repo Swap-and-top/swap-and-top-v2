@@ -1,7 +1,7 @@
 /**
  * Image placeholders and avatars.
  *
- * Every image in the wireframes is a grey box. Real listing photographs arrive
+ * Every image in the design is a plain grey box. Real listing photographs arrive
  * from object storage as URLs; until then this stands in, and it keeps the
  * layout honest about how much room a photo takes.
  */
@@ -16,24 +16,14 @@
   overflow: hidden;
 }
 
+/** The design draws photo slots as plain grey — no glyph. */
+.bare {
+  color: transparent;
+}
+
 /** Square corners, for a full-bleed card header image. */
 .flush {
   border-radius: 0;
-}
-
-/** On a tinted panel, e.g. inside the swap detail header. */
-.onTint {
-  background: var(--snt-bg-placeholder-strong);
-  border-radius: var(--snt-radius-lg);
-}
-
-/**
- * Dashed outline: the poster does not own this yet.
- * This is what makes the swap card readable in a second — the right-hand tile
- * is visibly a wish rather than a possession.
- */
-.wanted {
-  border: 2px dashed var(--snt-accent-border);
 }
 
 /** Dashed neutral outline, for a draft with no photo yet. */
@@ -45,7 +35,19 @@
 /* --- carousel --- */
 
 .carousel {
+  --carousel-h: 220px;
   position: relative;
+  flex-shrink: 0;
+  margin: var(--snt-space-8) var(--snt-column-inset) 0;
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .carousel {
+    --carousel-h: 340px;
+    margin-top: 23px;
+  }
 }
 
 .dots {
@@ -66,7 +68,7 @@
 }
 
 .dotActive {
-  background: var(--snt-ink);
+  background: var(--snt-accent);
 }
 
 /* --- avatar --- */
@@ -81,14 +83,14 @@
   color: var(--snt-ink-faint);
 }
 
-/** Shop mark: square, dark, initials. */
+/** Shop mark: square, near-black, initials. */
 .shopMark {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border-radius: var(--snt-radius-xs);
-  background: var(--snt-dark);
+  background: var(--snt-shop-mark);
   color: var(--snt-ink-on-dark);
   font-family: var(--snt-font-display);
   font-weight: var(--snt-weight-bold);

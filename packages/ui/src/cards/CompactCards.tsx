@@ -46,8 +46,14 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
           height={74}
           width={74}
           small
-          className={styles.thumb}
-          wanted={listing.type === 'request'}
+          className={[
+            styles.thumb,
+            // A request has no photo: its slot is brand green, like the
+            // "Looking for" side of a swap.
+            listing.type === 'request' ? styles.thumbWanted : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
         />
 
         <div className={styles.rowBody}>

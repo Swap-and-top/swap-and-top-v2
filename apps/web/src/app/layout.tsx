@@ -7,7 +7,7 @@ import '@snt/ui/styles/reset.css';
 import './globals.css';
 
 /**
- * One face, four weights: Poppins, served from our own origin.
+ * One face, five weights: Poppins, served from our own origin.
  *
  * The files live in `@snt/assets` so a future native app loads the same
  * bytes. They are referenced by path rather than by package specifier
@@ -42,6 +42,11 @@ const poppins = localFont({
     {
       path: '../../../../packages/assets/fonts/poppins/poppins-700.woff2',
       weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../../../../packages/assets/fonts/poppins/poppins-800.woff2',
+      weight: '800',
       style: 'normal',
     },
   ],

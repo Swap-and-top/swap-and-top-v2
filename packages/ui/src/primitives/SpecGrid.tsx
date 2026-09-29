@@ -96,29 +96,22 @@ export function specRowsFor(item: Item): SpecRow[] {
 }
 
 /**
- * The single spec line on a card, e.g. "ThinkPad T480 · i5 · 16GB · 256GB SSD".
+ * The specs part of a card's spec line, e.g. ["Core i5", "16GB RAM",
+ * "256GB SSD"] — the wording the design uses.
  *
- * At most three specs, because a card gets one line and a fourth pushes the
- * layout around. Processor is shortened — a card has no room for a full part
- * number, and the detail screen shows it in full.
+ * At most three, because a card gets one line. Processor loses its part number
+ * and memory its generation; the detail screen shows both in full.
  */
-export function specSummary(item: Item, limit = 3): string {
-  /** "Core i5-8250U" → "i5". A card has no room for a part number. */
-  const shortCpu = (value: string) =>
-    value.replace(/^(Core |Intel |AMD )/i, '').split('-')[0] ?? value;
+export function specParts(
+  item: Pick<Item, 'category' | 'specs'>,
+  limit = 3,
+): string[] {
+  /** "Core i5-8250U" → "Core i5". A card has no room for a part number. */
+  const shortCpu = (value: string) => value.split('-')[0] ?? value;
 
-  /** "16GB DDR4" → "16GB". The generation belongs on the detail screen. */
-  const shortMem = (value: string) => value.replace(/\s+(DDR\d|LPDDR\d)\b.*$/i, '');
-
-  /**
-   * "Lenovo ThinkPad T480" → "ThinkPad T480" when the brand is already
-   * implied by the model name. Keeps the line to one row on a phone.
-   */
-  const shortName = (() => {
-    if (!item.brand) return item.name;
-    const stripped = item.name.replace(new RegExp(`^${item.brand}\\s+`, 'i'), '');
-    return stripped.length > 0 ? stripped : item.name;
-  })();
+  /** "16GB DDR4" → "16GB RAM". The generation belongs on the detail screen. */
+  const shortMem = (value: string) =>
+    `${value.replace(/\s+(DDR\d|LPDDR\d)\b.*$/i, '')} RAM`;
 
   const candidates: (string | undefined)[] =
     item.category === 'phones'
@@ -131,6 +124,13 @@ export function specSummary(item: Item, limit = 3): string {
             item.specs.storage,
           ];
 
-  const parts = [shortName, ...candidates.filter(Boolean).slice(0, limit)];
-  return parts.join(' · ');
+  return candidates.filter((part): part is string => Boolean(part)).slice(0, limit);
+}
+
+/**
+ * The single spec line on a card, e.g.
+ * "Lenovo ThinkPad T480 · Core i5 · 16GB RAM · 256GB SSD".
+ */
+export function specSummary(item: Item, limit = 3): string {
+  return [item.name, ...specParts(item, limit)].join(' · ');
 }

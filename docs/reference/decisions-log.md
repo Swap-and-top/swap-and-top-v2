@@ -80,6 +80,8 @@
 | P17 | **Notifications kept deliberately minimal** | ✅ | v1 documented a full messaging system and never built it. Each notification must cause an action. |
 | P18 | **Categories: phones, laptops, desktops, consoles, parts, accessories** | ✅ | Gadgets, widened from phones-only for feed variety; not as far as furniture or vehicles. |
 | P19 | **Keep the name, broaden the tagline** | ✅ | "Swap & Top" describes one of three things the platform does. Lead with finding and trading. |
+| P20 | **Visual style follows `Swap & Top v2 Design.pdf`, with v1's brand colours** | ✅ | The clay wireframe palette was a placeholder. The v1 blue-to-green gradient, yellow call to action and logo are recognisable to existing users; the PDF supplies layout, type and card shapes. See [visual-design.md](../product/visual-design.md). |
+| P21 | **Desktop marketplace uses a 672px column and header navigation; bottom bar is phone-only** | ✅ | The design is drawn at desktop width with no bottom bar. The header's logo, Post New Item and account circle carry navigation instead. |
 
 ---
 

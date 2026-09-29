@@ -18,6 +18,7 @@ import {
   useSavedStore,
 } from '@snt/core';
 import {
+  AppHeader,
   Avatar,
   BottomNav,
   ConfirmedDealsBadge,
@@ -25,6 +26,7 @@ import {
   CountBadge,
   ListGroup,
   ListRow,
+  Panel,
   Screen,
   ScreenBody,
   Stack,
@@ -53,33 +55,35 @@ export default function MePage() {
 
   return (
     <Screen>
-      <div className={styles.identity}>
-        <div className={styles.head}>
-          <Avatar size={52} />
-          <div className={styles.headBody}>
-            <div className={styles.name}>{currentUser.displayName}</div>
-            <div className={styles.trust}>
-              <ConfirmedDealsBadge count={confirmedDeals} size="md" long />
-            </div>
-          </div>
-        </div>
-
-        <StatStrip
-          className={styles.stats}
-          stats={[
-            { value: 3, label: 'listings' },
-            { value: 12, label: 'number reveals' },
-            {
-              value: confirmedDeals,
-              label: 'deals confirmed',
-              tone: 'success',
-            },
-          ]}
-        />
-      </div>
+      <AppHeader />
 
       <ScreenBody>
         <Stack gap={6}>
+          <Panel padded>
+            <div className={styles.head}>
+              <Avatar size={52} />
+              <div className={styles.headBody}>
+                <div className={styles.name}>{currentUser.displayName}</div>
+                <div className={styles.trust}>
+                  <ConfirmedDealsBadge count={confirmedDeals} size="md" long />
+                </div>
+              </div>
+            </div>
+
+            <StatStrip
+              className={styles.stats}
+              stats={[
+                { value: 3, label: 'listings' },
+                { value: 12, label: 'number reveals' },
+                {
+                  value: confirmedDeals,
+                  label: 'deals confirmed',
+                  tone: 'success',
+                },
+              ]}
+            />
+          </Panel>
+
           <ListGroup>
             <ListRow
               href="/"

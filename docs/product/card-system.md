@@ -20,15 +20,16 @@ THE FOUR CARDS:
 │ 2. DEALER SALE     │ Adds a shop row: logo, name, verified badge,  │
 │                    │ stock count. Reads as commercial.             │
 ├────────────────────┼──────────────────────────────────────────────┤
-│ 3. SWAP            │ THE SIGNATURE. have ⇄ wants, cash in the      │
-│                    │ middle. Nothing else looks like this.          │
+│ 3. SWAP            │ THE SIGNATURE. Blue "has" tile with the cash, │
+│                    │ green "looking for" tile. Nothing else looks  │
+│                    │ like this.                                     │
 ├────────────────────┼──────────────────────────────────────────────┤
 │ 4. WANTED          │ No photo — they do not own the thing.          │
 │                    │ Text first, budget, one button: "I have this". │
 └────────────────────┴──────────────────────────────────────────────┘
 ```
 
-Wireframe reference board: frame `Cards`.
+Wireframe reference board: frame `Cards`. The visual treatment — colours, sizes, spacing — follows `Swap & Top v2 Design.pdf`; see [visual-design.md](./visual-design.md).
 
 ---
 
@@ -44,7 +45,7 @@ The baseline. Everything else is a variation on it.
 
 ## 2. Dealer sale card
 
-**Adds to the baseline:** a shop row separated by a divider, containing shop initial or logo, shop name, verified dealer badge, and stock count for that model.
+**Adds to the baseline:** a shop row separated by a divider, containing shop initial or logo, shop name, the "Verified Seller" badge, and stock count for that model ("4 in Stock").
 
 **Purpose of each addition:**
 
@@ -64,24 +65,21 @@ The most important visual element in the product.
 
 ```ascii
 ┌─────────────────────────────────────────────────┐
-│  ⇄  SWAP & TOP                                  │  ← tinted strip
-├─────────────────────────────────────────────────┤
-│  ┌─────────┐      ┌────┐      ┌ ─ ─ ─ ─ ┐      │
-│  │  photo  │      │ ⇄  │      │  photo  │      │  ← dashed = not owned
-│  │         │      │+$240│      │ or icon │      │
-│  └─────────┘      └────┘      └ ─ ─ ─ ─ ┘      │
-│  HAS                          WANTS             │
-│  MacBook Air 2017             Any i7, 16GB, SSD │
-├─────────────────────────────────────────────────┤
-│  Tarisai M. · 3 deals · Mt Pleasant · 5h ago     │
+│  ┌───────────────────┐  ┌───────────────────┐  │
+│  │       photo       │  │       photo       │  │
+│  ├───────────────────┤  ├───────────────────┤  │
+│  │ Has         +$240 │  │ Looking for       │  │
+│  │ Macbook Air 2017  │  │ Any Core i7       │  │
+│  │ Core i5 · 16GB RAM│  │ 16GB RAM · 500GB  │  │
+│  └─── brand blue ────┘  └─── brand green ───┘  │
+│  Tarisai M. ✔ 3 deals · Mt Pleasant · 5h ago    │
 └─────────────────────────────────────────────────┘
 ```
 
-**The three things that make it unmistakable:**
+**The two things that make it unmistakable:**
 
-1. **The split.** Two tiles side by side, not one image.
-2. **The cash amount in the middle.** Large, in the accent colour, with the direction implied by position.
-3. **The dashed border on the right tile.** Instantly communicates "they do not own this yet." Small detail, disproportionate clarity.
+1. **The split.** Two tiles side by side, not one image — what they have on the left, what they are looking for on the right.
+2. **The two brand colours.** The "has" tile is blue and carries the cash amount; the "looking for" tile is green. "This, plus cash, for that" reads in one glance, even small and out of context.
 
 **Why this matters commercially:** this is the card people screenshot into WhatsApp. It has to survive being seen small, out of context, without the surrounding app. It is the brand.
 

@@ -34,8 +34,9 @@ import {
   ScreenBody,
   ScreenFooter,
   StepHeader,
+  SwapTiles,
 } from '@snt/ui';
-import { InfoIcon, SwapIcon } from '@snt/ui/icons';
+import { InfoIcon } from '@snt/ui/icons';
 import styles from './page.module.css';
 
 const CHANNELS: { value: ContactChannel; label: string }[] = [
@@ -60,50 +61,32 @@ export default function PostReviewPage() {
 
         <Panel xl clip className={styles.card}>
           {kind === 'swap' ? (
-            <>
-              <div className={styles.strip}>
-                <SwapIcon size={14} weight={2} />
-                Swap &amp; Top
-              </div>
-              <div className={styles.tiles}>
-                <div className={styles.tile}>
-                  <ImagePlaceholder height={72} small />
-                  <Eyebrow tight className={styles.tileEyebrow}>
-                    Has
-                  </Eyebrow>
-                  <div className={styles.tileName}>
-                    {draft.haveTitle || 'Your item'}
-                  </div>
-                </div>
-
-                <div className={styles.middle}>
-                  <span className={styles.arrows}>
-                    <SwapIcon size={17} weight={2.1} />
-                  </span>
-                  {draft.cashDirection !== 'straight' && draft.cashAmount ? (
-                    <span>
-                      <Price
-                        amount={Number(draft.cashAmount.replace(/[^0-9]/g, '')) || 0}
-                        size="sm"
-                      />
-                    </span>
-                  ) : null}
-                </div>
-
-                <div className={styles.tile}>
-                  <ImagePlaceholder height={72} small wanted glyph="search" />
-                  <Eyebrow tight accent className={styles.tileEyebrow}>
-                    Wants
-                  </Eyebrow>
-                  <div className={styles.tileName}>
-                    {draft.wantTitle || 'What you want'}
-                  </div>
-                </div>
-              </div>
-            </>
+            <div className={styles.swapPreview}>
+              <SwapTiles
+                has={{
+                  name: draft.haveTitle || 'Your item',
+                  category: draft.category,
+                  specs: {
+                    processor: draft.processor,
+                    ram: draft.ram,
+                    storage: draft.storage,
+                  },
+                }}
+                wants={{
+                  name: draft.wantTitle || 'What you want',
+                  category: draft.category,
+                  specs: {},
+                }}
+                cashAmount={
+                  draft.cashDirection !== 'straight'
+                    ? Number(draft.cashAmount.replace(/[^0-9]/g, '')) || undefined
+                    : undefined
+                }
+              />
+            </div>
           ) : (
             <>
-              <ImagePlaceholder height={122} flush />
+              <ImagePlaceholder height={142} flush />
               <div className={styles.saleBody}>
                 <Price
                   amount={

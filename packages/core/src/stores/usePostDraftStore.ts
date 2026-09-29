@@ -73,7 +73,7 @@ const initial = {
   storage: '128GB SSD',
   condition: 'Good',
   photoCount: 2,
-  wantTitle: 'Any i7, 16GB, SSD',
+  wantTitle: 'Any Core i7',
   price: '',
   budget: '',
   cashDirection: 'i-add' as CashDirection,

@@ -70,7 +70,7 @@
 
 /** Sponsored, overlaid on a listing image. Must read on any photograph. */
 .dark {
-  background: var(--snt-dark);
+  background: var(--snt-shop-mark);
   color: var(--snt-ink-on-dark);
 }
 

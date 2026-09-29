@@ -79,10 +79,10 @@ export default function CardReferencePage() {
             </div>
           </div>
           <p className={styles.note}>
-            The only card with the have-wants split and the cash amount in the
-            middle. The dashed border on the right tile means they do not own that
-            yet. This is the card that gets screenshotted into WhatsApp, so it has
-            to be recognisable at a glance and out of context.
+            The only card with the has / looking-for split: a blue tile for what
+            they have, carrying the cash, and a green tile for what they want.
+            This is the card that gets screenshotted into WhatsApp, so it has to
+            be recognisable at a glance and out of context.
           </p>
         </section>
 

@@ -49,7 +49,12 @@ export {
 } from './primitives/Placeholder';
 export type { ImagePlaceholderProps } from './primitives/Placeholder';
 
-export { SpecGrid, specRowsFor, specSummary } from './primitives/SpecGrid';
+export {
+  SpecGrid,
+  specParts,
+  specRowsFor,
+  specSummary,
+} from './primitives/SpecGrid';
 export type { SpecRow } from './primitives/SpecGrid';
 
 export { StatStrip } from './primitives/StatStrip';
@@ -83,7 +88,8 @@ export { LeadCard } from './cards/LeadCard';
 export { ListingCard } from './cards/ListingCard';
 export { SaleCard } from './cards/SaleCard';
 export type { SaleCardProps } from './cards/SaleCard';
-export { SwapCard } from './cards/SwapCard';
+export { SwapCard, SwapTiles } from './cards/SwapCard';
+export type { SwapSide } from './cards/SwapCard';
 export { WantedCard } from './cards/WantedCard';
 
 /* --- layout -------------------------------------------------------------- */
@@ -95,6 +101,7 @@ export {
   ScreenHeader,
   StepHeader,
 } from './layout/Headers';
+export { Logo } from './layout/Logo';
 export {
   Band,
   EmptyState,

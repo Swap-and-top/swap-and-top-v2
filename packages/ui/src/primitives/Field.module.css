@@ -46,7 +46,7 @@
 }
 
 .input:focus {
-  border-color: var(--snt-ink);
+  border-color: var(--snt-accent);
   outline: none;
 }
 
@@ -63,15 +63,27 @@
   font-weight: var(--snt-weight-bold);
 }
 
-/** Search field in a header — pill shaped, ink border when it holds a query. */
+/** Search field — pill shaped. */
 .inputPill {
   border-radius: var(--snt-radius-pill);
-  border-color: var(--snt-ink);
+}
+
+/** In a brand header: a white pill with no outline, as on the feed. */
+:global([data-surface='brand']) .inputPill {
+  height: 40px;
+  padding: 0 var(--snt-space-9);
+  border-color: transparent;
+  font-size: var(--snt-text-base);
+}
+
+:global([data-surface='brand']) .inputPill:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
 }
 
 /** Filled, for a search box that sits on a white header. */
 .inputFilled {
-  background: var(--snt-bg-app);
+  background: var(--snt-bg-card);
 }
 
 /* --- rows --- */
@@ -128,7 +140,7 @@
   flex-basis: 0;
   height: 38px;
   border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-md);
+  border-radius: var(--snt-radius-pill);
   background: var(--snt-bg-surface);
   color: var(--snt-ink);
   font-size: var(--snt-text-base);
@@ -139,8 +151,8 @@
 }
 
 .segmentActive {
-  background: var(--snt-ink);
-  border-color: var(--snt-ink);
+  background: var(--snt-accent);
+  border-color: var(--snt-accent);
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
 }

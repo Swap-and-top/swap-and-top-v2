@@ -28,6 +28,10 @@
   flex-shrink: 0;
 }
 
+.thumb.thumbWanted {
+  background: var(--snt-brand-green);
+}
+
 .rowBody {
   flex-grow: 1;
   min-width: 0;

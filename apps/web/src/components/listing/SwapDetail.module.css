@@ -1,81 +1,20 @@
 /**
  * Swap listing detail. Wireframe artboard: `DetailSwap`.
  *
- * The tinted panel at the top is the whole point of the screen: what they have,
- * what they want, and the cash between the two.
+ * The two tiles at the top are the whole point of the screen: what they have
+ * with the cash on top, in blue, and what they want, in green.
  */
 
 .panel {
   flex-shrink: 0;
-  background: var(--snt-accent-tint);
-  padding: var(--snt-space-8) var(--snt-gutter);
+  padding: var(--snt-space-8) var(--snt-column-inset) 0;
 }
 
-.tiles {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-5);
-}
-
-.tile {
-  flex-grow: 1;
-  flex-basis: 0;
-  min-width: 0;
-}
-
-.middle {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--snt-space-3);
-}
-
-.arrows {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-accent);
-  color: var(--snt-ink-on-dark);
-}
-
-.amount {
-  font-family: var(--snt-font-display);
-  font-size: var(--snt-text-2xl);
-  font-weight: var(--snt-weight-bold);
-  color: var(--snt-accent);
-}
-
+/** Which way the cash goes, from the viewer's side. */
 .direction {
-  font-size: var(--snt-text-2xs);
-  color: var(--snt-ink-muted);
-}
-
-.labels {
-  display: flex;
-  gap: var(--snt-space-5);
   margin-top: var(--snt-space-5);
-}
-
-.labelCol {
-  flex-grow: 1;
-  flex-basis: 0;
-  min-width: 0;
-}
-
-.labelSpacer {
-  width: 42px;
-  flex-shrink: 0;
-}
-
-.itemName {
-  font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-semibold);
-  line-height: var(--snt-leading-tight);
-  margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
 }
 
 /* --- body --- */
@@ -96,6 +35,6 @@
 
 @media (min-width: 768px) {
   .panel {
-    padding-inline: var(--snt-space-10);
+    padding-top: 23px;
   }
 }

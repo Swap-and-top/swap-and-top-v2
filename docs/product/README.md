@@ -16,6 +16,7 @@ This folder describes what gets built and why, at the level of screens, flows an
 
 ### The core experience
 
+- **[visual-design.md](./visual-design.md)** — the v2 look: brand gradient, grey cards, blue and green, and every measurement from the design
 - **[card-system.md](./card-system.md)** — the four listing cards and what makes each one recognisable
 - **[search-and-discovery.md](./search-and-discovery.md)** — specification-aware search, the platform's main advantage
 - **[post-flow.md](./post-flow.md)** — one posting flow with three outcomes
@@ -34,7 +35,7 @@ Every screen described here exists as an interactive mobile-first wireframe:
 
 **https://claude.ai/artifact/JhU2rAynKjdh3n4CjcnFwz**
 
-Frame names in [information-architecture.md](./information-architecture.md) match the canvas exactly.
+Frame names in [information-architecture.md](./information-architecture.md) match the canvas exactly. The wireframes fix structure; the visual style follows `Swap & Top v2 Design.pdf` — see [visual-design.md](./visual-design.md).
 
 ---
 

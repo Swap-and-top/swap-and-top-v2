@@ -2,13 +2,13 @@
  * SaleCard.
  *
  * One component, two presentations. Pass a `shop` and it renders the dealer
- * variant with a shop row, verified badge and stock count. Leave it off and it
- * renders as a private seller.
+ * variant: a rule, then a shop row with the shop's mark, name, verified badge
+ * and stock count. Leave it off and it renders as a private seller, with a
+ * single trust line instead.
  */
 
 import Link from 'next/link';
-import type { SaleListing, Shop, User } from '@snt/core';
-import { CONDITION_LABELS } from '@snt/core';
+import type { Condition, SaleListing, Shop, User } from '@snt/core';
 import { Badge } from '../primitives/Badge';
 import { ImagePlaceholder, ShopMark } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
@@ -17,29 +17,36 @@ import { specSummary } from '../primitives/SpecGrid';
 import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
 import styles from './SaleCard.module.css';
 
+/** How a card words condition beside the price: "Used Good". */
+const CARD_CONDITION: Record<Condition, string> = {
+  'like-new': 'Like New',
+  good: 'Used Good',
+  fair: 'Used Fair',
+  'for-parts': 'For Parts',
+};
+
 export interface SaleCardProps {
   listing: SaleListing;
   /** Present for a dealer listing. Drives the shop row. */
   shop?: Shop;
   /** Present for a private seller. Drives the trust line. */
   seller?: User;
+  /** Overrides the image height, which otherwise follows the variant. */
   imageHeight?: number;
 }
 
-export function SaleCard({
-  listing,
-  shop,
-  seller,
-  imageHeight = 122,
-}: SaleCardProps) {
+export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) {
   const dropped =
     listing.previousPrice !== undefined && listing.previousPrice > listing.price;
 
   return (
-    <Link href={`/listing/${listing.slug}`} className={styles.card}>
+    <Link
+      href={`/listing/${listing.slug}`}
+      className={[styles.card, shop ? styles.dealer : ''].filter(Boolean).join(' ')}
+    >
       <Panel xl clip>
         <div className={styles.imageWrap}>
-          <ImagePlaceholder height={imageHeight} flush />
+          <ImagePlaceholder height={imageHeight ?? 'var(--sale-image-h)'} flush />
           {/* Paid placement is always labelled, never hidden. */}
           {listing.promotion === 'sponsored' ? (
             <Badge tone="dark" onImage>
@@ -57,7 +64,7 @@ export function SaleCard({
           <div className={styles.priceRow}>
             <Price amount={listing.price} />
             {listing.item.condition ? (
-              <Meta>{CONDITION_LABELS[listing.item.condition]}</Meta>
+              <Meta xs>{CARD_CONDITION[listing.item.condition]}</Meta>
             ) : null}
             {dropped ? (
               <Badge tone="accent">
@@ -70,13 +77,13 @@ export function SaleCard({
 
           {shop ? (
             <div className={styles.shopRow}>
-              <ShopMark initials={shop.initials} />
+              <ShopMark initials={shop.initials} size={39} />
               <span className={styles.shopName}>{shop.name}</span>
               {shop.verified ? <VerifiedDealerBadge /> : null}
               <span className={styles.spacer} />
               {listing.stockCount && listing.stockCount > 1 ? (
                 <span className={styles.stock}>
-                  {listing.stockCount} in stock
+                  {listing.stockCount} in Stock
                 </span>
               ) : null}
             </div>

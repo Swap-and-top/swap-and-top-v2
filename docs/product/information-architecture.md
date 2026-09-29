@@ -28,7 +28,7 @@ SURFACE SPLIT:
 
 ## Marketplace navigation
 
-Five items, bottom bar, thumb-reachable.
+On a phone: five items, bottom bar, thumb-reachable.
 
 ```ascii
 ┌──────────────────────────────────────────────┐
@@ -41,7 +41,7 @@ Five items, bottom bar, thumb-reachable.
 └────────┴────────┴────────┴────────┴──────────┘
                     ▲
             centre action button,
-            accent colour, always available
+            brand green, always available
 ```
 
 | Item | Purpose |
@@ -53,6 +53,17 @@ Five items, bottom bar, thumb-reachable.
 | **Me** | Own listings, requests, verification, safety guidance, settings, and the switch into the dealer console. |
 
 **Why Wanted gets a top-level slot:** it is the dealer product and the platform's structural difference from Facebook. Burying it inside search would hide the thing that makes the business work.
+
+**From tablet width up there is no bottom bar.** The brand header carries navigation, as in the v2 design: the logo goes to Browse, the yellow **Post New Item** button opens the posting flow, and the white account circle opens Me. Wanted is one tap away on Browse's type tabs, and Saved is listed in Me. See [visual-design.md](./visual-design.md).
+
+```ascii
+┌──────────────────────────────────────────────────────────────┐
+│ [logo] Swap & Top                  ( Post New Item )  ( ● ) │  ← brand gradient
+│ ( search …                                                ) │
+│ (All) (Phones) (Laptops) …                                  │
+│ All Types     Swaps     For Sale     Wanted                ╭╯
+└────────────────────────────────────────────────────────────┘
+```
 
 ---
 

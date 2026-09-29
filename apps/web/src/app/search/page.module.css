@@ -6,13 +6,25 @@
  * title-and-photo board cannot do.
  */
 
+/** The brand header, holding the query and the category row. */
 .header {
+  flex-shrink: 0;
+  background: var(--snt-brand-gradient);
+  border-bottom-right-radius: var(--snt-header-curve);
+  padding: var(--snt-space-6) var(--snt-column-inset) var(--snt-space-10);
+}
+
+.headerInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+}
+
+.queryRow {
   display: flex;
   align-items: center;
   gap: var(--snt-space-2);
-  flex-shrink: 0;
-  padding: var(--snt-space-4) var(--snt-space-3) var(--snt-space-6);
-  background: var(--snt-bg-surface);
+  margin-left: calc(var(--snt-space-5) * -1);
 }
 
 .back {
@@ -22,7 +34,13 @@
   width: 40px;
   height: var(--snt-touch);
   flex-shrink: 0;
-  color: var(--snt-ink);
+  border-radius: var(--snt-radius-pill);
+  color: var(--snt-ink-on-dark);
+}
+
+.back:hover {
+  color: var(--snt-ink-on-dark);
+  background: rgb(255 255 255 / 0.15);
 }
 
 .queryField {
@@ -30,17 +48,10 @@
   min-width: 0;
 }
 
-.categoryRow {
-  background: var(--snt-bg-surface);
-  padding: 0 var(--snt-gutter) var(--snt-space-6);
-  flex-shrink: 0;
-}
-
 .groups {
   display: flex;
   flex-direction: column;
-  gap: var(--snt-space-7);
-  padding-top: var(--snt-space-7);
+  gap: var(--snt-space-8);
 }
 
 .group {
@@ -67,23 +78,26 @@
   position: sticky;
   bottom: 0;
   flex-shrink: 0;
+  padding: var(--snt-space-6) var(--snt-column-inset);
+  padding-bottom: calc(var(--snt-space-8) + env(safe-area-inset-bottom, 0px));
+  background: var(--snt-bg-surface);
+  border-top: 1px solid var(--snt-line-subtle);
+}
+
+.footerInner {
   display: flex;
   align-items: center;
   gap: var(--snt-space-5);
-  padding: var(--snt-space-6) var(--snt-gutter) var(--snt-space-8);
-  background: var(--snt-bg-surface);
-  border-top: 1px solid var(--snt-line);
-  padding-bottom: calc(var(--snt-space-8) + env(safe-area-inset-bottom, 0px));
 }
 
-.footer > :last-child {
+.footerInner > :last-child {
   flex-grow: 1;
 }
 
 /** Results, shown under the filters once a query or filter is active. */
 .results {
   padding-top: var(--snt-space-8);
-  border-top: 1px solid var(--snt-line);
+  border-top: 1px solid var(--snt-line-subtle);
   margin-top: var(--snt-space-9);
 }
 
@@ -92,8 +106,7 @@
 }
 
 @media (min-width: 768px) {
-  .categoryRow,
-  .footer {
-    padding-inline: var(--snt-space-10);
+  .header {
+    padding-top: 21px;
   }
 }

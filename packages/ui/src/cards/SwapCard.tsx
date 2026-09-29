@@ -1,66 +1,39 @@
 /**
  * SwapCard — the signature card.
  *
- * `has` on the left with a photo, `wants` on the right with a dashed border and
- * no photo, the cash amount between them. The dashed border is load-bearing: it
- * is how a stranger understands in one second that the right-hand side is a
- * wish rather than a possession.
+ * Two tiles side by side. On the left, in brand blue, what they have — with
+ * the cash they add on top. On the right, in brand green, what they are
+ * looking for. The two colours are the swap: a stranger reads "this for that,
+ * plus cash" in one glance, even from a screenshot in WhatsApp.
  */
 
 import Link from 'next/link';
-import type { SwapListing, User } from '@snt/core';
-import { SwapIcon } from '../icons';
+import type { Item, SwapListing, User } from '@snt/core';
 import { ImagePlaceholder } from '../primitives/Placeholder';
+import { specParts } from '../primitives/SpecGrid';
 import { Panel } from '../primitives/Surface';
-import { CashAmount, Eyebrow } from '../primitives/Text';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import styles from './SwapCard.module.css';
 
 export function SwapCard({
   listing,
   seller,
-  tileHeight = 72,
+  tileHeight,
 }: {
   listing: SwapListing;
   seller?: User;
+  /** Overrides the photo height inside each tile. */
   tileHeight?: number;
 }) {
   return (
     <Link href={`/listing/${listing.slug}`} className={styles.card}>
-      <Panel xl clip>
-        <div className={styles.strip}>
-          <SwapIcon size={14} weight={2} />
-          Swap &amp; Top
-        </div>
-
-        <div className={styles.tiles}>
-          {/* What they have. Photographed, because a counterparty judges it. */}
-          <div className={styles.tile}>
-            <ImagePlaceholder height={tileHeight} small />
-            <Eyebrow tight className={styles.tileEyebrow}>
-              Has
-            </Eyebrow>
-            <div className={styles.tileName}>{listing.has.name}</div>
-          </div>
-
-          <div className={styles.middle}>
-            <span className={styles.arrows}>
-              <SwapIcon size={17} weight={2.1} />
-            </span>
-            {listing.cashAmount ? (
-              <CashAmount amount={listing.cashAmount} />
-            ) : null}
-          </div>
-
-          {/* What they want. Dashed, and never photographed. */}
-          <div className={styles.tile}>
-            <ImagePlaceholder height={tileHeight} small wanted glyph="search" />
-            <Eyebrow tight accent className={styles.tileEyebrow}>
-              Wants
-            </Eyebrow>
-            <div className={styles.tileName}>{listing.wants.name}</div>
-          </div>
-        </div>
+      <Panel xl>
+        <SwapTiles
+          has={listing.has}
+          wants={listing.wants}
+          cashAmount={listing.cashAmount}
+          tileHeight={tileHeight}
+        />
 
         <div className={styles.footer}>
           {seller ? (
@@ -75,5 +48,83 @@ export function SwapCard({
         </div>
       </Panel>
     </Link>
+  );
+}
+
+/** What a tile needs to know about one side of the swap. */
+export type SwapSide = Pick<Item, 'name' | 'category' | 'specs'>;
+
+/**
+ * The two tiles on their own — for the swap detail screen and the posting
+ * flow's preview. Pass `flush` to drop the card padding around them.
+ */
+export function SwapTiles({
+  has,
+  wants,
+  cashAmount,
+  tileHeight,
+  flush = false,
+}: {
+  has: SwapSide;
+  wants: SwapSide;
+  /** The cash the poster adds on top, shown on the "has" tile. */
+  cashAmount?: number;
+  tileHeight?: number;
+  flush?: boolean;
+}) {
+  const cash = cashAmount ? `+$${cashAmount}` : undefined;
+
+  return (
+    <div
+      className={[styles.tiles, flush ? styles.tilesFlush : '']
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <SwapTile
+        tone="has"
+        label="Has"
+        item={has}
+        cash={cash}
+        imageHeight={tileHeight}
+      />
+      <SwapTile
+        tone="wants"
+        label="Looking for"
+        item={wants}
+        imageHeight={tileHeight}
+      />
+    </div>
+  );
+}
+
+function SwapTile({
+  tone,
+  label,
+  item,
+  cash,
+  imageHeight,
+}: {
+  tone: 'has' | 'wants';
+  label: string;
+  item: SwapSide;
+  cash?: string;
+  imageHeight?: number;
+}) {
+  const specs = specParts(item);
+
+  return (
+    <div className={[styles.tile, styles[tone]].join(' ')}>
+      <ImagePlaceholder height={imageHeight ?? 'var(--swap-image-h)'} flush />
+      <div className={styles.caption}>
+        <div className={styles.captionText}>
+          <div className={styles.label}>{label}</div>
+          <div className={styles.itemName}>{item.name}</div>
+          {specs.length > 0 ? (
+            <div className={styles.specs}>{specs.join(' · ')}</div>
+          ) : null}
+        </div>
+        {cash ? <span className={styles.cash}>{cash}</span> : null}
+      </div>
+    </div>
   );
 }

@@ -73,37 +73,39 @@ export default function SearchPage() {
 
   return (
     <Screen>
-      <div className={styles.header}>
-        <Link href="/" aria-label="Back" className={styles.back}>
-          <ChevronLeftIcon size={22} />
-        </Link>
-        <Field
-          label="Search gadgets"
-          hideLabel
-          type="search"
-          placeholder="Search phones, laptops, consoles, parts"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          pill
-          className={styles.queryField}
-        />
-      </div>
+      <header className={styles.header} data-surface="brand">
+        <div className={styles.headerInner}>
+          <div className={styles.queryRow}>
+            <Link href="/" aria-label="Back" className={styles.back}>
+              <ChevronLeftIcon size={22} />
+            </Link>
+            <Field
+              label="Search gadgets"
+              hideLabel
+              type="search"
+              placeholder="Search phone, laptops, consoles, parts, accessories"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              pill
+              className={styles.queryField}
+            />
+          </div>
 
-      <div className={styles.categoryRow}>
-        <ChipRow label="Search within category">
-          {CATEGORIES.map((value) => (
-            <Chip
-              key={value}
-              selected={category === value}
-              onClick={() => setCategory(value)}
-            >
-              {CATEGORY_LABELS[value]}
-            </Chip>
-          ))}
-        </ChipRow>
-      </div>
+          <ChipRow label="Search within category">
+            {CATEGORIES.map((value) => (
+              <Chip
+                key={value}
+                selected={category === value}
+                onClick={() => setCategory(value)}
+              >
+                {CATEGORY_LABELS[value]}
+              </Chip>
+            ))}
+          </ChipRow>
+        </div>
+      </header>
 
-      <ScreenBody top={false}>
+      <ScreenBody>
         <div className={styles.groups}>
           {/* Filter groups come from the category, so they are always relevant. */}
           {(SPEC_OPTIONS[category] ?? []).map((group) => (
@@ -173,12 +175,14 @@ export default function SearchPage() {
       </ScreenBody>
 
       <div className={styles.footer}>
-        <Button variant="secondary" onClick={clear}>
-          Clear
-        </Button>
-        <Button size="lg" block>
-          Show {results.length} {results.length === 1 ? 'result' : 'results'}
-        </Button>
+        <div className={styles.footerInner}>
+          <Button variant="secondary" size="lg" onClick={clear}>
+            Clear
+          </Button>
+          <Button size="lg" block>
+            Show {results.length} {results.length === 1 ? 'result' : 'results'}
+          </Button>
+        </div>
       </div>
     </Screen>
   );

@@ -1,43 +1,37 @@
 /** Browse — the feed. */
 
-/** The white block holding the search entry and the category chips.
- *  Its bottom padding is the gap before the type tabs. */
-.filters {
-  background: var(--snt-bg-surface);
-  padding: 0 var(--snt-gutter) var(--snt-space-6);
-  flex-shrink: 0;
-}
-
-/** Tapping this opens the full search screen. Specification search is the
- *  product's main advantage, so it gets a screen rather than a dropdown. */
+/**
+ * Tapping this opens the full search screen. Specification search is the
+ * product's main advantage, so it gets a screen rather than a dropdown.
+ * White pill on the brand gradient.
+ */
 .searchEntry {
   display: flex;
   align-items: center;
   gap: var(--snt-space-5);
-  height: var(--snt-touch);
-  padding: 0 var(--snt-space-7);
-  margin-bottom: var(--snt-space-5);
-  border: 1px solid var(--snt-line);
+  height: 40px;
+  padding: 0 var(--snt-space-9);
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-app);
+  background: var(--snt-bg-surface);
   color: var(--snt-ink-muted);
-  font-size: var(--snt-text-md);
+  font-size: var(--snt-text-xs);
+  transition: box-shadow var(--snt-transition);
+}
+
+.searchEntry span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .searchEntry:hover {
-  border-color: var(--snt-ink);
-  color: var(--snt-ink);
+  color: var(--snt-ink-muted);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
 }
 
-/**
- * The type filter below is a `Tabs` row from `@snt/ui`, which brings its own
- * white surface, full-bleed rule and spacing. It is deliberately not inset to
- * match this block on wide screens — a tab rule that stops short of the edge
- * stops reading as a tab rule.
- */
-
-@media (min-width: 768px) {
-  .filters {
-    padding-inline: var(--snt-space-10);
-  }
+/** Gap between feed cards, per the design. */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-card-gap);
 }

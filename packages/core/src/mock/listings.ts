@@ -67,8 +67,8 @@ const itemMacbookAir: Item = {
 const itemWantedI7: Item = {
   id: 'i-wanted-i7',
   category: 'laptops',
-  name: 'Any i7, 16GB, SSD',
-  specs: { processor: 'Core i7', ram: '16GB', storage: 'SSD' },
+  name: 'Any Core i7',
+  specs: { processor: 'Core i7', ram: '16GB', storage: '500GB SSD' },
   images: [],
   wanted: true,
 };
@@ -76,7 +76,7 @@ const itemWantedI7: Item = {
 const itemWantedRtx: Item = {
   id: 'i-wanted-rtx-3060',
   category: 'parts',
-  name: 'RTX 3060 12GB or better',
+  name: 'RTX 3060 or Better',
   specs: { partType: 'Graphics card', capacity: '12GB' },
   images: [],
   wanted: true,
@@ -443,7 +443,7 @@ const rtxWanted: RequestListing = {
   type: 'request',
   ownerId: 'u-blessing',
   category: 'parts',
-  title: 'RTX 3060 12GB or better',
+  title: 'RTX 3060 or Better',
   location: 'Harare',
   status: 'live',
   createdAt: '2026-09-24',

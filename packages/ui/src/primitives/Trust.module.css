@@ -2,8 +2,11 @@
  * Trust signals.
  *
  * Two, and only two:
- *  - verified dealer, in clay, asserting a checked business
- *  - confirmed deals, in green, earned by behaviour
+ *  - verified dealer, asserting a checked business
+ *  - confirmed deals, earned by behaviour
+ *
+ * Both are drawn the same way in the design — a white tick in a brand-blue disc,
+ * then the words in blue — and are told apart by the words, never by colour.
  *
  * There is no status or occupation marker anywhere in this file, and there
  * should never be one. See docs/product/trust-and-safety.md.
@@ -14,7 +17,8 @@
   align-items: center;
   gap: var(--snt-space-2);
   font-size: var(--snt-text-xs);
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-accent);
   white-space: nowrap;
 }
 
@@ -22,23 +26,29 @@
   font-size: var(--snt-text-sm);
 }
 
+.disc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+}
+
+.discMd {
+  width: 20px;
+  height: 20px;
+}
+
 /** Verified dealer. */
 .verified {
   color: var(--snt-accent);
 }
 
-/** Confirmed deals. Green, and differs from clay in lightness as well as hue. */
+/** Confirmed deals. */
 .deals {
-  color: var(--snt-success);
-}
-
-/** Large version for a profile header. */
-.lg {
-  gap: var(--snt-space-2);
-  font-size: var(--snt-text-sm);
-}
-
-.count {
-  font-family: var(--snt-font-display);
-  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent);
 }

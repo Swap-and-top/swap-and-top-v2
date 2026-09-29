@@ -16,10 +16,10 @@ export type TrustSize = 'sm' | 'md';
 /** A registered business stands behind this listing. The only badge. */
 export function VerifiedDealerBadge({
   size = 'sm',
-  label = 'Verified',
+  label = 'Verified Seller',
 }: {
   size?: TrustSize;
-  /** "Verified" on a compact card, "Verified dealer" where there is room. */
+  /** "Verified Seller" on a feed card; shorter or longer where space differs. */
   label?: string;
 }) {
   return (
@@ -28,7 +28,7 @@ export function VerifiedDealerBadge({
         .filter(Boolean)
         .join(' ')}
     >
-      <CheckIcon size={size === 'md' ? 12 : 11} weight={3} />
+      <TickDisc size={size} />
       {label}
     </span>
   );
@@ -61,8 +61,22 @@ export function ConfirmedDealsBadge({
         .filter(Boolean)
         .join(' ')}
     >
-      <CheckIcon size={size === 'md' ? 12 : 11} weight={2.6} />
+      <TickDisc size={size} />
       {count} {noun}
+    </span>
+  );
+}
+
+/** The white tick in a filled brand-blue disc that both signals carry. */
+function TickDisc({ size }: { size: TrustSize }) {
+  return (
+    <span
+      className={[styles.disc, size === 'md' ? styles.discMd : '']
+        .filter(Boolean)
+        .join(' ')}
+      aria-hidden
+    >
+      <CheckIcon size={size === 'md' ? 12 : 11} weight={3} />
     </span>
   );
 }

@@ -11,14 +11,8 @@ body {
   min-height: 100%;
 }
 
-/**
- * A subtle page surround on large screens, so the centred mobile column reads
- * as deliberate rather than as a broken desktop layout. The marketplace
- * wireframes only define phone widths — see the note in Screen.module.css for
- * where a real desktop layout would go.
+/*
+ * The page is white at every width. The header runs full-bleed and the content
+ * sits in a centred column — see Screen.module.css and
+ * docs/product/visual-design.md.
  */
-@media (min-width: 768px) {
-  body {
-    background: var(--snt-bg-subtle);
-  }
-}

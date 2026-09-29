@@ -11,7 +11,7 @@
  * "wants" side. A swap arrives with a trade-in attached, which makes it the
  * higher-value lead.
  *
- * Wireframe artboard: `Wanted`.
+ * Wireframe artboard: `Wanted`, in the v2 design's brand header.
  */
 
 import {
@@ -24,7 +24,7 @@ import {
   type Category,
 } from '@snt/core';
 import {
-  Band,
+  AppHeader,
   BottomNav,
   ButtonLink,
   Chip,
@@ -57,14 +57,14 @@ export default function WantedPage() {
 
   return (
     <Screen>
-      <Band tight>
-        <ScreenTitle>Wanted</ScreenTitle>
-        <div className={styles.subtitle}>
-          People looking to buy or swap right now
+      <AppHeader>
+        <div>
+          <ScreenTitle>Wanted</ScreenTitle>
+          <div className={styles.subtitle}>
+            People looking to buy or swap right now
+          </div>
         </div>
-      </Band>
 
-      <div className={styles.chipRow}>
         <ChipRow label="Filter by category">
           {CATEGORIES.map((value) => (
             <Chip
@@ -76,11 +76,11 @@ export default function WantedPage() {
             </Chip>
           ))}
         </ChipRow>
-      </div>
+      </AppHeader>
 
       <ScreenBody>
         {demand.length > 0 ? (
-          <Stack gap={5}>
+          <Stack gap={8}>
             {demand.map((listing) => (
               <WantedCard
                 key={listing.id}

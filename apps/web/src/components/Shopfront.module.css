@@ -2,7 +2,7 @@
 
 .identity {
   background: var(--snt-bg-surface);
-  padding: var(--snt-space-2) var(--snt-gutter) var(--snt-space-8);
+  padding: var(--snt-space-8) var(--snt-column-inset) var(--snt-space-8);
   flex-shrink: 0;
 }
 
@@ -51,10 +51,4 @@
 
 .grid {
   padding-top: var(--snt-space-6);
-}
-
-@media (min-width: 768px) {
-  .identity {
-    padding-inline: var(--snt-space-10);
-  }
 }

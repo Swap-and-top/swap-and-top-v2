@@ -1,50 +1,135 @@
-/** App header, screen header and the posting flow's step header. */
+/**
+ * App header, screen header and the posting flow's step header.
+ *
+ * Every header is full-bleed brand gradient with a swept bottom-right corner;
+ * its contents line up with the content column underneath. Measurements are
+ * the design's desktop values — see docs/product/visual-design.md.
+ */
 
-/* --- app header: wordmark and alerts --- */
+.app,
+.screen {
+  flex-shrink: 0;
+  background: var(--snt-brand-gradient);
+  border-bottom-right-radius: var(--snt-header-curve);
+  color: var(--snt-ink-on-dark);
+}
+
+/** Centres the header's contents on the content column. */
+.inner {
+  max-width: calc(var(--snt-column-max) + var(--snt-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--snt-gutter);
+}
+
+/* --- app header ----------------------------------------------------------- */
 
 .app {
+  padding-top: var(--snt-space-6);
+}
+
+.appTop {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-4);
-  height: var(--snt-app-header-h);
-  flex-shrink: 0;
-  padding-left: var(--snt-gutter);
-  padding-right: var(--snt-space-3);
-  background: var(--snt-bg-surface);
+  gap: var(--snt-space-5);
+  height: 36px;
+  margin-bottom: var(--snt-space-8);
 }
 
-.wordmark {
-  flex-grow: 1;
-  font-family: var(--snt-font-display);
-  font-size: var(--snt-text-2xl);
+/* A header with nothing under the logo row keeps the same space below. */
+.appTop:last-child {
+  margin-bottom: var(--snt-space-6);
+}
+
+.logo {
+  display: flex;
+  margin-right: auto;
+  color: var(--snt-ink-on-dark);
+}
+
+.logo:hover {
+  color: var(--snt-ink-on-dark);
+}
+
+.logoArt {
+  display: block;
+  height: 28px;
+  width: auto;
+}
+
+/** Yellow on the gradient, green type — the v1 call to action. */
+.postButton {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 var(--snt-space-8);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-brand-yellow);
+  color: var(--snt-brand-green);
+  font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-display);
-  color: var(--snt-ink);
+  white-space: nowrap;
+  transition: filter var(--snt-transition);
 }
 
-.wordmark:hover {
-  color: var(--snt-ink);
+.postButton:hover {
+  color: var(--snt-brand-green);
+  filter: brightness(0.96);
 }
 
-/* --- screen header: back, title, actions --- */
+/** The account circle. Plain white until profile photos exist. */
+.account {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
+  transition: box-shadow var(--snt-transition);
+}
+
+.account:hover {
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
+}
+
+/**
+ * The screen's own controls. Bottom padding closes the header, except when it
+ * ends in a tab row — the active tab's underline sits on the header's edge.
+ */
+.appBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding-bottom: var(--snt-space-10);
+}
+
+.appBody:has(> [role='tablist']:last-child) {
+  padding-bottom: 0;
+}
+
+/* --- screen header: back, title, actions ---------------------------------- */
 
 .screen {
+  /* A shorter bar, so a shallower sweep. */
+  border-bottom-right-radius: min(var(--snt-header-curve), 24px);
+}
+
+.screenRow {
   display: flex;
   align-items: center;
   gap: var(--snt-space-1);
   height: var(--snt-screen-header-h);
-  flex-shrink: 0;
-  padding-inline: var(--snt-space-3);
-  background: var(--snt-bg-surface);
-  border-bottom: 1px solid var(--snt-line-subtle);
+  /* Pull the icon's touch target out to the column edge. */
+  margin-inline: calc(var(--snt-space-5) * -1);
 }
 
 .title {
   flex-grow: 1;
-  font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-semibold);
-  color: var(--snt-ink);
   min-width: 0;
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink-on-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .titleCentre {
@@ -53,7 +138,7 @@
 
 /** A title that names the mechanic, e.g. "Swap & Top" on a swap detail. */
 .titleAccent {
-  color: var(--snt-accent);
+  font-weight: var(--snt-weight-extrabold);
 }
 
 /** Icon button in a header. Full touch target, no visible chrome. */
@@ -64,12 +149,14 @@
   width: var(--snt-touch);
   height: var(--snt-touch);
   flex-shrink: 0;
-  color: var(--snt-ink);
-  border-radius: var(--snt-radius-md);
+  color: var(--snt-ink-on-dark);
+  border-radius: var(--snt-radius-pill);
+  transition: background var(--snt-transition);
 }
 
 .iconButton:hover {
-  color: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+  background: rgb(255 255 255 / 0.15);
 }
 
 /** Balances a back button so a centred title stays centred. */
@@ -78,16 +165,38 @@
   flex-shrink: 0;
 }
 
-/* --- step header: progress through the posting flow --- */
+/* --- step header: progress through the posting flow ----------------------- */
 
 .progressTrack {
   height: 3px;
-  flex-shrink: 0;
-  background: var(--snt-line-subtle);
+  margin-bottom: var(--snt-space-6);
+  border-radius: var(--snt-radius-pill);
+  background: rgb(255 255 255 / 0.3);
 }
 
 .progressFill {
   height: 3px;
-  background: var(--snt-accent);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
   transition: width var(--snt-transition);
+}
+
+/* --- desktop: the design's measurements ----------------------------------- */
+
+@media (min-width: 768px) {
+  .app {
+    padding-top: 21px;
+  }
+
+  .appTop {
+    margin-bottom: 13px;
+  }
+
+  .logoArt {
+    height: 36px;
+  }
+
+  .postButton {
+    padding: 0 var(--snt-space-12);
+  }
 }

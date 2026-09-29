@@ -1,23 +1,17 @@
 /**
  * The page scaffold.
  *
- * Mobile-first: a single column at the width the wireframes were drawn to. On a
- * larger screen the column is centred and allowed to grow to a comfortable
- * reading width rather than stretching — the marketplace wireframes only define
- * phone layouts, so inventing a desktop grid here would be guessing.
- *
- * ── Where to add a desktop layout ──────────────────────────────────────────
- * The media query at the bottom of this file is the place. A two-column feed at
- * `md` and a three-column at `lg` is the obvious next step; the cards already
- * handle being narrower.
+ * The page is full width and white. Headers run edge to edge on the brand
+ * gradient; everything else sits in one centred content column — 672px on
+ * desktop, the width of the feed in the design, and the full screen minus the
+ * gutter on a phone.
  */
 
 .screen {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  max-width: var(--snt-mobile-max);
-  margin-inline: auto;
+  width: 100%;
   background: var(--snt-bg-app);
 }
 
@@ -26,12 +20,19 @@
   background: var(--snt-bg-surface);
 }
 
+/** The content column. Every full-width part wraps its contents in one. */
+.column {
+  width: 100%;
+  max-width: var(--snt-column-max);
+  margin-inline: auto;
+}
+
 /** Scrolling content region. */
 .body {
   flex-grow: 1;
   padding-inline: var(--snt-gutter);
-  padding-bottom: var(--snt-space-10);
-  padding-top: var(--snt-gutter);
+  padding-bottom: var(--snt-space-16);
+  padding-top: var(--snt-space-8);
 }
 
 /** No horizontal padding — for a body whose children bleed to the edge. */
@@ -40,7 +41,7 @@
 }
 
 .bodyTop {
-  padding-top: var(--snt-space-6);
+  padding-top: var(--snt-space-8);
 }
 
 /**
@@ -50,10 +51,11 @@
 .footer {
   position: sticky;
   bottom: 0;
+  z-index: 1;
   flex-shrink: 0;
   padding: var(--snt-space-5) var(--snt-gutter) var(--snt-space-7);
   background: var(--snt-bg-surface);
-  border-top: 1px solid var(--snt-line);
+  border-top: 1px solid var(--snt-line-subtle);
 }
 
 .footerActions {
@@ -69,7 +71,7 @@
   margin-top: var(--snt-space-4);
 }
 
-/** A white band, e.g. the header area of Wanted or Saved. */
+/** A white band under a header, e.g. a subtitle or a filter row. */
 .band {
   background: var(--snt-bg-surface);
   padding: var(--snt-space-7) var(--snt-gutter) var(--snt-space-5);
@@ -80,15 +82,19 @@
   padding-bottom: 0;
 }
 
-/** Tabs along the bottom of a white band. */
+/**
+ * Tabs on a white surface. The rule runs edge to edge; the tabs themselves
+ * line up with the content column.
+ */
 .tabs {
   display: flex;
   gap: var(--snt-space-9);
-  padding-inline: var(--snt-gutter);
+  padding-inline: var(--snt-column-inset);
   background: var(--snt-bg-surface);
   border-bottom: 1px solid var(--snt-line);
   overflow-x: auto;
   scrollbar-width: none;
+  flex-shrink: 0;
 }
 
 .tabs::-webkit-scrollbar {
@@ -98,28 +104,30 @@
 .tab {
   flex-shrink: 0;
   height: 44px;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   background: none;
   color: var(--snt-ink-muted);
-  font-size: var(--snt-text-md);
+  font-size: var(--snt-text-base);
   white-space: nowrap;
+  transition: color var(--snt-transition);
+}
+
+.tab:hover {
+  color: var(--snt-ink);
 }
 
 .tabActive {
   border-bottom-color: var(--snt-accent);
   color: var(--snt-ink);
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-extrabold);
 }
 
 /**
- * Full-width variant. The row spans edge to edge and each tab takes an equal
- * share, so the underlines meet and the whole strip reads as one control.
- * No gutter and no gap: an inset would leave the rule stopping short of the
- * screen edge, which is what makes a tab row look like a stray chip row.
+ * Even-width variant: each tab takes an equal share of the column, so the
+ * strip reads as one control.
  */
 .tabsFill {
   gap: 0;
-  padding-inline: 0;
   overflow-x: visible;
 }
 
@@ -133,6 +141,31 @@
   text-overflow: ellipsis;
 }
 
+/**
+ * Tabs inside a brand header: white type, a heavy white underline on the
+ * active tab sitting on the header's bottom edge, and no rule of their own.
+ */
+:global([data-surface='brand']) .tabs {
+  padding-inline: 0;
+  margin-top: 9px;
+  background: none;
+  border-bottom: none;
+}
+
+:global([data-surface='brand']) .tab {
+  height: 30px;
+  padding-bottom: 3px;
+  color: var(--snt-ink-on-dark);
+}
+
+:global([data-surface='brand']) .tab:hover {
+  color: var(--snt-ink-on-dark);
+}
+
+:global([data-surface='brand']) .tabActive {
+  border-bottom-color: var(--snt-bg-surface);
+}
+
 /** Empty state, e.g. an over-filtered feed. Never a blank screen. */
 .empty {
   padding: var(--snt-space-16) var(--snt-space-6);
@@ -141,7 +174,7 @@
 
 .emptyTitle {
   font-family: var(--snt-font-display);
-  font-size: var(--snt-text-lg);
+  font-size: var(--snt-text-xl);
   font-weight: var(--snt-weight-bold);
   color: var(--snt-ink);
 }
@@ -160,25 +193,8 @@
 }
 
 @media (min-width: 768px) {
-  .screen {
-    /* Grow modestly rather than stretching to the viewport. */
-    max-width: 560px;
-    box-shadow: 0 0 0 1px var(--snt-line);
-  }
-
-  .body {
-    padding-inline: var(--snt-space-10);
-  }
-
-  .band,
-  .footer {
-    padding-inline: var(--snt-space-10);
-  }
-
-  /* The fill variant is deliberately exempt: it spans edge to edge at every
-     width, so the rule under it lines up with the screen, not with the body
-     gutter. */
-  .tabs:not(.tabsFill) {
-    padding-inline: var(--snt-space-10);
+  .body,
+  .bodyTop {
+    padding-top: 23px;
   }
 }

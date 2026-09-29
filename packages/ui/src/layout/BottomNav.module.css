@@ -4,6 +4,10 @@
  * Wanted gets a top-level slot on purpose: it is the dealer product and the
  * platform's structural difference from a supply-only board. Burying it inside
  * search would hide the thing that makes the business work.
+ *
+ * Phones only. From tablet up the brand header carries navigation — the logo
+ * goes home, "Post New Item" posts and the account circle opens Me — which is
+ * how the desktop design is drawn.
  */
 
 .nav {
@@ -15,7 +19,7 @@
   height: var(--snt-bottom-nav-h);
   flex-shrink: 0;
   background: var(--snt-bg-surface);
-  border-top: 1px solid var(--snt-line);
+  border-top: 1px solid var(--snt-line-subtle);
   /* Clear the home indicator on a phone. */
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
@@ -64,13 +68,13 @@
   width: 46px;
   height: 46px;
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-accent);
+  background: var(--snt-action);
   color: var(--snt-ink-on-dark);
   transition: background var(--snt-transition);
 }
 
 .post:hover .postCircle {
-  background: var(--snt-accent-strong);
+  background: var(--snt-action-strong);
 }
 
 .badge {
@@ -78,4 +82,10 @@
   top: 8px;
   left: 50%;
   margin-left: 4px;
+}
+
+@media (min-width: 768px) {
+  .nav {
+    display: none;
+  }
 }

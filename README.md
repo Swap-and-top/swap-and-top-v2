@@ -59,6 +59,9 @@ platforms need belongs in core.
 
 ### Styling
 
+- **The look comes from `Swap & Top v2 Design.pdf`**, with the v1 brand colours
+  and logo. Every measurement is written up in
+  [docs/product/visual-design.md](./docs/product/visual-design.md).
 - **Custom CSS and CSS Modules.** No Tailwind, no CSS-in-JS.
 - **Every value is a token.** Colours, spacing, radii, type sizes and breakpoints
   live in `packages/ui/src/styles/tokens.css` as custom properties. No component
@@ -74,7 +77,7 @@ platforms need belongs in core.
 | Token | Width | Used for |
 | --- | --- | --- |
 | `sm` | 480px | large phones |
-| `md` | 768px | tablet — the marketplace column widens |
+| `md` | 768px | tablet — the design's desktop measurements apply, the bottom bar hides and the header carries navigation |
 | `lg` | 1024px | **the dealer console gains its sidebar and table** |
 | `xl` | 1280px | desktop |
 
@@ -99,8 +102,14 @@ native app.
 ### Accessibility
 
 Real `<button>`, `<a>`, `<input>` and `<label>` everywhere, including in mockups.
-Touch targets at least 44px. Text contrast at least 4.5:1. Colours that must be
-told apart also differ in lightness, not only hue.
+Icon-only controls keep a 44px touch target. Colours that must be told apart
+also differ in lightness, not only hue, and the two trust signals are told apart
+by their words.
+
+**Known gap:** the v2 design's grey meta text (`#8E8E8E`) and white type on
+brand green (`#1CB67F`) sit below 4.5:1 contrast, and its buttons are 40px tall.
+They are implemented as drawn; darkening `--snt-ink-muted` and `--snt-action`
+in `tokens.css` fixes the contrast everywhere at once if that is preferred.
 
 ---
 
@@ -111,7 +120,7 @@ Each route maps to a wireframe artboard. The wireframes are at
 
 | Route | Artboard | Notes |
 | --- | --- | --- |
-| `/` | `Main` | One feed, two chip rows |
+| `/` | `Main` | One feed; search, category chips and type tabs in the brand header. Matches the v2 design PDF |
 | `/search` | `Search` | Per-category specification filters, live result count |
 | `/wanted` | `Wanted` | Requests and swaps shown as demand |
 | `/listing/[slug]` | `DetailDealer`, `DetailSwap` | One route, three views by type |
@@ -141,20 +150,17 @@ console tabs switch, and Show number reveals.
 - **Images are grey placeholders.** Real listing photos live in object storage.
 - **Phone numbers are obviously fake**, sequential placeholders.
 
-### Two deliberate deviations from the spec
+### One deliberate deviation from the spec
 
-1. **Everything is client-rendered.** `docs/architecture/seo-and-rendering.md`
-   requires the public pages — feed, search, listing, shopfront — to be
-   server-rendered, because search engines and WhatsApp link previews are the
-   acquisition channel. That cannot happen while the data is client-side mock
-   state. When the API arrives, those four routes move to server components;
-   the page files already have `generateMetadata` in place for it.
+**Everything is client-rendered.** `docs/architecture/seo-and-rendering.md`
+requires the public pages — feed, search, listing, shopfront — to be
+server-rendered, because search engines and WhatsApp link previews are the
+acquisition channel. That cannot happen while the data is client-side mock
+state. When the API arrives, those four routes move to server components; the
+page files already have `generateMetadata` in place for it.
 
-2. **The marketplace has no desktop layout.** The wireframes only define phone
-   widths, so rather than inventing one the column is centred and capped. The
-   place to add a real desktop grid is marked in
-   `packages/ui/src/layout/Screen.module.css`. The console *does* have a
-   desktop layout, because the wireframes define it.
+The marketplace's desktop layout is no longer a guess: it follows the v2
+design PDF — a full-width brand header over a centred 672px column.
 
 ---
 

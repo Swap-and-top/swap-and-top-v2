@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--snt-space-4);
-  border-radius: var(--snt-radius-md);
+  border-radius: var(--snt-radius-pill);
   font-family: var(--snt-font-body);
   font-weight: var(--snt-weight-semibold);
   text-align: center;
@@ -19,36 +19,37 @@
   cursor: not-allowed;
 }
 
-/* --- sizes. Never below the 44px touch target for a real action. --- */
+/* --- sizes. `md` is the design's "I have this": 40px tall, 15px type. --- */
 
 .sm {
-  height: 40px;
-  padding: 0 var(--snt-space-7);
+  height: 36px;
+  padding: 0 var(--snt-space-8);
   font-size: var(--snt-text-md);
 }
 
 .md {
-  height: var(--snt-touch);
-  padding: 0 var(--snt-space-8);
-  font-size: var(--snt-text-lg);
+  height: 40px;
+  padding: 0 var(--snt-space-12);
+  font-size: var(--snt-text-xl);
 }
 
 .lg {
-  height: 50px;
-  padding: 0 var(--snt-space-8);
+  height: 48px;
+  padding: 0 var(--snt-space-12);
   font-size: var(--snt-text-xl);
 }
 
 /* --- variants --- */
 
+/** Brand green, as on the Wanted card's "I have this". */
 .primary {
-  background: var(--snt-accent);
+  background: var(--snt-action);
   color: var(--snt-ink-on-dark);
   border: none;
 }
 
 .primary:hover:not(:disabled) {
-  background: var(--snt-accent-strong);
+  background: var(--snt-action-strong);
   color: var(--snt-ink-on-dark);
 }
 
@@ -76,7 +77,7 @@
 }
 
 .subtle {
-  background: var(--snt-bg-app);
+  background: var(--snt-bg-card);
   color: var(--snt-ink-muted);
   border: 1px solid var(--snt-line);
   font-weight: var(--snt-weight-normal);
@@ -135,13 +136,13 @@
 }
 
 .iconOnly.sm {
-  width: 40px;
+  width: 36px;
 }
 
 .iconOnly.md {
-  width: var(--snt-touch);
+  width: 40px;
 }
 
 .iconOnly.lg {
-  width: 50px;
+  width: 48px;
 }

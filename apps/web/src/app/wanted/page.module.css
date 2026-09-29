@@ -1,25 +1,14 @@
 /** Wanted — demand, from both requests and swaps. */
 
-.chipRow {
-  background: var(--snt-bg-surface);
-  padding: 0 var(--snt-gutter) var(--snt-space-6);
-  flex-shrink: 0;
-}
-
+/** Under the title, white on the brand gradient. */
 .subtitle {
   font-size: var(--snt-text-base);
-  color: var(--snt-ink-muted);
+  color: var(--snt-ink-on-dark);
+  opacity: 0.85;
   margin-top: var(--snt-space-1);
 }
 
 /** The invitation to post a request. Dashed, because it creates something. */
 .postPrompt {
-  padding: var(--snt-space-6) var(--snt-gutter);
-}
-
-@media (min-width: 768px) {
-  .chipRow,
-  .postPrompt {
-    padding-inline: var(--snt-space-10);
-  }
+  padding: var(--snt-space-6) var(--snt-column-inset) var(--snt-space-10);
 }

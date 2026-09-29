@@ -18,7 +18,7 @@ import {
   type Listing,
 } from '@snt/core';
 import {
-  Band,
+  AppHeader,
   BottomNav,
   ButtonLink,
   CompactListingRow,
@@ -59,11 +59,10 @@ export default function SavedPage() {
 
   return (
     <Screen>
-      <Band tight>
+      <AppHeader>
         <ScreenTitle>Saved</ScreenTitle>
-      </Band>
-
-      <Tabs tabs={tabs} active={tab} onChange={setTab} label="Saved listings" />
+        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Saved listings" />
+      </AppHeader>
 
       <ScreenBody>
         {shown.length > 0 ? (

@@ -41,7 +41,7 @@ export function WantedCard({
     listing.type === 'swap' ? listing.offerCount : listing.responseCount;
 
   return (
-    <Panel xl padded>
+    <Panel xl className={styles.card}>
       <div className={styles.head}>
         <span
           className={[styles.label, tradeIn ? styles.labelTradeIn : '']
@@ -60,9 +60,17 @@ export function WantedCard({
       </Link>
 
       <div className={styles.sub}>
-        {listing.type === 'request'
-          ? `Budget up to $${listing.budget} · ${listing.location}`
-          : `${listing.location} · trading up`}
+        {listing.type === 'request' ? (
+          <>
+            <span>Budget up to ${listing.budget}</span>
+            <span>{listing.location}</span>
+          </>
+        ) : (
+          <>
+            <span>{listing.location}</span>
+            <span>trading up</span>
+          </>
+        )}
       </div>
 
       {tradeIn ? (
@@ -83,8 +91,8 @@ export function WantedCard({
           </span>
         ) : null}
         {requester && !isSwapDemand ? (
-          <span className={styles.responses}>
-            {requester.displayName}{' '}
+          <span className={[styles.responses, styles.requester].join(' ')}>
+            {requester.displayName}
             <ConfirmedDealsBadge count={requester.confirmedDeals} />
           </span>
         ) : null}

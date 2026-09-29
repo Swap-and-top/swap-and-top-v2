@@ -48,7 +48,7 @@ export function ScreenBody({
         .filter(Boolean)
         .join(' ')}
     >
-      {children}
+      <div className={styles.column}>{children}</div>
     </div>
   );
 }
@@ -64,13 +64,15 @@ export function ScreenFooter({
 }) {
   return (
     <div className={styles.footer}>
-      <div className={styles.footerActions}>{children}</div>
-      {caption ? <div className={styles.footerCaption}>{caption}</div> : null}
+      <div className={styles.column}>
+        <div className={styles.footerActions}>{children}</div>
+        {caption ? <div className={styles.footerCaption}>{caption}</div> : null}
+      </div>
     </div>
   );
 }
 
-/** A white band at the top of a screen, holding a title or filters. */
+/** A white band under a header, holding a title or filters. */
 export function Band({
   children,
   tight = false,
@@ -81,7 +83,7 @@ export function Band({
 }) {
   return (
     <div className={[styles.band, tight ? styles.bandTight : ''].filter(Boolean).join(' ')}>
-      {children}
+      <div className={styles.column}>{children}</div>
     </div>
   );
 }
@@ -103,9 +105,9 @@ export function Tabs<T extends string>({
   onChange: (value: T) => void;
   label: string;
   /**
-   * Divide the full width evenly between the tabs instead of packing them to
-   * the left. For a short, fixed set that reads as a segmented control — the
-   * type filter on Browse. Leave it off when the set is long or open-ended,
+   * Divide the column evenly between the tabs instead of packing them to the
+   * left. For a short, fixed set that reads as a segmented control — the type
+   * filter on Browse. Leave it off when the set is long or open-ended,
    * because equal shares would squeeze the labels and hide the fact that the
    * row scrolls.
    */

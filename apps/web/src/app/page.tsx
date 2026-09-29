@@ -8,7 +8,7 @@
  * and wanted; thin inventory split three ways produces three dead-looking
  * feeds — the tabs switch the view over one feed, they do not switch route.
  *
- * Wireframe artboard: `Main`.
+ * Design: the one page of `Swap & Top v2 Design.pdf`.
  */
 
 import Link from 'next/link';
@@ -32,7 +32,6 @@ import {
   ListingCard,
   Screen,
   ScreenBody,
-  Stack,
   Tabs,
   type TabItem,
 } from '@snt/ui';
@@ -50,9 +49,9 @@ const CATEGORIES: (Category | 'all')[] = [
 ];
 
 const TYPES: TabItem<TypeFilter>[] = [
-  { value: 'all', label: 'All types' },
-  { value: 'sale', label: 'For sale' },
+  { value: 'all', label: 'All Types' },
   { value: 'swap', label: 'Swaps' },
+  { value: 'sale', label: 'For Sale' },
   { value: 'request', label: 'Wanted' },
 ];
 
@@ -65,12 +64,11 @@ export default function BrowsePage() {
 
   return (
     <Screen>
-      <AppHeader />
-
-      <div className={styles.filters}>
+      {/* Search, category and type all live in the brand header, as drawn. */}
+      <AppHeader>
         <Link href="/search" className={styles.searchEntry}>
-          <SearchIcon size={17} />
-          <span>Search phones, laptops, consoles, parts</span>
+          <SearchIcon size={18} />
+          <span>Search phone, laptops, consoles, parts, accessories</span>
         </Link>
 
         <ChipRow label="Filter by category">
@@ -84,26 +82,26 @@ export default function BrowsePage() {
             </Chip>
           ))}
         </ChipRow>
-      </div>
 
-      {/* Type is a tab bar, not a chip row: the four values are exhaustive and
-          mutually exclusive, so they should read as one control switching the
-          view rather than as four independent toggles. */}
-      <Tabs
-        fill
-        tabs={TYPES}
-        active={type}
-        onChange={setType}
-        label="Filter by listing type"
-      />
+        {/* Type is a tab bar, not a chip row: the four values are exhaustive
+            and mutually exclusive, so they should read as one control
+            switching the view rather than as four independent toggles. */}
+        <Tabs
+          fill
+          tabs={TYPES}
+          active={type}
+          onChange={setType}
+          label="Filter by listing type"
+        />
+      </AppHeader>
 
-      <ScreenBody top={false}>
+      <ScreenBody>
         {feed.length > 0 ? (
-          <Stack gap={6}>
+          <div className={styles.feed}>
             {feed.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
-          </Stack>
+          </div>
         ) : (
           <EmptyState
             title="Nothing here yet"

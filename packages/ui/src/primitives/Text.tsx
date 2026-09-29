@@ -55,7 +55,7 @@ export function Price({
   );
 }
 
-/** The swap top-up amount. Always clay — it is the swap mechanic. */
+/** The swap top-up amount. Brand blue — the swap's "has" side. */
 export function CashAmount({
   amount,
   className,

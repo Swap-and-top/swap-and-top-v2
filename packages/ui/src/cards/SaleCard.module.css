@@ -1,14 +1,20 @@
 /**
  * Sale card — the baseline. Everything else is a variation on it.
  *
- * The dealer variant adds a shop row. The absence of that row on a private
- * seller's card is itself the signal: a buyer knows immediately what kind of
- * transaction they are entering.
+ * The dealer variant adds a rule and a shop row, and a taller photo. The
+ * absence of that row on a private seller's card is itself the signal: a buyer
+ * knows immediately what kind of transaction they are entering.
  */
 
 .card {
   display: block;
   color: var(--snt-ink);
+  /* Photo height. The design draws the dealer photo taller. */
+  --sale-image-h: 128px;
+}
+
+.dealer {
+  --sale-image-h: 150px;
 }
 
 .card:hover {
@@ -20,52 +26,51 @@
 }
 
 .body {
-  padding: var(--snt-space-5) var(--snt-space-6) var(--snt-space-6);
+  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-10);
 }
 
 .priceRow {
   display: flex;
   align-items: baseline;
-  gap: var(--snt-space-4);
+  gap: var(--snt-space-2);
   flex-wrap: wrap;
 }
 
 .specLine {
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-medium);
-  margin-top: var(--snt-space-1);
-  line-height: var(--snt-leading-tight);
+  font-weight: var(--snt-weight-normal);
+  line-height: var(--snt-leading-snug);
 }
 
-/** Private seller: one meta line. */
+/** Private seller: one trust line. */
 .sellerLine {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-3);
+  gap: var(--snt-space-4);
   flex-wrap: wrap;
-  margin-top: var(--snt-space-4);
+  margin-top: var(--snt-space-7);
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
 }
 
 .sellerName {
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-bold);
   color: var(--snt-ink);
 }
 
-/** Dealer: a shop row separated by a rule. */
+/** Dealer: a shop row under a rule. */
 .shopRow {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-3);
-  margin-top: var(--snt-space-4);
-  padding-top: var(--snt-space-4);
-  border-top: 1px solid var(--snt-line-subtle);
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-3);
+  padding-top: var(--snt-space-7);
+  border-top: 1px solid var(--snt-line-strong);
 }
 
 .shopName {
-  font-size: var(--snt-text-sm);
-  font-weight: var(--snt-weight-semibold);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
 }
 
 .spacer {
@@ -78,9 +83,17 @@
   white-space: nowrap;
 }
 
-/* From tablet up, cards sit in a grid and the image gets taller. */
+/* The design's desktop measurements. */
 @media (min-width: 768px) {
+  .card {
+    --sale-image-h: 142px;
+  }
+
+  .dealer {
+    --sale-image-h: 168px;
+  }
+
   .body {
-    padding: var(--snt-space-6) var(--snt-space-7) var(--snt-space-7);
+    padding: var(--snt-space-9) var(--snt-card-pad) var(--snt-space-12);
   }
 }

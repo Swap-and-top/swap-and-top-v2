@@ -31,14 +31,14 @@
 }
 
 .priceMd {
-  font-size: var(--snt-text-2xl);
+  font-size: var(--snt-text-xl);
 }
 
 .priceLg {
   font-size: var(--snt-text-5xl);
 }
 
-/** The swap cash amount. Always clay, because it is the swap mechanic. */
+/** The swap cash amount. Brand blue, the colour of the swap's "has" side. */
 .cash {
   font-family: var(--snt-font-display);
   font-weight: var(--snt-weight-bold);
@@ -62,6 +62,11 @@
   font-weight: var(--snt-weight-bold);
   letter-spacing: var(--snt-tracking-display);
   color: var(--snt-ink);
+}
+
+/** In a brand header the title is white. */
+:global([data-surface='brand']) .screenTitle {
+  color: var(--snt-ink-on-dark);
 }
 
 /** Page heading inside a flow, e.g. "Did the deal go through?". */
@@ -93,12 +98,11 @@
 }
 
 .noteSurface {
-  background: var(--snt-bg-surface);
-  border: 1px solid var(--snt-line);
+  background: var(--snt-bg-card);
 }
 
 .noteSubtle {
-  background: var(--snt-bg-subtle);
+  background: var(--snt-bg-card);
 }
 
 .noteAccent {

@@ -41,6 +41,7 @@ How the thing behaves and looks, independent of technology.
 
 - **[Principles](./product/principles.md)** — non-negotiable product and design rules
 - **[Information Architecture](./product/information-architecture.md)** — surfaces, navigation, screen inventory
+- **[Visual Design](./product/visual-design.md)** — the v2 look: brand gradient, grey cards, blue and green
 - **[Card System](./product/card-system.md)** — the four listing cards and what distinguishes them
 - **[Search & Discovery](./product/search-and-discovery.md)** — the hero feature: specification-aware search
 - **[Post Flow](./product/post-flow.md)** — one posting flow with three outcomes
@@ -104,6 +105,8 @@ Interactive mobile-first wireframes for every screen described here, including t
 **https://claude.ai/artifact/JhU2rAynKjdh3n4CjcnFwz**
 
 Private to the owner's account. It has to be shared from the page's Share menu before anyone else can open it. The screen inventory in [product/information-architecture.md](./product/information-architecture.md) matches it frame for frame.
+
+The wireframes fix structure, not style. The visual design — colours, type, spacing — follows `Swap & Top v2 Design.pdf`, written up in [product/visual-design.md](./product/visual-design.md).
 
 ---
 

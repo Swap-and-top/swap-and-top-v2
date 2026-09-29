@@ -1,10 +1,15 @@
 /**
  * Wanted card — the dealer product.
  *
- * No photograph, because the poster does not have the thing. Text first, then
- * the budget, then one button. That button is the lead a dealer pays to be
- * alerted about, so everything here is arranged to make it the obvious step.
+ * No photograph, because the poster does not have the thing. A green WANTED
+ * label, the request in bold, the budget, then one green button. That button
+ * is the lead a dealer pays to be alerted about, so everything here is
+ * arranged to make it the obvious step.
  */
+
+.card {
+  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-10);
+}
 
 .head {
   display: flex;
@@ -18,14 +23,13 @@
   gap: var(--snt-space-3);
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--snt-ink-muted);
+  color: var(--snt-success);
 }
 
 /** A request that carries a trade-in is swap demand — the higher-value lead. */
 .labelTradeIn {
-  color: var(--snt-accent);
+  color: var(--snt-success);
 }
 
 .spacer {
@@ -41,20 +45,28 @@
 .title {
   display: block;
   font-size: var(--snt-text-xl);
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);
   color: var(--snt-ink);
-  margin-top: var(--snt-space-3);
+  margin-top: var(--snt-space-9);
 }
 
 .title:hover {
   color: var(--snt-accent);
 }
 
+/** Budget and area, separated by a small dot. */
 .sub {
-  font-size: var(--snt-text-base);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
   margin-top: var(--snt-space-2);
+}
+
+.sub > span + span::before {
+  content: '·';
+  margin-inline: var(--snt-space-3);
 }
 
 /** The trade-in strip: what is coming back, and the cash on top. */
@@ -62,9 +74,9 @@
   display: flex;
   align-items: center;
   gap: var(--snt-space-4);
-  margin-top: var(--snt-space-4);
-  padding: var(--snt-space-4) var(--snt-space-5);
-  background: var(--snt-bg-app);
+  margin-top: var(--snt-space-5);
+  padding: var(--snt-space-4) var(--snt-space-6);
+  background: var(--snt-bg-surface);
   border-radius: var(--snt-radius-md);
 }
 
@@ -74,20 +86,36 @@
 }
 
 .tradeInName {
-  font-size: var(--snt-text-base);
-  font-weight: var(--snt-weight-medium);
+  font-size: var(--snt-text-md);
   margin-top: var(--snt-space-1);
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-5);
+  gap: var(--snt-space-9);
   flex-wrap: wrap;
-  margin-top: var(--snt-space-6);
+  margin-top: var(--snt-space-8);
 }
 
 .responses {
-  font-size: var(--snt-text-sm);
+  font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
+}
+
+.requester {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+}
+
+/* The design's desktop measurements. */
+@media (min-width: 768px) {
+  .card {
+    padding: var(--snt-space-8) 27px var(--snt-space-10);
+  }
+
+  .actions {
+    margin-top: var(--snt-space-5);
+  }
 }

@@ -39,8 +39,8 @@ plain data, so it resolves identically on both platforms.
 
 ## Fonts
 
-`fonts/poppins/` holds Poppins at 400, 500, 600 and 700, normal style only —
-the four weights the type tokens in `@snt/ui` name, and no more. Each file is
+`fonts/poppins/` holds Poppins at 400, 500, 600, 700 and 800, normal style
+only — the five weights the type tokens in `@snt/ui` name, and no more. Each file is
 subset to latin + latin-ext and weighs about 11 kB.
 
 They are committed rather than linked from Google Fonts for two reasons: a
@@ -57,7 +57,8 @@ Regenerate by subsetting the upstream OFL release; do not hand-edit the woff2.
 
 ## Current contents
 
-The brand wordmark and the Poppins weights. Every image in the wireframes is a
+The logo (`brand/logo-white.svg`, carried over from the v1 app's header), the
+old text-only wordmark, and the Poppins weights. Every image in the design is a
 grey placeholder box, so there is nothing else to store yet — see
 `ImagePlaceholder` in `@snt/ui`. Real photography replaces those placeholders
 listing by listing, and none of it is committed here; listing photos live in

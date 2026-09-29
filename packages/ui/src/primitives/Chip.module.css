@@ -25,8 +25,8 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  height: 32px;
-  padding: 0 var(--snt-space-7);
+  height: 30px;
+  padding: 0 var(--snt-space-9);
   border-radius: var(--snt-radius-pill);
   border: 1px solid var(--snt-line);
   background: var(--snt-bg-surface);
@@ -44,7 +44,7 @@
   border-color: var(--snt-ink);
 }
 
-/** Category chips, selected. Clay. */
+/** Category chips, selected. Brand blue. */
 .selectedAccent {
   background: var(--snt-accent);
   border-color: var(--snt-accent);
@@ -88,4 +88,36 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--snt-space-3);
+}
+
+/**
+ * Chips inside a brand header: outlined in white on the gradient, and the
+ * selected one filled white with teal type.
+ */
+:global([data-surface='brand']) .chip {
+  background: none;
+  border-color: var(--snt-ink-on-dark);
+  color: var(--snt-ink-on-dark);
+}
+
+:global([data-surface='brand']) .chip:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+:global([data-surface='brand']) .selectedAccent,
+:global([data-surface='brand']) .selectedAccent:hover,
+:global([data-surface='brand']) .selectedInk,
+:global([data-surface='brand']) .selectedInk:hover {
+  background: var(--snt-bg-surface);
+  border-color: var(--snt-bg-surface);
+  color: var(--snt-brand-teal);
+  font-weight: var(--snt-weight-bold);
+}
+
+/* On a wide header the category row spreads across the column, as drawn. */
+@media (min-width: 768px) {
+  :global([data-surface='brand']) .row {
+    justify-content: space-between;
+    gap: var(--snt-space-5);
+  }
 }

@@ -6,9 +6,8 @@
  */
 
 .group {
-  background: var(--snt-bg-surface);
-  border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-card);
+  border-radius: var(--snt-radius-xl);
   overflow: hidden;
 }
 
@@ -25,11 +24,11 @@
 }
 
 .row + .row {
-  border-top: 1px solid var(--snt-line-subtle);
+  border-top: 1px solid var(--snt-bg-surface);
 }
 
 .row:hover {
-  background: var(--snt-bg-app);
+  background: var(--snt-bg-subtle);
   color: var(--snt-ink);
 }
 
@@ -42,7 +41,7 @@
 .label {
   flex-grow: 1;
   min-width: 0;
-  font-size: var(--snt-text-lg);
+  font-size: var(--snt-text-md);
 }
 
 .value {
@@ -68,7 +67,7 @@
 .dark {
   background: var(--snt-dark);
   border: none;
-  border-radius: var(--snt-radius-lg);
+  border-radius: var(--snt-radius-xl);
   color: var(--snt-ink-on-dark);
   display: flex;
   align-items: center;

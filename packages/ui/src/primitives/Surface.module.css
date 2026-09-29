@@ -1,9 +1,8 @@
-/** The white rounded box that almost every group of content sits in. */
+/** The light grey rounded box that almost every group of content sits in. */
 
 .panel {
-  background: var(--snt-bg-surface);
-  border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-card);
+  border-radius: var(--snt-radius-xl);
 }
 
 .panelXl {
@@ -17,23 +16,24 @@
 
 /** Inner padding. Omit for panels whose children pad themselves, like ListRows. */
 .padded {
-  padding: var(--snt-space-6);
+  padding: var(--snt-card-pad);
 }
 
 .paddedLg {
-  padding: var(--snt-space-7);
+  padding: var(--snt-card-pad);
 }
 
 /** Tinted panel: the swap detail header. */
 .tinted {
   background: var(--snt-accent-tint);
   border: none;
-  border-radius: 0;
 }
 
 /** Accent outline: a new lead, or the emphasised swap option. */
 .accent {
-  border-color: var(--snt-accent);
+  /* An inset ring rather than a border, so it adds no size. */
+  box-shadow: inset 0 0 0 1px var(--snt-accent);
+  background: var(--snt-accent-tint);
 }
 
 /** Dark panel: the console entry row on the account hub. */
@@ -45,14 +45,14 @@
 
 /** A section separated by a rule above it. */
 .section {
-  border-top: 1px solid var(--snt-line);
+  border-top: 1px solid var(--snt-line-subtle);
   padding-top: var(--snt-space-8);
   margin-top: var(--snt-space-9);
 }
 
 .divider {
   height: 1px;
-  background: var(--snt-line-subtle);
+  background: var(--snt-line);
   border: none;
   margin: 0;
 }

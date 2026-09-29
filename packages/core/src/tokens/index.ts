@@ -10,33 +10,46 @@
  */
 
 export const colors = {
+  /** The v1 brand palette. The header gradient runs blue to green. */
+  brandBlue: '#255DAB',
+  brandTeal: '#2572A2',
+  brandGreen: '#1CB67F',
+  brandYellow: '#FFFF8B',
+
   /** Page background behind cards. */
-  bgApp: '#F6F5F3',
-  /** Cards, headers, navigation. */
+  bgApp: '#FFFFFF',
+  /** Headers, navigation, form fields. */
   bgSurface: '#FFFFFF',
-  /** Muted fills and dividers that need more weight than a line. */
-  bgSubtle: '#ECEAE5',
+  /** Cards and panels. */
+  bgCard: '#F2F2F2',
+  /** Muted fills that need more weight than a line. */
+  bgSubtle: '#E8E8E8',
   /** Image placeholder fill. */
-  placeholder: '#E8E6E1',
-  /** Image placeholder on a tinted background. */
-  placeholderStrong: '#E1DBD4',
+  placeholder: '#CECECE',
 
-  ink: '#1A1A18',
-  inkMuted: '#5C5C57',
-  inkFaint: '#7A786F',
+  ink: '#434846',
+  inkMuted: '#8E8E8E',
+  inkFaint: '#A8A8A8',
 
-  line: '#DCDAD5',
-  lineSubtle: '#ECEAE5',
+  line: '#D9D9D9',
+  lineSubtle: '#E6E6E6',
+  lineStrong: '#A1A3A2',
 
-  /** Clay. Primary actions, the swap mechanic, verified dealer. */
-  accent: '#A8482A',
-  accentStrong: '#8A3A1F',
-  accentTint: '#F7EBE5',
-  accentBorder: '#C99B84',
+  /** Brand blue. Links, selected states, verified sellers, deal counts. */
+  accent: '#255DAB',
+  accentStrong: '#1D4B8A',
+  accentTint: '#E9F0F9',
 
-  /** Green. Confirmed deals and live status. Differs from accent in lightness. */
-  success: '#1F5133',
-  successTint: '#E3EFE6',
+  /** Brand green. The primary button. */
+  action: '#1CB67F',
+  actionStrong: '#179A6B',
+
+  /** Green. Confirmed deals, live status, the WANTED label. */
+  success: '#1CB67F',
+  successTint: '#E2F6EE',
+
+  /** A shop's initials mark. */
+  shopMark: '#2B2B2B',
 
   /** Dark surfaces: the dealer console chrome. */
   dark: '#1A1A18',
@@ -59,9 +72,10 @@ export const fonts = {
 export const radii = {
   xs: 4,
   sm: 6,
-  md: 8,
-  lg: 10,
-  xl: 12,
+  md: 10,
+  lg: 14,
+  /** Feed cards and the swap tiles. */
+  xl: 18,
   pill: 999,
 } as const;
 
@@ -82,11 +96,12 @@ export const space = {
 export const sizes = {
   /** Minimum touch target. Never go below this. */
   touch: 44,
-  appHeader: 54,
-  screenHeader: 48,
+  screenHeader: 52,
   bottomNav: 64,
   consoleNav: 62,
   consoleSidebar: 226,
+  /** The marketplace content column. */
+  columnMax: 672,
 } as const;
 
 /**

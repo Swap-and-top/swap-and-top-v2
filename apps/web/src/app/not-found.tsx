@@ -1,8 +1,9 @@
-import { ButtonLink, EmptyState, Screen, ScreenBody } from '@snt/ui';
+import { AppHeader, ButtonLink, EmptyState, Screen, ScreenBody } from '@snt/ui';
 
 export default function NotFound() {
   return (
     <Screen>
+      <AppHeader />
       <ScreenBody>
         <EmptyState
           title="Not found"

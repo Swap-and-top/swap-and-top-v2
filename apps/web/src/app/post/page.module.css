@@ -15,10 +15,10 @@
   display: flex;
   align-items: flex-start;
   gap: var(--snt-space-7);
-  padding: var(--snt-space-8);
-  border: 1px solid var(--snt-line);
+  padding: var(--snt-card-pad);
+  border: 2px solid transparent;
   border-radius: var(--snt-radius-xl);
-  background: var(--snt-bg-surface);
+  background: var(--snt-bg-card);
   color: var(--snt-ink);
   text-align: left;
   width: 100%;
@@ -28,7 +28,7 @@
 }
 
 .option:hover {
-  border-color: var(--snt-ink);
+  background: var(--snt-bg-subtle);
   color: var(--snt-ink);
 }
 
@@ -37,13 +37,13 @@
  * the one most likely to be new to whoever is reading it.
  */
 .optionFeatured {
-  border: 2px solid var(--snt-accent);
+  border-color: var(--snt-accent);
   background: var(--snt-accent-tint);
 }
 
 .optionFeatured:hover {
   border-color: var(--snt-accent);
-  background: var(--snt-bg-surface);
+  background: var(--snt-bg-highlight);
 }
 
 .glyph {
@@ -53,13 +53,13 @@
   width: 42px;
   height: 42px;
   flex-shrink: 0;
-  border-radius: var(--snt-radius-lg);
-  background: var(--snt-bg-app);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
   color: var(--snt-ink);
 }
 
 .glyphFeatured {
-  background: var(--snt-accent);
+  background: var(--snt-brand-gradient);
   color: var(--snt-ink-on-dark);
 }
 
@@ -76,18 +76,18 @@
 }
 
 .optionTitle {
-  font-size: var(--snt-text-2xl);
-  font-weight: var(--snt-weight-semibold);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
 }
 
 .ourThing {
   display: inline-flex;
   align-items: center;
   height: 18px;
-  padding: 0 var(--snt-space-3);
+  padding: 0 var(--snt-space-4);
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-accent);
-  color: var(--snt-ink-on-dark);
+  background: var(--snt-brand-yellow);
+  color: var(--snt-brand-green);
   font-size: var(--snt-text-2xs);
   font-weight: var(--snt-weight-bold);
   letter-spacing: var(--snt-tracking-label);

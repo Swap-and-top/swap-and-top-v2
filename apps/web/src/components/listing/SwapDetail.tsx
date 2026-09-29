@@ -24,7 +24,6 @@ import {
   Caption,
   Eyebrow,
   HeaderIconButton,
-  ImagePlaceholder,
   PosterRow,
   Screen,
   ScreenBody,
@@ -32,8 +31,9 @@ import {
   ScreenHeader,
   SpecGrid,
   specRowsFor,
+  SwapTiles,
 } from '@snt/ui';
-import { BookmarkIcon, PhoneIcon, ShareIcon, SwapIcon } from '@snt/ui/icons';
+import { BookmarkIcon, PhoneIcon, ShareIcon } from '@snt/ui/icons';
 import { useRevealStore } from '@snt/core';
 import styles from './SwapDetail.module.css';
 
@@ -56,7 +56,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
     <Screen surface>
       <ScreenHeader
         backHref="/"
-        title="Swap &amp; Top"
+        title="Swap & Top"
         accentTitle
         actions={
           <>
@@ -75,39 +75,16 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
 
       {/* The swap panel — the reason this screen exists. */}
       <div className={styles.panel}>
-        <div className={styles.tiles}>
-          <div className={styles.tile}>
-            <ImagePlaceholder height={104} onTint />
-          </div>
-
-          <div className={styles.middle}>
-            <span className={styles.arrows}>
-              <SwapIcon size={21} weight={2.1} />
-            </span>
-            {listing.cashAmount ? (
-              <span className={styles.amount}>+${listing.cashAmount}</span>
-            ) : null}
-            <span className={styles.direction}>{directionLabel}</span>
-          </div>
-
-          {/* Dashed and never photographed: they do not own this yet. */}
-          <div className={styles.tile}>
-            <ImagePlaceholder height={104} onTint wanted glyph="search" />
-          </div>
-        </div>
-
-        <div className={styles.labels}>
-          <div className={styles.labelCol}>
-            <Eyebrow tight>They have</Eyebrow>
-            <div className={styles.itemName}>{listing.has.name}</div>
-          </div>
-          <span className={styles.labelSpacer} />
-          <div className={styles.labelCol}>
-            <Eyebrow tight accent>
-              They want
-            </Eyebrow>
-            <div className={styles.itemName}>{listing.wants.name}</div>
-          </div>
+        <SwapTiles
+          has={listing.has}
+          wants={listing.wants}
+          cashAmount={listing.cashAmount}
+          flush
+        />
+        <div className={styles.direction}>
+          {listing.cashAmount && listing.cashDirection !== 'straight'
+            ? `$${listing.cashAmount} on top — ${directionLabel}`
+            : directionLabel}
         </div>
       </div>
 
