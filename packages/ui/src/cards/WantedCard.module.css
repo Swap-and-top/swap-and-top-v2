@@ -94,9 +94,14 @@
   margin-top: var(--snt-space-1);
 }
 
+/**
+ * Text on the left, button on the right. The button sits at the bottom, level
+ * with the last line of text — the requester's name, or on a trade-in card
+ * the area line — rather than floating in the middle.
+ */
 .main {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--snt-space-8);
   margin-top: var(--snt-space-6);
 }
@@ -106,7 +111,7 @@
   min-width: 0;
 }
 
-/** The button, vertically centred against the text beside it. */
+/** The button, bottom-aligned with the text beside it. */
 .cta {
   flex-shrink: 0;
 }
