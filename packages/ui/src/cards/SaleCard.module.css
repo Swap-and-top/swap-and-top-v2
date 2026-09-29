@@ -43,17 +43,32 @@
   padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-10);
 }
 
-.priceRow {
+/** Name and specs on the left, price and condition on the right. */
+.summary {
   display: flex;
-  align-items: baseline;
-  gap: var(--snt-space-3);
-  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--snt-space-8);
+}
+
+.identity {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/** Price over condition, right-aligned, level with the name. */
+.pricing {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--snt-space-1);
+  text-align: right;
+  line-height: var(--snt-leading-tight);
 }
 
 /** The item name: blue, and set like the Wanted card's title — 15px bold. */
 .name {
   display: block;
-  margin-top: var(--snt-space-2);
   font-size: var(--snt-text-xl);
   font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);

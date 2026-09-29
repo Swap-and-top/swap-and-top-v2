@@ -66,25 +66,30 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
         </div>
 
         <div className={styles.body}>
-          <div className={styles.priceRow}>
-            <Price amount={listing.price} />
-            {listing.item.condition ? (
-              <Meta xs>{CARD_CONDITION[listing.item.condition]}</Meta>
-            ) : null}
-            {dropped ? (
-              <Badge tone="accent">
-                Dropped ${listing.previousPrice! - listing.price}
-              </Badge>
-            ) : null}
-          </div>
+          {/* Name and specs on the left; price and condition balance them
+              on the right. */}
+          <div className={styles.summary}>
+            <div className={styles.identity}>
+              <ItemName side="owned" className={styles.name}>
+                {listing.item.name}
+              </ItemName>
+              {specs.length > 0 ? (
+                <div className={styles.specs}>{specs.join(' · ')}</div>
+              ) : null}
+            </div>
 
-          {/* Name on its own line, in the owned-item blue; specs under it. */}
-          <ItemName side="owned" className={styles.name}>
-            {listing.item.name}
-          </ItemName>
-          {specs.length > 0 ? (
-            <div className={styles.specs}>{specs.join(' · ')}</div>
-          ) : null}
+            <div className={styles.pricing}>
+              <Price amount={listing.price} />
+              {listing.item.condition ? (
+                <Meta xs>{CARD_CONDITION[listing.item.condition]}</Meta>
+              ) : null}
+              {dropped ? (
+                <Badge tone="accent">
+                  Dropped ${listing.previousPrice! - listing.price}
+                </Badge>
+              ) : null}
+            </div>
+          </div>
 
           {shop ? (
             <div className={styles.shopRow}>
