@@ -8,9 +8,15 @@
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: var(--snt-space-2);
+  gap: var(--snt-space-1);
   flex-shrink: 0;
-  margin-right: calc(var(--snt-space-3) * -1);
+  /*
+   * Pull the pair right so the share glyph's drawn edge — not its button's
+   * padding — lines up with the card's content edge, flush with the swap
+   * card's "Looking for" tile. 5px of button padding + 2px of empty space
+   * inside the 18px glyph.
+   */
+  margin-right: -7px;
 }
 
 .button {
@@ -18,8 +24,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--snt-radius-pill);
   color: var(--snt-ink-muted);
   transition:
@@ -27,11 +33,12 @@
     color var(--snt-transition);
 }
 
-/* A 44px touch target around the 34px circle. */
+/* A taller touch target around the 28px circle; sideways it stops at the
+   neighbouring button so the two never overlap. */
 .button::before {
   content: '';
   position: absolute;
-  inset: -5px;
+  inset: -8px -1px;
 }
 
 .button:hover {
