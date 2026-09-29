@@ -127,7 +127,7 @@ Saved lists and shopfront grids use reduced versions of the same cards — small
 | Badge | Meaning |
 | --- | --- |
 | `SPONSORED` | Paid placement |
-| `DROPPED $20` | Price reduced since the viewer saved it |
+| `DROPPED $20` | Price reduced since the viewer saved it (Saved list). On a feed card a drop shows instead as the old price struck through beside the new one |
 | `GONE` | Sold or withdrawn; card dimmed |
 | `LIVE` / `SOLD` / `DRAFT` | Console-only states |
 

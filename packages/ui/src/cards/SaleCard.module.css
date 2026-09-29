@@ -66,6 +66,19 @@
   line-height: var(--snt-leading-tight);
 }
 
+/** Old price, struck through, then the current price at the far right. */
+.priceLine {
+  display: flex;
+  align-items: baseline;
+  gap: var(--snt-space-3);
+}
+
+.wasPrice {
+  font-size: var(--snt-text-base);
+  font-variant-numeric: tabular-nums;
+  color: var(--snt-ink-muted);
+}
+
 /** The item name: blue, and set like the Wanted card's title — 15px bold. */
 .name {
   display: block;

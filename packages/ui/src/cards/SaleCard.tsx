@@ -79,14 +79,19 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
             </div>
 
             <div className={styles.pricing}>
-              <Price amount={listing.price} />
+              <div className={styles.priceLine}>
+                {/* A price drop shows the old price struck through, beside
+                    the current one. */}
+                {dropped ? (
+                  <s className={styles.wasPrice}>
+                    <span className="snt-visually-hidden">Was </span>
+                    {`$${listing.previousPrice}`}
+                  </s>
+                ) : null}
+                <Price amount={listing.price} />
+              </div>
               {listing.item.condition ? (
                 <Meta xs>{CARD_CONDITION[listing.item.condition]}</Meta>
-              ) : null}
-              {dropped ? (
-                <Badge tone="accent">
-                  Dropped ${listing.previousPrice! - listing.price}
-                </Badge>
               ) : null}
             </div>
           </div>
