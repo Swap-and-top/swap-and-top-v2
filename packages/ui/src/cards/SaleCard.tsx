@@ -105,16 +105,19 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
                 {shop.verified ? <VerifiedDealerBadge /> : null}
               </span>
               <span className={styles.spacer} />
-              {listing.stockCount && listing.stockCount > 1 ? (
-                <span className={styles.stock}>
-                  {listing.stockCount} in Stock
-                </span>
-              ) : null}
-              <CardActions
-                listingId={listing.id}
-                href={href}
-                title={listing.title}
-              />
+              {/* Stock count above the save and share icons. */}
+              <span className={styles.shopAside}>
+                {listing.stockCount && listing.stockCount > 1 ? (
+                  <span className={styles.stock}>
+                    {listing.stockCount} in Stock
+                  </span>
+                ) : null}
+                <CardActions
+                  listingId={listing.id}
+                  href={href}
+                  title={listing.title}
+                />
+              </span>
             </div>
           ) : (
             <div className={styles.sellerLine}>

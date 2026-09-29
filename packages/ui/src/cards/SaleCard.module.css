@@ -167,6 +167,19 @@
   flex-grow: 1;
 }
 
+/** Right of the shop row: stock count on top, icons beneath, right-aligned. */
+.shopAside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+/* Lines the text up with the icons' visual edge, not their hit area. */
+.shopAside .stock {
+  margin-right: var(--snt-space-1);
+}
+
 .stock {
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);

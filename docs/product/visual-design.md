@@ -141,7 +141,7 @@ Every marketplace screen starts with the gradient.
 See [card-system.md](./card-system.md) for what each card means. Visually they share one shape: a `#F2F2F2` box with 18px corners and no border.
 
 - **Wanted** — green WANTED label, bold green title, grey budget line, and the requester's trust line (bold first name, blue tick deal count) on the left; the green "I have this" pill in the bottom-right, level with the last line of text — the requester's name, or the area line on a trade-in card. The response count sits top right with the age — "4 responses · 1h ago" A trade-in strip, when there is one, runs full width underneath
-- **Dealer sale** — photo; the item name in blue with its specs in grey beneath on the left, price over condition on the right — after a price drop, the old price struck through in small grey beside it; a light rule, then the shop row: black initials square, bold name, blue tick "Verified Seller", "4 in Stock" at the far right. On a phone the name and badge stack
+- **Dealer sale** — photo; the item name in blue with its specs in grey beneath on the left, price over condition on the right — after a price drop, the old price struck through in small grey beside it; a light rule, then the shop row: black initials square, bold name, blue tick "Verified Seller", and at the far right "4 in Stock" above the save and share icons. On a phone the name and badge stack
 - **Private sale** — photo; name and specs on the left, price and condition on the right; then one trust line: bold first name, blue tick deal count, area and age
 - **Swap** — two solid rounded tiles, blue "Has" with the cash, green "Looking for", then the poster's trust line
 
