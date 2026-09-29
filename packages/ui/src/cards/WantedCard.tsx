@@ -85,17 +85,20 @@ export function WantedCard({
         </div>
       ) : null}
 
+      {/* Who is asking, set like the trust line on the other cards. */}
+      {requester && !isSwapDemand ? (
+        <div className={styles.requester}>
+          <span className={styles.requesterName}>{requester.displayName}</span>
+          <ConfirmedDealsBadge count={requester.confirmedDeals} />
+        </div>
+      ) : null}
+
+      {/* The button on the left, the response count balancing it on the right. */}
       <div className={styles.actions}>
         <Button onClick={onRespond}>I have this</Button>
         {responses > 0 ? (
           <span className={styles.responses}>
             {responses} {responses === 1 ? 'response' : 'responses'}
-          </span>
-        ) : null}
-        {requester && !isSwapDemand ? (
-          <span className={[styles.responses, styles.requester].join(' ')}>
-            {requester.displayName}
-            <ConfirmedDealsBadge count={requester.confirmedDeals} />
           </span>
         ) : null}
       </div>

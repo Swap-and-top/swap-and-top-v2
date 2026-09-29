@@ -98,9 +98,8 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-9);
-  flex-wrap: wrap;
-  margin-top: var(--snt-space-8);
+  gap: var(--snt-space-6);
+  margin-top: var(--snt-space-6);
 }
 
 /* Whole-card hover, as on the other cards. The title is the link. */
@@ -109,14 +108,24 @@
 }
 
 .responses {
+  margin-left: auto;
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
+  white-space: nowrap;
 }
 
+/** The requester's trust line: bold first name, then their deal count. */
 .requester {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--snt-space-3);
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+  font-size: var(--snt-text-xs);
+}
+
+.requesterName {
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-ink);
 }
 
 /* The design's desktop measurements. */
