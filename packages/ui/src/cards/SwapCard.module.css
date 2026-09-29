@@ -11,14 +11,39 @@
  */
 
 .card {
-  display: block;
+  position: relative;
   border-radius: var(--snt-radius-xl);
   color: var(--snt-ink);
   transition: transform var(--snt-transition);
 }
 
-.card:hover {
-  color: var(--snt-ink);
+/**
+ * The stretched link: its ::after covers the whole card, so a tap anywhere
+ * opens the listing, while the save and share buttons sit above it.
+ */
+.link {
+  display: block;
+  color: inherit;
+}
+
+.link:hover {
+  color: inherit;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.card:has(.link:focus-visible) {
+  outline: 2px solid var(--snt-accent);
+  outline-offset: 2px;
 }
 
 /* Feedback: the card darkens under the pointer and gives a little on press. */
@@ -26,7 +51,7 @@
   background: var(--snt-bg-card-hover);
 }
 
-.card:active {
+.card:has(.link:active) {
   transform: scale(0.99);
 }
 
@@ -114,7 +139,7 @@
   align-items: center;
   gap: var(--snt-space-4);
   flex-wrap: wrap;
-  padding: var(--snt-space-6) var(--snt-card-pad) var(--snt-space-8);
+  padding: var(--snt-space-4) var(--snt-card-pad) var(--snt-space-6);
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
 }
@@ -122,6 +147,10 @@
 .name {
   font-weight: var(--snt-weight-bold);
   color: var(--snt-ink);
+}
+
+.spacer {
+  flex-grow: 1;
 }
 
 @media (min-width: 768px) {
@@ -143,6 +172,6 @@
   }
 
   .footer {
-    padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-10);
+    padding: var(--snt-space-6) var(--snt-card-pad) var(--snt-space-8);
   }
 }

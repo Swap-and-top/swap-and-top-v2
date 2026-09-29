@@ -145,6 +145,8 @@ See [card-system.md](./card-system.md) for what each card means. Visually they s
 - **Private sale** — photo; name and specs on the left, price and condition on the right; then one trust line: bold first name, blue tick deal count, area and age
 - **Swap** — two solid rounded tiles, blue "Has" with the cash, green "Looking for", then the poster's trust line
 
+Sale and swap cards carry **save and share** icons at the far right of their bottom row. Saving fills the bookmark in blue; sharing opens the phone's share sheet (so WhatsApp), or copies the link where there is none. The rest of the card is one link to the listing.
+
 Every tappable card darkens slightly under the pointer and gives a little when pressed. Keyboard focus shows a blue ring — white on the gradient.
 
 ### Trust signals

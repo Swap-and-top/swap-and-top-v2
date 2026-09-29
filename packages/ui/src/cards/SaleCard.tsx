@@ -15,6 +15,7 @@ import { Panel } from '../primitives/Surface';
 import { ItemName, Meta, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
 import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
+import { CardActions } from './CardActions';
 import styles from './SaleCard.module.css';
 
 /** How a card words condition beside the price: "Used Good". */
@@ -39,12 +40,10 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
   const dropped =
     listing.previousPrice !== undefined && listing.previousPrice > listing.price;
   const specs = specParts(listing.item);
+  const href = `/listing/${listing.slug}`;
 
   return (
-    <Link
-      href={`/listing/${listing.slug}`}
-      className={styles.card}
-    >
+    <div className={styles.card}>
       <Panel xl clip>
         <div className={styles.imageWrap}>
           <ImagePlaceholder
@@ -68,7 +67,9 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
         <div className={styles.body}>
           {/* Name and specs on the left; price and condition balance them
               on the right. */}
-          <div className={styles.summary}>
+          {/* The link covers the whole card (see .link in the CSS); save and
+              share sit above it in the bottom row. */}
+          <Link href={href} className={[styles.summary, styles.link].join(' ')}>
             <div className={styles.identity}>
               <ItemName side="owned" className={styles.name}>
                 {listing.item.name}
@@ -94,7 +95,7 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
                 <Meta xs>{CARD_CONDITION[listing.item.condition]}</Meta>
               ) : null}
             </div>
-          </div>
+          </Link>
 
           {shop ? (
             <div className={styles.shopRow}>
@@ -109,6 +110,11 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
                   {listing.stockCount} in Stock
                 </span>
               ) : null}
+              <CardActions
+                listingId={listing.id}
+                href={href}
+                title={listing.title}
+              />
             </div>
           ) : (
             <div className={styles.sellerLine}>
@@ -121,10 +127,16 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
               <span>
                 {listing.location} · {listing.postedLabel}
               </span>
+              <span className={styles.spacer} />
+              <CardActions
+                listingId={listing.id}
+                href={href}
+                title={listing.title}
+              />
             </div>
           )}
         </div>
       </Panel>
-    </Link>
+    </div>
   );
 }

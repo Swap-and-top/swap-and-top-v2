@@ -1,0 +1,46 @@
+/**
+ * Save and share on a feed card. Quiet grey icons that sit above the card's
+ * stretched link, so they take their own clicks.
+ */
+
+.actions {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  flex-shrink: 0;
+  margin-right: calc(var(--snt-space-3) * -1);
+}
+
+.button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-pill);
+  color: var(--snt-ink-muted);
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+/* A 44px touch target around the 34px circle. */
+.button::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+}
+
+.button:hover {
+  background: var(--snt-bg-subtle);
+  color: var(--snt-ink);
+}
+
+/** Saved: filled, in the owned-item blue. */
+.saved,
+.saved:hover {
+  color: var(--snt-accent);
+}

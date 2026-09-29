@@ -13,6 +13,7 @@ import { ImagePlaceholder } from '../primitives/Placeholder';
 import { specParts } from '../primitives/SpecGrid';
 import { Panel } from '../primitives/Surface';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
+import { CardActions } from './CardActions';
 import styles from './SwapCard.module.css';
 
 export function SwapCard({
@@ -25,15 +26,21 @@ export function SwapCard({
   /** Overrides the photo height inside each tile. */
   tileHeight?: number;
 }) {
+  const href = `/listing/${listing.slug}`;
+
   return (
-    <Link href={`/listing/${listing.slug}`} className={styles.card}>
+    <div className={styles.card}>
       <Panel xl>
-        <SwapTiles
-          has={listing.has}
-          wants={listing.wants}
-          cashAmount={listing.cashAmount}
-          tileHeight={tileHeight}
-        />
+        {/* The link covers the whole card (see .link in the CSS); save and
+            share sit above it in the footer. */}
+        <Link href={href} className={styles.link}>
+          <SwapTiles
+            has={listing.has}
+            wants={listing.wants}
+            cashAmount={listing.cashAmount}
+            tileHeight={tileHeight}
+          />
+        </Link>
 
         <div className={styles.footer}>
           {seller ? (
@@ -45,9 +52,15 @@ export function SwapCard({
           <span>
             {listing.location} · {listing.postedLabel}
           </span>
+          <span className={styles.spacer} />
+          <CardActions
+            listingId={listing.id}
+            href={href}
+            title={listing.title}
+          />
         </div>
       </Panel>
-    </Link>
+    </div>
   );
 }
 
