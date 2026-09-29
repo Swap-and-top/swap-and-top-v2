@@ -50,12 +50,12 @@
   flex-wrap: wrap;
 }
 
-/** The item name: blue, a touch heavier than body, one line. */
+/** The item name: blue, and set like the Wanted card's title — 15px bold. */
 .name {
   display: block;
   margin-top: var(--snt-space-2);
-  font-size: var(--snt-text-lg);
-  font-weight: var(--snt-weight-medium);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);
 }
 

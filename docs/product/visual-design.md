@@ -84,9 +84,8 @@ One face, Poppins, self-hosted at five weights. Sizes start from the PDF, with t
 | Size | Weight | Used for |
 | --- | --- | --- |
 | 17px | Bold | Price and swap cash — fixed-width digits so prices line up |
-| 15px | Bold | Wanted card title |
+| 15px | Bold | Item names on feed cards — green on a Wanted card, blue on a sale card, on its own line |
 | 15px | SemiBold | Button label |
-| 14px | Medium | A sale card's item name (blue), on its own line |
 | 13px | Medium | Swap tile item name |
 | 12px | Regular | Specs under a name (grey), search placeholder |
 | 12px | Bold / Regular | Chips (selected / not), "Post New Item" |
