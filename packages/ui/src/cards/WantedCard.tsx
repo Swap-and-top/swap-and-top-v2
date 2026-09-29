@@ -20,6 +20,7 @@ import { Button } from '../primitives/Button';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
+import { CardActions } from './CardActions';
 import styles from './WantedCard.module.css';
 
 export function WantedCard({
@@ -94,9 +95,17 @@ export function WantedCard({
           ) : null}
         </div>
 
-        <Button onClick={onRespond} className={styles.cta}>
-          I have this
-        </Button>
+        {/* Save and share, centred over the button — centring keeps the pair
+            balanced against the pill's rounded ends. */}
+        <div className={styles.cta}>
+          <CardActions
+            listingId={listing.id}
+            href={`/listing/${listing.slug}`}
+            title={listing.title}
+            flushEnd={false}
+          />
+          <Button onClick={onRespond}>I have this</Button>
+        </div>
       </div>
 
       {tradeIn ? (

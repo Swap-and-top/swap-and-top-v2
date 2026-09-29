@@ -29,7 +29,7 @@ interface NavItem {
 const ITEMS: NavItem[] = [
   { href: '/', label: 'Browse', alsoMatches: ['/listing', '/shop', '/search'] },
   { href: '/wanted', label: 'Wanted' },
-  { href: '/saved', label: 'Saved' },
+  { href: '/saved', label: 'Wish list' },
   { href: '/me', label: 'Me', alsoMatches: ['/deals'] },
 ];
 
@@ -52,7 +52,7 @@ function iconFor(label: string, active: boolean) {
       return <GridIcon size={20} weight={active ? 1.9 : 1.7} />;
     case 'Wanted':
       return <MegaphoneIcon size={20} weight={active ? 1.9 : 1.7} />;
-    case 'Saved':
+    case 'Wish list':
       return <SaveStarIcon size={20} filled={active} />;
     default:
       return <PersonIcon size={20} weight={active ? 1.9 : 1.7} />;
@@ -67,7 +67,7 @@ export function BottomNav({
 }) {
   const pathname = usePathname();
 
-  // Browse, Wanted, [post], Saved, Me — the post action sits in the middle.
+  // Browse, Wanted, [post], Wish list, Me — the post action sits in the middle.
   const left = ITEMS.slice(0, 2);
   const right = ITEMS.slice(2);
 

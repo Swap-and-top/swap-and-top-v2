@@ -114,6 +114,10 @@
 /** The button, bottom-aligned with the text beside it. */
 .cta {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-4);
 }
 
 /* Whole-card hover, as on the other cards. The title is the link. */

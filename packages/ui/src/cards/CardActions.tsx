@@ -16,12 +16,18 @@ export function CardActions({
   listingId,
   href,
   title,
+  flushEnd = true,
 }: {
   listingId: string;
   /** The listing's path, shared as a full URL. */
   href: string;
   /** Shared alongside the link. */
   title: string;
+  /**
+   * Pull the share glyph's drawn edge flush with the card's content edge. Turn
+   * it off where the pair is centred rather than end-aligned.
+   */
+  flushEnd?: boolean;
 }) {
   const { ids, toggle } = useSavedStore();
   const saved = ids.includes(listingId);
@@ -44,7 +50,11 @@ export function CardActions({
   }
 
   return (
-    <span className={styles.actions}>
+    <span
+      className={[styles.actions, flushEnd ? styles.flushEnd : '']
+        .filter(Boolean)
+        .join(' ')}
+    >
       <button
         type="button"
         className={[styles.button, saved ? styles.saved : '']
