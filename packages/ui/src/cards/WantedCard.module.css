@@ -49,7 +49,6 @@
   font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);
   color: var(--snt-wanted-ink);
-  margin-top: var(--snt-space-6);
 }
 
 .title:hover {
@@ -95,11 +94,25 @@
   margin-top: var(--snt-space-1);
 }
 
-.actions {
+.main {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-6);
+  gap: var(--snt-space-8);
   margin-top: var(--snt-space-6);
+}
+
+.info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/** The button, with its response count centred beneath it. */
+.cta {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-3);
 }
 
 /* Whole-card hover, as on the other cards. The title is the link. */
@@ -108,7 +121,6 @@
 }
 
 .responses {
-  margin-left: auto;
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
   white-space: nowrap;
@@ -119,7 +131,7 @@
   display: flex;
   align-items: center;
   gap: var(--snt-space-4);
-  margin-top: var(--snt-space-6);
+  margin-top: var(--snt-space-4);
   font-size: var(--snt-text-xs);
 }
 

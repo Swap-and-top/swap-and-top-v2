@@ -55,22 +55,47 @@ export function WantedCard({
         <span className={styles.age}>{listing.postedLabel}</span>
       </div>
 
-      <Link href={`/listing/${listing.slug}`} className={styles.title}>
-        {wantedName}
-      </Link>
+      {/* What they want on the left; the response on the right, where it
+          balances the text instead of sitting under it. */}
+      <div className={styles.main}>
+        <div className={styles.info}>
+          <Link href={`/listing/${listing.slug}`} className={styles.title}>
+            {wantedName}
+          </Link>
 
-      <div className={styles.sub}>
-        {listing.type === 'request' ? (
-          <>
-            <span>Budget up to ${listing.budget}</span>
-            <span>{listing.location}</span>
-          </>
-        ) : (
-          <>
-            <span>{listing.location}</span>
-            <span>trading up</span>
-          </>
-        )}
+          <div className={styles.sub}>
+            {listing.type === 'request' ? (
+              <>
+                <span>Budget up to ${listing.budget}</span>
+                <span>{listing.location}</span>
+              </>
+            ) : (
+              <>
+                <span>{listing.location}</span>
+                <span>trading up</span>
+              </>
+            )}
+          </div>
+
+          {/* Who is asking, set like the trust line on the other cards. */}
+          {requester && !isSwapDemand ? (
+            <div className={styles.requester}>
+              <span className={styles.requesterName}>
+                {requester.displayName}
+              </span>
+              <ConfirmedDealsBadge count={requester.confirmedDeals} />
+            </div>
+          ) : null}
+        </div>
+
+        <div className={styles.cta}>
+          <Button onClick={onRespond}>I have this</Button>
+          {responses > 0 ? (
+            <span className={styles.responses}>
+              {responses} {responses === 1 ? 'response' : 'responses'}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       {tradeIn ? (
@@ -84,24 +109,6 @@ export function WantedCard({
           {cash ? <CashAmount amount={cash} /> : null}
         </div>
       ) : null}
-
-      {/* Who is asking, set like the trust line on the other cards. */}
-      {requester && !isSwapDemand ? (
-        <div className={styles.requester}>
-          <span className={styles.requesterName}>{requester.displayName}</span>
-          <ConfirmedDealsBadge count={requester.confirmedDeals} />
-        </div>
-      ) : null}
-
-      {/* The button on the left, the response count balancing it on the right. */}
-      <div className={styles.actions}>
-        <Button onClick={onRespond}>I have this</Button>
-        {responses > 0 ? (
-          <span className={styles.responses}>
-            {responses} {responses === 1 ? 'response' : 'responses'}
-          </span>
-        ) : null}
-      </div>
     </Panel>
   );
 }
