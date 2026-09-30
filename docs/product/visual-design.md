@@ -108,7 +108,8 @@ ExtraBold (800) was added for the active tab and the tile labels.
 | Logo row | 36px tall — logo, yellow pill, white circle | Same |
 | Search | 40px white pill | Same |
 | Chips | 30px pills, 1px white outline, spread across the column | Scroll sideways |
-| Type tabs | Equal widths, on white under the header, with the active tab underlined | Same |
+| Type tabs | Equal widths, on white under the header. One grey underline slides to the active tab (240ms); the rule under the row runs the full width of the screen | Same |
+| Category chips | Outlined white; the selected one filled grey with white type — never blue, which means for sale | Same |
 | Card radius | 18px | 18px |
 | Radius of boxes inside a card (swap tiles, inputs, trade-in strip) | 12px | 12px |
 | Card padding | 24px | 16px |

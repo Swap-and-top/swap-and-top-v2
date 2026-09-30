@@ -88,59 +88,6 @@ export function Band({
   );
 }
 
-export interface TabItem<T extends string> {
-  value: T;
-  label: string;
-}
-
-export function Tabs<T extends string>({
-  tabs,
-  active,
-  onChange,
-  label,
-  fill = false,
-}: {
-  tabs: TabItem<T>[];
-  active: T;
-  onChange: (value: T) => void;
-  label: string;
-  /**
-   * Divide the column evenly between the tabs instead of packing them to the
-   * left. For a short, fixed set that reads as a segmented control — the type
-   * filter on Browse. Leave it off when the set is long or open-ended,
-   * because equal shares would squeeze the labels and hide the fact that the
-   * row scrolls.
-   */
-  fill?: boolean;
-}) {
-  return (
-    <div
-      className={[styles.tabs, fill ? styles.tabsFill : ''].filter(Boolean).join(' ')}
-      role="tablist"
-      aria-label={label}
-    >
-      {tabs.map((tab) => (
-        <button
-          key={tab.value}
-          type="button"
-          role="tab"
-          aria-selected={tab.value === active}
-          className={[
-            styles.tab,
-            fill ? styles.tabFill : '',
-            tab.value === active ? styles.tabActive : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-          onClick={() => onChange(tab.value)}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 /**
  * Empty state. Never leave a blank screen: say what happened and offer the way
  * out — the nearest match with one filter relaxed, or posting a request.

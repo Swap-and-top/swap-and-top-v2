@@ -117,9 +117,9 @@ export {
   Screen,
   ScreenBody,
   ScreenFooter,
-  Tabs,
 } from './layout/Screen';
-export type { TabItem } from './layout/Screen';
+export { Tabs } from './layout/Tabs';
+export type { TabItem } from './layout/Tabs';
 
 /* --- helpers ------------------------------------------------------------- */
 export { monthYear, replyLabel, replyShort, swapTerms } from './format';

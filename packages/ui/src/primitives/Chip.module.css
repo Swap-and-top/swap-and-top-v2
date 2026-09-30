@@ -44,17 +44,20 @@
   border-color: var(--snt-ink);
 }
 
-/** Category chips, selected. Brand blue. */
+/**
+ * Category chips, selected. Grey, not blue: blue means for sale, and a
+ * selected filter should not read as a kind of listing.
+ */
 .selectedAccent {
-  background: var(--snt-accent);
-  border-color: var(--snt-accent);
+  background: var(--snt-ink-muted);
+  border-color: var(--snt-ink-muted);
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
 }
 
 .selectedAccent:hover {
-  background: var(--snt-accent-strong);
-  border-color: var(--snt-accent-strong);
+  background: var(--snt-ink);
+  border-color: var(--snt-ink);
 }
 
 /** Selected, ink. For a second chip row that must stay visually distinct
