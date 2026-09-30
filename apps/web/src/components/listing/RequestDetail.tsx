@@ -73,7 +73,8 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
           </div>
 
           <div>
-            <Eyebrow>Budget</Eyebrow>
+            {/* With something to swap, the budget is cash they add on top. */}
+            <Eyebrow>{listing.tradeIn ? 'They add up to' : 'Budget'}</Eyebrow>
             <Price amount={listing.budget} size="lg" />
           </div>
 

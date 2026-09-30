@@ -86,13 +86,14 @@ export function WantedCard({
           <div className={styles.sub}>
             {listing.type === 'request' ? (
               <>
-                {/* With a trade-in, the budget is cash on top of it. */}
+                <span>{listing.location}</span>
+                {/* With something to swap, the budget is cash they add on
+                    top of it — worded like a swap, capped rather than fixed. */}
                 <span>
                   {tradeIn
-                    ? `Up to $${listing.budget} cash + what they have`
+                    ? `They add up to $${listing.budget}`
                     : `Budget up to $${listing.budget}`}
                 </span>
-                <span>{listing.location}</span>
               </>
             ) : (
               <>
@@ -124,6 +125,11 @@ export function WantedCard({
             </ItemName>
           </div>
           {cash ? <CashAmount amount={cash} /> : null}
+          {listing.type === 'request' ? (
+            <span className={styles.upTo}>
+              up to <CashAmount amount={listing.budget} />
+            </span>
+          ) : null}
         </div>
       ) : null}
 
