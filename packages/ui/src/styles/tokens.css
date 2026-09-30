@@ -197,8 +197,8 @@
   /** Feed cards and the swap tiles. */
   --snt-radius-xl: 18px;
   --snt-radius-pill: 999px;
-  /** The sweep on the header's bottom-right corner. */
-  --snt-header-curve: 28px;
+  /** The sweep on the header's bottom-right corner. 22px on a phone. */
+  --snt-header-curve: 22px;
 
   /* --- sizes --------------------------------------------------------- */
 
