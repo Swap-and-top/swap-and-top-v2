@@ -143,9 +143,11 @@ See [card-system.md](./card-system.md) for what each card means. Visually they s
 - **Wanted** — green WANTED label, bold green title, grey budget line, and the requester's trust line (bold first name, blue tick deal count) on the left; the green "I have this" pill in the bottom-right, level with the last line of text — the requester's name, or the area line on a trade-in card. Save and share sit centred above the pill. The response count sits top right with the age — "4 responses · 1h ago" A trade-in strip, when there is one, runs full width underneath
 - **Dealer sale** — photo; the item name in blue with its specs in grey beneath on the left, price over condition on the right — after a price drop, the old price struck through in small grey beside it; a light rule, then the shop row: black initials square, bold name, blue tick "Verified Seller", and at the far right "4 in Stock" above the save and share icons. On a phone the name and badge stack
 - **Private sale** — photo; name and specs on the left, price and condition on the right; then one trust line: bold first name, blue tick deal count, area and age
-- **Swap** — two solid rounded tiles, blue "Has" with the cash, green "Looking for", then the poster's trust line
+- **Swap** — two solid rounded tiles, blue "Has" with the cash, green "Looking for", then the poster's trust line. The "Looking for" photo slot is the tile's own green with the category's icon: what someone wants is described, never pictured
 
-Sale and swap cards carry **save and share** icons — the v1 app's star and share glyphs — at the far right of their bottom row; Wanted cards carry them above the button. Saving fills the star in blue; sharing opens the phone's share sheet (so WhatsApp), or copies the link where there is none. The rest of the card is one link to the listing.
+Sale and swap cards carry **save and share** icons — the v1 app's star and share glyphs — at the far right of their bottom row; Wanted cards carry them in their bottom row beside the requester. Saving fills the star in blue; sharing opens the phone's share sheet (so WhatsApp), or copies the link where there is none. The rest of the card is one link to the listing.
+
+**Photos** swipe sideways, one at a time, on sale cards, on the "Has" tile of a swap, and at the top of a listing. Dots over the bottom edge show which photo is up (the current one stretches into a short bar) and jump to a photo when tapped; with a mouse, arrows appear on hover. A tap on a photo opens the listing; a swipe does not.
 
 Every tappable card darkens slightly under the pointer and gives a little when pressed. Keyboard focus shows a blue ring — white on the gradient.
 

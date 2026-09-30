@@ -39,45 +39,6 @@
   border: 1px dashed var(--snt-line);
 }
 
-/* --- carousel --- */
-
-.carousel {
-  --carousel-h: 220px;
-  position: relative;
-  flex-shrink: 0;
-  margin: var(--snt-space-8) var(--snt-column-inset) 0;
-  border-radius: var(--snt-radius-xl);
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .carousel {
-    --carousel-h: 340px;
-    margin-top: 23px;
-  }
-}
-
-.dots {
-  position: absolute;
-  bottom: var(--snt-space-6);
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: var(--snt-space-3);
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-surface);
-}
-
-.dotActive {
-  background: var(--snt-accent);
-}
-
 /* --- avatar --- */
 
 .avatar {

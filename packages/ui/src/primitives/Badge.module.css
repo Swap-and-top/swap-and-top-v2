@@ -79,6 +79,8 @@
 /** Top-left of a card image. */
 .onImage {
   position: absolute;
+  /* Above a photo gallery, which lifts itself to 1. */
+  z-index: 2;
   top: var(--snt-space-4);
   left: var(--snt-space-4);
 }

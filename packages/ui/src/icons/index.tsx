@@ -184,6 +184,75 @@ export const ShareIcon = ({ size = 20, title, ...rest }: IconProps) => (
   </FilledSvg>
 );
 
+/* ---------------------------------------------------------- categories --- */
+
+/** Laptops. An open lid over a base. */
+export const LaptopIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <rect x="4.5" y="5" width="15" height="10" rx="1.5" />
+    <path d="M2.5 18.5h19" />
+  </Svg>
+);
+
+/** Phones. A handset seen from the front — not the call glyph. */
+export const MobileIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <rect x="7" y="3" width="10" height="18" rx="2" />
+    <path d="M11 17.5h2" />
+  </Svg>
+);
+
+/** Desktops. A monitor on a stand. */
+export const DesktopIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <rect x="3.5" y="4" width="17" height="11.5" rx="1.5" />
+    <path d="M9 20h6M12 15.5V20" />
+  </Svg>
+);
+
+/** Consoles. A controller. */
+export const ConsoleIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M7 7.5h10a4.5 4.5 0 0 1 4.3 5.8l-1 3.4a2.3 2.3 0 0 1-3.9.9L14.5 15.5h-5l-1.9 2.1a2.3 2.3 0 0 1-3.9-.9l-1-3.4A4.5 4.5 0 0 1 7 7.5z" />
+    <path d="M8 10.5v3M6.5 12h3M15.5 11h.01M17.5 13h.01" />
+  </Svg>
+);
+
+/** Parts. A chip with pins. */
+export const PartIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />
+    <path d="M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3M3.5 9.5h3M3.5 14.5h3M17.5 9.5h3M17.5 14.5h3" />
+  </Svg>
+);
+
+/** Accessories. Headphones. */
+export const AccessoryIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M4.5 16v-3.5a7.5 7.5 0 0 1 15 0V16" />
+    <rect x="3.5" y="14" width="4" height="6" rx="1.5" />
+    <rect x="16.5" y="14" width="4" height="6" rx="1.5" />
+  </Svg>
+);
+
+const CATEGORY_ICONS = {
+  laptops: LaptopIcon,
+  phones: MobileIcon,
+  desktops: DesktopIcon,
+  consoles: ConsoleIcon,
+  parts: PartIcon,
+  accessories: AccessoryIcon,
+} as const;
+
+/** The icon for a listing category. */
+export const CategoryIcon = ({
+  category,
+  ...props
+}: IconProps & { category: keyof typeof CATEGORY_ICONS }) => {
+  const Icon = CATEGORY_ICONS[category];
+  return <Icon {...props} />;
+};
+
 /* ---------------------------------------------------------------- misc --- */
 
 export const BellIcon = (props: IconProps) => (

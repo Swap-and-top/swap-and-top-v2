@@ -24,7 +24,6 @@ import {
   Caption,
   HeaderIconButton,
   ImageCarousel,
-  firstPhoto,
   ItemName,
   PosterRow,
   Price,
@@ -73,11 +72,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
         }
       />
 
-      <ImageCarousel
-        count={listing.item.images.length || 1}
-        src={firstPhoto(listing.item.images)}
-        alt={listing.item.name}
-      />
+      <ImageCarousel images={listing.item.images} alt={listing.item.name} />
 
       <ScreenBody>
         <div className={styles.priceRow}>

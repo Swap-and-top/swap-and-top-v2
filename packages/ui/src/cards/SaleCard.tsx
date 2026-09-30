@@ -10,7 +10,8 @@
 import Link from 'next/link';
 import type { Condition, SaleListing, Shop, User } from '@snt/core';
 import { Badge } from '../primitives/Badge';
-import { ImagePlaceholder, ShopMark, firstPhoto } from '../primitives/Placeholder';
+import { PhotoGallery } from '../primitives/PhotoGallery';
+import { ShopMark } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
 import { ItemName, Meta, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
@@ -46,10 +47,11 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
     <div className={styles.card}>
       <Panel xl clip>
         <div className={styles.imageWrap}>
-          <ImagePlaceholder
-            src={firstPhoto(listing.item.images)}
-            height={imageHeight ?? 'auto'}
-            flush
+          <PhotoGallery
+            images={listing.item.images}
+            alt={listing.item.name}
+            href={href}
+            height={imageHeight}
             className={imageHeight ? undefined : styles.photo}
           />
           {/* Paid placement is always labelled, never hidden. */}

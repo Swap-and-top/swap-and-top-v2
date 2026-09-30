@@ -1,0 +1,144 @@
+/**
+ * Photo gallery: a scroll-snap strip with dots over the bottom edge and, on a
+ * pointer device, arrows on hover.
+ *
+ * `position: relative; z-index: 1` lifts it above a card's stretched link, so
+ * a swipe moves the photos and the dots take their own taps.
+ */
+
+.gallery {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--snt-bg-placeholder);
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+/* --- carousel: the gallery at the top of a listing detail --- */
+
+.carousel {
+  --carousel-h: 220px;
+  flex-shrink: 0;
+  margin: var(--snt-space-8) var(--snt-column-inset) 0;
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .carousel {
+    --carousel-h: 340px;
+    margin-top: 23px;
+  }
+}
+
+/* --- dots --- */
+
+.dots {
+  position: absolute;
+  bottom: var(--snt-space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--snt-space-2);
+  padding: var(--snt-space-2) var(--snt-space-3);
+  border-radius: var(--snt-radius-pill);
+  /* A soft backing so white dots read on a white photo. */
+  background: rgb(0 0 0 / 0.28);
+}
+
+.dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: rgb(255 255 255 / 0.55);
+  cursor: pointer;
+  transition:
+    width var(--snt-transition),
+    background var(--snt-transition);
+}
+
+/* A bigger target than the 6px dot, without spreading the dots apart. */
+.dot::before {
+  content: '';
+  position: absolute;
+  inset: -8px -2px;
+}
+
+/** The current photo: solid, and stretched into a short bar. */
+.dotActive {
+  width: 14px;
+  background: #fff;
+}
+
+/* --- arrows --- */
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: rgb(255 255 255 / 0.9);
+  color: var(--snt-ink);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.2);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--snt-transition);
+}
+
+.arrow[hidden] {
+  display: none;
+}
+
+.prev {
+  left: var(--snt-space-4);
+}
+
+.next {
+  right: var(--snt-space-4);
+}
+
+/* Arrows only where there is a mouse to hover with; phones swipe. */
+@media (hover: hover) {
+  .gallery:hover .arrow,
+  .arrow:focus-visible {
+    opacity: 1;
+  }
+}

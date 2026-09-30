@@ -9,7 +9,8 @@
 
 import Link from 'next/link';
 import type { Item, SwapListing, User } from '@snt/core';
-import { ImagePlaceholder, firstPhoto } from '../primitives/Placeholder';
+import { CategoryIcon } from '../icons';
+import { PhotoGallery } from '../primitives/PhotoGallery';
 import { specParts } from '../primitives/SpecGrid';
 import { Panel } from '../primitives/Surface';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
@@ -31,16 +32,17 @@ export function SwapCard({
   return (
     <div className={styles.card}>
       <Panel xl>
-        {/* The link covers the whole card (see .link in the CSS); save and
-            share sit above it in the footer. */}
-        <Link href={href} className={styles.link}>
-          <SwapTiles
-            has={listing.has}
-            wants={listing.wants}
-            cashAmount={listing.cashAmount}
-            tileHeight={tileHeight}
-          />
-        </Link>
+        {/* The link covers the whole card (see .link in the CSS); the photos,
+            save and share sit above it. It is empty, so its name is the
+            listing's title. */}
+        <Link href={href} className={styles.link} aria-label={listing.title} />
+        <SwapTiles
+          has={listing.has}
+          wants={listing.wants}
+          cashAmount={listing.cashAmount}
+          tileHeight={tileHeight}
+          href={href}
+        />
 
         <div className={styles.footer}>
           {seller ? (
@@ -78,6 +80,7 @@ export function SwapTiles({
   cashAmount,
   tileHeight,
   flush = false,
+  href,
 }: {
   has: SwapSide;
   wants: SwapSide;
@@ -85,6 +88,8 @@ export function SwapTiles({
   cashAmount?: number;
   tileHeight?: number;
   flush?: boolean;
+  /** Makes the photos links to the listing, for a card in the feed. */
+  href?: string;
 }) {
   const cash = cashAmount ? `+$${cashAmount}` : undefined;
 
@@ -100,6 +105,7 @@ export function SwapTiles({
         item={has}
         cash={cash}
         imageHeight={tileHeight}
+        href={href}
       />
       <SwapTile
         tone="wants"
@@ -117,24 +123,36 @@ function SwapTile({
   item,
   cash,
   imageHeight,
+  href,
 }: {
   tone: 'has' | 'wants';
   label: string;
   item: SwapSide;
   cash?: string;
   imageHeight?: number;
+  href?: string;
 }) {
   const specs = specParts(item);
 
   return (
     <div className={[styles.tile, styles[tone]].join(' ')}>
-      {/* Only the "has" side has a photo: what someone wants is described,
-          never pictured. */}
-      <ImagePlaceholder
-        src={firstPhoto(item.images)}
-        height={imageHeight ?? 'var(--swap-image-h)'}
-        flush
-      />
+      {/* What they have is photographed. What they want is described, never
+          pictured, so its slot is solid green with the category's icon. */}
+      {tone === 'has' ? (
+        <PhotoGallery
+          images={item.images ?? []}
+          alt={item.name}
+          href={href}
+          height={imageHeight ?? 'var(--swap-image-h)'}
+        />
+      ) : (
+        <div
+          className={styles.wantedSlot}
+          style={{ height: imageHeight ?? 'var(--swap-image-h)' }}
+        >
+          <CategoryIcon category={item.category} size={40} weight={1.4} />
+        </div>
+      )}
       <div className={styles.caption}>
         <div className={styles.captionText}>
           <div className={styles.label}>{label}</div>

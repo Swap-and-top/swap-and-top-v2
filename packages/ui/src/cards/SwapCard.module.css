@@ -88,6 +88,17 @@
 }
 
 /**
+ * The "looking for" photo slot: the tile's own green, with the category's
+ * icon, so the tile reads as one block rather than a missing photo.
+ */
+.wantedSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(255 255 255 / 0.55);
+}
+
+/**
  * The coloured strip under the photo. On a phone the tile is narrow, so the
  * cash sits under the text; from tablet up it sits beside the name, as drawn.
  */

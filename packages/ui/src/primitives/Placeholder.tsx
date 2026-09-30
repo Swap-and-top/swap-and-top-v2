@@ -1,5 +1,5 @@
 /**
- * ImagePlaceholder, ImageCarousel, Avatar and ShopMark.
+ * ImagePlaceholder, Avatar and ShopMark. The photo carousel is in PhotoGallery.
  *
  * A photo slot shows the listing's photo, cropped to fill, when there is one,
  * and a plain grey box otherwise. The image glyph only shows on an empty
@@ -90,46 +90,6 @@ export function ImagePlaceholder({
       aria-hidden
     >
       <Glyph size={small ? 19 : 26} />
-    </div>
-  );
-}
-
-/**
- * Placeholder carousel with position dots, for the top of a listing detail.
- * Sits in the content column with the feed card's rounded corners.
- */
-export function ImageCarousel({
-  count,
-  src,
-  alt,
-  activeIndex = 0,
-  height = 'var(--carousel-h)',
-}: {
-  count: number;
-  /** The photo on show. */
-  src?: string;
-  alt?: string;
-  activeIndex?: number;
-  height?: number | string;
-}) {
-  return (
-    <div className={styles.carousel}>
-      <ImagePlaceholder src={src} alt={alt} height={height} flush />
-      {count > 1 ? (
-        <div className={styles.dots} aria-hidden>
-          {Array.from({ length: count }).map((_, index) => (
-            <span
-              key={index}
-              className={[
-                styles.dot,
-                index === activeIndex ? styles.dotActive : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            />
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }
