@@ -31,7 +31,7 @@ export const colors = {
   /** An individual's sale or swap card. */
   bgCardPerson: '#EBF2FF',
   /** An individual's Wanted card. */
-  bgCardWanted: '#E5FFF6',
+  bgCardWanted: '#E4F0F1',
 
   ink: '#263A40',
   inkMuted: '#68777A',

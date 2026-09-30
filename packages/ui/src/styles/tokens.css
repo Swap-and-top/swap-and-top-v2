@@ -44,9 +44,9 @@
    */
   --snt-bg-card-person: #ebf2ff;
   --snt-bg-card-person-hover: #e0eafc;
-  /** An individual's Wanted card — light green. */
-  --snt-bg-card-wanted: #e5fff6;
-  --snt-bg-card-wanted-hover: #d6f7ea;
+  /** An individual's Wanted card — the v1 app's light green. */
+  --snt-bg-card-wanted: #e4f0f1;
+  --snt-bg-card-wanted-hover: #d8e8ea;
   /** Muted fill with more weight than a line. */
   --snt-bg-subtle: #e8eeef;
   /** Image placeholder fill. */
