@@ -11,6 +11,9 @@
  */
 
 .card {
+  /* Always an individual: the card and its hover take the individual's blue. */
+  --snt-bg-card: var(--snt-bg-card-person);
+  --snt-bg-card-hover: var(--snt-bg-card-person-hover);
   position: relative;
   border-radius: var(--snt-radius-xl);
   color: var(--snt-ink);

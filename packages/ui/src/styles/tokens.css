@@ -36,6 +36,15 @@
   --snt-bg-card: #f2f2f2;
   /** A tappable card under the pointer. */
   --snt-bg-card-hover: #eaeaea;
+  /**
+   * An individual's sale or swap card — the v1 app's sky blue. Dealers' cards
+   * stay grey, so the tint alone says "a person, not a shop".
+   */
+  --snt-bg-card-person: #ebf2ff;
+  --snt-bg-card-person-hover: #e0eafc;
+  /** An individual's Wanted card — the v1 app's light green. */
+  --snt-bg-card-wanted: #e4f0f1;
+  --snt-bg-card-wanted-hover: #d8e8ea;
   /** Muted fill with more weight than a line. */
   --snt-bg-subtle: #e8e8e8;
   /** Image placeholder fill. */

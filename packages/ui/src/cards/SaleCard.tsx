@@ -44,7 +44,12 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
   const href = `/listing/${listing.slug}`;
 
   return (
-    <div className={styles.card}>
+    // A private seller's card is tinted blue; a dealer's stays grey.
+    <div
+      className={[styles.card, shop ? '' : styles.person]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <Panel xl clip>
         <div className={styles.imageWrap}>
           <PhotoGallery

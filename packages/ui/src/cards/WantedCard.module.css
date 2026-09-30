@@ -113,6 +113,12 @@
   flex-shrink: 0;
 }
 
+/** An individual's request: the card and its hover take the Wanted green. */
+.person {
+  --snt-bg-card: var(--snt-bg-card-wanted);
+  --snt-bg-card-hover: var(--snt-bg-card-wanted-hover);
+}
+
 /* Whole-card hover, as on the other cards. The title is the link. */
 .card:has(.title:hover) {
   background: var(--snt-bg-card-hover);

@@ -41,7 +41,13 @@ export function WantedCard({
     listing.type === 'swap' ? listing.offerCount : listing.responseCount;
 
   return (
-    <Panel xl className={styles.card}>
+    // An individual's request is tinted green; a shop's would stay grey.
+    <Panel
+      xl
+      className={[styles.card, listing.shopId ? '' : styles.person]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className={styles.head}>
         <span
           className={[styles.label, tradeIn ? styles.labelTradeIn : '']
