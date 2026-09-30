@@ -45,7 +45,8 @@
 
 .itemActive {
   color: var(--snt-accent);
-  font-weight: var(--snt-weight-semibold);
+  /* With the filled icon, a bold label marks where you are. */
+  font-weight: var(--snt-weight-bold);
 }
 
 .itemActive:hover {

@@ -11,9 +11,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   GridIcon,
-  MegaphoneIcon,
   PersonIcon,
   PlusIcon,
+  ReceiveHandIcon,
   SaveStarIcon,
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
@@ -46,16 +46,17 @@ function isActive(pathname: string, item: NavItem): boolean {
   return (item.alsoMatches ?? []).some((prefix) => pathname.startsWith(prefix));
 }
 
+/** Outlined when idle, filled when active — every item the same way. */
 function iconFor(label: string, active: boolean) {
   switch (label) {
     case 'Browse':
-      return <GridIcon size={20} weight={active ? 1.9 : 1.7} />;
+      return <GridIcon size={20} filled={active} />;
     case 'Wanted':
-      return <MegaphoneIcon size={20} weight={active ? 1.9 : 1.7} />;
+      return <ReceiveHandIcon size={20} filled={active} />;
     case 'Wishlist':
       return <SaveStarIcon size={20} filled={active} />;
     default:
-      return <PersonIcon size={20} weight={active ? 1.9 : 1.7} />;
+      return <PersonIcon size={20} filled={active} />;
   }
 }
 

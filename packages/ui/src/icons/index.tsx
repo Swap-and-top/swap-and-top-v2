@@ -85,8 +85,12 @@ function FilledSvg({
 /* --------------------------------------------------------- navigation --- */
 
 /** Browse. Four squares. */
-export const GridIcon = (props: IconProps) => (
-  <Svg {...props}>
+export const GridIcon = ({
+  filled = false,
+  ...props
+}: IconProps & { filled?: boolean }) => (
+  // Filled for the active tab: the same squares, solid.
+  <Svg fill={filled ? 'currentColor' : 'none'} {...props}>
     <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
     <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
     <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
@@ -94,18 +98,62 @@ export const GridIcon = (props: IconProps) => (
   </Svg>
 );
 
-/** Wanted. A megaphone — demand being announced. */
-export const MegaphoneIcon = (props: IconProps) => (
+/**
+ * Wanted. An open hand held out, palm up, ready to receive — someone asking
+ * for a thing. The outline is after Lucide's hand-coins, without the coins
+ * (ISC licence); the filled form closes the hand into one solid shape.
+ */
+export const ReceiveHandIcon = ({
+  filled = false,
+  ...props
+}: IconProps & { filled?: boolean }) => (
   <Svg {...props}>
-    <path d="M3.5 10.5l13-5.5v13l-13-5.5z" />
-    <path d="M7 12.5V18a2 2 0 0 0 4 0v-4" />
+    {/* The artwork sits low in its box; lift it to the centre and scale it up
+        to match the other nav icons, keeping the stroke its usual width. */}
+    <g transform="translate(12 12) scale(1.15) translate(-12.2 -16.2)">
+      {filled ? (
+        <>
+          <path
+            fill="currentColor"
+            vectorEffect="non-scaling-stroke"
+            d="M3 17l5.6-5.4c.3-.4.8-.6 1.4-.6h3a2 2 0 1 1 0 4l1.45-.61 4.2-3.9a2 2 0 0 1 2.75 2.91l-4.6 4.4c-.7.8-1.7 1.2-2.8 1.2h-4c-.6 0-1.1.2-1.4.6L7 21z"
+          />
+          {/* Knocked out of the fill, so the thumb still reads as a thumb. */}
+          <path
+            d="M10.5 15h2.5"
+            stroke="var(--snt-bg-surface)"
+            vectorEffect="non-scaling-stroke"
+          />
+        </>
+      ) : (
+        <>
+          <path
+            vectorEffect="non-scaling-stroke"
+            d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"
+          />
+          <path
+            vectorEffect="non-scaling-stroke"
+            d="M7 21l1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"
+          />
+        </>
+      )}
+      {/* The cuff at the wrist. */}
+      <path vectorEffect="non-scaling-stroke" d="M2 16l6 6" />
+    </g>
   </Svg>
 );
 
-export const PersonIcon = (props: IconProps) => (
-  <Svg {...props}>
+/**
+ * A person: head and shoulders. The shoulders close along the bottom, so the
+ * outline is one joined shape and can be filled for the active tab.
+ */
+export const PersonIcon = ({
+  filled = false,
+  ...props
+}: IconProps & { filled?: boolean }) => (
+  <Svg fill={filled ? 'currentColor' : 'none'} {...props}>
     <circle cx="12" cy="8" r="3.5" />
-    <path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" />
+    <path d="M5 19.5c0-3.4 3.1-5.5 7-5.5s7 2.1 7 5.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5z" />
   </Svg>
 );
 
