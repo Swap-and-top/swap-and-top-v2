@@ -37,6 +37,7 @@ import {
   type TabItem,
 } from '@snt/ui';
 import { SearchIcon } from '@snt/ui/icons';
+import { useFeedFiltersInUrl } from '../components/useFeedFiltersInUrl';
 import styles from './page.module.css';
 
 const CATEGORIES: (Category | 'all')[] = [
@@ -58,6 +59,8 @@ const TYPES: TabItem<TypeFilter>[] = [
 
 export default function BrowsePage() {
   const { category, type, setCategory, setType, reset } = useFeedStore();
+  // The type and category live in the address too, so a refresh keeps them.
+  useFeedFiltersInUrl();
   const stickyTop = useStickyTabsOffset();
 
   const filtered = filterFeed(liveListings, { category, type });

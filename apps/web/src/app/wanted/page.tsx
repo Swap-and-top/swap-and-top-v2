@@ -37,6 +37,7 @@ import {
   WantedCard,
 } from '@snt/ui';
 import { PlusIcon } from '@snt/ui/icons';
+import { useFeedFiltersInUrl } from '../../components/useFeedFiltersInUrl';
 import styles from './page.module.css';
 
 const CATEGORIES: (Category | 'all')[] = [
@@ -50,6 +51,8 @@ const CATEGORIES: (Category | 'all')[] = [
 
 export default function WantedPage() {
   const { category, setCategory } = useFeedStore();
+  // The category lives in the address too, so a refresh keeps it.
+  useFeedFiltersInUrl({ withType: false });
 
   const demand = liveListings
     .filter(isDemand)
