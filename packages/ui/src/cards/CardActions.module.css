@@ -46,8 +46,11 @@
   color: var(--snt-ink);
 }
 
-/** Saved: filled, in the owned-item blue. */
+/**
+ * Saved: the star fills, in the same grey. Not blue — blue means for sale,
+ * and a saved star should not read as a kind of listing.
+ */
 .saved,
 .saved:hover {
-  color: var(--snt-accent);
+  color: var(--snt-ink-muted);
 }

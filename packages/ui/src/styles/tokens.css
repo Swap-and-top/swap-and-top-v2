@@ -82,6 +82,13 @@
   /* "has" tile.                                                          */
 
   --snt-accent: #255dab;
+  /**
+   * Trust: verified sellers and confirmed deals. Amber, so it is never read as
+   * the blue of things for sale or the green of things wanted. The text shade
+   * holds 4.5:1 on every card colour; the brighter disc carries a white tick.
+   */
+  --snt-trust: #9a5b00;
+  --snt-trust-fill: #c77700;
   --snt-accent-strong: #1d4b8a;
   --snt-accent-tint: #e9f0f9;
 

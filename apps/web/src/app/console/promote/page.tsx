@@ -64,7 +64,7 @@ export default function ConsolePromotePage() {
             {
               value: mockConsoleStats.confirmedDealsThirtyDays,
               label: 'deals, 30d',
-              tone: 'success',
+              tone: 'trust',
             },
             {
               value: mockConsoleStats.sponsoredLift,

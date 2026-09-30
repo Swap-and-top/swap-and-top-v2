@@ -102,7 +102,7 @@ export function Shopfront({
             {
               value: shop.confirmedDeals,
               label: 'deals confirmed',
-              tone: 'success',
+              tone: 'trust',
             },
             { value: replyShort(shop.replyHours), label: 'replies in' },
           ]}

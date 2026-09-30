@@ -5,8 +5,9 @@
  *  - verified dealer, asserting a checked business
  *  - confirmed deals, earned by behaviour
  *
- * Both are drawn the same way in the design — a white tick in a brand-blue disc,
- * then the words in blue — and are told apart by the words, never by colour.
+ * Both are drawn the same way — a white tick in an amber disc, then the words
+ * in amber — and are told apart by the words, never by colour. Amber because
+ * blue means for sale and green means wanted; trust must not look like either.
  *
  * There is no status or occupation marker anywhere in this file, and there
  * should never be one. See docs/product/trust-and-safety.md.
@@ -18,7 +19,7 @@
   gap: var(--snt-space-2);
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-normal);
-  color: var(--snt-accent);
+  color: var(--snt-trust);
   white-space: nowrap;
 }
 
@@ -34,7 +35,7 @@
   width: 18px;
   height: 18px;
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-accent);
+  background: var(--snt-trust-fill);
   color: var(--snt-ink-on-dark);
 }
 
@@ -45,10 +46,10 @@
 
 /** Verified dealer. */
 .verified {
-  color: var(--snt-accent);
+  color: var(--snt-trust);
 }
 
 /** Confirmed deals. */
 .deals {
-  color: var(--snt-accent);
+  color: var(--snt-trust);
 }

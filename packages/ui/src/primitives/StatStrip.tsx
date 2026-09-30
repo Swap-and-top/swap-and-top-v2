@@ -10,8 +10,8 @@ import styles from './StatStrip.module.css';
 export interface Stat {
   value: string | number;
   label: string;
-  /** Renders the number in green. Use it for confirmed deals. */
-  tone?: 'default' | 'success';
+  /** Renders the number in the trust amber. Use it for confirmed deals. */
+  tone?: 'default' | 'trust';
 }
 
 export function StatStrip({
@@ -28,7 +28,7 @@ export function StatStrip({
           <div
             className={[
               styles.value,
-              stat.tone === 'success' ? styles.valueSuccess : '',
+              stat.tone === 'trust' ? styles.valueTrust : '',
             ]
               .filter(Boolean)
               .join(' ')}

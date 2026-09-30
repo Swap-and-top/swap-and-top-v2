@@ -33,8 +33,9 @@
 }
 
 /** Confirmed deals, so the number reads as the trust signal it is. */
-.valueSuccess {
-  color: var(--snt-success);
+/** Confirmed deals: the same amber as the trust badges. */
+.valueTrust {
+  color: var(--snt-trust);
 }
 
 .label {

@@ -78,7 +78,7 @@ export default function MePage() {
                 {
                   value: confirmedDeals,
                   label: 'deals confirmed',
-                  tone: 'success',
+                  tone: 'trust',
                 },
               ]}
             />
