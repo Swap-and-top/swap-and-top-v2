@@ -136,6 +136,7 @@ function SwapTile({
         <PhotoGallery
           images={item.images ?? []}
           alt={item.name}
+          tone="person"
           height={imageHeight ?? 'var(--swap-image-h)'}
         />
       ) : (

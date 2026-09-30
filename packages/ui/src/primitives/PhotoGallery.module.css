@@ -155,8 +155,10 @@
 
 /*
  * --- viewer: full screen, photos whole ---
- * The ground is the v1 app's: a light brand-blue tint over the blurred page.
- * The controls sit on dark translucent circles, as in v1, so they read on it.
+ * The ground is the v1 app's: the page blurred behind a light tint that
+ * matches the card — blue for an individual, green for a Wanted post, none
+ * for a shop. The controls sit on dark translucent circles, as in v1, so they
+ * read on any of them.
  */
 
 .viewer {
@@ -167,7 +169,7 @@
   margin: 0;
   padding: 0;
   border: 0;
-  background: rgb(185 220 255 / 0.3);
+  background: transparent;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   color: #fff;
@@ -177,6 +179,18 @@
 .viewer::backdrop {
   background: transparent;
 }
+
+/** An individual's sale or swap: v1's blue tint. */
+.person {
+  background: rgb(185 220 255 / 0.3);
+}
+
+/** A Wanted post: the same tint in green. */
+.wanted {
+  background: rgb(185 235 215 / 0.3);
+}
+
+/* A shop's photos: blur only, no tint — the viewer's default. */
 
 .viewerTrack {
   display: flex;

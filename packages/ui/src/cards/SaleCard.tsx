@@ -55,6 +55,7 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
           <PhotoGallery
             images={listing.item.images}
             alt={listing.item.name}
+            tone={shop ? 'shop' : 'person'}
             height={imageHeight}
             className={imageHeight ? undefined : styles.photo}
           />

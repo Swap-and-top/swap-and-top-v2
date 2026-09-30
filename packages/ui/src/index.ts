@@ -42,6 +42,7 @@ export type { FieldProps, SegmentedOption } from './primitives/Field';
 export { ConsoleEntryRow, ListGroup, ListRow } from './primitives/ListRow';
 
 export { ImageCarousel, PhotoGallery } from './primitives/PhotoGallery';
+export type { PhotoTone } from './primitives/PhotoGallery';
 
 export {
   Avatar,

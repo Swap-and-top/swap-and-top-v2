@@ -72,7 +72,11 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
         }
       />
 
-      <ImageCarousel images={listing.item.images} alt={listing.item.name} />
+      <ImageCarousel
+        images={listing.item.images}
+        alt={listing.item.name}
+        tone={shop ? 'shop' : 'person'}
+      />
 
       <ScreenBody>
         <div className={styles.priceRow}>

@@ -19,15 +19,24 @@ import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '../icons';
 import { ImagePlaceholder } from './Placeholder';
 import styles from './PhotoGallery.module.css';
 
+/**
+ * Who posted the photos, which sets the viewer's tint to match the card: an
+ * individual's sale or swap is blue, a Wanted post green, a shop's untinted.
+ */
+export type PhotoTone = 'person' | 'wanted' | 'shop';
+
 export function PhotoGallery({
   images,
   alt,
+  tone = 'shop',
   height,
   className,
 }: {
   images: readonly string[];
   /** Names the item; each photo is announced as "{alt}, photo 2 of 4". */
   alt: string;
+  /** Tints the full-screen viewer to match the card. */
+  tone?: PhotoTone;
   /** CSS height. Leave unset to size the gallery with `className`. */
   height?: number | string;
   className?: string;
@@ -136,6 +145,7 @@ export function PhotoGallery({
         <PhotoViewer
           images={images}
           alt={alt}
+          tone={tone}
           startIndex={viewing}
           onClose={closeViewer}
         />
@@ -157,11 +167,13 @@ export function PhotoGallery({
 function PhotoViewer({
   images,
   alt,
+  tone,
   startIndex,
   onClose,
 }: {
   images: readonly string[];
   alt: string;
+  tone: PhotoTone;
   startIndex: number;
   /** Called with the photo on show, so the gallery can follow. */
   onClose: (index: number) => void;
@@ -203,7 +215,7 @@ function PhotoViewer({
   return createPortal(
     <dialog
       ref={dialog}
-      className={styles.viewer}
+      className={[styles.viewer, styles[tone]].join(' ')}
       aria-label={`${alt} photos`}
       onCancel={(event) => {
         // Escape: close through React rather than letting the dialog shut
@@ -305,13 +317,20 @@ function PhotoViewer({
 export function ImageCarousel({
   images,
   alt,
+  tone,
 }: {
   images: readonly string[];
   alt: string;
+  tone?: PhotoTone;
 }) {
   return (
     <div className={styles.carousel}>
-      <PhotoGallery images={images} alt={alt} height="var(--carousel-h)" />
+      <PhotoGallery
+        images={images}
+        alt={alt}
+        tone={tone}
+        height="var(--carousel-h)"
+      />
     </div>
   );
 }
