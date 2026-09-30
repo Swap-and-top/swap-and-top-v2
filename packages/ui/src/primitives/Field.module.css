@@ -38,7 +38,7 @@
 }
 
 .input::placeholder {
-  color: var(--snt-ink-muted);
+  color: var(--snt-ink-placeholder);
 }
 
 .input:hover {

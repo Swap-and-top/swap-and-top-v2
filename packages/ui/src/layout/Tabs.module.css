@@ -9,7 +9,8 @@
   display: flex;
   gap: var(--snt-space-9);
   margin-inline: var(--snt-column-inset);
-  background: var(--snt-bg-surface);
+  /* No fill of its own: it sits on whatever the page or band is. */
+  background: none;
   border-bottom: 1px solid var(--snt-line);
   overflow-x: auto;
   scrollbar-width: none;

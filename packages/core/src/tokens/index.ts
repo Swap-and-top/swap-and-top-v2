@@ -17,28 +17,41 @@ export const colors = {
   brandYellow: '#FFFF8B',
 
   /** Page background behind cards. */
-  bgApp: '#FFFFFF',
+  bgApp: '#F7F9F9',
   /** Headers, navigation, form fields. */
   bgSurface: '#FFFFFF',
   /** Cards and panels. */
-  bgCard: '#F2F2F2',
+  bgCard: '#EEF2F3',
   /** A tappable card under the pointer. */
-  bgCardHover: '#EAEAEA',
+  bgCardHover: '#E8EEEF',
   /** Muted fills that need more weight than a line. */
-  bgSubtle: '#E8E8E8',
+  bgSubtle: '#E8EEEF',
   /** Image placeholder fill. */
-  placeholder: '#CECECE',
+  placeholder: '#D5DFE1',
+  /** An individual's sale or swap card. */
+  bgCardPerson: '#EBF2FF',
+  /** An individual's Wanted card. */
+  bgCardWanted: '#E5FFF6',
 
-  ink: '#434846',
-  inkMuted: '#6B6B6B',
-  inkFaint: '#A8A8A8',
+  ink: '#263A40',
+  inkMuted: '#68777A',
+  inkPlaceholder: '#89979A',
+  inkIcon: '#52666B',
+  inkFaint: '#A3AFB1',
 
   /** Item names: blue for something owned, green for something wanted. */
   ownedInk: '#255DAB',
   wantedInk: '#12875C',
 
-  line: '#D9D9D9',
-  lineSubtle: '#E6E6E6',
+  line: '#D5DFE1',
+  lineSubtle: '#E0E7E8',
+  lineStrong: '#C8D4D6',
+
+  /** Verified sellers and confirmed deals: text, and the tick's disc. */
+  trust: '#9A5B00',
+  trustFill: '#C77700',
+  /** Count badges. */
+  alert: '#FF5C5C',
 
   /** Brand blue. Links, selected states, verified sellers, deal counts. */
   accent: '#255DAB',
