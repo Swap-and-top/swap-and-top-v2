@@ -30,7 +30,8 @@
   border-radius: var(--snt-radius-pill);
   border: 1px solid var(--snt-line);
   background: var(--snt-bg-surface);
-  color: var(--snt-ink);
+  /* Unselected labels are grey; the selected chip carries the dark ink. */
+  color: var(--snt-ink-muted);
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-normal);
   white-space: nowrap;
@@ -42,27 +43,18 @@
 
 .chip:hover {
   border-color: var(--snt-ink);
+  color: var(--snt-ink);
 }
 
 /**
- * Category chips, selected. Grey, not blue: blue means for sale, and a
- * selected filter should not read as a kind of listing.
+ * Category chips, selected: filled in the dark ink of the active tab's label
+ * and underline, so the two controls read as one set. Not blue — blue means
+ * for sale, and a selected filter should not read as a kind of listing.
  */
-.selectedAccent {
-  background: var(--snt-ink-muted);
-  border-color: var(--snt-ink-muted);
-  color: var(--snt-ink-on-dark);
-  font-weight: var(--snt-weight-semibold);
-}
-
-.selectedAccent:hover {
-  background: var(--snt-ink);
-  border-color: var(--snt-ink);
-}
-
-/** Selected, ink. For a second chip row that must stay visually distinct
- *  from an accent-toned one above it. */
-.selectedInk {
+.selectedAccent,
+.selectedAccent:hover,
+.selectedInk,
+.selectedInk:hover {
   background: var(--snt-ink);
   border-color: var(--snt-ink);
   color: var(--snt-ink-on-dark);

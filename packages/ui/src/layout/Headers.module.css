@@ -110,17 +110,9 @@
   padding-bottom: 0;
 }
 
-/*
- * Tabs under the header line up with the column, but their rule runs the
- * full width of the screen: it is drawn on the band, not on the tab row.
- */
+/* The band's column already sets the width; the tab row adds no inset. */
 .appBody > [role='tablist'] {
-  padding-inline: 0;
-  border-bottom: none;
-}
-
-.appBelow:has(> .appBody > [role='tablist']:last-child) {
-  border-bottom: 1px solid var(--snt-line);
+  margin-inline: 0;
 }
 
 /* --- screen header: back, title, actions ---------------------------------- */
