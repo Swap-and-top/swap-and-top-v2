@@ -13,6 +13,12 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /*
+   * No translucent blue box flashed over whatever is tapped on a phone. Every
+   * control gives its own feedback — cards darken and give a little, buttons
+   * change colour — and keyboard focus keeps its ring (see :focus-visible).
+   */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
