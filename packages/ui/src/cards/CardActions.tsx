@@ -50,7 +50,7 @@ export function CardActions({
         className={[styles.button, saved ? styles.saved : '']
           .filter(Boolean)
           .join(' ')}
-        aria-label={saved ? 'Remove from wish list' : 'Add to wish list'}
+        aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
         aria-pressed={saved}
         onClick={() => toggle(listingId)}
       >

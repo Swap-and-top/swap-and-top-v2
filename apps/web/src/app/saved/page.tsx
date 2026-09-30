@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Wish list — the listings someone has starred. The route stays `/saved`.
+ * Wishlist — the listings someone has starred. The route stays `/saved`.
  *
  * A reduced form of the same cards, with availability state and a price-drop
  * flag. A saved listing that has sold is dimmed and labelled rather than
@@ -60,8 +60,8 @@ export default function SavedPage() {
   return (
     <Screen>
       <AppHeader>
-        <ScreenTitle>Wish list</ScreenTitle>
-        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Wish list" />
+        <ScreenTitle>Wishlist</ScreenTitle>
+        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Wishlist" />
       </AppHeader>
 
       <ScreenBody>
@@ -73,7 +73,7 @@ export default function SavedPage() {
           </Stack>
         ) : (
           <EmptyState
-            title="Your wish list is empty"
+            title="Your wishlist is empty"
             body="Tap the star on any listing to keep it here. You will be told when the price drops."
             action={<ButtonLink href="/" variant="secondary">Browse listings</ButtonLink>}
           />

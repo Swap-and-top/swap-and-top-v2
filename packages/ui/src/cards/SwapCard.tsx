@@ -29,7 +29,6 @@ export function SwapCard({
   tileHeight?: number;
 }) {
   const href = `/listing/${listing.slug}`;
-  const terms = swapTerms(listing.cashDirection, listing.cashAmount);
 
   return (
     // Swaps are always between individuals, so the card is always tinted blue.
@@ -39,13 +38,6 @@ export function SwapCard({
             sit above it and open the photo viewer; save and share sit above
             it too. It is empty, so its name is the listing's title. */}
         <Link href={href} className={styles.link} aria-label={listing.title} />
-
-        {/* Who pays, before anything else: they add, you add, or neither. */}
-        <div className={styles.head}>
-          <span className={styles.kind}>Swap</span>
-          <span className={styles.spacer} />
-          <span className={styles.cashNote}>{terms.cashNote}</span>
-        </div>
 
         <SwapTiles
           has={listing.has}

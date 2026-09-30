@@ -90,13 +90,23 @@ export function PhotoGallery({
               aria-label={`View ${label}`}
               onClick={() => setViewing(i)}
             >
-              {/* A plain img until photos come from our own storage. */}
+              {/* The v1 fit: the whole photo, never cropped, over a blurred
+                  copy of itself that fills whatever space its shape leaves.
+                  Plain imgs until photos come from our own storage. */}
               <img
                 src={src}
                 alt=""
                 loading={i === 0 ? undefined : 'lazy'}
                 draggable={false}
-                className={styles.photo}
+                className={styles.backdrop}
+                aria-hidden
+              />
+              <img
+                src={src}
+                alt=""
+                loading={i === 0 ? undefined : 'lazy'}
+                draggable={false}
+                className={[styles.photo, styles.fitted].join(' ')}
               />
             </button>
           );

@@ -51,7 +51,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
         actions={
           <>
             <HeaderIconButton
-              label={saved ? 'Remove from wish list' : 'Add to wish list'}
+              label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
               onClick={() => toggle(listing.id)}
             >
               <SaveStarIcon size={20} filled={saved} />

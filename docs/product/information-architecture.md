@@ -36,7 +36,7 @@ On a phone: five items, bottom bar, thumb-reachable.
 │                 content                      │
 │                                              │
 ├────────┬────────┬────────┬────────┬──────────┤
-│ Browse │ Wanted │  POST  │Wish list│   Me    │
+│ Browse │ Wanted │  POST  │Wishlist│    Me    │
 │        │        │  (+)   │        │          │
 └────────┴────────┴────────┴────────┴──────────┘
                     ▲
@@ -49,7 +49,7 @@ On a phone: five items, bottom bar, thumb-reachable.
 | **Browse** | The mixed feed. The default landing surface. |
 | **Wanted** | Requests and swap demand. Where dealers hunt and buyers post what they want. |
 | **Post** | Centre action. Opens the three-way posting flow. |
-| **Wish list** | Saved listings, with availability state and price-drop flags. The route is `/saved`. |
+| **Wishlist** | Saved listings, with availability state and price-drop flags. The route is `/saved`. |
 | **Me** | Own listings, requests, verification, safety guidance, settings, and the switch into the dealer console. |
 
 **Why Wanted gets a top-level slot:** it is the dealer product and the platform's structural difference from Facebook. Burying it inside search would hide the thing that makes the business work.
