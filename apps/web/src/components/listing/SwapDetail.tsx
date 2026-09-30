@@ -45,7 +45,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
   const saved = ids.includes(listing.id);
   const number = revealed[listing.id];
 
-  /** Up, down or level, and who pays — worded as on the cards. */
+  /** Who pays — worded as on the cards. */
   const terms = swapTerms(listing.cashDirection, listing.cashAmount);
 
   return (
@@ -79,7 +79,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
           flush
         />
         <div className={styles.direction}>
-          {terms.label} · {terms.cashNote}
+          {terms.cashNote}
         </div>
       </div>
 

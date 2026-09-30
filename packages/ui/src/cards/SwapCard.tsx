@@ -40,10 +40,9 @@ export function SwapCard({
             it too. It is empty, so its name is the listing's title. */}
         <Link href={href} className={styles.link} aria-label={listing.title} />
 
-        {/* Which way the value runs, before anything else: up, down or
-            level, and who pays. */}
+        {/* Who pays, before anything else: they add, you add, or neither. */}
         <div className={styles.head}>
-          <span className={styles.kind}>Swap · {terms.label}</span>
+          <span className={styles.kind}>Swap</span>
           <span className={styles.spacer} />
           <span className={styles.cashNote}>{terms.cashNote}</span>
         </div>

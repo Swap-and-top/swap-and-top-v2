@@ -447,11 +447,11 @@ const hpProBook: SaleListing = {
 
 const gtxSwap: SwapListing = {
   id: 'l-gtx-1650-swap',
-  slug: 'gtx-1650-for-rtx-3060-belvedere-c845',
+  slug: 'gtx-1650-for-rx-580-belvedere-c845',
   type: 'swap',
   ownerId: 'u-blessing',
   category: 'parts',
-  title: 'GTX 1650 for an RTX 3060',
+  title: 'GTX 1650 for an RX 580',
   location: 'Belvedere',
   status: 'live',
   createdAt: '2026-09-24',
@@ -474,15 +474,15 @@ const gtxSwap: SwapListing = {
     wanted: false,
   },
   wants: {
-    id: 'i-wanted-rtx-3060-swap',
+    id: 'i-wanted-rx-580-swap',
     category: 'parts',
-    name: 'RTX 3060 12GB',
-    specs: { partType: 'Graphics card', capacity: '12GB' },
+    name: 'RX 580 8GB',
+    specs: { partType: 'Graphics card', capacity: '8GB' },
     images: [],
     wanted: true,
   },
-  cashDirection: 'i-add',
-  cashAmount: 150,
+  /** Like for like — cards of about the same value, so no cash either way. */
+  cashDirection: 'straight',
   offerCount: 1,
 };
 

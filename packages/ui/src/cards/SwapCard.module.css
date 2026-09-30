@@ -58,7 +58,7 @@
   transform: scale(0.99);
 }
 
-/** The direction row: "SWAP · TRADING UP" left, who pays right. */
+/** The top row: "SWAP" left, who pays right. */
 .head {
   display: flex;
   align-items: center;

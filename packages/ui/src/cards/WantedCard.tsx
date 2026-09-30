@@ -97,8 +97,7 @@ export function WantedCard({
             ) : (
               <>
                 <span>{listing.location}</span>
-                <span>{terms?.label}</span>
-                {terms?.cashSide ? <span>{terms.cashNote}</span> : null}
+                <span>{terms?.cashNote}</span>
               </>
             )}
           </div>
