@@ -153,7 +153,11 @@
   }
 }
 
-/* --- viewer: full screen, photos whole on a dark ground --- */
+/*
+ * --- viewer: full screen, photos whole ---
+ * The ground is the v1 app's: a light brand-blue tint over the blurred page.
+ * The controls sit on dark translucent circles, as in v1, so they read on it.
+ */
 
 .viewer {
   width: 100vw;
@@ -163,7 +167,9 @@
   margin: 0;
   padding: 0;
   border: 0;
-  background: rgb(0 0 0 / 0.97);
+  background: rgb(185 220 255 / 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #fff;
   overflow: hidden;
 }
@@ -207,8 +213,11 @@
 
 .counter {
   position: absolute;
-  top: var(--snt-space-8);
-  left: var(--snt-space-8);
+  top: var(--snt-space-6);
+  left: var(--snt-space-5);
+  padding: var(--snt-space-2) var(--snt-space-5);
+  border-radius: var(--snt-radius-pill);
+  background: rgb(0 0 0 / 0.54);
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-medium);
   font-variant-numeric: tabular-nums;
@@ -226,13 +235,14 @@
   padding: 0;
   border: 0;
   border-radius: var(--snt-radius-pill);
-  background: rgb(255 255 255 / 0.14);
+  background: rgb(0 0 0 / 0.54);
   color: #fff;
   cursor: pointer;
+  transition: background var(--snt-transition);
 }
 
 .close:hover {
-  background: rgb(255 255 255 / 0.24);
+  background: rgb(0 0 0 / 0.7);
 }
 
 .viewerArrow {
@@ -247,13 +257,14 @@
   padding: 0;
   border: 0;
   border-radius: var(--snt-radius-pill);
-  background: rgb(255 255 255 / 0.14);
+  background: rgb(0 0 0 / 0.54);
   color: #fff;
   cursor: pointer;
+  transition: background var(--snt-transition);
 }
 
 .viewerArrow:hover {
-  background: rgb(255 255 255 / 0.24);
+  background: rgb(0 0 0 / 0.7);
 }
 
 /* Arrows with a mouse; on a phone the photos swipe. */
@@ -269,4 +280,5 @@
 
 .viewerDots {
   bottom: var(--snt-space-8);
+  background: rgb(0 0 0 / 0.54);
 }

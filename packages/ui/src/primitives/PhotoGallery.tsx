@@ -145,8 +145,9 @@ export function PhotoGallery({
 }
 
 /**
- * Full-screen photo viewer: the photos whole (not cropped) on a dark screen,
- * swiped like the gallery, with arrows, dots, a counter and a close button.
+ * Full-screen photo viewer: the photos whole (not cropped) over the blurred,
+ * blue-tinted page, swiped like the gallery, with arrows, dots, a counter and
+ * a close button.
  * Escape, the close button or a tap beside the photo closes it; the arrow keys
  * move between photos.
  *

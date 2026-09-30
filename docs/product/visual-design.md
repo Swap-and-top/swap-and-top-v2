@@ -147,7 +147,7 @@ See [card-system.md](./card-system.md) for what each card means. Visually they s
 
 Sale and swap cards carry **save and share** icons — the v1 app's star and share glyphs — at the far right of their bottom row; Wanted cards carry them in their bottom row beside the requester. Saving fills the star in blue; sharing opens the phone's share sheet (so WhatsApp), or copies the link where there is none. The rest of the card is one link to the listing.
 
-**Photos** swipe sideways, one at a time, on sale cards, on the "Has" tile of a swap, and at the top of a listing. Dots over the bottom edge show which photo is up (the current one stretches into a short bar) and jump to a photo when tapped; with a mouse, arrows appear on hover. A tap on a photo opens it full screen — whole, not cropped, on a dark ground, with the same swipe, dots and arrows, a "2 / 4" counter and a close button (Escape and the arrow keys work too); a tap anywhere else on the card opens the listing.
+**Photos** swipe sideways, one at a time, on sale cards, on the "Has" tile of a swap, and at the top of a listing. Dots over the bottom edge show which photo is up (the current one stretches into a short bar) and jump to a photo when tapped; with a mouse, arrows appear on hover. A tap on a photo opens it full screen — whole, not cropped, over the page blurred under a light brand-blue tint (the v1 app's), with the same swipe, dots and arrows, a "2 / 4" counter and a close button (Escape and the arrow keys work too); a tap anywhere else on the card opens the listing.
 
 Every tappable card darkens slightly under the pointer and gives a little when pressed. Keyboard focus shows a blue ring — white on the gradient.
 
