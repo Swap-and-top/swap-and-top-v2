@@ -58,16 +58,21 @@
 
   /* --- text ---------------------------------------------------------- */
 
-  /** Primary text: a blue-charcoal rather than a neutral black-grey. */
-  --snt-ink: #263640;
+  /*
+   * Text is near-neutral: the steel hue is kept but mostly drained, so the
+   * dark ink — also the selected chip and the active tab's line — reads as
+   * grey and marks a selection without becoming the loudest colour on screen.
+   */
+  /** Primary text. */
+  --snt-ink: #2e3438;
   /** Captions and secondary text: muted slate. */
-  --snt-ink-muted: #5d676e;
+  --snt-ink-muted: #636668;
   /** Placeholder text in fields and the search box. */
-  --snt-ink-placeholder: #89939a;
+  --snt-ink-placeholder: #8f9294;
   /** Icons inside fields, e.g. the search glass. */
-  --snt-ink-icon: #52616b;
+  --snt-ink-icon: #5a5f63;
   /** Disabled, and decorative only — placeholder icons. Never body text. */
-  --snt-ink-faint: #a3acb1;
+  --snt-ink-faint: #a8abac;
   --snt-ink-on-dark: #ffffff;
   --snt-ink-on-dark-muted: #aba8a2;
   --snt-ink-on-dark-subtle: #c9c6be;

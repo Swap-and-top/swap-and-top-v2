@@ -33,11 +33,11 @@ export const colors = {
   /** An individual's Wanted card. */
   bgCardWanted: '#E4F0F1',
 
-  ink: '#263640',
-  inkMuted: '#5D676E',
-  inkPlaceholder: '#89939A',
-  inkIcon: '#52616B',
-  inkFaint: '#A3ACB1',
+  ink: '#2E3438',
+  inkMuted: '#636668',
+  inkPlaceholder: '#8F9294',
+  inkIcon: '#5A5F63',
+  inkFaint: '#A8ABAC',
 
   /** Item names: blue for something owned, green for something wanted. */
   ownedInk: '#255DAB',
