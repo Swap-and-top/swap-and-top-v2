@@ -79,7 +79,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
 
           {listing.tradeIn ? (
             <Panel padded>
-              <Eyebrow tight>Has a trade-in</Eyebrow>
+              <Eyebrow tight>Has</Eyebrow>
               <Body>
                 <ItemName side="owned">{listing.tradeIn.name}</ItemName>
               </Body>

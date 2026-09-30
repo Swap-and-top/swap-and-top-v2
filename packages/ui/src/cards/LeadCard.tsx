@@ -52,7 +52,7 @@ export function LeadCard({
       {tradeIn ? (
         <div className={styles.tradeIn}>
           <div className={styles.tradeInBody}>
-            <Eyebrow tight>Trading in</Eyebrow>
+            <Eyebrow tight>Has</Eyebrow>
             <ItemName side="owned" className={styles.tradeInName}>
               {tradeIn.name}
             </ItemName>

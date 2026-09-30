@@ -49,7 +49,8 @@
 .tradeInName {
   display: block;
   font-size: var(--snt-text-base);
-  font-weight: var(--snt-weight-medium);
+  /* Every item name is bold. */
+  font-weight: var(--snt-weight-bold);
   margin-top: var(--snt-space-1);
 }
 

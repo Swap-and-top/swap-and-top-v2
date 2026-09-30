@@ -89,9 +89,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
       </div>
 
       <ScreenBody>
-        <Eyebrow className={styles.specsLabel}>
-          What they are trading in
-        </Eyebrow>
+        <Eyebrow className={styles.specsLabel}>Has</Eyebrow>
         <SpecGrid rows={specRowsFor(listing.has)} />
 
         <div className={styles.identity}>

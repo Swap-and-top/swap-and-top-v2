@@ -171,7 +171,8 @@
 
   .tradeInName {
     font-size: var(--snt-text-lg);
-    font-weight: var(--snt-weight-semibold);
+    /* Every item name is bold. */
+    font-weight: var(--snt-weight-bold);
     margin-top: var(--snt-space-4);
   }
 

@@ -149,7 +149,7 @@ export default function ConsoleLeadsPage() {
               return (
                 <div className={styles.detailCards}>
                   <div className={styles.tradeInCard}>
-                    <Eyebrow tight>They are trading in</Eyebrow>
+                    <Eyebrow tight>Has</Eyebrow>
                     <div className={styles.tradeInName}>{tradeIn.name}</div>
                     <div className={styles.tradeInSpecs}>
                       {specSummary(tradeIn, 4)}
@@ -252,10 +252,10 @@ export default function ConsoleLeadsPage() {
 function subtitleFor(lead: Lead): string {
   if (lead.demand.type === 'swap') {
     const cash = lead.demand.cashAmount;
-    return `Trading in ${lead.demand.has.name}${cash ? ` · adds $${cash}` : ''}`;
+    return `Has ${lead.demand.has.name}${cash ? ` · adds $${cash}` : ''}`;
   }
   const tradeIn = lead.demand.tradeIn;
   return `Budget up to $${lead.demand.budget}${
-    tradeIn ? ` · trading in ${tradeIn.name}` : ' · no trade-in'
+    tradeIn ? ` · has ${tradeIn.name}` : ' · no trade-in'
   }`;
 }
