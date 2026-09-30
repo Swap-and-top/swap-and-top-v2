@@ -21,31 +21,31 @@ export const colors = {
   /** Headers, navigation, form fields. */
   bgSurface: '#FFFFFF',
   /** Cards and panels. */
-  bgCard: '#EEF0F3',
+  bgCard: '#EEF1F3',
   /** A tappable card under the pointer. */
-  bgCardHover: '#E8EBEF',
+  bgCardHover: '#E8ECEF',
   /** Muted fills that need more weight than a line. */
-  bgSubtle: '#E8EBEF',
+  bgSubtle: '#E8ECEF',
   /** Image placeholder fill. */
-  placeholder: '#D5D9E1',
+  placeholder: '#D5DCE1',
   /** An individual's sale or swap card. */
   bgCardPerson: '#EBF2FF',
   /** An individual's Wanted card. */
   bgCardWanted: '#E4F0F1',
 
-  ink: '#263040',
-  inkMuted: '#646B76',
-  inkPlaceholder: '#898F9A',
-  inkIcon: '#525B6B',
-  inkFaint: '#A3A8B1',
+  ink: '#263640',
+  inkMuted: '#5D676E',
+  inkPlaceholder: '#89939A',
+  inkIcon: '#52616B',
+  inkFaint: '#A3ACB1',
 
   /** Item names: blue for something owned, green for something wanted. */
   ownedInk: '#255DAB',
   wantedInk: '#12875C',
 
-  line: '#D5D9E1',
-  lineSubtle: '#E0E3E8',
-  lineStrong: '#C8CDD6',
+  line: '#D5DCE1',
+  lineSubtle: '#E0E5E8',
+  lineStrong: '#C8D1D6',
 
   /** Verified sellers and confirmed deals: text, and the tick's disc. */
   trust: '#9A5B00',

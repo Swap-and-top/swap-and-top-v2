@@ -27,18 +27,19 @@
   );
 
   /* --- surfaces ------------------------------------------------------ */
-  /* Cool neutrals: greys with a faint cast of the brand blue (hue ~218°), */
-  /* so they belong with it instead of reading as generic, hueless grey.    */
-  /* Not teal-green: that cast read as WhatsApp.                             */
+  /* Cool neutrals: greys with a faint steel-blue cast — the hue of v1's   */
+  /* blue, #2572a2 (~203°), which the header gradient passes through — so   */
+  /* they belong to the palette instead of reading as generic grey. Not     */
+  /* teal-green (read as WhatsApp), not the main blue (read as navy).       */
 
   /** Page background behind cards. */
   --snt-bg-app: #f7f8f9;
   /** Headers, navigation, form fields. */
   --snt-bg-surface: #ffffff;
   /** Cards and panels — the light grey box every group of content sits in. */
-  --snt-bg-card: #eef0f3;
+  --snt-bg-card: #eef1f3;
   /** A tappable card under the pointer. */
-  --snt-bg-card-hover: #e8ebef;
+  --snt-bg-card-hover: #e8ecef;
   /**
    * An individual's sale or swap card — the v1 app's sky blue. Dealers' cards
    * stay grey, so the tint alone says "a person, not a shop".
@@ -49,24 +50,24 @@
   --snt-bg-card-wanted: #e4f0f1;
   --snt-bg-card-wanted-hover: #d8e8ea;
   /** Muted fill with more weight than a line. */
-  --snt-bg-subtle: #e8ebef;
+  --snt-bg-subtle: #e8ecef;
   /** Image placeholder fill. */
-  --snt-bg-placeholder: #d5d9e1;
+  --snt-bg-placeholder: #d5dce1;
   /** Row highlight, e.g. the selected lead in the console table. */
   --snt-bg-highlight: #eef3fa;
 
   /* --- text ---------------------------------------------------------- */
 
   /** Primary text: a blue-charcoal rather than a neutral black-grey. */
-  --snt-ink: #263040;
+  --snt-ink: #263640;
   /** Captions and secondary text: muted slate. */
-  --snt-ink-muted: #646b76;
+  --snt-ink-muted: #5d676e;
   /** Placeholder text in fields and the search box. */
-  --snt-ink-placeholder: #898f9a;
+  --snt-ink-placeholder: #89939a;
   /** Icons inside fields, e.g. the search glass. */
-  --snt-ink-icon: #525b6b;
+  --snt-ink-icon: #52616b;
   /** Disabled, and decorative only — placeholder icons. Never body text. */
-  --snt-ink-faint: #a3a8b1;
+  --snt-ink-faint: #a3acb1;
   --snt-ink-on-dark: #ffffff;
   --snt-ink-on-dark-muted: #aba8a2;
   --snt-ink-on-dark-subtle: #c9c6be;
@@ -81,10 +82,10 @@
 
   /* --- lines --------------------------------------------------------- */
 
-  --snt-line: #d5d9e1;
-  --snt-line-subtle: #e0e3e8;
+  --snt-line: #d5dce1;
+  --snt-line-subtle: #e0e5e8;
   /** A divider with more weight than a border. */
-  --snt-line-strong: #c8cdd6;
+  --snt-line-strong: #c8d1d6;
   --snt-line-dark: #34332f;
 
   /* --- accent: brand blue -------------------------------------------- */
