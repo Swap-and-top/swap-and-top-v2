@@ -32,6 +32,7 @@ import {
   SpecGrid,
   specRowsFor,
   SwapTiles,
+  swapTerms,
 } from '@snt/ui';
 import { PhoneIcon, SaveStarIcon, ShareIcon } from '@snt/ui/icons';
 import { useRevealStore } from '@snt/core';
@@ -44,13 +45,8 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
   const saved = ids.includes(listing.id);
   const number = revealed[listing.id];
 
-  /** From the viewer's point of view, so "I add" reads as "they add". */
-  const directionLabel =
-    listing.cashDirection === 'i-add'
-      ? 'they add'
-      : listing.cashDirection === 'they-add'
-        ? 'you add'
-        : 'straight swap';
+  /** Up, down or level, and who pays — worded as on the cards. */
+  const terms = swapTerms(listing.cashDirection, listing.cashAmount);
 
   return (
     <Screen surface>
@@ -79,12 +75,11 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
           has={listing.has}
           wants={listing.wants}
           cashAmount={listing.cashAmount}
+          cashDirection={listing.cashDirection}
           flush
         />
         <div className={styles.direction}>
-          {listing.cashAmount && listing.cashDirection !== 'straight'
-            ? `$${listing.cashAmount} on top — ${directionLabel}`
-            : directionLabel}
+          {terms.label} · {terms.cashNote}
         </div>
       </div>
 

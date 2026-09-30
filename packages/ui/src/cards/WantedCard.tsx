@@ -20,6 +20,7 @@ import { PhotoThumb } from '../primitives/PhotoGallery';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
+import { swapTerms } from '../format';
 import { CardActions } from './CardActions';
 import styles from './WantedCard.module.css';
 
@@ -34,7 +35,15 @@ export function WantedCard({
   onRespond?: () => void;
 }) {
   const tradeIn = listing.type === 'swap' ? listing.has : listing.tradeIn;
-  const cash = listing.type === 'swap' ? listing.cashAmount : undefined;
+  const terms =
+    listing.type === 'swap'
+      ? swapTerms(listing.cashDirection, listing.cashAmount)
+      : undefined;
+  // The cash rides with what they have only when they are the ones adding it.
+  const cash =
+    listing.type === 'swap' && terms?.cashSide === 'has'
+      ? listing.cashAmount
+      : undefined;
   const wantedName =
     listing.type === 'swap' ? listing.wants.name : listing.wants.name;
   const responses =
@@ -77,13 +86,19 @@ export function WantedCard({
           <div className={styles.sub}>
             {listing.type === 'request' ? (
               <>
-                <span>Budget up to ${listing.budget}</span>
+                {/* With a trade-in, the budget is cash on top of it. */}
+                <span>
+                  {tradeIn
+                    ? `Up to $${listing.budget} cash + what they have`
+                    : `Budget up to $${listing.budget}`}
+                </span>
                 <span>{listing.location}</span>
               </>
             ) : (
               <>
                 <span>{listing.location}</span>
-                <span>trading up</span>
+                <span>{terms?.label}</span>
+                {terms?.cashSide ? <span>{terms.cashNote}</span> : null}
               </>
             )}
           </div>

@@ -122,4 +122,5 @@ export {
 export type { TabItem } from './layout/Screen';
 
 /* --- helpers ------------------------------------------------------------- */
-export { monthYear, replyLabel, replyShort } from './format';
+export { monthYear, replyLabel, replyShort, swapTerms } from './format';
+export type { SwapTerms } from './format';

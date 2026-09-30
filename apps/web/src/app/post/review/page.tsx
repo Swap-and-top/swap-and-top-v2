@@ -77,6 +77,7 @@ export default function PostReviewPage() {
                   category: draft.category,
                   specs: {},
                 }}
+                cashDirection={draft.cashDirection}
                 cashAmount={
                   draft.cashDirection !== 'straight'
                     ? Number(draft.cashAmount.replace(/[^0-9]/g, '')) || undefined

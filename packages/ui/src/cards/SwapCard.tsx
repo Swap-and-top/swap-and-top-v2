@@ -8,7 +8,8 @@
  */
 
 import Link from 'next/link';
-import type { Item, SwapListing, User } from '@snt/core';
+import type { CashDirection, Item, SwapListing, User } from '@snt/core';
+import { swapTerms } from '../format';
 import { CategoryIcon } from '../icons';
 import { PhotoGallery } from '../primitives/PhotoGallery';
 import { specParts } from '../primitives/SpecGrid';
@@ -28,6 +29,7 @@ export function SwapCard({
   tileHeight?: number;
 }) {
   const href = `/listing/${listing.slug}`;
+  const terms = swapTerms(listing.cashDirection, listing.cashAmount);
 
   return (
     // Swaps are always between individuals, so the card is always tinted blue.
@@ -37,10 +39,20 @@ export function SwapCard({
             sit above it and open the photo viewer; save and share sit above
             it too. It is empty, so its name is the listing's title. */}
         <Link href={href} className={styles.link} aria-label={listing.title} />
+
+        {/* Which way the value runs, before anything else: up, down or
+            level, and who pays. */}
+        <div className={styles.head}>
+          <span className={styles.kind}>Swap · {terms.label}</span>
+          <span className={styles.spacer} />
+          <span className={styles.cashNote}>{terms.cashNote}</span>
+        </div>
+
         <SwapTiles
           has={listing.has}
           wants={listing.wants}
           cashAmount={listing.cashAmount}
+          cashDirection={listing.cashDirection}
           tileHeight={tileHeight}
         />
 
@@ -78,17 +90,21 @@ export function SwapTiles({
   has,
   wants,
   cashAmount,
+  cashDirection = 'i-add',
   tileHeight,
   flush = false,
 }: {
   has: SwapSide;
   wants: SwapSide;
-  /** The cash the poster adds on top, shown on the "has" tile. */
+  /** The cash on top. */
   cashAmount?: number;
+  /** Which side the cash comes with — see `swapTerms`. */
+  cashDirection?: CashDirection;
   tileHeight?: number;
   flush?: boolean;
 }) {
   const cash = cashAmount ? `+$${cashAmount}` : undefined;
+  const { cashSide } = swapTerms(cashDirection, cashAmount);
 
   return (
     <div
@@ -100,13 +116,14 @@ export function SwapTiles({
         tone="has"
         label="Has"
         item={has}
-        cash={cash}
+        cash={cashSide === 'has' ? cash : undefined}
         imageHeight={tileHeight}
       />
       <SwapTile
         tone="wants"
         label="Looking for"
         item={wants}
+        cash={cashSide === 'wants' ? cash : undefined}
         imageHeight={tileHeight}
       />
     </div>

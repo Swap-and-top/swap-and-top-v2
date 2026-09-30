@@ -58,6 +58,31 @@
   transform: scale(0.99);
 }
 
+/** The direction row: "SWAP · TRADING UP" left, who pays right. */
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-6) var(--snt-card-pad) 0;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink);
+}
+
+.kind {
+  font-weight: var(--snt-weight-extrabold);
+  text-transform: uppercase;
+}
+
+.cashNote {
+  font-weight: var(--snt-weight-bold);
+  white-space: nowrap;
+}
+
+/* Under the direction row, the tiles need less room above them. */
+.head + .tiles {
+  padding-top: var(--snt-space-5);
+}
+
 .tiles {
   /* Photo height inside each tile. */
   --swap-image-h: 108px;
