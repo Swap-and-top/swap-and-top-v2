@@ -1,0 +1,115 @@
+'use client';
+
+/**
+ * Wanted — demand.
+ *
+ * Top-level navigation on purpose: this is the dealer product and the platform's
+ * structural difference from a supply-only board like Facebook Marketplace.
+ * Burying it inside search would hide the thing that makes the business work.
+ *
+ * Both sources of demand appear here — requests, and swaps seen from their
+ * "wants" side. A swap arrives with a trade-in attached, which makes it the
+ * higher-value lead.
+ *
+ * Wireframe artboard: `Wanted`, in the v2 design's brand header.
+ */
+
+import {
+  CATEGORY_LABELS,
+  getUser,
+  isDemand,
+  liveListings,
+  pendingConfirmationCount,
+  type Category,
+} from '@snt/core';
+import {
+  AppHeader,
+  BottomNav,
+  ButtonLink,
+  Chip,
+  ChipRow,
+  EmptyState,
+  Screen,
+  ScreenBody,
+  ScreenTitle,
+  Stack,
+  WantedCard,
+} from '@snt/ui';
+import { PlusIcon } from '@snt/ui/icons';
+import type { FeedFilterParams } from '../../components/feedFilterParams';
+import { useFeedFiltersInUrl } from '../../components/useFeedFiltersInUrl';
+import styles from './page.module.css';
+
+const CATEGORIES: (Category | 'all')[] = [
+  'all',
+  'laptops',
+  'phones',
+  'desktops',
+  'consoles',
+  'parts',
+];
+
+/** Wanted. Its server half, page.tsx, reads the category from the address. */
+export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
+  // The category lives in the address too, so a refresh keeps it.
+  const { category, setCategory } = useFeedFiltersInUrl(initial, {
+    withType: false,
+  });
+
+  const demand = liveListings
+    .filter(isDemand)
+    .filter((listing) => category === 'all' || listing.category === category);
+
+  return (
+    <Screen>
+      <AppHeader>
+        <div>
+          <ScreenTitle>Wanted</ScreenTitle>
+          <div className={styles.subtitle}>
+            People looking to buy or swap right now
+          </div>
+        </div>
+
+        <ChipRow label="Filter by category">
+          {CATEGORIES.map((value) => (
+            <Chip
+              key={value}
+              selected={category === value}
+              onClick={() => setCategory(value)}
+            >
+              {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
+            </Chip>
+          ))}
+        </ChipRow>
+      </AppHeader>
+
+      <ScreenBody>
+        {demand.length > 0 ? (
+          <Stack gap={8}>
+            {demand.map((listing) => (
+              <WantedCard
+                key={listing.id}
+                listing={listing}
+                requester={getUser(listing.ownerId)}
+              />
+            ))}
+          </Stack>
+        ) : (
+          <EmptyState
+            title="No requests in this category"
+            body="Nobody is looking for one of these right now. Post what you want and dealers will come to you."
+          />
+        )}
+      </ScreenBody>
+
+      <div className={styles.postPrompt}>
+        <ButtonLink href="/post" variant="dashed" size="lg" block>
+          <PlusIcon size={17} />
+          Post what you are looking for
+        </ButtonLink>
+      </div>
+
+      <BottomNav pendingConfirmations={pendingConfirmationCount} />
+    </Screen>
+  );
+}

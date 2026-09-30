@@ -1,65 +1,59 @@
 'use client';
 
 /**
- * Keeps the feed filters in the address, e.g. `/?type=swap&category=phones`,
- * so a refresh, a shared link or the back button lands on the same view.
+ * The feed filters, kept in the address so a refresh, a shared link or the
+ * back button lands on the same view — without a flash of "All" first.
+ *
+ * The page's server half reads the address and passes what it names in as
+ * `initial`. The server renders from it, the browser's first render does
+ * too, and the store is seeded from it before the first paint — so nothing
+ * jumps once the page wakes up.
  *
  * The filters themselves stay in `useFeedStore`, so a category picked on
- * Browse still carries over to Wanted. On load the address wins; if it names
- * no filter, the store's current one is kept and written into the address.
- * After that, every change to the store rewrites the address in place — a
- * replace, not a new history entry, so Back leaves the page rather than
- * stepping back through every chip that was tapped.
+ * Browse still carries over to Wanted: a filter the address leaves out keeps
+ * the store's current value, and is written into the address. Every change
+ * rewrites the address in place — a replace, not a new history entry, so
+ * Back leaves the page rather than stepping back through every chip tapped.
  */
 
 import { useEffect, useLayoutEffect, useState } from 'react';
-import {
-  CATEGORY_LABELS,
-  useFeedStore,
-  type CategoryFilter,
-  type TypeFilter,
-} from '@snt/core';
+import { useFeedStore } from '@snt/core';
+import { TYPE_TO_PARAM, type FeedFilterParams } from './feedFilterParams';
 
-/** Words in the address. "wanted" reads better there than "request". */
-const TYPE_TO_PARAM: Record<Exclude<TypeFilter, 'all'>, string> = {
-  swap: 'swap',
-  sale: 'sale',
-  request: 'wanted',
-};
+export function useFeedFiltersInUrl(
+  initial: FeedFilterParams,
+  {
+    withType = true,
+  }: {
+    /** Off on Wanted, which filters by category only. */
+    withType?: boolean;
+  } = {},
+) {
+  const store = useFeedStore();
+  const [seeded, setSeeded] = useState(false);
 
-function typeFromParam(value: string | null): TypeFilter | undefined {
-  const match = Object.entries(TYPE_TO_PARAM).find(([, word]) => word === value);
-  return match ? (match[0] as TypeFilter) : undefined;
-}
-
-function categoryFromParam(value: string | null): CategoryFilter | undefined {
-  return value && value in CATEGORY_LABELS
-    ? (value as CategoryFilter)
-    : undefined;
-}
-
-export function useFeedFiltersInUrl({
-  withType = true,
-}: {
-  /** Off on Wanted, which filters by category only. */
-  withType?: boolean;
-} = {}) {
-  const { category, type, setCategory, setType } = useFeedStore();
-  const [readAddress, setReadAddress] = useState(false);
-
-  // Before the first paint, so a refreshed page opens on its filters rather
-  // than flashing "All" first.
+  // Seed the store from the address once, before the first paint. Not during
+  // render: another page may still be on screen mid-navigation, and updating
+  // a shared store while rendering would disturb it. Never on the server
+  // either, where the store is shared by every request.
   useLayoutEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const fromCategory = categoryFromParam(params.get('category'));
-    const fromType = typeFromParam(params.get('type'));
-    if (fromCategory) setCategory(fromCategory);
-    if (withType && fromType) setType(fromType);
-    setReadAddress(true);
-  }, [setCategory, setType, withType]);
+    const seed: FeedFilterParams = {};
+    if (initial.category) seed.category = initial.category;
+    if (withType && initial.type) seed.type = initial.type;
+    if (seed.category || seed.type) useFeedStore.setState(seed);
+    setSeeded(true);
+    // Once per mount: later changes come from the chips and tabs.
+  }, []);
+
+  // Until seeded, render exactly what the server did — from the address —
+  // so the first render matches its HTML. The seeded values replace it before
+  // anything is painted.
+  const category = seeded ? store.category : (initial.category ?? 'all');
+  const type = seeded ? store.type : (initial.type ?? 'all');
 
   useEffect(() => {
-    if (!readAddress) return;
+    // Not before seeding, or this would write "All" over the address.
+    if (!seeded) return;
 
     const params = new URLSearchParams(window.location.search);
     if (category === 'all') params.delete('category');
@@ -76,5 +70,7 @@ export function useFeedFiltersInUrl({
     if (next !== current) {
       window.history.replaceState(window.history.state, '', next);
     }
-  }, [readAddress, category, type, withType]);
+  }, [seeded, category, type, withType]);
+
+  return { ...store, category, type };
 }
