@@ -93,7 +93,7 @@ The only card with no photograph, because the poster does not have the item.
 
 **Contains:** a `WANTED` label, what they want in plain words, budget, area, age, and one primary button — **"I have this"**.
 
-**When the request has a trade-in attached** (a swap posted as demand), the card gains a compact trade-in strip showing the device coming back and the cash on offer. That variant is the highest-value lead on the platform.
+**When the request has a trade-in attached** (a swap posted as demand), the label reads **WANTED + SWAP** (no icon) and the card gains a compact strip headed **Has**, with the device coming back — its name in bold, like every item name — and the cash on offer. That variant is the highest-value lead on the platform.
 
 **That button is the business.** Tapping it is the action a dealer pays to be alerted about. Everything about the card is arranged to make it the obvious next step.
 

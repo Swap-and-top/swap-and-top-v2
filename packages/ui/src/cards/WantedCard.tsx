@@ -15,7 +15,6 @@
 
 import Link from 'next/link';
 import type { DemandListing, User } from '@snt/core';
-import { SwapIcon } from '../icons';
 import { Button } from '../primitives/Button';
 import { PhotoThumb } from '../primitives/PhotoGallery';
 import { Panel } from '../primitives/Surface';
@@ -55,8 +54,7 @@ export function WantedCard({
             .filter(Boolean)
             .join(' ')}
         >
-          {tradeIn ? <SwapIcon size={13} weight={2.1} /> : null}
-          {tradeIn ? 'Wanted — has a trade-in' : 'Wanted'}
+          {tradeIn ? 'Wanted + Swap' : 'Wanted'}
         </span>
         <span className={styles.spacer} />
         {/* The small grey facts sit together, top right. */}
@@ -106,7 +104,7 @@ export function WantedCard({
             tone="wanted"
           />
           <div className={styles.tradeInBody}>
-            <Eyebrow tight>Trading in</Eyebrow>
+            <Eyebrow tight>Has</Eyebrow>
             <ItemName side="owned" className={styles.tradeInName}>
               {tradeIn.name}
             </ItemName>

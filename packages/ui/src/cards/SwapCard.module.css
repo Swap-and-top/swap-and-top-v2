@@ -127,7 +127,8 @@
 
 .itemName {
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-medium);
+  /* Every item name is bold — what someone has, sells or wants. */
+  font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);
   overflow-wrap: anywhere;
 }
