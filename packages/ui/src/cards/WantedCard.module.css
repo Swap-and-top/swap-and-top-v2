@@ -77,9 +77,14 @@
 .tradeIn {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-4);
+  gap: var(--snt-space-5);
   margin-top: var(--snt-space-6);
   padding: var(--snt-space-4) var(--snt-space-6);
+}
+
+/* With a photo, it sits as close to the edge as it does to the top. */
+.tradeIn:has(> button) {
+  padding-left: var(--snt-space-4);
   background: var(--snt-bg-surface);
   border-radius: var(--snt-radius-md);
 }

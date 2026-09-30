@@ -17,6 +17,7 @@ import Link from 'next/link';
 import type { DemandListing, User } from '@snt/core';
 import { SwapIcon } from '../icons';
 import { Button } from '../primitives/Button';
+import { PhotoThumb } from '../primitives/PhotoGallery';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
@@ -97,6 +98,13 @@ export function WantedCard({
 
       {tradeIn ? (
         <div className={styles.tradeIn}>
+          {/* What they are offering is theirs, so it can be pictured; what
+              they want never is. Opens the viewer on the Wanted green. */}
+          <PhotoThumb
+            images={tradeIn.images ?? []}
+            alt={tradeIn.name}
+            tone="wanted"
+          />
           <div className={styles.tradeInBody}>
             <Eyebrow tight>Trading in</Eyebrow>
             <ItemName side="owned" className={styles.tradeInName}>

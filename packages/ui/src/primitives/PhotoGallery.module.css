@@ -69,6 +69,41 @@
   }
 }
 
+/* --- thumb: a small photo that opens the viewer --- */
+
+.thumb {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--snt-radius-sm);
+  overflow: hidden;
+  background: var(--snt-bg-placeholder);
+  cursor: zoom-in;
+}
+
+.thumb:focus-visible {
+  outline: 2px solid var(--snt-accent);
+  outline-offset: 2px;
+}
+
+/** Photo count, bottom-right, on v1's dark translucent ground. */
+.thumbCount {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  min-width: 16px;
+  padding: 0 4px;
+  border-radius: var(--snt-radius-pill);
+  background: rgb(0 0 0 / 0.54);
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--snt-weight-bold);
+  line-height: 16px;
+  text-align: center;
+}
+
 /* --- dots --- */
 
 .dots {

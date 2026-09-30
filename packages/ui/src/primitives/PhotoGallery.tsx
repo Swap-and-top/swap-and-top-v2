@@ -155,6 +155,59 @@ export function PhotoGallery({
 }
 
 /**
+ * A small photo that opens the full-screen viewer — for a card that shows a
+ * photo alongside something else, like the trade-in on a Wanted card. With
+ * more than one photo, a count sits in its corner.
+ */
+export function PhotoThumb({
+  images,
+  alt,
+  tone = 'shop',
+  size = 44,
+  className,
+}: {
+  images: readonly string[];
+  alt: string;
+  tone?: PhotoTone;
+  /** Width and height in px. */
+  size?: number;
+  className?: string;
+}) {
+  const [viewing, setViewing] = useState(false);
+
+  if (images.length === 0) return null;
+
+  return (
+    <>
+      <button
+        type="button"
+        className={[styles.thumb, className ?? ''].filter(Boolean).join(' ')}
+        style={{ width: size, height: size }}
+        aria-label={`View ${alt} photos`}
+        onClick={() => setViewing(true)}
+      >
+        <img src={images[0]} alt="" draggable={false} className={styles.photo} />
+        {images.length > 1 ? (
+          <span className={styles.thumbCount} aria-hidden>
+            {images.length}
+          </span>
+        ) : null}
+      </button>
+
+      {viewing ? (
+        <PhotoViewer
+          images={images}
+          alt={alt}
+          tone={tone}
+          startIndex={0}
+          onClose={() => setViewing(false)}
+        />
+      ) : null}
+    </>
+  );
+}
+
+/**
  * Full-screen photo viewer: the photos whole (not cropped) over the blurred,
  * blue-tinted page, swiped like the gallery, with arrows, dots, a counter and
  * a close button.
