@@ -8,7 +8,9 @@
  */
 
 .card {
-  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-10);
+  /* Bottom padding matches the swap card's footer, so the icons sit the same
+     distance from the edge on every card. */
+  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-6);
 }
 
 .head {
@@ -94,14 +96,10 @@
   margin-top: var(--snt-space-1);
 }
 
-/**
- * Text on the left, button on the right. The button sits at the bottom, level
- * with the last line of text — the requester's name, or on a trade-in card
- * the area line — rather than floating in the middle.
- */
+/** Text on the left, button on the right, centred against the text. */
 .main {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: var(--snt-space-8);
   margin-top: var(--snt-space-6);
 }
@@ -111,13 +109,8 @@
   min-width: 0;
 }
 
-/** The button, bottom-aligned with the text beside it. */
 .cta {
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--snt-space-4);
 }
 
 /* Whole-card hover, as on the other cards. The title is the link. */
@@ -125,12 +118,15 @@
   background: var(--snt-bg-card-hover);
 }
 
-/** The requester's trust line: bold first name, then their deal count. */
-.requester {
+/**
+ * Bottom row: the requester's trust line — bold first name, deal count — and
+ * save and share at the far right, as on the other cards.
+ */
+.footer {
   display: flex;
   align-items: center;
   gap: var(--snt-space-4);
-  margin-top: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
   font-size: var(--snt-text-xs);
 }
 
@@ -142,6 +138,6 @@
 /* The design's desktop measurements. */
 @media (min-width: 768px) {
   .card {
-    padding: var(--snt-space-10) var(--snt-card-pad) var(--snt-space-12);
+    padding: var(--snt-space-10) var(--snt-card-pad) var(--snt-space-8);
   }
 }

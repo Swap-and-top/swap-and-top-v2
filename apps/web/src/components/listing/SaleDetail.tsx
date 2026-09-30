@@ -60,7 +60,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
         actions={
           <>
             <HeaderIconButton
-              label={saved ? 'Remove from saved' : 'Save listing'}
+              label={saved ? 'Remove from wish list' : 'Add to wish list'}
               onClick={() => toggle(listing.id)}
             >
               <SaveStarIcon size={20} filled={saved} />

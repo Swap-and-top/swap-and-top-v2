@@ -33,7 +33,6 @@ export function WantedCard({
   /** "I have this". In the real app this opens the offer composer. */
   onRespond?: () => void;
 }) {
-  const isSwapDemand = listing.type === 'swap';
   const tradeIn = listing.type === 'swap' ? listing.has : listing.tradeIn;
   const cash = listing.type === 'swap' ? listing.cashAmount : undefined;
   const wantedName =
@@ -83,29 +82,11 @@ export function WantedCard({
               </>
             )}
           </div>
-
-          {/* Who is asking, set like the trust line on the other cards. */}
-          {requester && !isSwapDemand ? (
-            <div className={styles.requester}>
-              <span className={styles.requesterName}>
-                {requester.displayName}
-              </span>
-              <ConfirmedDealsBadge count={requester.confirmedDeals} />
-            </div>
-          ) : null}
         </div>
 
-        {/* Save and share, centred over the button — centring keeps the pair
-            balanced against the pill's rounded ends. */}
-        <div className={styles.cta}>
-          <CardActions
-            listingId={listing.id}
-            href={`/listing/${listing.slug}`}
-            title={listing.title}
-            flushEnd={false}
-          />
-          <Button onClick={onRespond}>I have this</Button>
-        </div>
+        <Button onClick={onRespond} className={styles.cta}>
+          I have this
+        </Button>
       </div>
 
       {tradeIn ? (
@@ -119,6 +100,25 @@ export function WantedCard({
           {cash ? <CashAmount amount={cash} /> : null}
         </div>
       ) : null}
+
+      {/* Who is asking, then save and share far right — the same bottom row
+          as the sale and swap cards, so the icons are always in one place. */}
+      <div className={styles.footer}>
+        {requester ? (
+          <>
+            <span className={styles.requesterName}>
+              {requester.displayName}
+            </span>
+            <ConfirmedDealsBadge count={requester.confirmedDeals} />
+          </>
+        ) : null}
+        <span className={styles.spacer} />
+        <CardActions
+          listingId={listing.id}
+          href={`/listing/${listing.slug}`}
+          title={listing.title}
+        />
+      </div>
     </Panel>
   );
 }

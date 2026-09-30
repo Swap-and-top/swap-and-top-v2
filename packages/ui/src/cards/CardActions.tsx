@@ -16,18 +16,12 @@ export function CardActions({
   listingId,
   href,
   title,
-  flushEnd = true,
 }: {
   listingId: string;
   /** The listing's path, shared as a full URL. */
   href: string;
   /** Shared alongside the link. */
   title: string;
-  /**
-   * Pull the share glyph's drawn edge flush with the card's content edge. Turn
-   * it off where the pair is centred rather than end-aligned.
-   */
-  flushEnd?: boolean;
 }) {
   const { ids, toggle } = useSavedStore();
   const saved = ids.includes(listingId);
@@ -50,17 +44,13 @@ export function CardActions({
   }
 
   return (
-    <span
-      className={[styles.actions, flushEnd ? styles.flushEnd : '']
-        .filter(Boolean)
-        .join(' ')}
-    >
+    <span className={styles.actions}>
       <button
         type="button"
         className={[styles.button, saved ? styles.saved : '']
           .filter(Boolean)
           .join(' ')}
-        aria-label={saved ? 'Remove from saved' : 'Save listing'}
+        aria-label={saved ? 'Remove from wish list' : 'Add to wish list'}
         aria-pressed={saved}
         onClick={() => toggle(listingId)}
       >

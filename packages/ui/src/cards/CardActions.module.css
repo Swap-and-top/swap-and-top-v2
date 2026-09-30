@@ -10,9 +10,6 @@
   align-items: center;
   gap: var(--snt-space-1);
   flex-shrink: 0;
-}
-
-.flushEnd {
   /*
    * Pull the pair right so the share glyph's drawn edge — not its button's
    * padding — lines up with the card's content edge, flush with the swap

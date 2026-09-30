@@ -106,7 +106,7 @@ export default function MePage() {
             <ListRow
               href="/saved"
               icon={<SaveStarIcon size={19} />}
-              label="Saved"
+              label="Wish list"
               value={String(ids.length)}
             />
           </ListGroup>
