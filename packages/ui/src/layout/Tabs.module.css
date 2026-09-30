@@ -36,8 +36,15 @@
 }
 
 .tabActive {
+  /* The line before the sliding bar is measured — see .measured. */
+  border-bottom-color: var(--snt-ink);
   color: var(--snt-ink);
   font-weight: var(--snt-weight-extrabold);
+}
+
+/* Once the bar is measured it carries the line, and the tab's own gives way. */
+.measured .tabActive {
+  border-bottom-color: transparent;
 }
 
 /**
@@ -108,4 +115,12 @@
 
 :global([data-surface='brand']) .bar {
   background: var(--snt-bg-surface);
+}
+
+:global([data-surface='brand']) .tabActive {
+  border-bottom-color: var(--snt-bg-surface);
+}
+
+:global([data-surface='brand']) .measured .tabActive {
+  border-bottom-color: transparent;
 }

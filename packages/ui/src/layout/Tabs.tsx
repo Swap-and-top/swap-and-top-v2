@@ -7,6 +7,11 @@
  * rather than a line on each tab that blinks on and off. It is measured from
  * the active tab, and re-measured whenever a tab changes size (the active
  * label is bolder, and fonts load late).
+ *
+ * Measuring needs the browser, so until then the active tab draws the same
+ * line itself — in the server's HTML, on the first paint. When the sliding
+ * bar is measured, it takes over in the same spot in the same render, so the
+ * line is simply there on load and never appears or slides in.
  */
 
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -49,7 +54,14 @@ export function Tabs<T extends string>({
     const measure = () => {
       const current = el.querySelector<HTMLElement>('[aria-selected="true"]');
       if (!current) return;
-      setBar({ left: current.offsetLeft, width: current.offsetWidth });
+      // Sub-pixel, not offsetLeft/offsetWidth, which round: the bar must sit
+      // exactly on the tab's own line, which it replaces.
+      const tab = current.getBoundingClientRect();
+      const box = el.getBoundingClientRect();
+      setBar({
+        left: tab.left - box.left - el.clientLeft + el.scrollLeft,
+        width: tab.width,
+      });
     };
 
     measure();
@@ -69,7 +81,13 @@ export function Tabs<T extends string>({
   return (
     <div
       ref={row}
-      className={[styles.tabs, fill ? styles.tabsFill : ''].filter(Boolean).join(' ')}
+      className={[
+        styles.tabs,
+        fill ? styles.tabsFill : '',
+        bar ? styles.measured : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       role="tablist"
       aria-label={label}
     >
