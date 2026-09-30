@@ -26,31 +26,42 @@ export function AppHeader({
   postHref = '/post',
   accountHref = '/me',
 }: {
-  /** Search, chips, tabs or a title, stacked under the logo row. */
+  /**
+   * Search, chips, tabs or a title. They sit on white under the gradient,
+   * which holds only the logo row, so every screen's header looks the same.
+   */
   children?: ReactNode;
   postHref?: string;
   accountHref?: string;
 }) {
   return (
-    <header className={styles.app} data-surface="brand">
-      <div className={styles.inner}>
-        <div className={styles.appTop}>
-          <Link href="/" className={styles.logo} aria-label="Swap & Top — home">
-            <Logo height={36} className={styles.logoArt} />
-          </Link>
-          <Link href={postHref} className={styles.postButton}>
-            Post New Item
-          </Link>
-          <Link
-            href={accountHref}
-            aria-label="Your account"
-            className={styles.account}
-          />
+    <>
+      <header className={styles.app} data-surface="brand">
+        <div className={styles.inner}>
+          <div className={styles.appTop}>
+            <Link href="/" className={styles.logo} aria-label="Swap & Top — home">
+              <Logo height={36} className={styles.logoArt} />
+            </Link>
+            <Link href={postHref} className={styles.postButton}>
+              Post New Item
+            </Link>
+            <Link
+              href={accountHref}
+              aria-label="Your account"
+              className={styles.account}
+            />
+          </div>
         </div>
+      </header>
 
-        {children ? <div className={styles.appBody}>{children}</div> : null}
-      </div>
-    </header>
+      {children ? (
+        <div className={styles.appBelow}>
+          <div className={[styles.inner, styles.appBody].join(' ')}>
+            {children}
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
 

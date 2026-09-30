@@ -66,8 +66,8 @@ export default function BrowsePage() {
 
   return (
     <Screen>
-      {/* Search, category and type all live in the brand header, as drawn.
-          On a phone the header sticks, pulled up so only the type tabs stay in
+      {/* Search, category and type sit on white under the brand header. On a
+          phone the whole block sticks, pulled up so only the type tabs stay in
           view while the feed scrolls. */}
       <div
         ref={stickyTop.ref}
@@ -132,7 +132,7 @@ export default function BrowsePage() {
 
 /**
  * How far to pull the sticky header up so that only its type tabs — and a
- * little gradient above them — remain on screen. Re-measured whenever the
+ * little room above them — remain on screen. Re-measured whenever the
  * header changes size, e.g. on rotation.
  */
 function useStickyTabsOffset() {

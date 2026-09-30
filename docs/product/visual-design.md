@@ -103,12 +103,12 @@ ExtraBold (800) was added for the active tab and the tile labels.
 | Measurement | Desktop (from the PDF) | Phone |
 | --- | --- | --- |
 | Content column | 672px, centred | Full width minus 16px gutters |
-| Header | Full-bleed gradient, 203px on the feed | Same parts, scaled down |
+| Header | Full-bleed gradient, the logo row only (78px) | The logo row only (60px) |
 | Header's bottom-right corner | 40px sweep | 28px sweep |
 | Logo row | 36px tall — logo, yellow pill, white circle | Same |
 | Search | 40px white pill | Same |
 | Chips | 30px pills, 1px white outline, spread across the column | Scroll sideways |
-| Type tabs | Equal widths, 3px white underline on the header's edge | Same |
+| Type tabs | Equal widths, on white under the header, with the active tab underlined | Same |
 | Card radius | 18px | 18px |
 | Radius of boxes inside a card (swap tiles, inputs, trade-in strip) | 12px | 12px |
 | Card padding | 24px | 16px |
@@ -132,7 +132,7 @@ These refine the PDF's own values (25–27px padding, fixed 168/142px photos, a 
 
 Every marketplace screen starts with the gradient.
 
-- **App header** — Browse, Wanted, Saved, Me. Logo row, then whatever the screen puts under it: the search pill, the chip row, the type tabs, a title. Chips, tabs, titles and search fields restyle themselves automatically when they sit inside it.
+- **App header** — Browse, Wanted, Wish list, Me. The gradient holds only the logo row — logo, Post New Item, account — the same height on every screen. Whatever the screen adds — the search pill (filled grey), the chip row, the type tabs, a title — sits on white directly beneath it. Chips, tabs, titles and search fields have a white-on-gradient style too, used only if one is ever placed on the gradient.
 - **Screen header** — detail screens. A shorter gradient bar with a white back button, title and actions.
 - **Step header** — the posting flow. A screen header with a white progress bar.
 

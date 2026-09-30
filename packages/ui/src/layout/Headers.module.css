@@ -2,7 +2,9 @@
  * App header, screen header and the posting flow's step header.
  *
  * Every header is full-bleed brand gradient with a swept bottom-right corner;
- * its contents line up with the content column underneath. Measurements are
+ * its contents line up with the content column underneath. The app header's
+ * gradient holds only the logo row; a screen's search, chips, tabs or title
+ * sit on white beneath it. Measurements are
  * the design's desktop values — see docs/product/visual-design.md.
  */
 
@@ -24,7 +26,9 @@
 /* --- app header ----------------------------------------------------------- */
 
 .app {
-  padding-top: var(--snt-space-6);
+  /* The same space below the logo row as above it. Padding, not a margin on
+     the row, so it cannot collapse out of the header. */
+  padding-block: var(--snt-space-6);
 }
 
 .appTop {
@@ -32,12 +36,6 @@
   align-items: center;
   gap: var(--snt-space-5);
   height: 36px;
-  margin-bottom: var(--snt-space-8);
-}
-
-/* A header with nothing under the logo row keeps the same space below. */
-.appTop:last-child {
-  margin-bottom: var(--snt-space-6);
 }
 
 .logo {
@@ -90,14 +88,21 @@
   box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
 }
 
+/** The screen's own controls, on white under the gradient. */
+.appBelow {
+  flex-shrink: 0;
+  background: var(--snt-bg-surface);
+}
+
 /**
- * The screen's own controls. Bottom padding closes the header, except when it
- * ends in a tab row — the active tab's underline sits on the header's edge.
+ * Bottom padding closes the band, except when it ends in a tab row — the tab
+ * row's own rule is the edge.
  */
 .appBody {
   display: flex;
   flex-direction: column;
   gap: var(--snt-space-6);
+  padding-top: var(--snt-space-8);
   padding-bottom: var(--snt-space-10);
 }
 
@@ -185,11 +190,7 @@
 
 @media (min-width: 768px) {
   .app {
-    padding-top: 21px;
-  }
-
-  .appTop {
-    margin-bottom: 13px;
+    padding-block: 21px;
   }
 
   .logoArt {

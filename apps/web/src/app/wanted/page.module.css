@@ -3,8 +3,7 @@
 /** Under the title, white on the brand gradient. */
 .subtitle {
   font-size: var(--snt-text-base);
-  color: var(--snt-ink-on-dark);
-  opacity: 0.85;
+  color: var(--snt-ink-muted);
   margin-top: var(--snt-space-1);
 }
 
