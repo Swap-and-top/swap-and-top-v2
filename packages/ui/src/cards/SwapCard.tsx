@@ -32,16 +32,15 @@ export function SwapCard({
   return (
     <div className={styles.card}>
       <Panel xl>
-        {/* The link covers the whole card (see .link in the CSS); the photos,
-            save and share sit above it. It is empty, so its name is the
-            listing's title. */}
+        {/* The link covers the whole card (see .link in the CSS). The photos
+            sit above it and open the photo viewer; save and share sit above
+            it too. It is empty, so its name is the listing's title. */}
         <Link href={href} className={styles.link} aria-label={listing.title} />
         <SwapTiles
           has={listing.has}
           wants={listing.wants}
           cashAmount={listing.cashAmount}
           tileHeight={tileHeight}
-          href={href}
         />
 
         <div className={styles.footer}>
@@ -80,7 +79,6 @@ export function SwapTiles({
   cashAmount,
   tileHeight,
   flush = false,
-  href,
 }: {
   has: SwapSide;
   wants: SwapSide;
@@ -88,8 +86,6 @@ export function SwapTiles({
   cashAmount?: number;
   tileHeight?: number;
   flush?: boolean;
-  /** Makes the photos links to the listing, for a card in the feed. */
-  href?: string;
 }) {
   const cash = cashAmount ? `+$${cashAmount}` : undefined;
 
@@ -105,7 +101,6 @@ export function SwapTiles({
         item={has}
         cash={cash}
         imageHeight={tileHeight}
-        href={href}
       />
       <SwapTile
         tone="wants"
@@ -123,14 +118,12 @@ function SwapTile({
   item,
   cash,
   imageHeight,
-  href,
 }: {
   tone: 'has' | 'wants';
   label: string;
   item: SwapSide;
   cash?: string;
   imageHeight?: number;
-  href?: string;
 }) {
   const specs = specParts(item);
 
@@ -142,7 +135,6 @@ function SwapTile({
         <PhotoGallery
           images={item.images ?? []}
           alt={item.name}
-          href={href}
           height={imageHeight ?? 'var(--swap-image-h)'}
         />
       ) : (

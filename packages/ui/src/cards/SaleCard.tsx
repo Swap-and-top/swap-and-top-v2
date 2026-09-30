@@ -50,7 +50,6 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
           <PhotoGallery
             images={listing.item.images}
             alt={listing.item.name}
-            href={href}
             height={imageHeight}
             className={imageHeight ? undefined : styles.photo}
           />
@@ -70,8 +69,9 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
         <div className={styles.body}>
           {/* Name and specs on the left; price and condition balance them
               on the right. */}
-          {/* The link covers the whole card (see .link in the CSS); save and
-              share sit above it in the bottom row. */}
+          {/* The link covers the whole card (see .link in the CSS); the photo
+              sits above it and opens the photo viewer, and save and share sit
+              above it in the bottom row. */}
           <Link href={href} className={[styles.summary, styles.link].join(' ')}>
             <div className={styles.identity}>
               <ItemName side="owned" className={styles.name}>
