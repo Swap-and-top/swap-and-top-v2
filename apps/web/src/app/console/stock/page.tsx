@@ -21,6 +21,7 @@ import {
   ConsoleShell,
   Field,
   ImagePlaceholder,
+  listingPhoto,
   Price,
   StatusBadge,
   specSummary,
@@ -109,6 +110,7 @@ export default function ConsoleStockPage() {
                 .join(' ')}
             >
               <ImagePlaceholder
+                src={listingPhoto(listing)}
                 height={44}
                 width={44}
                 small

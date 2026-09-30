@@ -21,6 +21,13 @@
   color: transparent;
 }
 
+/** A real photo: fills its box, cropped rather than squashed. */
+.photo {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
 /** Square corners, for a full-bleed card header image. */
 .flush {
   border-radius: 0;

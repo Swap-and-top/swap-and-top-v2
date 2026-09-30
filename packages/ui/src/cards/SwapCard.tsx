@@ -9,7 +9,7 @@
 
 import Link from 'next/link';
 import type { Item, SwapListing, User } from '@snt/core';
-import { ImagePlaceholder } from '../primitives/Placeholder';
+import { ImagePlaceholder, firstPhoto } from '../primitives/Placeholder';
 import { specParts } from '../primitives/SpecGrid';
 import { Panel } from '../primitives/Surface';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
@@ -65,7 +65,8 @@ export function SwapCard({
 }
 
 /** What a tile needs to know about one side of the swap. */
-export type SwapSide = Pick<Item, 'name' | 'category' | 'specs'>;
+export type SwapSide = Pick<Item, 'name' | 'category' | 'specs'> &
+  Partial<Pick<Item, 'images'>>;
 
 /**
  * The two tiles on their own — for the swap detail screen and the posting
@@ -127,7 +128,13 @@ function SwapTile({
 
   return (
     <div className={[styles.tile, styles[tone]].join(' ')}>
-      <ImagePlaceholder height={imageHeight ?? 'var(--swap-image-h)'} flush />
+      {/* Only the "has" side has a photo: what someone wants is described,
+          never pictured. */}
+      <ImagePlaceholder
+        src={firstPhoto(item.images)}
+        height={imageHeight ?? 'var(--swap-image-h)'}
+        flush
+      />
       <div className={styles.caption}>
         <div className={styles.captionText}>
           <div className={styles.label}>{label}</div>

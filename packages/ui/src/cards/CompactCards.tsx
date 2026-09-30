@@ -9,7 +9,7 @@ import type { Listing } from '@snt/core';
 import { getShop, getUser } from '@snt/core';
 import { SwapIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
-import { ImagePlaceholder } from '../primitives/Placeholder';
+import { ImagePlaceholder, listingPhoto } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, ItemName, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
@@ -43,6 +43,7 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
           .join(' ')}
       >
         <ImagePlaceholder
+          src={listingPhoto(listing)}
           height={74}
           width={74}
           small
@@ -116,7 +117,7 @@ export function GridCard({ listing }: { listing: Listing }) {
   return (
     <Link href={`/listing/${listing.slug}`} className={styles.grid}>
       <Panel clip>
-        <ImagePlaceholder height={82} flush small />
+        <ImagePlaceholder src={listingPhoto(listing)} height={82} flush small />
         <div className={styles.gridBody}>
           {price !== undefined ? <Price amount={price} size="sm" /> : null}
           {listing.type === 'swap' && listing.cashAmount ? (

@@ -10,7 +10,7 @@
 import Link from 'next/link';
 import type { Condition, SaleListing, Shop, User } from '@snt/core';
 import { Badge } from '../primitives/Badge';
-import { ImagePlaceholder, ShopMark } from '../primitives/Placeholder';
+import { ImagePlaceholder, ShopMark, firstPhoto } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
 import { ItemName, Meta, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
@@ -47,6 +47,7 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
       <Panel xl clip>
         <div className={styles.imageWrap}>
           <ImagePlaceholder
+            src={firstPhoto(listing.item.images)}
             height={imageHeight ?? 'auto'}
             flush
             className={imageHeight ? undefined : styles.photo}

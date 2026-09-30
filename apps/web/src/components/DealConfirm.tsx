@@ -29,6 +29,7 @@ import {
   Button,
   Eyebrow,
   ImagePlaceholder,
+  listingPhoto,
   Note,
   PageHeading,
   Panel,
@@ -67,7 +68,12 @@ export function DealConfirm({
         {listing ? (
           <Panel>
             <Link href={`/listing/${listing.slug}`} className={styles.summary}>
-              <ImagePlaceholder height={54} width={54} small />
+              <ImagePlaceholder
+                src={listingPhoto(listing)}
+                height={54}
+                width={54}
+                small
+              />
               <span className={styles.summaryBody}>
                 <span className={styles.summaryTitle}>
                   {listing.type === 'sale'

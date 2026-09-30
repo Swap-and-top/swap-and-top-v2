@@ -46,6 +46,8 @@ export {
   ImageCarousel,
   ImagePlaceholder,
   ShopMark,
+  firstPhoto,
+  listingPhoto,
 } from './primitives/Placeholder';
 export type { ImagePlaceholderProps } from './primitives/Placeholder';
 

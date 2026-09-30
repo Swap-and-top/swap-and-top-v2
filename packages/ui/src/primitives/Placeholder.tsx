@@ -1,15 +1,42 @@
 /**
  * ImagePlaceholder, ImageCarousel, Avatar and ShopMark.
  *
- * Swap `ImagePlaceholder` for `next/image` once listings carry real photo URLs.
- * A photo slot is drawn as a plain grey box, as in the design; the image glyph
- * only shows on an empty draft, where it prompts the poster to add one.
+ * A photo slot shows the listing's photo, cropped to fill, when there is one,
+ * and a plain grey box otherwise. The image glyph only shows on an empty
+ * draft, where it prompts the poster to add one. Move to `next/image` once
+ * photos come from our own storage.
  */
 
+import type { Listing } from '@snt/core';
 import { ImageIcon, ImageSmallIcon, PersonIcon } from '../icons';
 import styles from './Placeholder.module.css';
 
+/** The cover photo: the first in the list, if there is one. */
+export function firstPhoto(images: readonly string[] | undefined) {
+  return images?.[0];
+}
+
+/**
+ * The photo that represents a listing: the item for a sale or auction, what
+ * the poster has for a swap, and the trade-in for a request that carries one.
+ * A plain request has nothing to photograph.
+ */
+export function listingPhoto(listing: Listing) {
+  switch (listing.type) {
+    case 'swap':
+      return firstPhoto(listing.has.images);
+    case 'request':
+      return firstPhoto(listing.tradeIn?.images);
+    default:
+      return firstPhoto(listing.item.images);
+  }
+}
+
 export interface ImagePlaceholderProps {
+  /** Photo URL. Without one the slot is drawn as the grey placeholder. */
+  src?: string;
+  /** Alt text for the photo. Leave empty where a caption already names it. */
+  alt?: string;
   /** CSS height. Width fills the container unless `width` is given. */
   height: number | string;
   width?: number | string;
@@ -23,6 +50,8 @@ export interface ImagePlaceholderProps {
 }
 
 export function ImagePlaceholder({
+  src,
+  alt = '',
   height,
   width,
   empty = false,
@@ -31,6 +60,21 @@ export function ImagePlaceholder({
   className,
 }: ImagePlaceholderProps) {
   const Glyph = small ? ImageSmallIcon : ImageIcon;
+
+  if (src) {
+    return (
+      // A plain img until photos come from our own storage (see top).
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className={[styles.image, styles.photo, flush ? styles.flush : '', className ?? '']
+          .filter(Boolean)
+          .join(' ')}
+        style={{ height, width }}
+      />
+    );
+  }
 
   return (
     <div
@@ -56,16 +100,21 @@ export function ImagePlaceholder({
  */
 export function ImageCarousel({
   count,
+  src,
+  alt,
   activeIndex = 0,
   height = 'var(--carousel-h)',
 }: {
   count: number;
+  /** The photo on show. */
+  src?: string;
+  alt?: string;
   activeIndex?: number;
   height?: number | string;
 }) {
   return (
     <div className={styles.carousel}>
-      <ImagePlaceholder height={height} flush />
+      <ImagePlaceholder src={src} alt={alt} height={height} flush />
       {count > 1 ? (
         <div className={styles.dots} aria-hidden>
           {Array.from({ length: count }).map((_, index) => (

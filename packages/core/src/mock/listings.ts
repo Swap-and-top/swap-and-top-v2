@@ -23,6 +23,58 @@ import type {
 
 const THIRTY_DAYS_ON = '2026-10-24';
 
+/* ----------------------------------------------------------------- photos - */
+
+/**
+ * Stand-in photos from Wikimedia Commons, so the cards can be designed with
+ * real pictures in them. Each is a photo of the model named, or the nearest
+ * one available (the GTX 1650 is a GTX 1660 Ti; the i3 tower is an OptiPlex).
+ * Replace with our own storage URLs once uploads exist.
+ */
+const COMMONS = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/';
+const commons = (...paths: string[]) => paths.map((path) => COMMONS + path);
+
+const photos = {
+  t480: commons(
+    '2/28/ThinkPad_T480_%282%29_%28cropped%29.jpg/960px-ThinkPad_T480_%282%29_%28cropped%29.jpg',
+    '9/95/ThinkPad_T480.jpg/960px-ThinkPad_T480.jpg',
+    'b/bf/ThinkPad_T480_%281%29.jpg/960px-ThinkPad_T480_%281%29.jpg',
+    '6/6f/ThinkPad_T480_and_T470s.jpg/960px-ThinkPad_T480_and_T470s.jpg',
+  ),
+  macbookAir: commons(
+    'a/a1/MacBook_Air.jpeg/960px-MacBook_Air.jpeg',
+    'b/b4/MacBook_Air_%28Early_2015%29.jpg/960px-MacBook_Air_%28Early_2015%29.jpg',
+  ),
+  latitude7490: commons(
+    '8/8c/Dell_Latitude_7490_running_Ubuntu_Cinnamon_23.10.jpg/960px-Dell_Latitude_7490_running_Ubuntu_Cinnamon_23.10.jpg',
+  ),
+  eliteBook840: commons(
+    '5/57/HP_EliteBook_840_G3_IMG_20220831_221222.jpg/960px-HP_EliteBook_840_G3_IMG_20220831_221222.jpg',
+    '2/2b/HP_EliteBook_840_G3_IMG_20220831_215522.jpg/960px-HP_EliteBook_840_G3_IMG_20220831_215522.jpg',
+  ),
+  proBook: commons(
+    '4/46/HP-probook-6450b-01.jpg/960px-HP-probook-6450b-01.jpg',
+    '7/77/Small_size_laptop_hp.jpg/960px-Small_size_laptop_hp.jpg',
+  ),
+  rx580: commons(
+    '7/72/Sapphire_RX_580_Nitro%2B.jpg/960px-Sapphire_RX_580_Nitro%2B.jpg',
+  ),
+  gtxCard: commons(
+    '2/20/Gigabyte_GTX_1660_Ti_graphics_card_%2851993493927%29.jpg/960px-Gigabyte_GTX_1660_Ti_graphics_card_%2851993493927%29.jpg',
+  ),
+  redmiNote12: commons(
+    'f/f4/Redmi_Note_12_back.jpg/960px-Redmi_Note_12_back.jpg',
+    'b/be/Redmi_Note_12_front.jpg/960px-Redmi_Note_12_front.jpg',
+  ),
+  galaxyA34: commons(
+    '3/3c/Samsung_Galaxy_A34_5G_20231122_HOF01963-HDR_RAW-Export_cens.png/960px-Samsung_Galaxy_A34_5G_20231122_HOF01963-HDR_RAW-Export_cens.png',
+    '2/2b/%EC%82%BC%EC%84%B1_%EA%B0%A4%EB%9F%AD%EC%8B%9C_A34.jpg/960px-%EC%82%BC%EC%84%B1_%EA%B0%A4%EB%9F%AD%EC%8B%9C_A34.jpg',
+  ),
+  towerPc: commons(
+    'f/fd/Dell_Optiplex_Tower.jpg/960px-Dell_Optiplex_Tower.jpg',
+  ),
+};
+
 /* ------------------------------------------------------------------ items - */
 
 const itemThinkpad: Item = {
@@ -42,7 +94,7 @@ const itemThinkpad: Item = {
     screen: '14in 1080p',
     battery: 'Holds 4h',
   },
-  images: ['placeholder', 'placeholder', 'placeholder', 'placeholder'],
+  images: photos.t480,
   wanted: false,
 };
 
@@ -60,7 +112,7 @@ const itemMacbookAir: Item = {
     ram: '8GB',
     storage: '128GB SSD',
   },
-  images: ['placeholder', 'placeholder'],
+  images: photos.macbookAir,
   wanted: false,
 };
 
@@ -173,7 +225,7 @@ const dellLatitude: SaleListing = {
       screen: '14in 1080p',
       battery: 'Holds 5h',
     },
-    images: ['placeholder', 'placeholder', 'placeholder'],
+    images: photos.latitude7490,
     wanted: false,
   },
   price: 410,
@@ -213,7 +265,7 @@ const hpEliteBook: SaleListing = {
       storage: '256GB SSD',
       screen: '14in 1080p',
     },
-    images: ['placeholder', 'placeholder'],
+    images: photos.eliteBook840,
     wanted: false,
   },
   price: 255,
@@ -248,7 +300,7 @@ const rx580: SaleListing = {
     condition: 'good',
     defects: 'Tested, no box',
     specs: { partType: 'Graphics card', capacity: '8GB' },
-    images: ['placeholder'],
+    images: photos.rx580,
     wanted: false,
   },
   price: 95,
@@ -281,7 +333,7 @@ const redmiNote12: SaleListing = {
     brand: 'Xiaomi',
     condition: 'like-new',
     specs: { storage: '128GB', ram: '6GB', battery: '94%' },
-    images: ['placeholder', 'placeholder'],
+    images: photos.redmiNote12,
     wanted: false,
   },
   price: 160,
@@ -347,7 +399,7 @@ const hpProBook: SaleListing = {
     condition: 'fair',
     defects: 'Scuffed palm rest',
     specs: { processor: 'Core i3', ram: '8GB', storage: '500GB HDD' },
-    images: ['placeholder', 'placeholder'],
+    images: photos.proBook,
     wanted: false,
   },
   price: 120,
@@ -379,7 +431,7 @@ const gtxSwap: SwapListing = {
     brand: 'MSI',
     condition: 'good',
     specs: { partType: 'Graphics card', capacity: '4GB' },
-    images: ['placeholder'],
+    images: photos.gtxCard,
     wanted: false,
   },
   wants: {
@@ -420,7 +472,7 @@ const galaxySwap: SwapListing = {
     brand: 'Samsung',
     condition: 'like-new',
     specs: { storage: '128GB', ram: '6GB', battery: '97%' },
-    images: ['placeholder', 'placeholder'],
+    images: photos.galaxyA34,
     wanted: false,
   },
   wants: {
@@ -554,7 +606,7 @@ const cadDesktopWanted: RequestListing = {
     name: 'i3 tower, 8GB, 1TB HDD',
     condition: 'fair',
     specs: { processor: 'Core i3', ram: '8GB', storage: '1TB HDD' },
-    images: ['placeholder'],
+    images: photos.towerPc,
     wanted: false,
   },
   responseCount: 3,
