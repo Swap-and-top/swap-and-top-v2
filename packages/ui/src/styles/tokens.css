@@ -18,7 +18,12 @@
 
   --snt-brand-blue: #255dab;
   --snt-brand-teal: #2572a2;
-  --snt-brand-green: #1cb67f;
+  /*
+   * "Green" by role: the wanted side, the action, the gradient's far end. A
+   * lagoon teal (hue ~185°), between the brand blue and v1's green and leaning
+   * away from it, so it no longer reads as WhatsApp's green. v1 was #1cb67f.
+   */
+  --snt-brand-green: #0e9ba8;
   --snt-brand-yellow: #ffff8b;
   --snt-brand-gradient: linear-gradient(
     90deg,
@@ -76,7 +81,7 @@
   /* green is a shade deeper than the brand green so it reads as text.     */
 
   --snt-owned-ink: #255dab;
-  --snt-wanted-ink: #12875c;
+  --snt-wanted-ink: #0a7580;
 
   /* --- lines --------------------------------------------------------- */
 
@@ -109,16 +114,16 @@
   /* --- action: brand green ------------------------------------------- */
   /* The primary button — "I have this", confirm, publish.                 */
 
-  --snt-action: #1cb67f;
-  --snt-action-strong: #179a6b;
+  --snt-action: #0e9ba8;
+  --snt-action-strong: #0a8591;
 
   /* --- success: green ------------------------------------------------ */
   /* Confirmed deals, live status, the WANTED label, the swap "looking     */
   /* for" tile.                                                           */
 
-  --snt-success: #1cb67f;
-  --snt-success-strong: #179a6b;
-  --snt-success-tint: #e2f6ee;
+  --snt-success: #0e9ba8;
+  --snt-success-strong: #0a8591;
+  --snt-success-tint: #e0f3f5;
 
   /* --- dark surfaces ------------------------------------------------- */
   /* The dealer console chrome.                                          */

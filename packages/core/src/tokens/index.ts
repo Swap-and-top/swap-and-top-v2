@@ -13,7 +13,7 @@ export const colors = {
   /** The v1 brand palette. The header gradient runs blue to green. */
   brandBlue: '#255DAB',
   brandTeal: '#2572A2',
-  brandGreen: '#1CB67F',
+  brandGreen: '#0E9BA8',
   brandYellow: '#FFFF8B',
 
   /** Page background behind cards. */
@@ -41,7 +41,7 @@ export const colors = {
 
   /** Item names: blue for something owned, green for something wanted. */
   ownedInk: '#255DAB',
-  wantedInk: '#12875C',
+  wantedInk: '#0A7580',
 
   line: '#D5DFE1',
   lineSubtle: '#E0E7E8',
@@ -59,12 +59,12 @@ export const colors = {
   accentTint: '#E9F0F9',
 
   /** Brand green. The primary button. */
-  action: '#1CB67F',
-  actionStrong: '#179A6B',
+  action: '#0E9BA8',
+  actionStrong: '#0A8591',
 
   /** Green. Confirmed deals, live status, the WANTED label. */
-  success: '#1CB67F',
-  successTint: '#E2F6EE',
+  success: '#0E9BA8',
+  successTint: '#E0F3F5',
 
   /** A shop's initials mark. */
   shopMark: '#2B2B2B',
