@@ -89,15 +89,21 @@
   border-radius: var(--snt-radius-md);
 }
 
-/** "up to +$600": a request's cash is a cap, not a fixed amount. */
+/**
+ * "+ up to $600": a request's cash is a cap, not a fixed amount. Set like the
+ * cash on a swap, with "up to" lighter so the amount still leads.
+ */
 .upTo {
   flex-shrink: 0;
-  display: flex;
-  align-items: baseline;
-  gap: var(--snt-space-2);
-  font-size: var(--snt-text-xs);
-  color: var(--snt-ink-muted);
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--snt-accent);
   white-space: nowrap;
+}
+
+.upToWords {
+  font-weight: var(--snt-weight-medium);
 }
 
 .tradeInBody {

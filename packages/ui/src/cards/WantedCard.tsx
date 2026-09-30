@@ -126,8 +126,10 @@ export function WantedCard({
           </div>
           {cash ? <CashAmount amount={cash} /> : null}
           {listing.type === 'request' ? (
+            // "+ up to $600": cash on top, capped rather than fixed.
             <span className={styles.upTo}>
-              up to <CashAmount amount={listing.budget} />
+              + <span className={styles.upToWords}>up to</span> $
+              {listing.budget}
             </span>
           ) : null}
         </div>
