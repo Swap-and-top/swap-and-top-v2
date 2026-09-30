@@ -88,14 +88,15 @@
 }
 
 /**
- * The "looking for" photo slot: the tile's own green, with the category's
- * icon, so the tile reads as one block rather than a missing photo.
+ * The "looking for" slot: the photo grey, with the category's icon in the
+ * tile's green, so it reads as a picture of the kind of thing wanted.
  */
 .wantedSlot {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgb(255 255 255 / 0.55);
+  background: var(--snt-bg-placeholder);
+  color: var(--snt-brand-green);
 }
 
 /**

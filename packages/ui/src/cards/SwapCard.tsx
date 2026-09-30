@@ -137,7 +137,7 @@ function SwapTile({
   return (
     <div className={[styles.tile, styles[tone]].join(' ')}>
       {/* What they have is photographed. What they want is described, never
-          pictured, so its slot is solid green with the category's icon. */}
+          pictured, so its slot is grey with the category's icon in green. */}
       {tone === 'has' ? (
         <PhotoGallery
           images={item.images ?? []}
