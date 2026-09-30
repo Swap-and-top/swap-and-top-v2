@@ -89,6 +89,11 @@
    */
   --snt-trust: #9a5b00;
   --snt-trust-fill: #c77700;
+  /**
+   * Alert: count badges — something waiting for you. Red, so it stands out
+   * from every listing colour. White on it holds 4.8:1.
+   */
+  --snt-alert: #d92d20;
   --snt-accent-strong: #1d4b8a;
   --snt-accent-tint: #e9f0f9;
 

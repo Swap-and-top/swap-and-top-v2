@@ -91,7 +91,8 @@
   height: 18px;
   padding: 0 var(--snt-space-2);
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-accent);
+  /* Red, so a waiting count stands out from every listing colour. */
+  background: var(--snt-alert);
   color: var(--snt-ink-on-dark);
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-bold);
