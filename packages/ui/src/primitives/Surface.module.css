@@ -1,7 +1,11 @@
 /** The light grey rounded box that almost every group of content sits in. */
 
 .panel {
+  /* Inside a card, the two inks are the card's own. */
+  --snt-ink: var(--snt-card-ink);
+  --snt-ink-muted: var(--snt-card-ink-muted);
   background: var(--snt-bg-card);
+  color: var(--snt-ink);
   border-radius: var(--snt-radius-xl);
 }
 

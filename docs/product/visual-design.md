@@ -71,7 +71,7 @@ The gradient runs **left to right across the full viewport**, not across the con
 
 **Blue means owned, green means wanted.** The swap card's blue "Has" tile and green "Looking for" tile set the rule, and the rest of the app follows it quietly: the name of an item — never its specs — is blue when someone has it and green when someone wants it. Cards themselves stay plain grey; there are no coloured stripes or outlines.
 
-**The accent is brand blue.** Links and selected states use it. **The action is brand green.** Primary buttons and live status use it. **Trust is amber** — the verified badge, the deal count and confirmed-deal figures — so it is never read as the blue of things for sale or the green of things wanted (`--snt-trust` `#9a5b00` for text, `--snt-trust-fill` `#c77700` for the tick disc).
+**The accent is brand blue.** Links and selected states use it. **The action is brand green.** Primary buttons and live status use it. **Trust is the regular blue** (`#2572a2`) — the verified badge, the deal count and confirmed-deal figures, tick disc and words alike.
 
 **The dealer console keeps its dark chrome** (`--snt-dark`). Only its accent changes, from clay to brand blue, because it reads the same tokens.
 
@@ -141,9 +141,9 @@ Every marketplace screen starts with the gradient.
 
 See [card-system.md](./card-system.md) for what each card means. Visually they share one shape: a `#F2F2F2` box with 18px corners and no border.
 
-- **Wanted** — green WANTED label, bold green title, grey budget line, and the requester's trust line (bold first name, amber tick deal count) on the left; the green "I have this" pill on the right, centred against the text. The response count sits top right with the age — "4 responses · 1h ago" A trade-in strip, when there is one, runs full width underneath, with a small photo of the trade-in at its left (a count in its corner when there are several) that opens the photo viewer. What someone wants is never pictured; what they offer can be.
-- **Dealer sale** — photo; the item name in blue with its specs in grey beneath on the left, price over condition on the right — after a price drop, the old price struck through in small grey beside it; a light rule, then the shop row: black initials square, bold name, amber tick "Verified Seller", and at the far right "4 in Stock" above the save and share icons. On a phone the name and badge stack
-- **Private sale** — photo; name and specs on the left, price and condition on the right; then one trust line: bold first name, amber tick deal count, area and age
+- **Wanted** — green WANTED label, bold green title, grey budget line, and the requester's trust line (bold first name, blue tick deal count) on the left; the green "I have this" pill on the right, centred against the text. The response count sits top right with the age — "4 responses · 1h ago" A trade-in strip, when there is one, runs full width underneath, with a small photo of the trade-in at its left (a count in its corner when there are several) that opens the photo viewer. What someone wants is never pictured; what they offer can be.
+- **Dealer sale** — photo; the item name in blue with its specs in grey beneath on the left, price over condition on the right — after a price drop, the old price struck through in small grey beside it; a light rule, then the shop row: black initials square, bold name, blue tick "Verified Seller", and at the far right "4 in Stock" above the save and share icons. On a phone the name and badge stack
+- **Private sale** — photo; name and specs on the left, price and condition on the right; then one trust line: bold first name, blue tick deal count, area and age
 - **Swap** — two solid rounded tiles, blue "Has" and green "Looking for", with the cash on the side that comes with it — "Has" when the poster adds, "Looking for" when you do. Then the poster's trust line. Wanted cards and the swap detail also say who pays in words — "They add $240", "You add $60" or "Straight swap" — from one helper (`swapTerms`); "they" is always the poster and "you" whoever takes the swap. A request with something to swap is worded the same way: its budget is cash the poster adds on top, capped rather than fixed, so it reads "They add up to $600", with "+ up to $600" on the Has strip. The "Looking for" photo slot is grey with the category's icon in green: what someone wants is described, never pictured
 
 Sale and swap cards carry **save and share** icons — the v1 app's star and share glyphs — at the far right of their bottom row; Wanted cards carry them in their bottom row beside the requester. Saving fills the star in the same grey — never blue, which means for sale; sharing opens the phone's share sheet (so WhatsApp), or copies the link where there is none. The rest of the card is one link to the listing.
@@ -156,7 +156,7 @@ Every tappable card gives a little when pressed; it does not change colour under
 
 ### Trust signals
 
-Both are a **white tick in an amber disc** followed by amber words — "Verified Seller" or "3 deals". They are told apart by the words, never by colour.
+Both are a **white tick in a blue disc** followed by words in the same blue — "Verified Seller" or "3 deals". They are told apart by the words, never by colour.
 
 ### Buttons
 

@@ -67,7 +67,7 @@ export function ConfirmedDealsBadge({
   );
 }
 
-/** The white tick in a filled amber disc that both signals carry. */
+/** The white tick in a filled blue disc that both signals carry. */
 function TickDisc({ size }: { size: TrustSize }) {
   return (
     <span

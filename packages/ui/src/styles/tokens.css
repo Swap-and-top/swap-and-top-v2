@@ -53,6 +53,13 @@
   --snt-ink-muted: #6b6b6b;
   /** Decorative only — placeholder icons. Never body text. */
   --snt-ink-faint: #a8a8a8;
+  /**
+   * Text inside a card. Darker text (names of people and shops, prices) and
+   * the smaller grey text and icons (specs, areas, times, save and share).
+   * Set on the card itself, so text outside cards keeps the inks above.
+   */
+  --snt-card-ink: #505453;
+  --snt-card-ink-muted: #8e8e8e;
   --snt-ink-on-dark: #ffffff;
   --snt-ink-on-dark-muted: #aba8a2;
   --snt-ink-on-dark-subtle: #c9c6be;
@@ -86,12 +93,11 @@
   --snt-accent: #2572a2;
   --snt-accent-bold: #3983b1;
   /**
-   * Trust: verified sellers and confirmed deals. Amber, so it is never read as
-   * the blue of things for sale or the green of things wanted. The text shade
-   * holds 4.5:1 on every card colour; the brighter disc carries a white tick.
+   * Trust: verified sellers and confirmed deals — the tick's disc and the
+   * words beside it. The regular blue, the same as the swap card's Has tile.
    */
-  --snt-trust: #9a5b00;
-  --snt-trust-fill: #c77700;
+  --snt-trust: #2572a2;
+  --snt-trust-fill: #2572a2;
   /**
    * Alert: count badges — something waiting for you. Red, so it stands out
    * from every listing colour. White on it holds 4.8:1.

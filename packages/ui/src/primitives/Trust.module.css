@@ -5,9 +5,8 @@
  *  - verified dealer, asserting a checked business
  *  - confirmed deals, earned by behaviour
  *
- * Both are drawn the same way — a white tick in an amber disc, then the words
- * in amber — and are told apart by the words, never by colour. Amber because
- * blue means for sale and green means wanted; trust must not look like either.
+ * Both are drawn the same way — a white tick in a blue disc, then the words
+ * in the same blue — and are told apart by the words, never by colour.
  *
  * There is no status or occupation marker anywhere in this file, and there
  * should never be one. See docs/product/trust-and-safety.md.
