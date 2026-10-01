@@ -30,3 +30,6 @@ pnpm-debug.log*
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# vercel
+.vercel/
