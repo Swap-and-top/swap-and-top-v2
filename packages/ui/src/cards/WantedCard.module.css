@@ -80,13 +80,14 @@
   gap: var(--snt-space-5);
   margin-top: var(--snt-space-6);
   padding: var(--snt-space-4) var(--snt-space-6);
+  /* Set into the white card, so it needs its own tint to show. */
+  background: var(--snt-bg-inset);
+  border-radius: var(--snt-radius-md);
 }
 
 /* With a photo, it sits as close to the edge as it does to the top. */
 .tradeIn:has(> button) {
   padding-left: var(--snt-space-4);
-  background: var(--snt-bg-surface);
-  border-radius: var(--snt-radius-md);
 }
 
 /**
@@ -134,12 +135,6 @@
 
 .cta {
   flex-shrink: 0;
-}
-
-/** An individual's request: the card and its hover take the Wanted green. */
-.person {
-  --snt-bg-card: var(--snt-bg-card-wanted);
-  --snt-bg-card-hover: var(--snt-bg-card-wanted-hover);
 }
 
 /* Whole-card hover, as on the other cards. The title is the link. */

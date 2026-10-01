@@ -21,9 +21,9 @@ export const colors = {
   /** Headers, navigation, form fields. */
   bgSurface: '#FFFFFF',
   /** Cards and panels. */
-  bgCard: '#F2F2F2',
+  bgCard: '#FFFFFF',
   /** A tappable card under the pointer. */
-  bgCardHover: '#EAEAEA',
+  bgCardHover: '#F4F8FF',
   /** Muted fills that need more weight than a line. */
   bgSubtle: '#E8E8E8',
   /** Image placeholder fill. */

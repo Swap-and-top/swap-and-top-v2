@@ -31,7 +31,6 @@ export function SwapCard({
   const href = `/listing/${listing.slug}`;
 
   return (
-    // Swaps are always between individuals, so the card is always tinted blue.
     <div className={styles.card}>
       <Panel xl>
         {/* The link covers the whole card (see .link in the CSS). The photos

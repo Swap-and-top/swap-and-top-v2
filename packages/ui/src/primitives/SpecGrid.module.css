@@ -14,16 +14,16 @@
   background: var(--snt-bg-card);
 }
 
-/* White rules between cells, on the grey card. */
+/* Rules between cells in the page colour, on the white card. */
 .cell {
   padding: var(--snt-space-5) var(--snt-space-7);
-  border-bottom: 1px solid var(--snt-bg-surface);
+  border-bottom: 1px solid var(--snt-bg-app);
   min-width: 0;
 }
 
 /* Vertical rule between the two columns. */
 .cell:nth-child(odd) {
-  border-right: 1px solid var(--snt-bg-surface);
+  border-right: 1px solid var(--snt-bg-app);
 }
 
 /* No rule under the final row, whether it is one cell or two. */
@@ -57,7 +57,7 @@
   }
 
   .cell:nth-child(odd) {
-    border-right: 1px solid var(--snt-bg-surface);
+    border-right: 1px solid var(--snt-bg-app);
   }
 
   .cell:nth-child(3n) {

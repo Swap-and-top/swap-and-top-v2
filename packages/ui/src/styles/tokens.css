@@ -32,19 +32,15 @@
   --snt-bg-app: #ebf2ff;
   /** Headers, navigation, form fields. */
   --snt-bg-surface: #ffffff;
-  /** Cards and panels — the light grey box every group of content sits in. */
-  --snt-bg-card: #f2f2f2;
-  /** A tappable card under the pointer. */
-  --snt-bg-card-hover: #eaeaea;
   /**
-   * An individual's sale or swap card — the v1 app's sky blue. Dealers' cards
-   * stay grey, so the tint alone says "a person, not a shop".
+   * Cards and panels — the white box every group of content sits in, on the
+   * sky-blue page. Every card is white, whoever posted it.
    */
-  --snt-bg-card-person: #ebf2ff;
-  --snt-bg-card-person-hover: #e0eafc;
-  /** An individual's Wanted card — the v1 app's light green. */
-  --snt-bg-card-wanted: #e4f0f1;
-  --snt-bg-card-wanted-hover: #d8e8ea;
+  --snt-bg-card: #ffffff;
+  /** A tappable card under the pointer. */
+  --snt-bg-card-hover: #f4f8ff;
+  /** A box set into a white card, e.g. the "Has" strip on a Wanted card. */
+  --snt-bg-inset: #ebf2ff;
   /** Muted fill with more weight than a line. */
   --snt-bg-subtle: #e8e8e8;
   /** Image placeholder fill. */

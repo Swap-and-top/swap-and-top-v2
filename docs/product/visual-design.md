@@ -150,7 +150,7 @@ Sale and swap cards carry **save and share** icons — the v1 app's star and sha
 
 **Photos** swipe sideways, one at a time, on sale cards, on the "Has" tile of a swap, and at the top of a listing. Dots over the bottom edge show which photo is up (the current one stretches into a short bar) and jump to a photo when tapped; with a mouse, arrows appear on hover. A tap on a photo opens it full screen — whole, not cropped, over the page blurred under a light tint that matches the card (v1's blue for an individual's post, the same in green for a Wanted post, no tint for a shop's), with the same swipe, dots and arrows, a "2 / 4" counter and a close button (Escape and the arrow keys work too); a tap anywhere else on the card opens the listing.
 
-**Who posted it** shows in the card's own colour, taken from the v1 app. A dealer's or shop's card is the standard grey. An individual's sale or swap card is v1's sky blue (`#ebf2ff`), and an individual's Wanted card v1's light green (`#e4f0f1`). Swaps are always between individuals, so they are always blue.
+**Every card is white**, on the sky-blue page (`#ebf2ff`), whoever posted it — dealer, individual or Wanted. A box set into a card, like the "Has" strip on a Wanted card, takes the page colour so it still shows. Who posted a listing is read from its content: a shop row and verified badge for a dealer, a name and deal count for an individual.
 
 Every tappable card darkens slightly under the pointer and gives a little when pressed. Keyboard focus shows a blue ring — white on the gradient.
 

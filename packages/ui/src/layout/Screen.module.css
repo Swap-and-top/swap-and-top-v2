@@ -15,9 +15,12 @@
   background: var(--snt-bg-app);
 }
 
-/** White background, for screens that are one continuous surface. */
+/**
+ * For screens that are one continuous surface. The page colour, like every
+ * other screen, so the white cards on it show.
+ */
 .screenSurface {
-  background: var(--snt-bg-surface);
+  background: var(--snt-bg-app);
 }
 
 /** The content column. Every full-width part wraps its contents in one. */

@@ -50,12 +50,6 @@
   transform: scale(0.99);
 }
 
-/** A private seller: the card and its hover take the individual's blue. */
-.person {
-  --snt-bg-card: var(--snt-bg-card-person);
-  --snt-bg-card-hover: var(--snt-bg-card-person-hover);
-}
-
 .imageWrap {
   position: relative;
 }

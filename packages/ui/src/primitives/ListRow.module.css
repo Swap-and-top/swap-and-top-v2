@@ -24,7 +24,7 @@
 }
 
 .row + .row {
-  border-top: 1px solid var(--snt-bg-surface);
+  border-top: 1px solid var(--snt-bg-app);
 }
 
 .row:hover {
