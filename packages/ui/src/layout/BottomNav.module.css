@@ -19,6 +19,9 @@
   height: var(--snt-bottom-nav-h);
   flex-shrink: 0;
   background: var(--snt-bg-surface);
+  /* A soft shadow cast upward, tinted with the control blue rather than
+     grey, to lift the bar off the page without a hard line. */
+  box-shadow: 0 -2px 12px rgb(48 121 158 / 0.12);
   /* Clear the home indicator on a phone. */
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
