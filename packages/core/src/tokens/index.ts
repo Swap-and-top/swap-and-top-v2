@@ -17,7 +17,7 @@ export const colors = {
   brandYellow: '#FFFF8B',
 
   /** Page background behind cards. */
-  bgApp: '#FFFFFF',
+  bgApp: '#EBF2FF',
   /** Headers, navigation, form fields. */
   bgSurface: '#FFFFFF',
   /** Cards and panels. */
@@ -42,6 +42,9 @@ export const colors = {
 
   /** Brand blue. Links, selected states, verified sellers, deal counts. */
   accent: '#255DAB',
+  /** Filter controls: the selected chip and active tab; and the idle ones. */
+  controlActive: '#30799E',
+  controlIdle: '#74A4C7',
   accentStrong: '#1D4B8A',
   accentTint: '#E9F0F9',
 

@@ -9,8 +9,9 @@
   display: flex;
   gap: var(--snt-space-9);
   margin-inline: var(--snt-column-inset);
-  background: var(--snt-bg-surface);
-  border-bottom: 1px solid var(--snt-line);
+  /* No fill of its own: it sits on whatever the page or band is. */
+  background: none;
+  border-bottom: 1px solid var(--snt-control-idle);
   overflow-x: auto;
   scrollbar-width: none;
   flex-shrink: 0;
@@ -21,43 +22,59 @@
 }
 
 .tab {
+  position: relative;
   flex-shrink: 0;
   height: 44px;
-  border-bottom: 3px solid transparent;
+  /* Room for the 3px line, inside the box so the fill variant cannot clip it. */
+  border: 0;
+  padding-bottom: 3px;
   background: none;
-  color: var(--snt-ink-muted);
+  color: var(--snt-control-idle);
   font-size: var(--snt-text-base);
   white-space: nowrap;
   transition: color var(--snt-transition);
 }
 
 .tab:hover {
-  color: var(--snt-ink);
+  color: var(--snt-control-active);
 }
 
 .tabActive {
-  /* The line before the sliding bar is measured — see .measured. */
-  border-bottom-color: var(--snt-ink);
-  color: var(--snt-ink);
+  color: var(--snt-control-active);
   font-weight: var(--snt-weight-extrabold);
 }
 
+/*
+ * The line before the sliding bar is measured — see .measured. Drawn as its
+ * own rounded shape along the tab's bottom edge, so it matches the bar exactly.
+ */
+.tabActive::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+}
+
 /* Once the bar is measured it carries the line, and the tab's own gives way. */
-.measured .tabActive {
-  border-bottom-color: transparent;
+.measured .tabActive::after {
+  display: none;
 }
 
 /**
  * The active tab's underline: one bar that slides between tabs, in the active
- * label's own colour. Not blue — blue means for sale, and a selected view
- * should not read as a kind of listing.
+ * label's own colour, with rounded ends.
  */
 .bar {
   position: absolute;
   bottom: 0;
   left: 0;
   height: 3px;
-  background: var(--snt-ink);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
   pointer-events: none;
 }
 
@@ -117,10 +134,6 @@
   background: var(--snt-bg-surface);
 }
 
-:global([data-surface='brand']) .tabActive {
-  border-bottom-color: var(--snt-bg-surface);
-}
-
-:global([data-surface='brand']) .measured .tabActive {
-  border-bottom-color: transparent;
+:global([data-surface='brand']) .tabActive::after {
+  background: var(--snt-bg-surface);
 }

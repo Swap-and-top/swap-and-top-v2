@@ -19,7 +19,7 @@
 /**
  * Tapping this opens the full search screen. Specification search is the
  * product's main advantage, so it gets a screen rather than a dropdown.
- * A filled grey pill, on the white band under the header.
+ * An outlined white pill, on the band under the header.
  */
 .searchEntry {
   display: flex;
@@ -28,10 +28,14 @@
   height: 40px;
   padding: 0 var(--snt-space-9);
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-card);
-  color: var(--snt-ink-muted);
+  /* Idle: outline, icon and prompt in the idle control colour. */
+  border: 1px solid var(--snt-control-idle);
+  background: var(--snt-bg-surface);
+  color: var(--snt-control-idle);
   font-size: var(--snt-text-base);
-  transition: background var(--snt-transition);
+  transition:
+    border-color var(--snt-transition),
+    color var(--snt-transition);
 }
 
 .searchEntry span {
@@ -41,8 +45,8 @@
 }
 
 .searchEntry:hover {
-  color: var(--snt-ink-muted);
-  background: var(--snt-bg-card-hover);
+  border-color: var(--snt-control-active);
+  color: var(--snt-control-active);
 }
 
 /** Gap between feed cards, per the design. */

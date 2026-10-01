@@ -91,7 +91,8 @@
 /** The screen's own controls, on white under the gradient. */
 .appBelow {
   flex-shrink: 0;
-  background: var(--snt-bg-surface);
+  /* The page's own background, so the band reads as part of the page. */
+  background: var(--snt-bg-app);
 }
 
 /**

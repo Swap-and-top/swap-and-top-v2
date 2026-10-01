@@ -28,10 +28,10 @@
   height: 30px;
   padding: 0 var(--snt-space-9);
   border-radius: var(--snt-radius-pill);
-  border: 1px solid var(--snt-line);
+  /* Idle: outline and label in the idle control colour. */
+  border: 1px solid var(--snt-control-idle);
   background: var(--snt-bg-surface);
-  /* Unselected labels are grey; the selected chip carries the dark ink. */
-  color: var(--snt-ink-muted);
+  color: var(--snt-control-idle);
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-normal);
   white-space: nowrap;
@@ -42,21 +42,20 @@
 }
 
 .chip:hover {
-  border-color: var(--snt-ink);
-  color: var(--snt-ink);
+  border-color: var(--snt-control-active);
+  color: var(--snt-control-active);
 }
 
 /**
- * Category chips, selected: filled in the dark ink of the active tab's label
- * and underline, so the two controls read as one set. Not blue — blue means
- * for sale, and a selected filter should not read as a kind of listing.
+ * Category chips, selected: filled in the active control colour, the same as
+ * the active tab's label and line, so the two controls read as one set.
  */
 .selectedAccent,
 .selectedAccent:hover,
 .selectedInk,
 .selectedInk:hover {
-  background: var(--snt-ink);
-  border-color: var(--snt-ink);
+  background: var(--snt-control-active);
+  border-color: var(--snt-control-active);
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
 }

@@ -28,8 +28,8 @@
 
   /* --- surfaces ------------------------------------------------------ */
 
-  /** Page background behind cards. */
-  --snt-bg-app: #ffffff;
+  /** Page background behind cards: the v1 app's sky blue. */
+  --snt-bg-app: #ebf2ff;
   /** Headers, navigation, form fields. */
   --snt-bg-surface: #ffffff;
   /** Cards and panels — the light grey box every group of content sits in. */
@@ -94,6 +94,13 @@
    * from every listing colour. White on it holds 4.8:1.
    */
   --snt-alert: #d92d20;
+  /*
+   * Filter controls under the header — search, category chips, type tabs.
+   * Active: the selected chip's fill, the active tab's label and line.
+   * Idle: outlines, labels and the rule under the tabs when not selected.
+   */
+  --snt-control-active: #30799e;
+  --snt-control-idle: #74a4c7;
   --snt-accent-strong: #1d4b8a;
   --snt-accent-tint: #e9f0f9;
 
