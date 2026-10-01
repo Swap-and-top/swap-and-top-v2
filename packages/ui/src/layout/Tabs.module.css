@@ -1,17 +1,25 @@
 /** Tabs: a row of mutually exclusive views, with one sliding underline. */
 
 /**
- * Tabs on a white surface. The row and its rule span the content column, the
- * same width as the cards beneath — not the whole screen.
+ * Tabs. The row spans the content column, the same width as the cards
+ * beneath — not the whole screen.
+ *
+ * The thin rule under the row is a 1px strip painted along the bottom, not a
+ * border, so it can stop short: it is inset at each end by the radius of the
+ * active line's rounded corners (half its 3px height). That way the rule
+ * never pokes out past the curve when the first or last tab is active — the
+ * two lines end flush.
  */
 .tabs {
+  --tab-line: 3px;
   position: relative;
   display: flex;
   gap: var(--snt-space-9);
   margin-inline: var(--snt-column-inset);
-  /* No fill of its own: it sits on whatever the page or band is. */
-  background: none;
-  border-bottom: 1px solid var(--snt-control-idle);
+  /* Room for the rule; the row has no fill of its own. */
+  padding-bottom: 1px;
+  background: linear-gradient(var(--snt-control-idle), var(--snt-control-idle))
+    center bottom / calc(100% - var(--tab-line)) 1px no-repeat;
   overflow-x: auto;
   scrollbar-width: none;
   flex-shrink: 0;
@@ -27,9 +35,11 @@
   height: 44px;
   /* Room for the 3px line, inside the box so the fill variant cannot clip it. */
   border: 0;
-  padding-bottom: 3px;
+  padding-bottom: var(--tab-line);
   background: none;
-  color: var(--snt-control-idle);
+  /* Idle labels in the darker blue too, so they stay readable; the active
+     one is told apart by its weight and the line. */
+  color: var(--snt-control-active);
   font-size: var(--snt-text-base);
   white-space: nowrap;
   transition: color var(--snt-transition);
@@ -54,7 +64,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 3px;
+  height: var(--tab-line);
   border-radius: var(--snt-radius-pill);
   background: var(--snt-control-active);
 }
@@ -70,9 +80,10 @@
  */
 .bar {
   position: absolute;
-  bottom: 0;
+  /* Sits on top of the rule, not over it. */
+  bottom: 1px;
   left: 0;
-  height: 3px;
+  height: var(--tab-line);
   border-radius: var(--snt-radius-pill);
   background: var(--snt-control-active);
   pointer-events: none;
@@ -115,9 +126,13 @@
  */
 :global([data-surface='brand']) .tabs {
   padding-inline: 0;
+  padding-bottom: 0;
   margin-top: 9px;
   background: none;
-  border-bottom: none;
+}
+
+:global([data-surface='brand']) .bar {
+  bottom: 0;
 }
 
 :global([data-surface='brand']) .tab {
