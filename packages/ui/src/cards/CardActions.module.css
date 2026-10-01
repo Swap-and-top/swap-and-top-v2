@@ -27,7 +27,7 @@
   width: 24px;
   height: 24px;
   border-radius: var(--snt-radius-pill);
-  color: var(--snt-ink-muted);
+  color: var(--snt-card-icon);
   transition:
     background var(--snt-transition),
     color var(--snt-transition);
@@ -52,5 +52,5 @@
  */
 .saved,
 .saved:hover {
-  color: var(--snt-ink-muted);
+  color: var(--snt-card-icon);
 }

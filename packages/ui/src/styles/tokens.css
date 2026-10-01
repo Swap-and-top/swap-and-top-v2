@@ -55,11 +55,13 @@
   --snt-ink-faint: #a8a8a8;
   /**
    * Text inside a card. Darker text (names of people and shops, prices) and
-   * the smaller grey text and icons (specs, areas, times, save and share).
-   * Set on the card itself, so text outside cards keeps the inks above.
+   * the smaller grey text (specs, areas, times) — 4.6:1 on white. Set on the
+   * card itself, so text outside cards keeps the inks above.
    */
   --snt-card-ink: #505453;
-  --snt-card-ink-muted: #8e8e8e;
+  --snt-card-ink-muted: #757575;
+  /** The save and share icons on a card: lighter, as icons only need 3:1. */
+  --snt-card-icon: #8e8e8e;
   --snt-ink-on-dark: #ffffff;
   --snt-ink-on-dark-muted: #aba8a2;
   --snt-ink-on-dark-subtle: #c9c6be;
