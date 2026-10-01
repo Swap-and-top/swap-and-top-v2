@@ -16,8 +16,9 @@
   display: flex;
   gap: var(--snt-space-9);
   margin-inline: var(--snt-column-inset);
-  /* Room for the rule; the row has no fill of its own. */
-  padding-bottom: 1px;
+  /* The rule runs along the row's own bottom edge, behind the tabs, so the
+     active line's base lies on it and the two read as one line that thickens
+     under the active tab. The row has no fill of its own. */
   background: linear-gradient(var(--snt-control-idle), var(--snt-control-idle))
     center bottom / calc(100% - var(--tab-line)) 1px no-repeat;
   overflow-x: auto;
@@ -80,8 +81,8 @@
  */
 .bar {
   position: absolute;
-  /* Sits on top of the rule, not over it. */
-  bottom: 1px;
+  /* Its base lies on the rule: the bottom 1px of the two overlap. */
+  bottom: 0;
   left: 0;
   height: var(--tab-line);
   border-radius: var(--snt-radius-pill);
@@ -126,13 +127,8 @@
  */
 :global([data-surface='brand']) .tabs {
   padding-inline: 0;
-  padding-bottom: 0;
   margin-top: 9px;
   background: none;
-}
-
-:global([data-surface='brand']) .bar {
-  bottom: 0;
 }
 
 :global([data-surface='brand']) .tab {
