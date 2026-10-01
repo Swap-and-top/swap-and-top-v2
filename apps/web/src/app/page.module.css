@@ -30,7 +30,7 @@
   border-radius: var(--snt-radius-pill);
   /* A plain white pill, no outline; icon and prompt in the idle colour. */
   background: var(--snt-bg-surface);
-  color: var(--snt-control-idle);
+  color: var(--snt-control-idle-ink);
   font-size: var(--snt-text-base);
   transition: color var(--snt-transition);
 }

@@ -54,7 +54,8 @@
   width: auto;
 }
 
-/** Yellow on the gradient, green type — the v1 call to action. */
+/** Yellow on the gradient, green type — the v1 call to action. The green is
+ *  deepened so it holds 4.5:1 on the yellow. */
 .postButton {
   display: inline-flex;
   align-items: center;
@@ -62,7 +63,7 @@
   padding: 0 var(--snt-space-8);
   border-radius: var(--snt-radius-pill);
   background: var(--snt-brand-yellow);
-  color: var(--snt-brand-green);
+  color: var(--snt-post-ink);
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-bold);
   white-space: nowrap;
@@ -70,7 +71,7 @@
 }
 
 .postButton:hover {
-  color: var(--snt-brand-green);
+  color: var(--snt-post-ink);
   filter: brightness(0.96);
 }
 

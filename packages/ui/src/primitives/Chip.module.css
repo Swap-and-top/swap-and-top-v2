@@ -31,7 +31,7 @@
   /* Idle: outline and label in the idle control colour, no fill. */
   border: 1px solid var(--snt-control-idle);
   background: none;
-  color: var(--snt-control-idle);
+  color: var(--snt-control-idle-ink);
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-normal);
   white-space: nowrap;

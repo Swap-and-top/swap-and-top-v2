@@ -55,8 +55,6 @@
 
 .title:hover {
   color: var(--snt-wanted-ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 /** Budget and area, separated by a small dot. */
@@ -80,7 +78,9 @@
   gap: var(--snt-space-5);
   margin-top: var(--snt-space-6);
   padding: var(--snt-space-4) var(--snt-space-6);
-  /* Set into the white card, so it needs its own tint to show. */
+  /* Set into the white card, so it needs its own tint to show. The small
+     grey text on it goes a shade deeper to hold 4.5:1 on that tint. */
+  --snt-ink-muted: #6e6e6e;
   background: var(--snt-bg-inset);
   border-radius: var(--snt-radius-md);
 }

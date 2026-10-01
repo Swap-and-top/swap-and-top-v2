@@ -41,6 +41,11 @@
   --snt-bg-inset: #ebf2ff;
   /** Muted fill with more weight than a line. */
   --snt-bg-subtle: #e8e8e8;
+  /**
+   * The empty picture slot on a swap card's "Looking for" side, behind the
+   * category icon, when there is no photo of what is wanted.
+   */
+  --snt-bg-wanted-slot: #dae3ef;
   /** Image placeholder fill. */
   --snt-bg-placeholder: #cecece;
   /** Row highlight, e.g. the selected lead in the console table. */
@@ -72,10 +77,11 @@
   /* green is a shade deeper than the brand green so it reads as text.     */
 
   --snt-owned-ink: #2572a2;
-  --snt-wanted-ink: #1f978d;
+  /* Green holds 4.5:1 both as text on white and under white text. */
+  --snt-wanted-ink: #1b847c;
   /** The solid tiles on a swap card: what they have, what they want. */
   --snt-owned-fill: #2572a2;
-  --snt-wanted-fill: #1f978d;
+  --snt-wanted-fill: #1b847c;
 
   /* --- lines --------------------------------------------------------- */
 
@@ -93,7 +99,8 @@
   /* --snt-accent-bold.                                                     */
 
   --snt-accent: #2572a2;
-  --snt-accent-bold: #3983b1;
+  /* 4.5:1 on white and on the inset blue of the Has strip. */
+  --snt-accent-bold: #33749d;
   /**
    * Trust: verified sellers and confirmed deals — the tick's disc and the
    * words beside it. The regular blue, the same as the swap card's Has tile.
@@ -110,23 +117,28 @@
    * Active: the selected chip's fill, the active tab's label and line.
    * Idle: outlines, labels and the rule under the tabs when not selected.
    */
-  --snt-control-active: #30799e;
-  --snt-control-idle: #74a4c7;
+  --snt-control-active: #2f7599;
+  /* Idle outlines, icons and the rule under the tabs: 3:1 on the page. */
+  --snt-control-idle: #5791bb;
+  /* Idle labels and the search prompt: 4.5:1 on the page and on white. */
+  --snt-control-idle-ink: #3e7399;
+  /** "Post New Item" on the header's yellow button: 4.5:1 on it. */
+  --snt-post-ink: #14835b;
   --snt-accent-strong: #1d5d85;
   --snt-accent-tint: #e9f0f9;
 
   /* --- action: brand green ------------------------------------------- */
   /* The primary button — "I have this", confirm, publish.                 */
 
-  --snt-action: #1f978d;
-  --snt-action-strong: #1a8078;
+  --snt-action: #1b847c;
+  --snt-action-strong: #166e67;
 
   /* --- success: green ------------------------------------------------ */
   /* Confirmed deals, live status, the WANTED label, the swap "looking     */
   /* for" tile.                                                           */
 
-  --snt-success: #1f978d;
-  --snt-success-strong: #1a8078;
+  --snt-success: #1b847c;
+  --snt-success-strong: #166e67;
   --snt-success-tint: #e2f6ee;
 
   /* --- dark surfaces ------------------------------------------------- */

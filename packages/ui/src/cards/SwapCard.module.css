@@ -84,14 +84,14 @@
 }
 
 /**
- * The "looking for" slot: the photo grey, with the category's icon in the
+ * The "looking for" slot: a pale blue-grey, with the category's icon in the
  * tile's green, so it reads as a picture of the kind of thing wanted.
  */
 .wantedSlot {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--snt-bg-placeholder);
+  background: var(--snt-bg-wanted-slot);
   color: var(--snt-wanted-fill);
 }
 
