@@ -78,16 +78,20 @@ export function CashAmount({
 export function ItemName({
   children,
   side,
+  bold = false,
   className,
 }: {
   children: ReactNode;
   side: 'owned' | 'wanted';
+  /** Set where the name is in bold: bold blue text takes a lighter blue. */
+  bold?: boolean;
   className?: string;
 }) {
   return (
     <span
       className={[
         side === 'owned' ? styles.owned : styles.wanted,
+        bold && side === 'owned' ? styles.ownedBold : '',
         className ?? '',
       ]
         .filter(Boolean)

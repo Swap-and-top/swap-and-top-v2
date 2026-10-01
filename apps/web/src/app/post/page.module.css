@@ -87,7 +87,7 @@
   padding: 0 var(--snt-space-4);
   border-radius: var(--snt-radius-pill);
   background: var(--snt-brand-yellow);
-  color: var(--snt-brand-green);
+  color: var(--snt-wanted-ink);
   font-size: var(--snt-text-2xs);
   font-weight: var(--snt-weight-bold);
   letter-spacing: var(--snt-tracking-label);

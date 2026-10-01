@@ -64,8 +64,11 @@
   /* side of a deal — the same rule as the swap card's two tiles. The      */
   /* green is a shade deeper than the brand green so it reads as text.     */
 
-  --snt-owned-ink: #255dab;
-  --snt-wanted-ink: #12875c;
+  --snt-owned-ink: #2572a2;
+  --snt-wanted-ink: #1f978d;
+  /** The solid tiles on a swap card: what they have, what they want. */
+  --snt-owned-fill: #2572a2;
+  --snt-wanted-fill: #1f978d;
 
   /* --- lines --------------------------------------------------------- */
 
@@ -77,7 +80,12 @@
   /* Links, selected states, verified sellers, deal counts, the swap       */
   /* "has" tile.                                                          */
 
-  --snt-accent: #255dab;
+  /* Everywhere but the header, whose gradient keeps the brand blue and     */
+  /* green above. Regular-weight blue text, links, outlines and fills use   */
+  /* --snt-accent; bold blue text uses the lighter --snt-accent-bold.       */
+
+  --snt-accent: #2572a2;
+  --snt-accent-bold: #3983b1;
   /**
    * Trust: verified sellers and confirmed deals. Amber, so it is never read as
    * the blue of things for sale or the green of things wanted. The text shade
@@ -97,21 +105,21 @@
    */
   --snt-control-active: #30799e;
   --snt-control-idle: #74a4c7;
-  --snt-accent-strong: #1d4b8a;
+  --snt-accent-strong: #1d5d85;
   --snt-accent-tint: #e9f0f9;
 
   /* --- action: brand green ------------------------------------------- */
   /* The primary button — "I have this", confirm, publish.                 */
 
-  --snt-action: #1cb67f;
-  --snt-action-strong: #179a6b;
+  --snt-action: #1f978d;
+  --snt-action-strong: #1a8078;
 
   /* --- success: green ------------------------------------------------ */
   /* Confirmed deals, live status, the WANTED label, the swap "looking     */
   /* for" tile.                                                           */
 
-  --snt-success: #1cb67f;
-  --snt-success-strong: #179a6b;
+  --snt-success: #1f978d;
+  --snt-success-strong: #1a8078;
   --snt-success-tint: #e2f6ee;
 
   /* --- dark surfaces ------------------------------------------------- */

@@ -75,7 +75,7 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
               above it in the bottom row. */}
           <Link href={href} className={[styles.summary, styles.link].join(' ')}>
             <div className={styles.identity}>
-              <ItemName side="owned" className={styles.name}>
+              <ItemName side="owned" bold className={styles.name}>
                 {listing.item.name}
               </ItemName>
               {specs.length > 0 ? (

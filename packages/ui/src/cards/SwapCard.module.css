@@ -80,11 +80,11 @@
 }
 
 .has {
-  background: var(--snt-brand-blue);
+  background: var(--snt-owned-fill);
 }
 
 .wants {
-  background: var(--snt-brand-green);
+  background: var(--snt-wanted-fill);
 }
 
 /**
@@ -96,7 +96,7 @@
   align-items: center;
   justify-content: center;
   background: var(--snt-bg-placeholder);
-  color: var(--snt-brand-green);
+  color: var(--snt-wanted-fill);
 }
 
 /**

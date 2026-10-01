@@ -200,7 +200,7 @@
     font-family: var(--snt-font-display);
     font-size: 30px;
     font-weight: var(--snt-weight-bold);
-    color: var(--snt-accent);
+    color: var(--snt-accent-bold);
     margin-top: var(--snt-space-2);
   }
 

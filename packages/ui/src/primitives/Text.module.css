@@ -47,12 +47,17 @@
   font-family: var(--snt-font-display);
   font-weight: var(--snt-weight-bold);
   font-variant-numeric: tabular-nums;
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
 }
 
 /** Item names: blue for owned, green for wanted. */
 .owned {
   color: var(--snt-owned-ink);
+}
+
+/* In bold, the lighter blue. Doubled so it wins whatever the file order. */
+.owned.ownedBold {
+  color: var(--snt-accent-bold);
 }
 
 .wanted {

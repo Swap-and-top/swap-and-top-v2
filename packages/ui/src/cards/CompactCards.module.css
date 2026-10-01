@@ -40,7 +40,7 @@
 }
 
 .thumb.thumbWanted {
-  background: var(--snt-brand-green);
+  background: var(--snt-wanted-fill);
 }
 
 .rowBody {
@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   gap: var(--snt-space-2);
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
 }
 
 .rowTitle {

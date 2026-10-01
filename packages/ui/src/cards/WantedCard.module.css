@@ -99,7 +99,7 @@
   font-family: var(--snt-font-display);
   font-weight: var(--snt-weight-bold);
   font-variant-numeric: tabular-nums;
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
   white-space: nowrap;
 }
 

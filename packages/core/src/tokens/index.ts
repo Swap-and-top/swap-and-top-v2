@@ -34,26 +34,27 @@ export const colors = {
   inkFaint: '#A8A8A8',
 
   /** Item names: blue for something owned, green for something wanted. */
-  ownedInk: '#255DAB',
-  wantedInk: '#12875C',
+  ownedInk: '#2572A2',
+  wantedInk: '#1F978D',
 
   line: '#D9D9D9',
   lineSubtle: '#E6E6E6',
 
   /** Brand blue. Links, selected states, verified sellers, deal counts. */
-  accent: '#255DAB',
+  accent: '#2572A2',
+  accentBold: '#3983B1',
   /** Filter controls: the selected chip and active tab; and the idle ones. */
   controlActive: '#30799E',
   controlIdle: '#74A4C7',
-  accentStrong: '#1D4B8A',
+  accentStrong: '#1D5D85',
   accentTint: '#E9F0F9',
 
   /** Brand green. The primary button. */
-  action: '#1CB67F',
-  actionStrong: '#179A6B',
+  action: '#1F978D',
+  actionStrong: '#1A8078',
 
   /** Green. Confirmed deals, live status, the WANTED label. */
-  success: '#1CB67F',
+  success: '#1F978D',
   successTint: '#E2F6EE',
 
   /** A shop's initials mark. */

@@ -44,13 +44,13 @@
 }
 
 .itemActive {
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
   /* With the filled icon, a bold label marks where you are. */
   font-weight: var(--snt-weight-bold);
 }
 
 .itemActive:hover {
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
 }
 
 /** The centre post action. Always available, whatever screen you are on. */
