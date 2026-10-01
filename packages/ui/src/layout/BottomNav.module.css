@@ -19,7 +19,6 @@
   height: var(--snt-bottom-nav-h);
   flex-shrink: 0;
   background: var(--snt-bg-surface);
-  border-top: 1px solid var(--snt-line-subtle);
   /* Clear the home indicator on a phone. */
   padding-bottom: env(safe-area-inset-bottom, 0);
 }

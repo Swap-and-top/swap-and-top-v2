@@ -114,7 +114,7 @@
 /** Dashed, for an invitation to create something. */
 .dashed {
   background: var(--snt-accent-tint);
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
   border: 1px dashed var(--snt-accent);
 }
 

@@ -114,7 +114,7 @@
 }
 
 .navItemActive {
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
   font-weight: var(--snt-weight-semibold);
 }
 

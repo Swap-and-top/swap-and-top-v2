@@ -36,7 +36,7 @@
   padding: var(--snt-space-6);
   border-radius: var(--snt-radius-lg);
   background: var(--snt-accent-tint);
-  color: var(--snt-accent);
+  color: var(--snt-accent-bold);
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-semibold);
 }

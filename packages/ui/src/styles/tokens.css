@@ -37,8 +37,6 @@
    * sky-blue page. Every card is white, whoever posted it.
    */
   --snt-bg-card: #ffffff;
-  /** A tappable card under the pointer. */
-  --snt-bg-card-hover: #f4f8ff;
   /** A box set into a white card, e.g. the "Has" strip on a Wanted card. */
   --snt-bg-inset: #ebf2ff;
   /** Muted fill with more weight than a line. */
@@ -82,7 +80,8 @@
 
   /* Everywhere but the header, whose gradient keeps the brand blue and     */
   /* green above. Regular-weight blue text, links, outlines and fills use   */
-  /* --snt-accent; bold blue text uses the lighter --snt-accent-bold.       */
+  /* --snt-accent; bold and semi-bold blue text uses the lighter            */
+  /* --snt-accent-bold.                                                     */
 
   --snt-accent: #2572a2;
   --snt-accent-bold: #3983b1;

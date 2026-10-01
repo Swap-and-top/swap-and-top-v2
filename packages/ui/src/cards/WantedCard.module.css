@@ -137,11 +137,6 @@
   flex-shrink: 0;
 }
 
-/* Whole-card hover, as on the other cards. The title is the link. */
-.card:has(.title:hover) {
-  background: var(--snt-bg-card-hover);
-}
-
 /**
  * Bottom row: the requester's trust line — bold first name, deal count — and
  * save and share at the far right, as on the other cards.

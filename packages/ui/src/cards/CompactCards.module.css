@@ -19,11 +19,6 @@
   color: var(--snt-ink);
 }
 
-/* The panel wrapping a row darkens under the pointer, like the feed cards. */
-.rowPanel:has(.row:hover) {
-  background: var(--snt-bg-card-hover);
-}
-
 /** A sale's specs, trailing its name in grey. */
 .specs {
   font-weight: var(--snt-weight-normal);
@@ -91,10 +86,6 @@
 
 .grid:hover {
   color: var(--snt-ink);
-}
-
-.grid:hover > div {
-  background: var(--snt-bg-card-hover);
 }
 
 .grid:active {

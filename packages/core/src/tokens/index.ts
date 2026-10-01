@@ -22,8 +22,6 @@ export const colors = {
   bgSurface: '#FFFFFF',
   /** Cards and panels. */
   bgCard: '#FFFFFF',
-  /** A tappable card under the pointer. */
-  bgCardHover: '#F4F8FF',
   /** Muted fills that need more weight than a line. */
   bgSubtle: '#E8E8E8',
   /** Image placeholder fill. */

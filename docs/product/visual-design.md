@@ -152,7 +152,7 @@ Sale and swap cards carry **save and share** icons — the v1 app's star and sha
 
 **Every card is white**, on the sky-blue page (`#ebf2ff`), whoever posted it — dealer, individual or Wanted. A box set into a card, like the "Has" strip on a Wanted card, takes the page colour so it still shows. Who posted a listing is read from its content: a shop row and verified badge for a dealer, a name and deal count for an individual.
 
-Every tappable card darkens slightly under the pointer and gives a little when pressed. Keyboard focus shows a blue ring — white on the gradient.
+Every tappable card gives a little when pressed; it does not change colour under the pointer. Keyboard focus shows a blue ring — white on the gradient.
 
 ### Trust signals
 

@@ -46,11 +46,7 @@
   outline-offset: 2px;
 }
 
-/* Feedback: the card darkens under the pointer and gives a little on press. */
-.card:hover > div {
-  background: var(--snt-bg-card-hover);
-}
-
+/* Feedback: the card gives a little on press. No hover fill. */
 .card:has(.link:active) {
   transform: scale(0.99);
 }
