@@ -19,7 +19,7 @@
 /**
  * Tapping this opens the full search screen. Specification search is the
  * product's main advantage, so it gets a screen rather than a dropdown.
- * An outlined white pill, on the band under the header.
+ * A white pill with no outline, on the band under the header.
  */
 .searchEntry {
   display: flex;
@@ -28,14 +28,11 @@
   height: 40px;
   padding: 0 var(--snt-space-9);
   border-radius: var(--snt-radius-pill);
-  /* Idle: outline, icon and prompt in the idle control colour. */
-  border: 1px solid var(--snt-control-idle);
+  /* A plain white pill, no outline; icon and prompt in the idle colour. */
   background: var(--snt-bg-surface);
   color: var(--snt-control-idle);
   font-size: var(--snt-text-base);
-  transition:
-    border-color var(--snt-transition),
-    color var(--snt-transition);
+  transition: color var(--snt-transition);
 }
 
 .searchEntry span {
@@ -45,7 +42,6 @@
 }
 
 .searchEntry:hover {
-  border-color: var(--snt-control-active);
   color: var(--snt-control-active);
 }
 

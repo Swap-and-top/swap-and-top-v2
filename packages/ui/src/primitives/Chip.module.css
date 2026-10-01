@@ -28,9 +28,9 @@
   height: 30px;
   padding: 0 var(--snt-space-9);
   border-radius: var(--snt-radius-pill);
-  /* Idle: outline and label in the idle control colour. */
+  /* Idle: outline and label in the idle control colour, no fill. */
   border: 1px solid var(--snt-control-idle);
-  background: var(--snt-bg-surface);
+  background: none;
   color: var(--snt-control-idle);
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-normal);
