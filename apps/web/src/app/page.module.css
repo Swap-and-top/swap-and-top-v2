@@ -16,35 +16,6 @@
   }
 }
 
-/**
- * Tapping this opens the full search screen. Specification search is the
- * product's main advantage, so it gets a screen rather than a dropdown.
- * A white pill with no outline, on the band under the header.
- */
-.searchEntry {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-5);
-  height: 40px;
-  padding: 0 var(--snt-space-9);
-  border-radius: var(--snt-radius-pill);
-  /* A plain white pill, no outline; icon and prompt in the idle colour. */
-  background: var(--snt-bg-surface);
-  color: var(--snt-control-idle-ink);
-  font-size: var(--snt-text-base);
-  transition: color var(--snt-transition);
-}
-
-.searchEntry span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.searchEntry:hover {
-  color: var(--snt-control-active);
-}
-
 /** Gap between feed cards, per the design. */
 .feed {
   display: flex;

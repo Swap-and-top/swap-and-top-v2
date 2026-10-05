@@ -1,0 +1,276 @@
+/**
+ * The search bar, and the panel that drops from it.
+ */
+
+/*
+ * The bar: a plain white pill, no outline, icon and prompt in the idle
+ * colour. It is the field itself, so it never moves or changes shape.
+ */
+.bar {
+  /* Room at the right end for the close cross, only while active. */
+  --trail: 0px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  height: 40px;
+  padding: 0 var(--snt-space-9);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
+  color: var(--snt-control-idle-ink);
+  cursor: text;
+  transition:
+    color var(--snt-transition),
+    box-shadow var(--snt-transition);
+}
+
+.bar:hover {
+  color: var(--snt-control-active);
+}
+
+/*
+ * Active: a border, and nothing else — a faded blue, so it marks the bar
+ * without shouting. Drawn as a shadow so the bar keeps its exact size and
+ * position.
+ */
+.barActive,
+.barActive:hover {
+  --trail: 28px;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snt-control-active) 35%, transparent);
+  color: var(--snt-control-active);
+}
+
+.bar svg {
+  flex-shrink: 0;
+}
+
+/*
+ * The text. A phone zooms the page when a field under 16px takes focus, so
+ * the field is 16px and scaled down to the bar's 12px: it reads exactly as
+ * the prompt always has, and nothing jumps when it is tapped.
+ */
+.input {
+  flex: 0 0 auto;
+  width: calc((100% - 18px - var(--snt-space-5) - var(--trail)) / 0.75);
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--snt-ink);
+  font: inherit;
+  font-size: 1rem;
+  transform: scale(0.75);
+  transform-origin: left center;
+  text-overflow: ellipsis;
+}
+
+.input::placeholder {
+  color: var(--snt-control-idle-ink);
+  opacity: 1;
+}
+
+.bar:hover .input::placeholder,
+.barActive .input::placeholder {
+  color: var(--snt-control-active);
+}
+
+/* The browser's own clear cross and search decoration. */
+.input::-webkit-search-cancel-button,
+.input::-webkit-search-decoration {
+  display: none;
+}
+
+/* --- the panel: everything beneath the bar -------------------------------- */
+
+/*
+ * Fixed from just under the bar (its `top` is measured) to the bottom of the
+ * screen, over the chips, the feed and the bottom nav. It slides down out of
+ * the bar: revealed from its top edge while it eases into place. Closing is
+ * the same in reverse: it slides back up into the bar.
+ */
+.panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding-top: 6px;
+  background: var(--snt-bg-app);
+  color: var(--snt-ink);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: drop 280ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes drop {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-12px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+.panelClosing {
+  animation: rise 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes rise {
+  from {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-12px);
+  }
+}
+
+/** The same content column as the page. */
+.column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  max-width: calc(var(--snt-column-max) + var(--snt-gutter) * 2);
+  margin-inline: auto;
+  padding: 0 var(--snt-gutter) var(--snt-space-12);
+  margin-top: 12px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-10);
+}
+
+/** The heading with its filters, then the listings. */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+}
+
+/*
+ * The close cross: at the right end of the bar, opposite the search icon,
+ * only while the search is active. A small disc with a full-size touch
+ * target around it.
+ */
+.close {
+  position: absolute;
+  top: 50%;
+  right: var(--snt-space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  cursor: pointer;
+}
+
+.close::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+.close:hover {
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}
+
+/*
+ * Suggested searches: a tooltip hanging right under the bar, floating over
+ * the dropdowns and results instead of pushing them down.
+ */
+.terms {
+  position: absolute;
+  /* Up past the column's top margin and the panel's padding, to sit 6px
+     under the bar. */
+  top: -18px;
+  left: var(--snt-gutter);
+  right: var(--snt-gutter);
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  box-shadow: 0 8px 24px rgb(48 121 158 / 0.22);
+  overflow: hidden;
+}
+
+.terms li + li {
+  border-top: 1px solid var(--snt-bg-app);
+}
+
+.term {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  width: 100%;
+  min-height: var(--snt-touch);
+  padding: 0 var(--snt-card-pad);
+  border: 0;
+  background: none;
+  color: var(--snt-ink);
+  font-size: var(--snt-text-md);
+  text-align: left;
+  cursor: pointer;
+}
+
+.term svg {
+  flex-shrink: 0;
+  color: var(--snt-control-idle);
+}
+
+.term span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+.none {
+  margin: 0;
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}
+
+.more {
+  display: block;
+  width: 100%;
+  min-height: var(--snt-touch);
+  border: 1px solid var(--snt-control-active);
+  border-radius: var(--snt-radius-pill);
+  background: none;
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+  cursor: pointer;
+}
+
+.more:hover {
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}

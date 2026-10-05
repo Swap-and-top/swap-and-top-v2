@@ -11,7 +11,6 @@
  * Design: the one page of `Swap & Top v2 Design.pdf`.
  */
 
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import {
   CATEGORY_LABELS,
@@ -35,8 +34,8 @@ import {
   Tabs,
   type TabItem,
 } from '@snt/ui';
-import { SearchIcon } from '@snt/ui/icons';
 import type { FeedFilterParams } from '../components/feedFilterParams';
+import { SearchEntry } from '../components/SearchEntry';
 import { useFeedFiltersInUrl } from '../components/useFeedFiltersInUrl';
 import styles from './page.module.css';
 
@@ -79,10 +78,8 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
         style={{ top: stickyTop.offset }}
       >
         <AppHeader>
-          <Link href="/search" className={styles.searchEntry}>
-            <SearchIcon size={18} />
-            <span>Search phone, laptops, consoles, parts, accessories</span>
-          </Link>
+          {/* Opens the full-screen search over this page. */}
+          <SearchEntry />
 
           <ChipRow label="Filter by category">
             {CATEGORIES.map((value) => (

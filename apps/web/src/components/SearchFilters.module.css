@@ -1,0 +1,123 @@
+/**
+ * The results heading with its Filters button, and the filters it opens.
+ */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+}
+
+/** Heading on the left, Filters on the right. */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+}
+
+/** "Search results for “…”", then the count, which may wrap under it. */
+.heading {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.count {
+  margin-left: var(--snt-space-4);
+  font-weight: var(--snt-weight-normal);
+  white-space: nowrap;
+}
+
+.count::before {
+  content: '·';
+  margin-right: var(--snt-space-4);
+}
+
+/*
+ * The toggle: an outlined pill like an idle dropdown, filled in the active
+ * colour while the filters are open.
+ */
+.toggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  height: 32px;
+  padding: 0 var(--snt-space-8);
+  border: 1px solid var(--snt-control-idle);
+  border-radius: var(--snt-radius-pill);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-medium);
+  cursor: pointer;
+  transition:
+    background var(--snt-transition),
+    border-color var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.toggle:hover {
+  border-color: var(--snt-control-active);
+}
+
+.toggleOn {
+  border-color: var(--snt-control-active);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/** How many filters are narrowing the list. */
+.badge {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  line-height: 18px;
+  text-align: center;
+}
+
+.toggleOn .badge {
+  background: var(--snt-ink-on-dark);
+  color: var(--snt-control-active);
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+}
+
+/** Two side by side: the dropdowns, then min and max price. */
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-5);
+}
+
+/*
+ * The price boxes: white pills as round as the search bar, with no outline
+ * until one is being typed in, which gets a thin blue border.
+ */
+.prices input,
+.prices input:hover {
+  padding: 0 var(--snt-space-9);
+  border: 1px solid transparent;
+  border-radius: var(--snt-radius-pill);
+}
+
+.prices input:focus {
+  border-color: var(--snt-control-active);
+}
+
+/** Their labels: sentence case, bold, in the bold blue. */
+.prices label {
+  color: var(--snt-accent-bold);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: 0;
+  text-transform: none;
+}

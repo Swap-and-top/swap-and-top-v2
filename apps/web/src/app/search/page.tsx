@@ -1,189 +1,21 @@
-'use client';
-
 /**
- * Search — specification filters per category.
+ * Search results. The server half: it reads the search from the address, e.g.
+ * `/search?q=thinkpad&category=laptops&type=sale`, so the first paint already shows the
+ * results. The page itself is SearchResults.
  *
- * The category selector drives which filter groups appear: choose Laptops and
- * you get processor and graphics; choose Phones and you get battery health
- * instead. Filters are never generic, because that is the whole advantage.
- *
- * The result count is live, so you can tell you are over-constraining before you
- * submit. Wireframe artboard: `Search`.
+ * Searching happens in the full-screen search (SearchEntry); this page is
+ * where "View all results", a suggested term or Enter lands.
  */
 
-import Link from 'next/link';
-import {
-  CATEGORY_LABELS,
-  liveListings,
-  searchListings,
-  SPEC_OPTIONS,
-  useSearchStore,
-  type Category,
-} from '@snt/core';
-import {
-  Button,
-  Chip,
-  ChipRow,
-  ChipWrap,
-  Eyebrow,
-  Field,
-  ListingCard,
-  Screen,
-  ScreenBody,
-  Stack,
-} from '@snt/ui';
-import { ChevronLeftIcon } from '@snt/ui/icons';
-import styles from './page.module.css';
+import { parseSearchQuery } from '../../components/searchParams';
+import { SearchResults } from './SearchResults';
 
-const CATEGORIES: Category[] = [
-  'laptops',
-  'desktops',
-  'phones',
-  'consoles',
-  'parts',
-  'accessories',
-];
-
-export default function SearchPage() {
-  const state = useSearchStore();
-  const {
-    query,
-    category,
-    minPrice,
-    maxPrice,
-    setQuery,
-    setCategory,
-    toggle,
-    setMinPrice,
-    setMaxPrice,
-    clear,
-  } = state;
-
-  const results = searchListings(liveListings, state);
-
-  const anyFilterActive =
-    query.trim().length > 0 ||
-    minPrice.length > 0 ||
-    maxPrice.length > 0 ||
-    state.processor.length > 0 ||
-    state.ram.length > 0 ||
-    state.storage.length > 0 ||
-    state.graphics.length > 0 ||
-    state.condition.length > 0;
-
-  return (
-    <Screen>
-      <header className={styles.header} data-surface="brand">
-        <div className={styles.headerInner}>
-          <div className={styles.queryRow}>
-            <Link href="/" aria-label="Back" className={styles.back}>
-              <ChevronLeftIcon size={22} />
-            </Link>
-            <Field
-              label="Search gadgets"
-              hideLabel
-              type="search"
-              placeholder="Search phone, laptops, consoles, parts, accessories"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              pill
-              className={styles.queryField}
-            />
-          </div>
-
-          <ChipRow label="Search within category">
-            {CATEGORIES.map((value) => (
-              <Chip
-                key={value}
-                selected={category === value}
-                onClick={() => setCategory(value)}
-              >
-                {CATEGORY_LABELS[value]}
-              </Chip>
-            ))}
-          </ChipRow>
-        </div>
-      </header>
-
-      <ScreenBody>
-        <div className={styles.groups}>
-          {/* Filter groups come from the category, so they are always relevant. */}
-          {(SPEC_OPTIONS[category] ?? []).map((group) => (
-            <div key={`${category}-${group.label}`} className={styles.group}>
-              <Eyebrow className={styles.groupLabel}>{group.label}</Eyebrow>
-              <ChipWrap label={group.label}>
-                {group.values.map((value) => (
-                  <Chip
-                    key={value}
-                    square
-                    tone="ink"
-                    selected={(state[group.group] as string[]).includes(value)}
-                    onClick={() => toggle(group.group, value)}
-                  >
-                    {value}
-                  </Chip>
-                ))}
-              </ChipWrap>
-            </div>
-          ))}
-
-          <div className={styles.priceRow}>
-            <Field
-              label="Min price"
-              inputMode="numeric"
-              placeholder="$0"
-              value={minPrice}
-              onChange={(event) => setMinPrice(event.target.value)}
-              size="sm"
-            />
-            <Field
-              label="Max price"
-              inputMode="numeric"
-              placeholder="Any"
-              value={maxPrice}
-              onChange={(event) => setMaxPrice(event.target.value)}
-              size="sm"
-            />
-          </div>
-        </div>
-
-        {/* Results render under the filters, which stay visible and editable. */}
-        {anyFilterActive ? (
-          <div className={styles.results}>
-            <Eyebrow className={styles.resultsLabel}>
-              {results.length} {results.length === 1 ? 'result' : 'results'}
-            </Eyebrow>
-
-            {results.length > 0 ? (
-              <Stack gap={6}>
-                {results.map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} />
-                ))}
-              </Stack>
-            ) : (
-              <Stack gap={5}>
-                <Eyebrow>Nothing matched</Eyebrow>
-                <Button variant="secondary" onClick={clear}>
-                  Relax the filters
-                </Button>
-                {/* A dead end becomes a lead. */}
-                <Button variant="dashed">Post this as a request instead</Button>
-              </Stack>
-            )}
-          </div>
-        ) : null}
-      </ScreenBody>
-
-      <div className={styles.footer}>
-        <div className={styles.footerInner}>
-          <Button variant="secondary" size="lg" onClick={clear}>
-            Clear
-          </Button>
-          <Button size="lg" block>
-            Show {results.length} {results.length === 1 ? 'result' : 'results'}
-          </Button>
-        </div>
-      </div>
-    </Screen>
-  );
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const search = parseSearchQuery(await searchParams);
+  // A new search is a new page: the key resets the filters it starts from.
+  return <SearchResults key={search.q} initial={search} />;
 }

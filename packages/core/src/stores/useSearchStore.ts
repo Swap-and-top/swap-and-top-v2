@@ -17,13 +17,16 @@ export interface SpecFilters {
   condition: Condition[];
 }
 
+/** "All" searches every category. */
+export type SearchCategory = Category | 'all';
+
 interface SearchState extends SpecFilters {
   query: string;
-  category: Category;
+  category: SearchCategory;
   minPrice: string;
   maxPrice: string;
   setQuery: (query: string) => void;
-  setCategory: (category: Category) => void;
+  setCategory: (category: SearchCategory) => void;
   toggle: (group: keyof SpecFilters, value: string) => void;
   setMinPrice: (value: string) => void;
   setMaxPrice: (value: string) => void;
@@ -137,7 +140,7 @@ export const SPEC_OPTIONS: Record<
 
 export const useSearchStore = create<SearchState>((set) => ({
   query: '',
-  category: 'laptops',
+  category: 'all',
   minPrice: '',
   maxPrice: '',
   ...emptyFilters,
@@ -204,7 +207,9 @@ export function searchListings(
   const max = state.maxPrice ? Number(state.maxPrice.replace(/[^0-9]/g, '')) : undefined;
 
   return listings.filter((listing) => {
-    if (listing.category !== state.category) return false;
+    if (state.category !== 'all' && listing.category !== state.category) {
+      return false;
+    }
 
     const haystack = `${listing.title} ${specHaystack(listing)}`;
     if (query && !haystack.includes(query)) return false;
@@ -233,4 +238,53 @@ export function searchListings(
 
     return true;
   });
+}
+
+/** No spec filters — for a search by text, category and price alone. */
+export const NO_SPEC_FILTERS: SpecFilters = emptyFilters;
+
+/**
+ * Search terms to suggest while someone types, e.g. "Lenovo ThinkPad T480" for
+ * "think". Drawn from the names of the items in live listings — what people
+ * have and what they want — so every suggestion leads to at least one result.
+ *
+ * Names that start with the query come first, then names with a word that
+ * starts with it, then names that merely contain it.
+ */
+export function suggestSearchTerms(
+  listings: Listing[],
+  query: string,
+  category: SearchCategory = 'all',
+  limit = 5,
+): string[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+
+  const seen = new Map<string, string>();
+  for (const listing of listings) {
+    if (category !== 'all' && listing.category !== category) continue;
+    const items =
+      listing.type === 'swap'
+        ? [listing.has, listing.wants]
+        : listing.type === 'request'
+          ? [listing.wants, listing.tradeIn]
+          : [listing.item];
+    for (const item of items) {
+      if (!item) continue;
+      const key = item.name.toLowerCase();
+      if (!seen.has(key)) seen.set(key, item.name);
+    }
+  }
+
+  const rank = (name: string) => {
+    if (name.startsWith(q)) return 0;
+    if (name.split(/[\s,/-]+/).some((word) => word.startsWith(q))) return 1;
+    return 2;
+  };
+
+  return [...seen.entries()]
+    .filter(([key]) => key.includes(q) && key !== q)
+    .sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b))
+    .slice(0, limit)
+    .map(([, name]) => name);
 }

@@ -2,10 +2,10 @@
 
 /** Uppercase section label, e.g. PROCESSOR, WANTED, YOUR RECORD. */
 .eyebrow {
-  font-size: var(--snt-text-sm);
+  /* font-size: var(--snt-text-sm); */
   font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-label);
-  text-transform: uppercase;
+  /* letter-spacing: var(--snt-tracking-label); */
+  /* text-transform: uppercase; */
   color: var(--snt-ink-muted);
 }
 

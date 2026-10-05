@@ -1,112 +1,25 @@
-/**
- * Search — the highest-priority screen in the product.
- *
- * A dedicated screen rather than a bar with a dropdown, because specification
- * search is the promise ("find gadgets easily") and the one thing a
- * title-and-photo board cannot do.
+/** Search results — laid out like the feed. */
+
+/*
+ * The results heading with its Filters button, above the cards. Pulled up
+ * over part of the page's top padding, which comes on top of the header's own,
+ * so it sits 24px under the search bar — the same distance as in the search
+ * panel.
  */
-
-/** The brand header, holding the query and the category row. */
-.header {
-  flex-shrink: 0;
-  background: var(--snt-brand-gradient);
-  border-bottom-right-radius: var(--snt-header-curve);
-  padding: var(--snt-space-6) var(--snt-column-inset) var(--snt-space-10);
+.heading {
+  margin-top: -12px;
+  margin-bottom: var(--snt-space-6);
 }
 
-.headerInner {
+/** Gap between cards, as on the feed. */
+.feed {
   display: flex;
   flex-direction: column;
-  gap: var(--snt-space-6);
-}
-
-.queryRow {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-2);
-  margin-left: calc(var(--snt-space-5) * -1);
-}
-
-.back {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: var(--snt-touch);
-  flex-shrink: 0;
-  border-radius: var(--snt-radius-pill);
-  color: var(--snt-ink-on-dark);
-}
-
-.back:hover {
-  color: var(--snt-ink-on-dark);
-  background: rgb(255 255 255 / 0.15);
-}
-
-.queryField {
-  flex-grow: 1;
-  min-width: 0;
-}
-
-.groups {
-  display: flex;
-  flex-direction: column;
-  gap: var(--snt-space-8);
-}
-
-.group {
-  min-width: 0;
-}
-
-.groupLabel {
-  margin-bottom: var(--snt-space-4);
-}
-
-.priceRow {
-  display: flex;
-  gap: var(--snt-space-5);
-}
-
-.priceRow > * {
-  flex-grow: 1;
-  flex-basis: 0;
-  min-width: 0;
-}
-
-/** Sticky footer: clear, and the live result count. */
-.footer {
-  position: sticky;
-  bottom: 0;
-  flex-shrink: 0;
-  padding: var(--snt-space-6) var(--snt-column-inset);
-  padding-bottom: calc(var(--snt-space-8) + env(safe-area-inset-bottom, 0px));
-  background: var(--snt-bg-surface);
-  border-top: 1px solid var(--snt-line-subtle);
-}
-
-.footerInner {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-5);
-}
-
-.footerInner > :last-child {
-  flex-grow: 1;
-}
-
-/** Results, shown under the filters once a query or filter is active. */
-.results {
-  padding-top: var(--snt-space-8);
-  border-top: 1px solid var(--snt-line-subtle);
-  margin-top: var(--snt-space-9);
-}
-
-.resultsLabel {
-  margin-bottom: var(--snt-space-5);
+  gap: var(--snt-card-gap);
 }
 
 @media (min-width: 768px) {
-  .header {
-    padding-top: 21px;
+  .heading {
+    margin-top: -19px;
   }
 }
