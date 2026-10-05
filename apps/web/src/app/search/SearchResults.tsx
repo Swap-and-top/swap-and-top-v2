@@ -29,14 +29,11 @@ import {
 } from '@snt/ui';
 import { SearchEntry } from '../../components/SearchEntry';
 import {
+  QuotedQuery,
   SearchFilters,
   type SearchFilterValues,
 } from '../../components/SearchFilters';
-import {
-  quoteQuery,
-  searchHref,
-  type SearchQuery,
-} from '../../components/searchParams';
+import { searchHref, type SearchQuery } from '../../components/searchParams';
 import styles from './page.module.css';
 
 export function SearchResults({ initial }: { initial: SearchQuery }) {
@@ -86,9 +83,13 @@ export function SearchResults({ initial }: { initial: SearchQuery }) {
         <div className={styles.heading}>
           <SearchFilters
             heading={
-              initial.q
-                ? `Search results for “${quoteQuery(initial.q)}”`
-                : 'All listings'
+              initial.q ? (
+                <>
+                  Search results for <QuotedQuery q={initial.q} bold />
+                </>
+              ) : (
+                'All listings'
+              )
             }
             count={results.length}
             open={filtersOpen}
@@ -112,8 +113,9 @@ export function SearchResults({ initial }: { initial: SearchQuery }) {
             title="Nothing matched"
             body="Try another category, widen the price range, or post what you are looking for and let sellers come to you."
             action={
-              <ButtonLink href="/post" variant="secondary">
-                Post what you want
+              // Green like the post button in the bottom menu, no border.
+              <ButtonLink href="/post" variant="primary">
+                Post what you are looking for
               </ButtonLink>
             }
           />

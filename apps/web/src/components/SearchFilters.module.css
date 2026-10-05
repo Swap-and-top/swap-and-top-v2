@@ -100,8 +100,8 @@
 }
 
 /*
- * The price boxes: white pills as round as the search bar, with no outline
- * until one is being typed in, which gets a thin blue border.
+ * The price boxes: white pills as round as the search bar, with no outline.
+ * The one being typed in gets the faded blue ring every text box gets.
  */
 .prices input,
 .prices input:hover {
@@ -110,14 +110,20 @@
   border-radius: var(--snt-radius-pill);
 }
 
-.prices input:focus {
-  border-color: var(--snt-control-active);
-}
-
 /** Their labels: sentence case, bold, in the bold blue. */
 .prices label {
   color: var(--snt-accent-bold);
   font-weight: var(--snt-weight-bold);
   letter-spacing: 0;
   text-transform: none;
+}
+
+/* The search quoted back: regular blue in ordinary text, bold blue in bold. */
+.quoted {
+  color: var(--snt-accent);
+}
+
+.quotedBold {
+  color: var(--snt-accent-bold);
+  font-weight: var(--snt-weight-bold);
 }

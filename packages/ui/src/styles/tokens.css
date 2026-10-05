@@ -118,6 +118,13 @@
    * Idle: outlines, labels and the rule under the tabs when not selected.
    */
   --snt-control-active: #2f7599;
+  /*
+   * The ring round the text box being typed in — the search bar and every
+   * form field alike: the active blue, faded, so it marks without shouting.
+   * A shadow, so the box keeps its size.
+   */
+  --snt-focus-ring: 0 0 0 2px
+    color-mix(in srgb, var(--snt-control-active) 35%, transparent);
   /* Idle outlines, icons and the rule under the tabs: 3:1 on the page. */
   --snt-control-idle: #5791bb;
   /* Idle labels and the search prompt: 4.5:1 on the page and on white. */

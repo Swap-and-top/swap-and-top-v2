@@ -34,19 +34,31 @@
   background: var(--snt-bg-surface);
   color: var(--snt-ink);
   font-size: var(--snt-text-lg);
-  transition: border-color var(--snt-transition);
+  transition:
+    border-color var(--snt-transition),
+    box-shadow var(--snt-transition);
 }
 
+/*
+ * The prompt in an empty box is blue, like the search bar's; what is typed
+ * over it is the ordinary grey. The same in every text box.
+ */
 .input::placeholder {
-  color: var(--snt-ink-muted);
+  color: var(--snt-control-idle-ink);
+  opacity: 1;
 }
 
 .input:hover {
   border-color: var(--snt-ink-muted);
 }
 
+/*
+ * Active: the same faded blue ring as the search bar, in place of the box's
+ * own outline, so every text box in the app is marked the same way.
+ */
 .input:focus {
-  border-color: var(--snt-accent);
+  border-color: transparent;
+  box-shadow: var(--snt-focus-ring);
   outline: none;
 }
 

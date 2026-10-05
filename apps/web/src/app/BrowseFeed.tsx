@@ -119,7 +119,7 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
             body="No listings match those filters. Clear them, or post what you are looking for and let dealers come to you."
             action={
               <ButtonLink href="/post" variant="secondary" onClick={reset}>
-                Post what you want
+                Post what you are looking for
               </ButtonLink>
             }
           />

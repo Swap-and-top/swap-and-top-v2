@@ -97,7 +97,7 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
         ) : (
           <EmptyState
             title="No requests in this category"
-            body="Nobody is looking for one of these right now. Post what you want and dealers will come to you."
+            body="Nobody is looking for one of these right now. Post what you are looking for and dealers will come to you."
           />
         )}
       </ScreenBody>

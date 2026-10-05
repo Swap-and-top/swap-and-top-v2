@@ -18,7 +18,8 @@
  *
  * Only "View all results", a suggested term or Enter goes to the results
  * page. Tapping a listing opens that listing. Escape, the cross or a tap on
- * the header puts everything back: the panel slides back up into the bar.
+ * the header puts everything back: the panel slides back up into the bar. The
+ * cross also empties the bar.
  */
 
 import { useRouter } from 'next/navigation';
@@ -42,8 +43,12 @@ import {
 } from '@snt/core';
 import { CompactListingRow } from '@snt/ui';
 import { CloseIcon, SearchIcon } from '@snt/ui/icons';
-import { SearchFilters, type SearchFilterValues } from './SearchFilters';
-import { MAX_QUERY, quoteQuery, searchHref } from './searchParams';
+import {
+  QuotedQuery,
+  SearchFilters,
+  type SearchFilterValues,
+} from './SearchFilters';
+import { MAX_QUERY, searchHref } from './searchParams';
 import styles from './SearchEntry.module.css';
 
 const PLACEHOLDER = 'Search phone, laptops, consoles, parts, accessories';
@@ -110,10 +115,12 @@ export function SearchEntry({
    * Put everything back: the bar as it was at once, and the panel slides up
    * into it. The page beneath is uncovered once the panel has gone.
    */
-  function close() {
+  function close({ clear = false }: { clear?: boolean } = {}) {
     leaving.current = query.trim();
     setClosing(true);
-    setQuery(currentQuery);
+    // The cross empties the bar. Escape or a tap outside only backs out, so
+    // the bar goes back to the search already on screen, if there is one.
+    setQuery(clear ? '' : currentQuery);
     input.current?.blur();
   }
 
@@ -220,7 +227,7 @@ export function SearchEntry({
             onClick={(event) => {
               // Not a tap on the bar: do not hand focus back to the field.
               event.stopPropagation();
-              close();
+              close({ clear: true });
             }}
           >
             <CloseIcon size={16} weight={2.2} />
@@ -346,15 +353,23 @@ function SearchPanel({
                 typed, and how many — with the filters behind a button. */}
             <SearchFilters
               heading={
-                typed
-                  ? `Search results for “${quoteQuery(typed)}”`
-                  : 'Latest listings'
+                typed ? (
+                  <>
+                    Search results for <QuotedQuery q={typed} bold />
+                  </>
+                ) : (
+                  'Latest listings'
+                )
               }
               count={typed ? matches.length : undefined}
               open={filtersOpen}
               onToggle={() => setFiltersOpen((current) => !current)}
               values={filters}
               onChange={onFilters}
+              // Enter in the max price is Enter in the search bar.
+              onSubmit={() => {
+                if (typed) onResults(typed);
+              }}
             />
 
             {preview.length > 0 ? (
@@ -366,9 +381,13 @@ function SearchPanel({
               </div>
             ) : (
               <p className={styles.none}>
-                {typed
-                  ? `Nothing matches “${quoteQuery(typed)}”`
-                  : 'Nothing matches'}
+                {typed ? (
+                  <>
+                    Nothing matches <QuotedQuery q={typed} bold />
+                  </>
+                ) : (
+                  'Nothing matches'
+                )}
                 {category === 'all'
                   ? ''
                   : ` in ${CATEGORY_LABELS[category as Category]}`}

@@ -7,7 +7,7 @@
 import Link from 'next/link';
 import type { Listing } from '@snt/core';
 import { getShop, getUser } from '@snt/core';
-import { SwapIcon } from '../icons';
+import { PersonIcon, StorefrontIcon, SwapIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
 import { ImagePlaceholder, listingPhoto } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
@@ -58,8 +58,25 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
         />
 
         <div className={styles.rowBody}>
+          {/* The item first, in bold; then what it costs; then who has it. */}
+          <div className={styles.rowTitle}>
+            <ListingName listing={listing} bold />
+          </div>
+
           <div className={styles.rowTop}>
-            {listing.type === 'sale' ? <Price amount={listing.price} size="sm" /> : null}
+            {listing.type === 'sale' ? (
+              <>
+                {/* A price drop shows the old price struck through, beside
+                    the current one. */}
+                {dropped ? (
+                  <s className={styles.wasPrice}>
+                    <span className="snt-visually-hidden">Was </span>
+                    {`$${listing.previousPrice}`}
+                  </s>
+                ) : null}
+                <Price amount={listing.price} size="sm" />
+              </>
+            ) : null}
 
             {listing.type === 'swap' && listing.cashAmount ? (
               <span className={styles.swapAmount}>
@@ -72,22 +89,20 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
               <Price amount={listing.budget} size="sm" />
             ) : null}
 
-            {dropped && listing.type === 'sale' ? (
-              <Badge tone="accent">
-                Dropped ${listing.previousPrice! - listing.price}
-              </Badge>
-            ) : null}
-
             {gone ? <Badge tone="neutral">Gone</Badge> : null}
           </div>
 
-          <div className={styles.rowTitle}>
-            <ListingName listing={listing} />
-          </div>
-
           <div className={styles.rowMeta}>
-            {shop?.name ?? owner?.displayName ?? 'Unknown seller'} ·{' '}
-            {gone ? listing.postedLabel : listing.location}
+            {/* Who is selling: a shop or dealer, or a person. */}
+            <strong className={styles.seller}>
+              {shop ? (
+                <StorefrontIcon size={15} weight={1.9} title="Shop" />
+              ) : (
+                <PersonIcon size={15} weight={1.9} title="Person" />
+              )}
+              {shop?.name ?? owner?.displayName ?? 'Unknown seller'}
+            </strong>{' '}
+            · {gone ? listing.postedLabel : listing.location}
           </div>
         </div>
       </Link>
@@ -139,26 +154,42 @@ export function GridCard({ listing }: { listing: Listing }) {
 function ListingName({
   listing,
   specLimit = 3,
+  bold = false,
 }: {
   listing: Listing;
   specLimit?: number;
+  /** Item names in bold; the words and specs around them stay as they are. */
+  bold?: boolean;
 }) {
+  const name = bold ? styles.nameBold : undefined;
+
   switch (listing.type) {
     case 'swap':
       return (
         <>
-          <ItemName side="owned">{listing.has.name}</ItemName> for{' '}
-          <ItemName side="wanted">{listing.wants.name}</ItemName>
+          <ItemName side="owned" bold={bold} className={name}>
+            {listing.has.name}
+          </ItemName>{' '}
+          for{' '}
+          <ItemName side="wanted" className={name}>
+            {listing.wants.name}
+          </ItemName>
         </>
       );
     case 'request':
-      return <ItemName side="wanted">{listing.wants.name}</ItemName>;
+      return (
+        <ItemName side="wanted" className={name}>
+          {listing.wants.name}
+        </ItemName>
+      );
     case 'sale':
     case 'auction': {
       const specs = specParts(listing.item, specLimit);
       return (
         <>
-          <ItemName side="owned">{listing.item.name}</ItemName>
+          <ItemName side="owned" bold={bold} className={name}>
+            {listing.item.name}
+          </ItemName>
           {specs.length > 0 ? (
             <span className={styles.specs}> · {specs.join(' · ')}</span>
           ) : null}

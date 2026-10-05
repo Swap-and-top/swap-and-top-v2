@@ -331,6 +331,19 @@ export const ShopIcon = (props: IconProps) => (
   </Svg>
 );
 
+/**
+ * A storefront, as marketplaces draw one: a scalloped awning over a shop
+ * with a door. Marks a seller as a shop or dealer rather than a person.
+ */
+export const StorefrontIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M3 9l1.6-5h14.8L21 9" />
+    <path d="M3 9a3 3 0 0 0 6 0a3 3 0 0 0 6 0a3 3 0 0 0 6 0" />
+    <path d="M5 12.5V20h14v-7.5" />
+    <path d="M10 20v-4.5h4V20" />
+  </Svg>
+);
+
 export const StarIcon = (props: IconProps) => (
   <Svg weight={1.9} {...props}>
     <path d="M12 4l2.3 4.9 5.2.7-3.8 3.6 1 5.3-4.7-2.6-4.7 2.6 1-5.3-3.8-3.6 5.2-.7z" />

@@ -36,7 +36,7 @@
 .barActive,
 .barActive:hover {
   --trail: 28px;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snt-control-active) 35%, transparent);
+  box-shadow: var(--snt-focus-ring);
   color: var(--snt-control-active);
 }
 

@@ -39,6 +39,11 @@
   outline-offset: 2px;
 }
 
+/* Clicked or tapped, not tabbed to: no ring. Doubled to outrank the above. */
+.select.byPointer:focus-visible {
+  outline: none;
+}
+
 /* The options list is the system's; keep it readable on any platform. */
 .select option {
   color: var(--snt-ink);

@@ -10,6 +10,8 @@
 
 .row {
   display: flex;
+  /* The text sits level with the middle of the photo, not its top. */
+  align-items: center;
   gap: var(--snt-space-6);
   padding: var(--snt-space-5);
   color: var(--snt-ink);
@@ -43,11 +45,20 @@
   min-width: 0;
 }
 
+/** The price line, under the name. */
 .rowTop {
   display: flex;
   align-items: center;
   gap: var(--snt-space-4);
   flex-wrap: wrap;
+  margin-top: var(--snt-space-1);
+}
+
+/** The price before a drop, struck through beside the current one. */
+.wasPrice {
+  font-size: var(--snt-text-base);
+  font-variant-numeric: tabular-nums;
+  color: var(--snt-ink-muted);
 }
 
 .swapAmount {
@@ -60,14 +71,30 @@
 .rowTitle {
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-medium);
-  margin-top: var(--snt-space-1);
   line-height: var(--snt-leading-tight);
+}
+
+/** The item's name, in bold: blue if it is owned, green if it is wanted. */
+.nameBold {
+  font-weight: var(--snt-weight-bold);
 }
 
 .rowMeta {
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
   margin-top: var(--snt-space-2);
+}
+
+/** Who posted it: the person or the shop, in bold. Not the place. */
+.seller {
+  font-weight: var(--snt-weight-bold);
+}
+
+/* The little shop or person before the name, sitting on the text's line. */
+.seller svg {
+  display: inline-block;
+  margin-right: var(--snt-space-1);
+  vertical-align: -3px;
 }
 
 /* --- grid card --- */
