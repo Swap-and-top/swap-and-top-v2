@@ -22,6 +22,7 @@ import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { swapTerms } from '../format';
 import { CardActions } from './CardActions';
+import { SellerIcon } from './SellerIcon';
 import styles from './WantedCard.module.css';
 
 export function WantedCard({
@@ -135,6 +136,7 @@ export function WantedCard({
         {requester ? (
           <>
             <span className={styles.requesterName}>
+              <SellerIcon kind="person" />
               {requester.displayName}
             </span>
             <ConfirmedDealsBadge count={requester.confirmedDeals} />

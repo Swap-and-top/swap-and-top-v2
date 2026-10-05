@@ -19,7 +19,9 @@
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain;
+  /* No edge effect of the browser's own — a bounce on an iPhone, a glow
+     elsewhere: the strip stretches instead (see useRubberBand). */
+  overscroll-behavior-x: none;
   scrollbar-width: none;
 }
 
@@ -257,7 +259,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
   scrollbar-width: none;
 }
 

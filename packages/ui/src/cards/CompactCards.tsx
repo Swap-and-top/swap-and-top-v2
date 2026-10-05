@@ -5,14 +5,15 @@
  */
 
 import Link from 'next/link';
-import type { Listing } from '@snt/core';
+import type { Listing, SwapListing } from '@snt/core';
 import { getShop, getUser } from '@snt/core';
-import { PersonIcon, StorefrontIcon, SwapIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
 import { ImagePlaceholder, listingPhoto } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, ItemName, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
+import { swapTerms } from '../format';
+import { SellerIcon } from './SellerIcon';
 import styles from './CompactCards.module.css';
 
 function isGone(listing: Listing): boolean {
@@ -59,9 +60,13 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
 
         <div className={styles.rowBody}>
           {/* The item first, in bold; then what it costs; then who has it. */}
-          <div className={styles.rowTitle}>
-            <ListingName listing={listing} bold />
-          </div>
+          {listing.type === 'swap' ? (
+            <SwapLines listing={listing} />
+          ) : (
+            <div className={styles.rowTitle}>
+              <ListingName listing={listing} bold />
+            </div>
+          )}
 
           <div className={styles.rowTop}>
             {listing.type === 'sale' ? (
@@ -78,13 +83,6 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
               </>
             ) : null}
 
-            {listing.type === 'swap' && listing.cashAmount ? (
-              <span className={styles.swapAmount}>
-                <SwapIcon size={13} weight={2.1} />
-                <CashAmount amount={listing.cashAmount} />
-              </span>
-            ) : null}
-
             {listing.type === 'request' ? (
               <Price amount={listing.budget} size="sm" />
             ) : null}
@@ -95,11 +93,7 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
           <div className={styles.rowMeta}>
             {/* Who is selling: a shop or dealer, or a person. */}
             <strong className={styles.seller}>
-              {shop ? (
-                <StorefrontIcon size={15} weight={1.9} title="Shop" />
-              ) : (
-                <PersonIcon size={15} weight={1.9} title="Person" />
-              )}
+              <SellerIcon kind={shop ? 'shop' : 'person'} />
               {shop?.name ?? owner?.displayName ?? 'Unknown seller'}
             </strong>{' '}
             · {gone ? listing.postedLabel : listing.location}
@@ -107,6 +101,46 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
         </div>
       </Link>
     </Panel>
+  );
+}
+
+/**
+ * A swap in a row, as two plain lines so neither side is mistaken for the
+ * other: "Has" and what the poster is offering, then "Looking for" and what
+ * they are after. Any cash sits on the side that adds it — theirs if they
+ * add, the wanted side if whoever takes the swap adds — in that side's
+ * colour: blue with what they have, green with what they are looking for.
+ */
+function SwapLines({ listing }: { listing: SwapListing }) {
+  const { cashSide } = swapTerms(listing.cashDirection, listing.cashAmount);
+  const cash =
+    listing.cashAmount !== undefined ? (
+      <>
+        {' '}
+        <CashAmount
+          amount={listing.cashAmount}
+          className={cashSide === 'wants' ? styles.cashWanted : undefined}
+        />
+      </>
+    ) : null;
+
+  return (
+    <div className={styles.rowTitle}>
+      <div>
+        <span className={styles.sideLabel}>Has</span>{' '}
+        <ItemName side="owned" bold className={styles.nameBold}>
+          {listing.has.name}
+        </ItemName>
+        {cashSide === 'has' ? cash : null}
+      </div>
+      <div className={styles.wantsLine}>
+        <span className={styles.sideLabel}>Looking for</span>{' '}
+        <ItemName side="wanted" className={styles.nameBold}>
+          {listing.wants.name}
+        </ItemName>
+        {cashSide === 'wants' ? cash : null}
+      </div>
+    </div>
   );
 }
 

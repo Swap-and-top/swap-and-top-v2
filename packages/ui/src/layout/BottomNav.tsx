@@ -1,127 +1,120 @@
 'use client';
 
 /**
- * BottomNav — the marketplace's five-item navigation.
+ * BottomNav — the phone's bottom bar: the feed's four listing types.
  *
- * The active item is derived from the pathname rather than passed in, so no
- * page has to remember to declare which tab it belongs to.
+ * All types, Swaps, For sale and Wanted switch the view over the one feed.
+ * On a phone they live here, under the thumb, instead of in a tab row above
+ * the listings; from tablet up this bar is hidden and the tab row does the
+ * job (see Browse).
+ *
+ * On the feed it is handed the current type and switches it in place. On any
+ * other screen its items go to the feed, showing the type that was tapped.
+ * Posting, the account and the wishlist are reached from the header.
  */
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import {
-  GridIcon,
-  PersonIcon,
-  PlusIcon,
-  ReceiveHandIcon,
-  SaveStarIcon,
-} from '../icons';
-import { CountBadge } from '../primitives/Badge';
+import type { MouseEvent } from 'react';
+import { useFeedStore, type TypeFilter } from '@snt/core';
+import { GridIcon, ReceiveHandIcon, SwapIcon, TagIcon } from '../icons';
 import styles from './BottomNav.module.css';
 
 interface NavItem {
-  href: string;
+  type: TypeFilter;
   label: string;
-  /** Extra path prefixes that should also light this item up. */
-  alsoMatches?: string[];
+  /** The feed's address for this type. */
+  href: string;
 }
 
 const ITEMS: NavItem[] = [
-  { href: '/', label: 'Browse', alsoMatches: ['/listing', '/shop', '/search'] },
-  { href: '/wanted', label: 'Wanted' },
-  { href: '/saved', label: 'Wishlist' },
-  { href: '/me', label: 'Me', alsoMatches: ['/deals'] },
+  { type: 'all', label: 'All types', href: '/' },
+  { type: 'swap', label: 'Swaps', href: '/?type=swap' },
+  { type: 'sale', label: 'For sale', href: '/?type=sale' },
+  { type: 'request', label: 'Wanted', href: '/?type=wanted' },
 ];
 
-function isActive(pathname: string, item: NavItem): boolean {
-  if (item.href === '/') {
-    if (pathname === '/') return true;
-    return (item.alsoMatches ?? []).some((prefix) =>
-      pathname.startsWith(prefix),
-    );
-  }
-  if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
-    return true;
-  }
-  return (item.alsoMatches ?? []).some((prefix) => pathname.startsWith(prefix));
-}
-
-/** Outlined when idle, filled when active — every item the same way. */
-function iconFor(label: string, active: boolean) {
-  switch (label) {
-    case 'Browse':
-      return <GridIcon size={20} filled={active} />;
-    case 'Wanted':
-      return <ReceiveHandIcon size={20} filled={active} />;
-    case 'Wishlist':
-      return <SaveStarIcon size={20} filled={active} />;
+/**
+ * Always the outline: the active item is marked by the blue pill behind its
+ * icon, which turns the icon white, not by filling the icon in.
+ */
+function iconFor(type: TypeFilter) {
+  switch (type) {
+    case 'all':
+      return <GridIcon size={20} />;
+    case 'swap':
+      return <SwapIcon size={20} weight={1.9} />;
+    case 'sale':
+      return <TagIcon size={20} />;
     default:
-      return <PersonIcon size={20} filled={active} />;
+      return <ReceiveHandIcon size={20} />;
   }
 }
 
 export function BottomNav({
-  /** Deals awaiting this user's confirmation. Shown on the Me item. */
-  pendingConfirmations = 0,
+  type,
+  onType,
 }: {
-  pendingConfirmations?: number;
+  /** The listing type on show. Only the feed has one; elsewhere none is lit. */
+  type?: TypeFilter;
+  /** Switches the type in place. Without it, the items link to the feed. */
+  onType?: (type: TypeFilter) => void;
 }) {
-  const pathname = usePathname();
-
-  // Browse, Wanted, [post], Wishlist, Me — the post action sits in the middle.
-  const left = ITEMS.slice(0, 2);
-  const right = ITEMS.slice(2);
+  // As on the category chips: the blue slides into the tapped item's pill
+  // from the side of the item that had it, while that one dissolves. Which
+  // way that is has to be known before the type changes, so it is noted on
+  // the bar as an item is pressed, for the CSS to read.
+  function noteDirection(event: MouseEvent<HTMLElement>) {
+    const bar = event.currentTarget;
+    const next = (event.target as HTMLElement).closest('button');
+    const current = bar.querySelector('button[aria-pressed="true"]');
+    if (!next || !current || next === current) return;
+    const after =
+      current.compareDocumentPosition(next) & Node.DOCUMENT_POSITION_FOLLOWING;
+    bar.dataset.travel = after ? 'forward' : 'back';
+  }
 
   return (
-    <nav className={styles.nav} aria-label="Main">
-      {left.map((item) => (
-        <NavLink key={item.href} item={item} pathname={pathname} />
-      ))}
-
-      <Link href="/post" aria-label="Post a listing" className={styles.post}>
-        <span className={styles.postCircle}>
-          <PlusIcon size={22} />
-        </span>
-      </Link>
-
-      {right.map((item) => (
-        <NavLink
-          key={item.href}
-          item={item}
-          pathname={pathname}
-          badge={item.label === 'Me' ? pendingConfirmations : 0}
-        />
-      ))}
-    </nav>
-  );
-}
-
-function NavLink({
-  item,
-  pathname,
-  badge = 0,
-}: {
-  item: NavItem;
-  pathname: string;
-  badge?: number;
-}) {
-  const active = isActive(pathname, item);
-
-  return (
-    <Link
-      href={item.href}
-      aria-current={active ? 'page' : undefined}
-      className={[styles.item, active ? styles.itemActive : '']
-        .filter(Boolean)
-        .join(' ')}
+    <nav
+      className={styles.nav}
+      aria-label="Listing type"
+      onClickCapture={noteDirection}
     >
-      {iconFor(item.label, active)}
-      <span>{item.label}</span>
-      {badge > 0 ? (
-        <span className={styles.badge}>
-          <CountBadge count={badge} />
-        </span>
-      ) : null}
-    </Link>
+      {ITEMS.map((item) => {
+        const active = item.type === type;
+        const className = [styles.item, active ? styles.itemActive : '']
+          .filter(Boolean)
+          .join(' ');
+        const content = (
+          <>
+            {/* The pill holds the icon only; the label sits under it. */}
+            <span className={styles.pill}>{iconFor(item.type)}</span>
+            <span>{item.label}</span>
+          </>
+        );
+
+        return onType ? (
+          <button
+            key={item.type}
+            type="button"
+            className={className}
+            aria-pressed={active}
+            onClick={() => onType(item.type)}
+          >
+            {content}
+          </button>
+        ) : (
+          <Link
+            key={item.type}
+            href={item.href}
+            className={className}
+            // The feed keeps its last type unless told otherwise, and the
+            // address for "All types" names none — so say it outright.
+            onClick={() => useFeedStore.setState({ type: item.type })}
+          >
+            {content}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

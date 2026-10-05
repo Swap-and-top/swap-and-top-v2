@@ -54,6 +54,23 @@
   width: auto;
 }
 
+/*
+ * On a phone the logo row is pinned to the top of the screen and moved by
+ * AutoHideHeader: up and off with the content as the page scrolls down, tied
+ * to the scroll; back in with a quick slide as soon as it scrolls up. The
+ * transition is set there, only for the way back. Above the cards and their
+ * photos; below the search panel. From tablet up it simply scrolls away with
+ * the page, as in the design.
+ */
+@media (max-width: 767px) {
+  .app {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    will-change: transform;
+  }
+}
+
 /** Yellow on the gradient, green type — the v1 call to action. The green is
  *  deepened so it holds 4.5:1 on the yellow. */
 .postButton {

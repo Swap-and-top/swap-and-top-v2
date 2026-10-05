@@ -13,7 +13,7 @@
  * does for listing type.
  */
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import styles from './Chip.module.css';
 
 export type ChipTone = 'accent' | 'ink';
@@ -72,8 +72,27 @@ export function ChipRow({
   /** Accessible name for the group, e.g. "Filter by category". */
   label: string;
 }) {
+  // The selected fill enters a chip from the side of the one selected before
+  // it, while that one dissolves. Which way that is has to be
+  // known before the selection changes, so it is noted on the row as a chip is
+  // pressed — ahead of the chip's own handler — for the CSS to read.
+  function noteDirection(event: MouseEvent<HTMLDivElement>) {
+    const row = event.currentTarget;
+    const next = (event.target as HTMLElement).closest('button');
+    const current = row.querySelector('button[aria-pressed="true"]');
+    if (!next || !current || next === current || !row.contains(next)) return;
+    const after =
+      current.compareDocumentPosition(next) & Node.DOCUMENT_POSITION_FOLLOWING;
+    row.dataset.travel = after ? 'forward' : 'back';
+  }
+
   return (
-    <div className={styles.row} role="group" aria-label={label}>
+    <div
+      className={styles.row}
+      role="group"
+      aria-label={label}
+      onClickCapture={noteDirection}
+    >
       {children}
     </div>
   );

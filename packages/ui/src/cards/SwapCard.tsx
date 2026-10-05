@@ -16,6 +16,7 @@ import { specParts } from '../primitives/SpecGrid';
 import { Panel } from '../primitives/Surface';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { CardActions } from './CardActions';
+import { SellerIcon } from './SellerIcon';
 import styles from './SwapCard.module.css';
 
 export function SwapCard({
@@ -49,11 +50,14 @@ export function SwapCard({
         <div className={styles.footer}>
           {seller ? (
             <>
-              <span className={styles.name}>{seller.displayName}</span>
+              <span className={styles.name}>
+                <SellerIcon kind="person" />
+                {seller.displayName}
+              </span>
               <ConfirmedDealsBadge count={seller.confirmedDeals} />
             </>
           ) : null}
-          <span>
+          <span className={styles.where}>
             {listing.location} · {listing.postedLabel}
           </span>
           <span className={styles.spacer} />

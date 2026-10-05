@@ -147,10 +147,26 @@
   display: flex;
   align-items: center;
   gap: var(--snt-space-4);
-  flex-wrap: wrap;
   padding: var(--snt-space-4) var(--snt-card-pad) var(--snt-space-6);
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
+}
+
+/* The name, the deals badge and the icons keep their width. */
+.footer > :not(.where):not(.spacer) {
+  flex-shrink: 0;
+}
+
+/*
+ * Where and when. On a narrow phone this is the part that gives way, cut
+ * short with three dots, so save and share stay on the seller's line.
+ */
+.where {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .name {

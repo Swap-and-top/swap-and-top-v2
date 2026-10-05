@@ -4,9 +4,13 @@
  * Browse — the feed.
  *
  * One stream carrying every listing type, narrowed by a scrolling category chip
- * row and then by a type tab bar. There are no separate pages for sale, swap
+ * row and then by listing type. There are no separate pages for sale, swap
  * and wanted; thin inventory split three ways produces three dead-looking
- * feeds — the tabs switch the view over one feed, they do not switch route.
+ * feeds — the types switch the view over one feed, they do not switch route.
+ *
+ * The four types are a tab row above the listings from tablet up, where it
+ * sticks to the top as the feed scrolls. On a phone they are the bottom bar
+ * instead, and the tab row is not shown.
  *
  * Design: the one page of `Swap & Top v2 Design.pdf`.
  */
@@ -17,7 +21,6 @@ import {
   filterFeed,
   interleaveSponsored,
   liveListings,
-  pendingConfirmationCount,
   type Category,
   type TypeFilter,
 } from '@snt/core';
@@ -69,9 +72,10 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
 
   return (
     <Screen>
-      {/* Search, category and type sit on white under the brand header. On a
-          phone the whole block sticks, pulled up so only the type tabs stay in
-          view while the feed scrolls. */}
+      {/* Search, category and type sit under the brand header. From tablet up
+          the whole block sticks, pulled up so only the type tabs stay in view
+          while the feed scrolls. On a phone it scrolls away: the types are in
+          the bottom bar. */}
       <div
         ref={stickyTop.ref}
         className={styles.stickyHeader}
@@ -95,7 +99,8 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
 
           {/* Type is a tab bar, not a chip row: the four values are exhaustive
               and mutually exclusive, so they should read as one control
-              switching the view rather than as four independent toggles. */}
+              switching the view rather than as four independent toggles.
+              Hidden on a phone, where the bottom bar carries them. */}
           <Tabs
             fill
             tabs={TYPES}
@@ -118,7 +123,7 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
             title="Nothing here yet"
             body="No listings match those filters. Clear them, or post what you are looking for and let dealers come to you."
             action={
-              <ButtonLink href="/post" variant="secondary" onClick={reset}>
+              <ButtonLink href="/post" variant="primary" onClick={reset}>
                 Post what you are looking for
               </ButtonLink>
             }
@@ -126,7 +131,8 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
         )}
       </ScreenBody>
 
-      <BottomNav pendingConfirmations={pendingConfirmationCount} />
+      {/* On a phone the listing types are here, not in the tab row. */}
+      <BottomNav type={type} onType={setType} />
     </Screen>
   );
 }

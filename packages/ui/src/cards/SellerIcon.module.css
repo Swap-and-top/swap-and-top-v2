@@ -1,0 +1,7 @@
+/* Sits on the name's line, close before it, in the name's colour. */
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  margin-right: var(--snt-space-1);
+  vertical-align: -3px;
+}

@@ -4,15 +4,17 @@
  * The heading over a list of search results, and the filters it can open.
  *
  * The heading says what the list is and how many listings are in it; at its
- * right end a "Filters" button opens and closes the filters beneath it — a
+ * right end a "Filter" button opens and closes the filters beneath it — a
  * category and a listing-type dropdown, then a price range. They start
- * closed, so the results come first. While closed, the button counts the
+ * closed, so the results come first, and slide down and back up like the
+ * search panel itself. While closed, the button counts the
  * filters that are narrowing the list, so none of them is hidden.
  */
 
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 import type { SearchCategory, TypeFilter } from '@snt/core';
 import { Eyebrow, Field } from '@snt/ui';
+import { FilterIcon } from '@snt/ui/icons';
 import { FilterSelect } from './FilterSelect';
 import { CATEGORY_OPTIONS, quoteQuery, TYPE_OPTIONS } from './searchParams';
 import styles from './SearchFilters.module.css';
@@ -106,7 +108,8 @@ export function SearchFilters({
           aria-controls="search-filters"
           onClick={onToggle}
         >
-          Filters
+          <FilterIcon size={15} weight={2} />
+          Filter
           {narrowing > 0 ? (
             <span className={styles.badge} aria-label={`${narrowing} on`}>
               {narrowing}
@@ -115,50 +118,60 @@ export function SearchFilters({
         </button>
       </div>
 
-      {open ? (
-        <div id="search-filters" className={styles.filters}>
-          {/* Category on the left, listing type on the right. */}
-          <div className={styles.pair}>
-            <FilterSelect
-              label="Category"
-              value={values.category}
-              options={CATEGORY_OPTIONS}
-              onChange={(category) => onChange({ category })}
-            />
-            <FilterSelect
-              label="Listing type"
-              value={values.type}
-              options={TYPE_OPTIONS}
-              onChange={(type) => onChange({ type })}
-            />
-          </div>
+      {/* Always there, so it can slide: shut, it has no height and takes no
+          taps or tabs. */}
+      <div
+        id="search-filters"
+        className={[styles.reveal, open ? styles.revealOpen : '']
+          .filter(Boolean)
+          .join(' ')}
+        inert={!open}
+      >
+        <div className={styles.revealInner}>
+          <div className={styles.filters}>
+            {/* Category on the left, listing type on the right. */}
+            <div className={styles.pair}>
+              <FilterSelect
+                label="Category"
+                value={values.category}
+                options={CATEGORY_OPTIONS}
+                onChange={(category) => onChange({ category })}
+              />
+              <FilterSelect
+                label="Listing type"
+                value={values.type}
+                options={TYPE_OPTIONS}
+                onChange={(type) => onChange({ type })}
+              />
+            </div>
 
-          <div ref={prices} className={[styles.pair, styles.prices].join(' ')}>
-            <Field
-              label="Min price"
-              inputMode="numeric"
-              enterKeyHint="next"
-              onKeyDown={nextOnEnter}
-              placeholder="$0"
-              value={values.min}
-              onChange={(event) => onChange({ min: digits(event.target.value) })}
-              size="sm"
-              pill
-            />
-            <Field
-              label="Max price"
-              inputMode="numeric"
-              enterKeyHint="search"
-              onKeyDown={searchOnEnter}
-              placeholder="Any"
-              value={values.max}
-              onChange={(event) => onChange({ max: digits(event.target.value) })}
-              size="sm"
-              pill
-            />
+            <div ref={prices} className={[styles.pair, styles.prices].join(' ')}>
+              <Field
+                label="Min price"
+                inputMode="numeric"
+                enterKeyHint="next"
+                onKeyDown={nextOnEnter}
+                placeholder="$0"
+                value={values.min}
+                onChange={(event) => onChange({ min: digits(event.target.value) })}
+                size="sm"
+                pill
+              />
+              <Field
+                label="Max price"
+                inputMode="numeric"
+                enterKeyHint="search"
+                onKeyDown={searchOnEnter}
+                placeholder="Any"
+                value={values.max}
+                onChange={(event) => onChange({ max: digits(event.target.value) })}
+                size="sm"
+                pill
+              />
+            </div>
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

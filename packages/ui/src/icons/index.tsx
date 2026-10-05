@@ -332,6 +332,29 @@ export const ShopIcon = (props: IconProps) => (
 );
 
 /**
+ * For sale: a price tag, with the hole its string goes through. Filled for
+ * the active tab, the hole knocked out of the fill.
+ */
+export const TagIcon = ({
+  filled = false,
+  ...props
+}: IconProps & { filled?: boolean }) => (
+  <Svg {...props}>
+    <path
+      fill={filled ? 'currentColor' : 'none'}
+      d="M3.5 12.1V5A1.5 1.5 0 0 1 5 3.5h7.1a1.5 1.5 0 0 1 1.06.44l7.4 7.4a1.5 1.5 0 0 1 0 2.12l-7.1 7.1a1.5 1.5 0 0 1-2.12 0l-7.4-7.4a1.5 1.5 0 0 1-.44-1.06z"
+    />
+    <circle
+      cx="8.2"
+      cy="8.2"
+      r="1.2"
+      stroke={filled ? 'var(--snt-bg-surface)' : 'currentColor'}
+      fill={filled ? 'var(--snt-bg-surface)' : 'none'}
+    />
+  </Svg>
+);
+
+/**
  * A storefront, as marketplaces draw one: a scalloped awning over a shop
  * with a door. Marks a seller as a shop or dealer rather than a person.
  */

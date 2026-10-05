@@ -1,18 +1,42 @@
 /** Browse — the feed. */
 
-/**
- * On a phone the header sticks to the top of the screen. Its `top` is set in
- * page.tsx so only the type tabs stay visible. From tablet up it scrolls away
- * normally, as in the design.
+/*
+ * From tablet up the header sticks to the top of the screen. Its `top` is set
+ * in BrowseFeed.tsx so only the type tabs stay visible while the feed scrolls.
+ *
+ * On a phone only the logo row sticks (the header does that itself), the
+ * search bar and chips scroll away, and the type tabs are not shown: the four
+ * listing types are the bottom bar there. The wrapper steps aside — no box of
+ * its own — so the logo row can stick for the whole page, not just for the
+ * height of this block.
  */
 .stickyHeader {
-  position: sticky;
-  z-index: 3;
+  display: contents;
+}
+
+/* The header leaves no room under a tab row; with the row gone, the chips
+   need a little. */
+.stickyHeader > :last-child {
+  padding-bottom: var(--snt-space-4);
+}
+
+.stickyHeader [role='tablist'] {
+  display: none;
 }
 
 @media (min-width: 768px) {
   .stickyHeader {
-    position: static;
+    display: block;
+    position: sticky;
+    z-index: 3;
+  }
+
+  .stickyHeader > :last-child {
+    padding-bottom: 0;
+  }
+
+  .stickyHeader [role='tablist'] {
+    display: flex;
   }
 }
 

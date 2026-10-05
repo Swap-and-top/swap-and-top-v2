@@ -13,7 +13,7 @@
  * card opens the listing.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '../icons';
 import { ImagePlaceholder } from './Placeholder';
@@ -24,6 +24,138 @@ import styles from './PhotoGallery.module.css';
  * individual's sale or swap is blue, a Wanted post green, a shop's untinted.
  */
 export type PhotoTone = 'person' | 'wanted' | 'shop';
+
+/**
+ * The rubber band at the ends of a photo strip. Swipe towards a photo that is
+ * not there — back from the first, on from the last, either way from an only
+ * photo — and the photo stretches towards the finger like a rubber band,
+ * less the further it is pulled, then eases back when let go. It says "that
+ * is all of them" without a word.
+ *
+ * A stretch, not a slide: the photo never leaves its frame. The edge the
+ * pull comes from stays pinned where it is, no gap opens behind it, and only
+ * the picture gives. The same on every phone, so the browser's own edge
+ * effect — a bounce on an iPhone, a glow elsewhere — is switched off for the
+ * strip. Touch only: a mouse has the arrows, which go away at the ends.
+ */
+function useRubberBand(track: RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return;
+
+    let startX = 0;
+    let startY = 0;
+    let atStart = false;
+    let atEnd = false;
+    /** Undecided until the finger has moved enough to tell across from down. */
+    let across: boolean | null = null;
+    let pulled = false;
+    /** Where the strip is held while it is being pulled, or null. */
+    let heldAt: number | null = null;
+    let release: ReturnType<typeof setTimeout> | undefined;
+
+    // A pull must only ever stretch. Left alone, the strip would still take
+    // the same finger as a swipe — so a hard pull that eases back even a
+    // little flicks it over to the neighbouring photo. While pulled, the
+    // strip is held where it is and cannot be scrolled.
+    const hold = () => {
+      if (heldAt !== null) return;
+      heldAt = el.scrollLeft;
+      el.style.overflowX = 'hidden';
+    };
+    const letGo = () => {
+      clearTimeout(release);
+      if (heldAt === null) return;
+      el.scrollLeft = heldAt;
+      heldAt = null;
+      el.style.overflowX = '';
+    };
+    const onScroll = () => {
+      if (heldAt !== null && el.scrollLeft !== heldAt) el.scrollLeft = heldAt;
+    };
+
+    const onStart = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch || event.touches.length > 1) return;
+      // A new touch before the last pull has settled: free the strip first.
+      letGo();
+      startX = touch.clientX;
+      startY = touch.clientY;
+      atStart = el.scrollLeft <= 1;
+      atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
+      across = null;
+      pulled = false;
+    };
+
+    const onMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      if (across === null) {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        across = Math.abs(dx) > Math.abs(dy);
+      }
+      if (!across) return;
+
+      // Only against an end: right from the first photo, left from the last.
+      const against = (dx > 0 && atStart) || (dx < 0 && atEnd);
+      if (!against) {
+        // Eased back past where the pull began: flat again, but still held —
+        // the rest of this touch does not turn into a swipe.
+        if (pulled) el.style.transform = '';
+        return;
+      }
+
+      // The further the pull, the less it gives, and it is slight, as on
+      // Android: a long drag adds about a twentieth to the width.
+      const width = el.clientWidth || 1;
+      const distance = Math.abs(dx);
+      const give = (1 - 1 / ((distance * 0.55) / width + 1)) * width;
+      pulled = true;
+      hold();
+      el.style.transition = 'none';
+      // Pinned at the edge the pull starts from, stretching after the finger.
+      el.style.transformOrigin = dx > 0 ? 'left center' : 'right center';
+      el.style.transform = `scaleX(${1 + give / (5 * width)})`;
+    };
+
+    const onEnd = () => {
+      if (!pulled) return;
+      // Let go: it snaps most of the way back, then eases to rest.
+      el.style.transition = 'transform 400ms cubic-bezier(0.16, 1, 0.3, 1)';
+      el.style.transform = '';
+      // Held until it has settled, so nothing left of the touch moves it.
+      clearTimeout(release);
+      release = setTimeout(letGo, 400);
+    };
+
+    // A pull is not a tap: do not open the photo it started on.
+    const onClick = (event: MouseEvent) => {
+      if (!pulled) return;
+      pulled = false;
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    el.addEventListener('touchstart', onStart, { passive: true });
+    el.addEventListener('touchmove', onMove, { passive: true });
+    el.addEventListener('touchend', onEnd);
+    el.addEventListener('touchcancel', onEnd);
+    el.addEventListener('click', onClick, true);
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      letGo();
+      el.removeEventListener('scroll', onScroll);
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+      el.removeEventListener('touchcancel', onEnd);
+      el.removeEventListener('click', onClick, true);
+    };
+  }, [track]);
+}
 
 export function PhotoGallery({
   images,
@@ -45,6 +177,7 @@ export function PhotoGallery({
   const [index, setIndex] = useState(0);
   /** The photo open in the viewer, or null when it is closed. */
   const [viewing, setViewing] = useState<number | null>(null);
+  useRubberBand(track);
 
   if (images.length === 0) {
     return <ImagePlaceholder height={height ?? 'auto'} flush className={className} />;
@@ -245,6 +378,7 @@ function PhotoViewer({
   const track = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(startIndex);
   const many = images.length > 1;
+  useRubberBand(track);
 
   useEffect(() => {
     const el = dialog.current;

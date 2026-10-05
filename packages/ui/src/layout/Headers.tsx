@@ -17,6 +17,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ChevronLeftIcon, CloseIcon } from '../icons';
+import { AutoHideHeader } from './AutoHideHeader';
 import { Logo } from './Logo';
 import styles from './Headers.module.css';
 
@@ -36,7 +37,9 @@ export function AppHeader({
 }) {
   return (
     <>
-      <header className={styles.app} data-surface="brand">
+      {/* On a phone this bar goes up with the page as it scrolls down and
+          comes back down with it as soon as it scrolls up. */}
+      <AutoHideHeader className={styles.app}>
         <div className={styles.inner}>
           <div className={styles.appTop}>
             <Link href="/" className={styles.logo} aria-label="Swap & Top — home">
@@ -52,7 +55,7 @@ export function AppHeader({
             />
           </div>
         </div>
-      </header>
+      </AutoHideHeader>
 
       {children ? (
         <div className={styles.appBelow}>

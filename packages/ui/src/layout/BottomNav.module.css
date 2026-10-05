@@ -1,13 +1,9 @@
 /**
- * The five-item bottom navigation.
+ * The phone's bottom bar: the feed's four listing types.
  *
- * Wanted gets a top-level slot on purpose: it is the dealer product and the
- * platform's structural difference from a supply-only board. Burying it inside
- * search would hide the thing that makes the business work.
- *
- * Phones only. From tablet up the brand header carries navigation — the logo
- * goes home, "Post New Item" posts and the account circle opens Me — which is
- * how the desktop design is drawn.
+ * Phones only. From tablet up the same four sit in a tab row above the
+ * listings, and the brand header carries the rest — the logo goes home,
+ * "Post New Item" posts and the account circle opens Me.
  */
 
 .nav {
@@ -45,46 +41,75 @@
   color: var(--snt-ink);
 }
 
-.itemActive {
-  color: var(--snt-accent-bold);
-  /* With the filled icon, a bold label marks where you are. */
+/*
+ * The pill behind an icon: a sideways oval, clear when idle. On the active
+ * item it fills with the control blue and its icon turns white — far easier
+ * to pick out at a glance than a change of icon weight alone.
+ *
+ * The blue is its own layer so it can move, the same way as on the category
+ * chips: it slides into the tapped item's pill from the side of the item that
+ * had it, while that one simply dissolves. The bar notes which way (see
+ * BottomNav.tsx); with nothing noted, it opens from the centre.
+ */
+.pill {
+  position: relative;
+  /* Keeps the blue, which sits behind the icon, inside the oval. */
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 28px;
+  border-radius: var(--snt-radius-pill);
+  transition: color 200ms ease;
+}
+
+.pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--snt-control-active);
+  opacity: 0;
+  transform: scaleX(0);
+  /* Going: a plain dissolve where it stands, then it resets, unseen, ready
+     to slide in next time. */
+  transition:
+    opacity 200ms ease,
+    transform 0s 200ms;
+}
+
+/** The label takes the pill's blue, in bold. */
+.itemActive,
+.itemActive:hover {
+  color: var(--snt-control-active);
   font-weight: var(--snt-weight-bold);
 }
 
-.itemActive:hover {
-  color: var(--snt-accent-bold);
-}
-
-/** The centre post action. Always available, whatever screen you are on. */
-.post {
-  flex-grow: 1;
-  flex-basis: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.postCircle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-action);
+.itemActive .pill {
   color: var(--snt-ink-on-dark);
-  transition: background var(--snt-transition);
+  transition: color 260ms ease;
 }
 
-.post:hover .postCircle {
-  background: var(--snt-action-strong);
+.itemActive .pill::before {
+  opacity: 1;
+  transform: scaleX(1);
+  /* Arriving: solid from the start, sliding in. */
+  transition:
+    opacity 0s,
+    transform 260ms cubic-bezier(0.3, 0, 0.2, 1);
 }
 
-.badge {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  margin-left: 4px;
+/* Moving along the bar: the blue comes in from the near end. */
+.nav[data-travel='forward'] .pill::before {
+  transform-origin: left center;
+}
+
+/* Moving back along the bar: from the other end. */
+.nav[data-travel='back'] .pill::before {
+  transform-origin: right center;
 }
 
 @media (min-width: 768px) {

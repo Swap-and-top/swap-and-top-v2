@@ -560,9 +560,9 @@ const ps5Wanted: RequestListing = {
   title: 'PS5 controller, working drift-free',
   location: 'Mt Pleasant',
   status: 'live',
-  createdAt: '2026-09-23',
+  createdAt: '2026-09-24',
   expiresAt: THIRTY_DAYS_ON,
-  postedLabel: 'Yesterday',
+  postedLabel: '3h ago',
   contactChannels: ['whatsapp'],
   allowDealerOffers: true,
   viewCount: 14,
@@ -590,9 +590,9 @@ const redmiWanted: RequestListing = {
   title: 'Redmi Note 12, 128GB',
   location: 'Mt Pleasant',
   status: 'live',
-  createdAt: '2026-09-23',
+  createdAt: '2026-09-24',
   expiresAt: THIRTY_DAYS_ON,
-  postedLabel: 'Yesterday',
+  postedLabel: '6h ago',
   contactChannels: ['whatsapp', 'call'],
   allowDealerOffers: true,
   viewCount: 19,
@@ -1043,31 +1043,35 @@ const xboxOneS: SaleListing = {
 
 /* ------------------------------------------------------------ collections - */
 
-/** Newest first, which is the feed's default order. */
+/**
+ * Newest first, which is the feed's default order. Sales, swaps and Wanted
+ * posts are interleaved, as they would be on a live board: nobody posts in
+ * blocks of one kind.
+ */
 export const mockListings: Listing[] = [
   rtxWanted,
   iphone11,
   thinkpad,
+  ps5Wanted,
   hpProBook,
   iphoneXr,
   ps4Slim,
   macbookSwap,
   sodimm,
+  redmiWanted,
   airpodsPro,
   gtxSwap,
-  redmiNote12,
   ideaPad,
+  cadDesktopWanted,
   galaxyA14,
   dualSense,
-  dellLatitude,
   galaxySwap,
-  ps5Wanted,
-  redmiWanted,
-  cadDesktopWanted,
   optiplex,
-  xboxOneS,
-  hpEliteBook,
   sodimmWanted,
+  redmiNote12,
+  xboxOneS,
+  dellLatitude,
+  hpEliteBook,
   rx580,
   eliteDeskDraft,
 ];

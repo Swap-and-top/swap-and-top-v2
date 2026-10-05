@@ -13,7 +13,6 @@
 import { useState } from 'react';
 import {
   getListing,
-  pendingConfirmationCount,
   useSavedStore,
   type Listing,
 } from '@snt/core';
@@ -80,7 +79,7 @@ export default function SavedPage() {
         )}
       </ScreenBody>
 
-      <BottomNav pendingConfirmations={pendingConfirmationCount} />
+      <BottomNav />
     </Screen>
   );
 }

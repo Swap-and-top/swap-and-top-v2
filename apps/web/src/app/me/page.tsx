@@ -140,7 +140,7 @@ export default function MePage() {
         </Stack>
       </ScreenBody>
 
-      <BottomNav pendingConfirmations={pendingConfirmationCount} />
+      <BottomNav />
     </Screen>
   );
 }

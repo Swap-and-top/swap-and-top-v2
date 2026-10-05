@@ -61,11 +61,21 @@
   color: var(--snt-ink-muted);
 }
 
-.swapAmount {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-2);
-  color: var(--snt-accent-bold);
+/** "Has" and "Looking for" on a swap's two lines: grey, so the names stand out. */
+.sideLabel {
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
+.wantsLine {
+  margin-top: var(--snt-space-1);
+}
+
+/* Cash on the "Looking for" line: green, like the item it sits beside. The
+   amount is blue by default, which is right on the "Has" line. Doubled so it
+   wins whatever the file order. */
+.cashWanted.cashWanted {
+  color: var(--snt-wanted-ink);
 }
 
 .rowTitle {
@@ -90,12 +100,6 @@
   font-weight: var(--snt-weight-bold);
 }
 
-/* The little shop or person before the name, sitting on the text's line. */
-.seller svg {
-  display: inline-block;
-  margin-right: var(--snt-space-1);
-  vertical-align: -3px;
-}
 
 /* --- grid card --- */
 

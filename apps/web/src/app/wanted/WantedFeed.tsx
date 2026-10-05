@@ -19,7 +19,6 @@ import {
   getUser,
   isDemand,
   liveListings,
-  pendingConfirmationCount,
   type Category,
 } from '@snt/core';
 import {
@@ -109,7 +108,7 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
         </ButtonLink>
       </div>
 
-      <BottomNav pendingConfirmations={pendingConfirmationCount} />
+      <BottomNav />
     </Screen>
   );
 }

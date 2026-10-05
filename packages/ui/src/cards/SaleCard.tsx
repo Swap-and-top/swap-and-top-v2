@@ -17,6 +17,7 @@ import { ItemName, Meta, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
 import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
 import { CardActions } from './CardActions';
+import { SellerIcon } from './SellerIcon';
 import styles from './SaleCard.module.css';
 
 /** How a card words condition beside the price: "Used Good". */
@@ -41,6 +42,9 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
   const dropped =
     listing.previousPrice !== undefined && listing.previousPrice > listing.price;
   const specs = specParts(listing.item);
+  const condition = listing.item.condition
+    ? CARD_CONDITION[listing.item.condition]
+    : undefined;
   const href = `/listing/${listing.slug}`;
 
   return (
@@ -69,7 +73,8 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
 
         <div className={styles.body}>
           {/* Name and specs on the left; price and condition balance them
-              on the right. */}
+              on the right. An item with no specs would leave the left empty
+              under its name, so there the condition takes that place. */}
           {/* The link covers the whole card (see .link in the CSS); the photo
               sits above it and opens the photo viewer, and save and share sit
               above it in the bottom row. */}
@@ -80,6 +85,8 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
               </ItemName>
               {specs.length > 0 ? (
                 <div className={styles.specs}>{specs.join(' · ')}</div>
+              ) : condition ? (
+                <div className={styles.specs}>{condition}</div>
               ) : null}
             </div>
 
@@ -95,8 +102,8 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
                 ) : null}
                 <Price amount={listing.price} />
               </div>
-              {listing.item.condition ? (
-                <Meta xs>{CARD_CONDITION[listing.item.condition]}</Meta>
+              {condition && specs.length > 0 ? (
+                <Meta xs>{condition}</Meta>
               ) : null}
             </div>
           </Link>
@@ -105,7 +112,10 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
             <div className={styles.shopRow}>
               <ShopMark initials={shop.initials} size={40} />
               <span className={styles.shopIdentity}>
-                <span className={styles.shopName}>{shop.name}</span>
+                <span className={styles.shopName}>
+                  <SellerIcon kind="shop" />
+                  {shop.name}
+                </span>
                 {shop.verified ? <VerifiedDealerBadge /> : null}
               </span>
               <span className={styles.spacer} />
@@ -127,11 +137,14 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
             <div className={styles.sellerLine}>
               {seller ? (
                 <>
-                  <span className={styles.sellerName}>{seller.displayName}</span>
+                  <span className={styles.sellerName}>
+                    <SellerIcon kind="person" />
+                    {seller.displayName}
+                  </span>
                   <ConfirmedDealsBadge count={seller.confirmedDeals} />
                 </>
               ) : null}
-              <span>
+              <span className={styles.where}>
                 {listing.location} · {listing.postedLabel}
               </span>
               <span className={styles.spacer} />

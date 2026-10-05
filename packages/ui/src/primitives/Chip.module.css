@@ -22,6 +22,12 @@
 }
 
 .chip {
+  /* The selected fill; a brand header swaps it for white. */
+  --chip-fill: var(--snt-control-active);
+  position: relative;
+  /* Keeps the fill, which sits behind the label, inside the chip. */
+  isolation: isolate;
+  overflow: hidden;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -37,8 +43,60 @@
   white-space: nowrap;
   transition:
     background var(--snt-transition),
-    border-color var(--snt-transition),
-    color var(--snt-transition);
+    border-color 260ms ease,
+    color 260ms ease;
+}
+
+/*
+ * The selected fill is its own layer, so it can move. In a row, picking a
+ * chip slides the fill into it from the side facing the chip that was
+ * selected, as if it came across from there; the old chip simply dissolves.
+ * The row notes which way (see ChipRow); a chip on its own opens from its
+ * centre.
+ */
+.chip::before {
+  content: '';
+  position: absolute;
+  /* Over the outline too, so no ring of it shows round the fill. */
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--chip-fill);
+  opacity: 0;
+  transform: scaleX(0);
+  /* Going: a plain dissolve where it stands, then it resets, unseen, ready
+     to slide in next time. */
+  transition:
+    opacity 200ms ease,
+    transform 0s 200ms;
+}
+
+.selectedAccent,
+.selectedInk {
+  transition:
+    background var(--snt-transition),
+    border-color 260ms ease,
+    color 260ms ease;
+}
+
+.selectedAccent::before,
+.selectedInk::before {
+  opacity: 1;
+  transform: scaleX(1);
+  /* Arriving: solid from the start, sliding in. */
+  transition:
+    opacity 0s,
+    transform 260ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+/* Moving along the row: the fill comes in from the near end. */
+.row[data-travel='forward'] .chip::before {
+  transform-origin: left center;
+}
+
+/* Moving back along the row: from the other end. */
+.row[data-travel='back'] .chip::before {
+  transform-origin: right center;
 }
 
 .chip:hover {
@@ -54,7 +112,7 @@
 .selectedAccent:hover,
 .selectedInk,
 .selectedInk:hover {
-  background: var(--snt-control-active);
+  /* The fill itself is the layer above; see .chip::before. */
   border-color: var(--snt-control-active);
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
@@ -89,6 +147,7 @@
  * selected one filled white with teal type.
  */
 :global([data-surface='brand']) .chip {
+  --chip-fill: var(--snt-bg-surface);
   background: none;
   border-color: var(--snt-ink-on-dark);
   color: var(--snt-ink-on-dark);
@@ -102,7 +161,6 @@
 :global([data-surface='brand']) .selectedAccent:hover,
 :global([data-surface='brand']) .selectedInk,
 :global([data-surface='brand']) .selectedInk:hover {
-  background: var(--snt-bg-surface);
   border-color: var(--snt-bg-surface);
   color: var(--snt-brand-teal);
   font-weight: var(--snt-weight-bold);

@@ -15,7 +15,6 @@ import { useEffect, useState } from 'react';
 import {
   liveListings,
   NO_SPEC_FILTERS,
-  pendingConfirmationCount,
   searchListings,
 } from '@snt/core';
 import {
@@ -122,7 +121,7 @@ export function SearchResults({ initial }: { initial: SearchQuery }) {
         )}
       </ScreenBody>
 
-      <BottomNav pendingConfirmations={pendingConfirmationCount} />
+      <BottomNav />
     </Screen>
   );
 }
