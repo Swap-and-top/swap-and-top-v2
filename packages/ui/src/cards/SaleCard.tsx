@@ -110,12 +110,27 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
 
           {shop ? (
             <div className={styles.shopRow}>
-              <ShopMark initials={shop.initials} size={40} />
+              {/* A shop has a page of its own, so its picture and its name
+                  open it — and say so on hover, by turning blue. A private
+                  seller has none; their name is just a name. The picture is
+                  a second way to the same place, so only the name is a stop
+                  for the keyboard and for screen readers. */}
+              <Link
+                href={`/shop/${shop.slug}`}
+                className={[styles.shopLink, styles.shopMark].join(' ')}
+                tabIndex={-1}
+                aria-hidden
+              >
+                <ShopMark initials={shop.initials} size={40} />
+              </Link>
               <span className={styles.shopIdentity}>
-                <span className={styles.shopName}>
+                <Link
+                  href={`/shop/${shop.slug}`}
+                  className={[styles.shopLink, styles.shopName].join(' ')}
+                >
                   <SellerIcon kind="shop" />
                   {shop.name}
-                </span>
+                </Link>
                 {shop.verified ? <VerifiedDealerBadge /> : null}
               </span>
               <span className={styles.spacer} />

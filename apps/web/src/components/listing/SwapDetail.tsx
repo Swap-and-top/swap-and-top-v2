@@ -16,7 +16,6 @@
 
 import {
   getUser,
-  useSavedStore,
   type SwapListing,
 } from '@snt/core';
 import {
@@ -33,6 +32,7 @@ import {
   specRowsFor,
   SwapTiles,
   swapTerms,
+  useWishlist,
 } from '@snt/ui';
 import { PhoneIcon, SaveStarIcon, ShareIcon } from '@snt/ui/icons';
 import { useRevealStore } from '@snt/core';
@@ -40,9 +40,8 @@ import styles from './SwapDetail.module.css';
 
 export function SwapDetail({ listing }: { listing: SwapListing }) {
   const owner = getUser(listing.ownerId);
-  const { ids, toggle } = useSavedStore();
+  const { saved, toggleSaved } = useWishlist(listing.id);
   const { reveal, revealed } = useRevealStore();
-  const saved = ids.includes(listing.id);
   const number = revealed[listing.id];
 
   /** Who pays — worded as on the cards. */
@@ -58,7 +57,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
           <>
             <HeaderIconButton
               label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
-              onClick={() => toggle(listing.id)}
+              onClick={toggleSaved}
             >
               <SaveStarIcon size={20} filled={saved} />
             </HeaderIconButton>

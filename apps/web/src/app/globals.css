@@ -16,3 +16,18 @@ body {
  * sits in a centred column — see Screen.module.css and
  * docs/product/visual-design.md.
  */
+
+/*
+ * Toasts (sonner): the app's own green for success and red for failure, with
+ * white type, in the app's font. Prefixed with `html` to outrank sonner's own
+ * theme, which it adds to the page after this file.
+ */
+html [data-sonner-toaster][data-sonner-theme] {
+  --success-bg: var(--snt-action);
+  --success-border: var(--snt-action);
+  --success-text: var(--snt-ink-on-dark);
+  --error-bg: var(--snt-alert);
+  --error-border: var(--snt-alert);
+  --error-text: var(--snt-ink-on-dark);
+  font-family: var(--snt-font-body);
+}

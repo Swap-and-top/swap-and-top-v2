@@ -18,7 +18,8 @@
     "clean": "rm -rf .turbo node_modules *.tsbuildinfo"
   },
   "dependencies": {
-    "@snt/core": "workspace:*"
+    "@snt/core": "workspace:*",
+    "sonner": "^2.0.8"
   },
   "peerDependencies": {
     "next": "^15.0.0",

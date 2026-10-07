@@ -13,7 +13,6 @@
 
 import {
   getUser,
-  useSavedStore,
   type RequestListing,
 } from '@snt/core';
 import {
@@ -34,14 +33,14 @@ import {
   SpecGrid,
   Stack,
   specRowsFor,
+  useWishlist,
 } from '@snt/ui';
 import { InfoIcon, SaveStarIcon, ShareIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
 
 export function RequestDetail({ listing }: { listing: RequestListing }) {
   const owner = getUser(listing.ownerId);
-  const { ids, toggle } = useSavedStore();
-  const saved = ids.includes(listing.id);
+  const { saved, toggleSaved } = useWishlist(listing.id);
 
   return (
     <Screen surface>
@@ -52,7 +51,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
           <>
             <HeaderIconButton
               label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
-              onClick={() => toggle(listing.id)}
+              onClick={toggleSaved}
             >
               <SaveStarIcon size={20} filled={saved} />
             </HeaderIconButton>

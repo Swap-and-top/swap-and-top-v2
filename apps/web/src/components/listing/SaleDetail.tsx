@@ -15,7 +15,6 @@ import {
   CONDITION_LABELS,
   getShop,
   getUser,
-  useSavedStore,
   type SaleListing,
 } from '@snt/core';
 import {
@@ -34,6 +33,7 @@ import {
   ShopRow,
   SpecGrid,
   specRowsFor,
+  useWishlist,
 } from '@snt/ui';
 import {
   MessageIcon,
@@ -47,8 +47,7 @@ import styles from './SaleDetail.module.css';
 export function SaleDetail({ listing }: { listing: SaleListing }) {
   const shop = getShop(listing.shopId);
   const owner = getUser(listing.ownerId);
-  const { ids, toggle } = useSavedStore();
-  const saved = ids.includes(listing.id);
+  const { saved, toggleSaved } = useWishlist(listing.id);
 
   const dropped =
     listing.previousPrice !== undefined && listing.previousPrice > listing.price;
@@ -61,7 +60,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
           <>
             <HeaderIconButton
               label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
-              onClick={() => toggle(listing.id)}
+              onClick={toggleSaved}
             >
               <SaveStarIcon size={20} filled={saved} />
             </HeaderIconButton>

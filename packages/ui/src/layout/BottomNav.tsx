@@ -16,7 +16,7 @@
 import Link from 'next/link';
 import type { MouseEvent } from 'react';
 import { useFeedStore, type TypeFilter } from '@snt/core';
-import { GridIcon, ReceiveHandIcon, SwapIcon, TagIcon } from '../icons';
+import { BinocularsIcon, GridIcon, SwapIcon, TagIcon } from '../icons';
 import styles from './BottomNav.module.css';
 
 interface NavItem {
@@ -46,7 +46,7 @@ function iconFor(type: TypeFilter) {
     case 'sale':
       return <TagIcon size={20} />;
     default:
-      return <ReceiveHandIcon size={20} />;
+      return <BinocularsIcon size={20} />;
   }
 }
 

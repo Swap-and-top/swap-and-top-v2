@@ -95,6 +95,7 @@ export { CompactListingRow, GridCard, GridCardList } from './cards/CompactCards'
 export { PosterRow, ShopRow } from './cards/IdentityRow';
 export { LeadCard } from './cards/LeadCard';
 export { ListingCard } from './cards/ListingCard';
+export { useWishlist } from './cards/useWishlist';
 export { SaleCard } from './cards/SaleCard';
 export type { SaleCardProps } from './cards/SaleCard';
 export { SwapCard, SwapTiles } from './cards/SwapCard';

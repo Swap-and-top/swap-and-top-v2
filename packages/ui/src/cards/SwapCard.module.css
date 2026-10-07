@@ -170,6 +170,11 @@
 }
 
 .name {
+  /* A person has no page to open, so their name is not a way in: it sits
+     above the card's link and keeps the plain arrow. */
+  position: relative;
+  z-index: 1;
+  cursor: default;
   font-weight: var(--snt-weight-bold);
   color: var(--snt-ink);
 }

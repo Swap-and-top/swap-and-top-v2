@@ -41,16 +41,29 @@
   inset: -10px -1px;
 }
 
-.button:hover {
-  background: var(--snt-bg-subtle);
-  color: var(--snt-ink);
+/*
+ * Hovered, an icon takes its card's colour on a pale tint of it: blue on a
+ * sale or a swap, green on a Wanted post. Only where there is a pointer to
+ * hover with: a phone "hovers" whatever was last tapped and leaves it lit,
+ * so on touch the icons simply stay as they are.
+ */
+@media (hover: hover) {
+  .owned .button:hover {
+    background: var(--snt-accent-tint);
+    color: var(--snt-owned-ink);
+  }
+
+  .wanted .button:hover {
+    background: var(--snt-success-tint);
+    color: var(--snt-wanted-ink);
+  }
 }
 
 /**
  * Saved: the star fills, in the same grey. Not blue — blue means for sale,
- * and a saved star should not read as a kind of listing.
+ * and a saved star should not read as a kind of listing. With a mouse it
+ * still takes the card's colour while hovered, like the others.
  */
-.saved,
-.saved:hover {
+.saved {
   color: var(--snt-card-icon);
 }

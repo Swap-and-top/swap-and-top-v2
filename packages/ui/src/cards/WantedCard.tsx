@@ -9,12 +9,14 @@
  *
  * Note the structure differs from the wireframe in one way: the card is not one
  * big link. A `<button>` cannot live inside an `<a>` — it is invalid HTML and
- * the anchor swallows the click. So the title is the link and "I have this" is a
- * real sibling button.
+ * the anchor swallows the click. So the title is the link, stretched over the
+ * whole card so a tap anywhere opens the request, and "I have this" is a real
+ * sibling button sitting above it.
  */
 
 import Link from 'next/link';
 import type { DemandListing, User } from '@snt/core';
+import { BinocularsIcon, SwapIcon } from '../icons';
 import { Button } from '../primitives/Button';
 import { PhotoThumb } from '../primitives/PhotoGallery';
 import { Panel } from '../primitives/Surface';
@@ -58,7 +60,17 @@ export function WantedCard({
             .filter(Boolean)
             .join(' ')}
         >
-          {tradeIn ? 'Wanted + Swap' : 'Wanted'}
+          {/* Each word carries its mark: binoculars for a thing looked for,
+              the swap arrows for a trade-in offered with it. */}
+          <BinocularsIcon size={14} weight={2} />
+          Wanted
+          {tradeIn ? (
+            <>
+              <span aria-hidden>+</span>
+              <SwapIcon size={14} weight={2.2} />
+              Swap
+            </>
+          ) : null}
         </span>
         <span className={styles.spacer} />
         {/* The small grey facts sit together, top right. */}
@@ -147,6 +159,7 @@ export function WantedCard({
           listingId={listing.id}
           href={`/listing/${listing.slug}`}
           title={listing.title}
+          tone="wanted"
         />
       </div>
     </Panel>

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import { Toaster } from 'sonner';
 
 // Order matters: tokens first, then the reset that uses them, then app styles.
 import '@snt/ui/styles/tokens.css';
@@ -76,7 +77,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={poppins.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Short confirmations — "Added to your wishlist". Bottom left on a
+            desktop; on a phone sonner runs them the full width of the screen,
+            at the bottom, clear of the bottom bar. Green when the thing
+            worked, red when it did not (see globals.css). */}
+        <Toaster
+          position="bottom-left"
+          richColors
+          offset={24}
+          mobileOffset={{ bottom: 80 }}
+          duration={2500}
+        />
+      </body>
     </html>
   );
 }

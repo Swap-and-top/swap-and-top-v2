@@ -140,6 +140,11 @@
 }
 
 .sellerName {
+  /* A person has no page to open, so their name is not a way in: it sits
+     above the card's link and keeps the plain arrow. */
+  position: relative;
+  z-index: 1;
+  cursor: default;
   font-weight: var(--snt-weight-bold);
   color: var(--snt-ink);
 }
@@ -166,7 +171,40 @@
   min-width: 0;
 }
 
+.shopName,
+.shopName:hover {
+  color: var(--snt-ink);
+}
+
+/** The shop's picture, as a way to its page. */
+.shopMark {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-shrink: 0;
+  transition: opacity var(--snt-transition);
+}
+
+/*
+ * Over the shop's picture or its name, both answer together: the name and its
+ * storefront turn blue, and the picture dims — so it is plain this goes to
+ * the shop, not to the listing. Dimmed by fading it, which shows on the dark
+ * initials tile as well as it will on a photo.
+ */
+@media (hover: hover) {
+  .shopRow:has(.shopLink:hover) .shopName {
+    color: var(--snt-accent-bold);
+  }
+
+  .shopRow:has(.shopLink:hover) .shopMark {
+    opacity: 0.7;
+  }
+}
+
 .shopName {
+  /* Above the card's stretched link: it goes to the shop, not the listing. */
+  position: relative;
+  z-index: 1;
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-bold);
   white-space: nowrap;

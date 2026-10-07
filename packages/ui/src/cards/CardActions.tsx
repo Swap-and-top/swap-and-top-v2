@@ -8,23 +8,28 @@
  * click). The cards use a stretched link instead, and these sit above it.
  */
 
-import { useSavedStore } from '@snt/core';
 import { SaveStarIcon, ShareIcon } from '../icons';
+import { useWishlist } from './useWishlist';
 import styles from './CardActions.module.css';
 
 export function CardActions({
   listingId,
   href,
   title,
+  tone = 'owned',
 }: {
   listingId: string;
   /** The listing's path, shared as a full URL. */
   href: string;
   /** Shared alongside the link. */
   title: string;
+  /**
+   * The card's colour, which the icons take when hovered: blue on a sale or
+   * a swap, green on a Wanted post.
+   */
+  tone?: 'owned' | 'wanted';
 }) {
-  const { ids, toggle } = useSavedStore();
-  const saved = ids.includes(listingId);
+  const { saved, toggleSaved } = useWishlist(listingId);
 
   /**
    * The phone's own share sheet where there is one — WhatsApp is where these
@@ -44,7 +49,12 @@ export function CardActions({
   }
 
   return (
-    <span className={styles.actions}>
+    <span
+      className={[
+        styles.actions,
+        tone === 'wanted' ? styles.wanted : styles.owned,
+      ].join(' ')}
+    >
       <button
         type="button"
         className={[styles.button, saved ? styles.saved : '']
@@ -52,7 +62,7 @@ export function CardActions({
           .join(' ')}
         aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
         aria-pressed={saved}
-        onClick={() => toggle(listingId)}
+        onClick={toggleSaved}
       >
         <SaveStarIcon size={18} filled={saved} />
       </button>
