@@ -22,6 +22,15 @@ const PLACEHOLDER_NUMBERS: Record<string, string> = {
 
 const FALLBACK_NUMBER = '+263 77 000 0000';
 
+/**
+ * A user's contact number, for the one other place it is handed over: when
+ * an offer is accepted, and the two people are put in touch. Placeholders
+ * here; in the real system this too is a recorded, server-side action.
+ */
+export function contactNumberFor(userId: string): string {
+  return PLACEHOLDER_NUMBERS[userId] ?? FALLBACK_NUMBER;
+}
+
 interface RevealState {
   /** Listing id → the number shown. */
   revealed: Record<string, string>;

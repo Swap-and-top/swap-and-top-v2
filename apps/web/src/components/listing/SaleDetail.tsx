@@ -18,10 +18,11 @@ import {
   type SaleListing,
 } from '@snt/core';
 import {
+  AppHeader,
   Badge,
   Button,
   Caption,
-  HeaderIconButton,
+  CardActions,
   ImageCarousel,
   ItemName,
   PosterRow,
@@ -29,47 +30,26 @@ import {
   Screen,
   ScreenBody,
   ScreenFooter,
-  ScreenHeader,
   ShopRow,
   SpecGrid,
   specRowsFor,
-  useWishlist,
 } from '@snt/ui';
-import {
-  MessageIcon,
-  SaveStarIcon,
-  ShareIcon,
-  SwapIcon,
-} from '@snt/ui/icons';
+import { MessageIcon, SwapIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
 import styles from './SaleDetail.module.css';
 
 export function SaleDetail({ listing }: { listing: SaleListing }) {
   const shop = getShop(listing.shopId);
   const owner = getUser(listing.ownerId);
-  const { saved, toggleSaved } = useWishlist(listing.id);
 
   const dropped =
     listing.previousPrice !== undefined && listing.previousPrice > listing.price;
 
   return (
     <Screen surface>
-      <ScreenHeader
-        backHref="/"
-        actions={
-          <>
-            <HeaderIconButton
-              label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
-              onClick={toggleSaved}
-            >
-              <SaveStarIcon size={20} filled={saved} />
-            </HeaderIconButton>
-            <HeaderIconButton label="Share on WhatsApp">
-              <ShareIcon size={20} />
-            </HeaderIconButton>
-          </>
-        }
-      />
+      {/* The same header as the feed, so the site does not change face on
+          the way into a listing. Save and share are in the page. */}
+      <AppHeader />
 
       <ImageCarousel
         images={listing.item.images}
@@ -90,6 +70,16 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
               Dropped ${listing.previousPrice! - listing.price}
             </Badge>
           ) : null}
+          {/* Save and share, under the photo at the right, level with the
+              price. */}
+          <span className={styles.actions}>
+            <CardActions
+              listingId={listing.id}
+              href={`/listing/${listing.slug}`}
+              title={listing.title}
+              report
+            />
+          </span>
         </div>
 
         <h1 className={styles.title}>

@@ -8,7 +8,8 @@
  */
 
 import Link from 'next/link';
-import type { Condition, SaleListing, Shop, User } from '@snt/core';
+import type { SaleListing, Shop, User } from '@snt/core';
+import { CARD_CONDITION } from '../format';
 import { Badge } from '../primitives/Badge';
 import { PhotoGallery } from '../primitives/PhotoGallery';
 import { ShopMark } from '../primitives/Placeholder';
@@ -19,14 +20,6 @@ import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
 import { CardActions } from './CardActions';
 import { SellerIcon } from './SellerIcon';
 import styles from './SaleCard.module.css';
-
-/** How a card words condition beside the price: "Used Good". */
-const CARD_CONDITION: Record<Condition, string> = {
-  'like-new': 'Like New',
-  good: 'Used Good',
-  fair: 'Used Fair',
-  'for-parts': 'For Parts',
-};
 
 export interface SaleCardProps {
   listing: SaleListing;

@@ -11,13 +11,14 @@
  * big link. A `<button>` cannot live inside an `<a>` — it is invalid HTML and
  * the anchor swallows the click. So the title is the link, stretched over the
  * whole card so a tap anywhere opens the request, and "I have this" is a real
- * sibling button sitting above it.
+ * sibling button sitting above it, which opens the offer sheet.
  */
 
 import Link from 'next/link';
+import { offerCountFor, useOfferStore } from '@snt/core';
 import type { DemandListing, User } from '@snt/core';
 import { BinocularsIcon, SwapIcon } from '../icons';
-import { Button } from '../primitives/Button';
+import { OfferButton } from '../offers/OfferButton';
 import { PhotoThumb } from '../primitives/PhotoGallery';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
@@ -30,13 +31,11 @@ import styles from './WantedCard.module.css';
 export function WantedCard({
   listing,
   requester,
-  onRespond,
 }: {
   listing: DemandListing;
   requester?: User;
-  /** "I have this". In the real app this opens the offer composer. */
-  onRespond?: () => void;
 }) {
+  const offers = useOfferStore((store) => store.offers);
   const tradeIn = listing.type === 'swap' ? listing.has : listing.tradeIn;
   const terms =
     listing.type === 'swap'
@@ -49,8 +48,11 @@ export function WantedCard({
       : undefined;
   const wantedName =
     listing.type === 'swap' ? listing.wants.name : listing.wants.name;
-  const responses =
-    listing.type === 'swap' ? listing.offerCount : listing.responseCount;
+  const responses = offerCountFor(
+    offers,
+    listing.id,
+    listing.type === 'swap' ? listing.offerCount : listing.responseCount,
+  );
 
   return (
     <Panel xl className={styles.card}>
@@ -111,9 +113,8 @@ export function WantedCard({
           </div>
         </div>
 
-        <Button onClick={onRespond} className={styles.cta}>
-          I have this
-        </Button>
+        {/* Opens the offer sheet; on your own post, leads to its offers. */}
+        <OfferButton listing={listing} className={styles.cta} />
       </div>
 
       {tradeIn ? (

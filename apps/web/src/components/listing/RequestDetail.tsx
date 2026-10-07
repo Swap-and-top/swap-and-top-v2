@@ -14,61 +14,61 @@
 import {
   getUser,
   type RequestListing,
+  offerCountFor,
+  useOfferStore,
 } from '@snt/core';
 import {
+  AppHeader,
   Body,
-  Button,
   Caption,
+  CardActions,
   Eyebrow,
-  HeaderIconButton,
   ItemName,
   Note,
+  OfferButton,
+  OffersReceived,
   Panel,
   PosterRow,
   Price,
   Screen,
   ScreenBody,
   ScreenFooter,
-  ScreenHeader,
   SpecGrid,
-  Stack,
   specRowsFor,
-  useWishlist,
+  Stack,
 } from '@snt/ui';
-import { InfoIcon, SaveStarIcon, ShareIcon } from '@snt/ui/icons';
+import { InfoIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
+import styles from './RequestDetail.module.css';
 
 export function RequestDetail({ listing }: { listing: RequestListing }) {
   const owner = getUser(listing.ownerId);
-  const { saved, toggleSaved } = useWishlist(listing.id);
+  const offers = useOfferStore((store) => store.offers);
+  const responses = offerCountFor(offers, listing.id, listing.responseCount);
 
   return (
     <Screen surface>
-      <ScreenHeader
-        backHref="/wanted"
-        title="Wanted"
-        actions={
-          <>
-            <HeaderIconButton
-              label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
-              onClick={toggleSaved}
-            >
-              <SaveStarIcon size={20} filled={saved} />
-            </HeaderIconButton>
-            <HeaderIconButton label="Share on WhatsApp">
-              <ShareIcon size={20} />
-            </HeaderIconButton>
-          </>
-        }
-      />
+      {/* The same header as the feed, so the site does not change face on
+          the way into a listing. Save and share are in the page. */}
+      <AppHeader />
 
       <ScreenBody>
         <Stack gap={6}>
-          <div>
-            <Eyebrow>Looking for</Eyebrow>
-            <Body>
-              <ItemName side="wanted">{listing.wants.name}</ItemName>
-            </Body>
+          {/* What they want on the left; save and share at the right. */}
+          <div className={styles.lead}>
+            <div className={styles.leadText}>
+              <Eyebrow>Looking for</Eyebrow>
+              <Body>
+                <ItemName side="wanted">{listing.wants.name}</ItemName>
+              </Body>
+            </div>
+            <CardActions
+              listingId={listing.id}
+              href={`/listing/${listing.slug}`}
+              title={listing.title}
+              tone="wanted"
+              report
+            />
           </div>
 
           <div>
@@ -89,9 +89,12 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
 
           {owner ? <PosterRow user={owner} /> : null}
 
+          {/* Only the owner sees these: the offers made on this post. */}
+          <OffersReceived listing={listing} />
+
           <Note icon={<InfoIcon size={17} />} tone="subtle">
-            {listing.responseCount > 0
-              ? `${listing.responseCount} ${listing.responseCount === 1 ? 'person has' : 'people have'} responded. `
+            {responses > 0
+              ? `${responses} ${responses === 1 ? 'person has' : 'people have'} responded. `
               : ''}
             {listing.allowDealerOffers
               ? 'This person accepts offers from dealers.'
@@ -103,9 +106,8 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
       <ScreenFooter
         caption={<Caption>No account needed · meet in public</Caption>}
       >
-        <Button size="lg" block>
-          I have this
-        </Button>
+        {/* Opens the offer sheet. On your own post it leads to its offers. */}
+        <OfferButton listing={listing} size="lg" block />
         <RevealAction
           listingId={listing.id}
           ownerId={listing.ownerId}

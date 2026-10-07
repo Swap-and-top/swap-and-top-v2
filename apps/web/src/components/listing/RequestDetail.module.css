@@ -1,0 +1,13 @@
+/** Wanted listing detail. */
+
+/** What they are looking for, with save and share opposite it. */
+.lead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-6);
+}
+
+.leadText {
+  flex-grow: 1;
+  min-width: 0;
+}

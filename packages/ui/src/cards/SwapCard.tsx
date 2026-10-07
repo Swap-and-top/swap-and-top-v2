@@ -9,7 +9,7 @@
 
 import Link from 'next/link';
 import type { CashDirection, Item, SwapListing, User } from '@snt/core';
-import { swapTerms } from '../format';
+import { CARD_CONDITION, swapTerms } from '../format';
 import { CategoryIcon } from '../icons';
 import { PhotoGallery } from '../primitives/PhotoGallery';
 import { specParts } from '../primitives/SpecGrid';
@@ -74,7 +74,7 @@ export function SwapCard({
 
 /** What a tile needs to know about one side of the swap. */
 export type SwapSide = Pick<Item, 'name' | 'category' | 'specs'> &
-  Partial<Pick<Item, 'images'>>;
+  Partial<Pick<Item, 'images' | 'condition'>>;
 
 /**
  * The two tiles on their own — for the swap detail screen and the posting
@@ -138,6 +138,7 @@ function SwapTile({
   imageHeight?: number;
 }) {
   const specs = specParts(item);
+  const condition = item.condition ? CARD_CONDITION[item.condition] : undefined;
 
   return (
     <div className={[styles.tile, styles[tone]].join(' ')}>
@@ -166,7 +167,16 @@ function SwapTile({
             <div className={styles.specs}>{specs.join(' · ')}</div>
           ) : null}
         </div>
-        {cash ? <span className={styles.cash}>{cash}</span> : null}
+        {/* As on a sale card: the amount, and the condition under it. With
+            no cash on this side, the condition stands there alone. */}
+        {cash || condition ? (
+          <div className={styles.terms}>
+            {cash ? <span className={styles.cash}>{cash}</span> : null}
+            {condition ? (
+              <span className={styles.condition}>{condition}</span>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -5,3 +5,4 @@ export * from './useRevealStore';
 export * from './usePostDraftStore';
 export * from './useConsoleStore';
 export * from './useDealStore';
+export * from './useOfferStore';

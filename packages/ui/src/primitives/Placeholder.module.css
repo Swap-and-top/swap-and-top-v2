@@ -47,8 +47,9 @@
   justify-content: center;
   flex-shrink: 0;
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-placeholder);
-  color: var(--snt-ink-faint);
+  /* A person, in the app's blue on a pale tint of it — not a grey blank. */
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent);
 }
 
 /** Shop mark: square, near-black, initials. */

@@ -1,0 +1,33 @@
+/** Offers — received and made. */
+
+.title {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-10);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+.for,
+.for:hover {
+  color: inherit;
+}
+
+.none {
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}

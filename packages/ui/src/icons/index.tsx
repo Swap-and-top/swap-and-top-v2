@@ -332,6 +332,18 @@ export const ShopIcon = (props: IconProps) => (
 );
 
 /**
+ * Report a listing: a speech bubble with an exclamation mark, as the first
+ * app drew it — "something is wrong with this one".
+ */
+export const ReportIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M4 18.5V7a2.5 2.5 0 0 1 2.5-2.5h11A2.5 2.5 0 0 1 20 7v6.5a2.5 2.5 0 0 1-2.5 2.5H8z" />
+    <path d="M12 7.5v4" />
+    <path d="M12 13.6v.1" />
+  </Svg>
+);
+
+/**
  * Wanted, as a listing type: binoculars — someone on the lookout for a
  * thing. The outline is Lucide's binoculars (ISC licence).
  */

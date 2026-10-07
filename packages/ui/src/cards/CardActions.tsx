@@ -8,7 +8,8 @@
  * click). The cards use a stretched link instead, and these sit above it.
  */
 
-import { SaveStarIcon, ShareIcon } from '../icons';
+import { toast } from 'sonner';
+import { ReportIcon, SaveStarIcon, ShareIcon } from '../icons';
 import { useWishlist } from './useWishlist';
 import styles from './CardActions.module.css';
 
@@ -17,6 +18,7 @@ export function CardActions({
   href,
   title,
   tone = 'owned',
+  report = false,
 }: {
   listingId: string;
   /** The listing's path, shared as a full URL. */
@@ -28,6 +30,11 @@ export function CardActions({
    * a swap, green on a Wanted post.
    */
   tone?: 'owned' | 'wanted';
+  /**
+   * Adds a report button after share. For an opened listing, where there is
+   * something to read and so something to object to; not on feed cards.
+   */
+  report?: boolean;
 }) {
   const { saved, toggleSaved } = useWishlist(listingId);
 
@@ -74,6 +81,18 @@ export function CardActions({
       >
         <ShareIcon size={18} />
       </button>
+      {report ? (
+        <button
+          type="button"
+          className={styles.button}
+          aria-label="Report listing"
+          // Reports have nowhere to go until there is a server to take
+          // them, so this says so rather than pretending one was sent.
+          onClick={() => toast('Reporting a listing is not available yet.')}
+        >
+          <ReportIcon size={18} weight={1.9} />
+        </button>
+      ) : null}
     </span>
   );
 }

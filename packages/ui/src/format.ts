@@ -8,7 +8,15 @@
  * client-only boundary — see the note on `postedLabel` in `@snt/core`.
  */
 
-import type { CashDirection } from '@snt/core';
+import type { CashDirection, Condition } from '@snt/core';
+
+/** How a card words condition beside a price: "Used Good". */
+export const CARD_CONDITION: Record<Condition, string> = {
+  'like-new': 'Like New',
+  good: 'Used Good',
+  fair: 'Used Fair',
+  'for-parts': 'For Parts',
+};
 
 const MONTHS = [
   'Jan',

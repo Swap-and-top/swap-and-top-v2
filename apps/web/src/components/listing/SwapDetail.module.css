@@ -1,8 +1,10 @@
 /**
- * Swap listing detail. Wireframe artboard: `DetailSwap`.
+ * Swap listing detail.
  *
- * The two tiles at the top are the whole point of the screen: what they have
- * with the cash on top, in blue, and what they want, in green.
+ * Two bands, one above the other: what they have, in blue, and what they are
+ * looking for, in green. Each is the item's picture with its details beside
+ * it on the band's colour — on a phone, under it, where there is not the
+ * width for both.
  */
 
 .panel {
@@ -10,31 +12,244 @@
   padding: var(--snt-space-8) var(--snt-column-inset) 0;
 }
 
-/** Which way the cash goes, from the viewer's side. */
-.direction {
-  margin-top: var(--snt-space-5);
+/**
+ * The post: one white card holding both bands and, under them, who adds cash
+ * and the save and share icons.
+ */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding: var(--snt-card-pad) var(--snt-card-pad) var(--snt-space-6);
+}
+
+/* --- a side: its name, then its band (picture + details) ------------------ */
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+}
+
+/**
+ * "Has" or "Looking for", over the band and in its colour: centred on a
+ * phone, at the left from tablet up.
+ */
+.sideLabel {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-bold);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.sideLabelHas {
+  color: var(--snt-accent-bold);
+}
+
+.sideLabelWants {
+  color: var(--snt-wanted-ink);
+}
+
+.band {
+  --band-photo-h: 200px;
+  display: flex;
+  flex-direction: column;
+  /* One step tighter than the card it sits in, like the feed's tiles. */
+  border-radius: var(--snt-radius-md);
+  overflow: hidden;
+  color: var(--snt-ink-on-dark);
+}
+
+.has {
+  background: var(--snt-owned-fill);
+}
+
+.wants {
+  background: var(--snt-wanted-fill);
+}
+
+.media {
+  position: relative;
+  flex-shrink: 0;
+  min-height: var(--band-photo-h);
+}
+
+/* The picture fills its side of the band, however tall the details beside
+   it make the band. Pinned to the side's edges rather than sized, so it has
+   a real height for the photo strip inside it to fill. */
+.media > .photo,
+.media > .wantedSlot {
+  position: absolute;
+  inset: 0;
+}
+
+/**
+ * The "looking for" picture: a pale blue-grey with the category's icon in the
+ * band's green, as on the feed card.
+ */
+.wantedSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--snt-bg-wanted-slot);
+  color: var(--snt-wanted-fill);
+}
+
+.info {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/** The item's name, and any cash with this side. */
+.heading {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--snt-space-5) var(--snt-space-7);
+}
+
+/** The item's name, with any cash that comes with this side opposite it. */
+.nameRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+}
+
+.name {
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: var(--snt-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.cash {
+  flex-shrink: 0;
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The details, in the shape of the specification table on a sale listing: a
+ * two-column grid of cells, each a small label over its value, with rules
+ * between them — here in a faint white, on the band's colour. Prose —
+ * defects, accessories — takes a whole row.
+ */
+.facts {
+  --rule: rgb(255 255 255 / 0.28);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.fact {
+  min-width: 0;
+  padding: var(--snt-space-5) var(--snt-space-7);
+  border-top: 1px solid var(--rule);
+}
+
+/* The rule down the middle, between the two columns. */
+.fact:nth-child(odd):not(.factWide) {
+  border-right: 1px solid var(--rule);
+}
+
+.factWide {
+  grid-column: 1 / -1;
+}
+
+.fact dt {
   font-size: var(--snt-text-xs);
+}
+
+.fact dd {
+  margin: var(--snt-space-1) 0 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+/* Side by side once there is the width: picture left, details right. */
+@media (min-width: 640px) {
+  .band {
+    --band-photo-h: 220px;
+    flex-direction: row;
+  }
+
+  .media {
+    flex: 0 0 40%;
+  }
+
+  .sideLabel {
+    text-align: left;
+  }
+
+}
+
+/**
+ * The post's own facts, closing the card: who adds cash, in the card's ink,
+ * over a quiet line of where and how it is doing; save, share and report at
+ * the right, level with the first line.
+ */
+.summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--snt-space-6);
+}
+
+.terms {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+  /* The height of the icons beside it, so the two sit level. */
+  line-height: 24px;
+}
+
+.termsHas {
+  color: var(--snt-accent-bold);
+}
+
+.termsWants {
+  color: var(--snt-wanted-ink);
+}
+
+/** Location, age, views, offers: one grey line, a dot between each. */
+.meta {
+  /* The full width of the card, under the icons too. */
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-snug);
   color: var(--snt-ink-muted);
+}
+
+.meta li {
+  white-space: nowrap;
+}
+
+.meta li + li::before {
+  content: '·';
+  margin-inline: var(--snt-space-3);
 }
 
 /* --- body --- */
 
-.specsLabel {
-  margin-bottom: var(--snt-space-4);
-}
-
 .identity {
-  margin-top: var(--snt-space-6);
-}
-
-.activity {
-  font-size: var(--snt-text-sm);
-  color: var(--snt-ink-muted);
-  margin-top: var(--snt-space-6);
+  margin-top: 0;
 }
 
 @media (min-width: 768px) {
   .panel {
     padding-top: 23px;
   }
+}
+
+.offers:not(:empty) {
+  margin-top: var(--snt-space-8);
 }

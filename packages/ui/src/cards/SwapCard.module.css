@@ -133,6 +133,24 @@
   opacity: 0.9;
 }
 
+/**
+ * The cash on top with the item's condition under it, as a sale card sets
+ * price over condition. Under the text on a phone; beside it from tablet up.
+ */
+.terms {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.condition {
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-snug);
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
 /** The cash on top. */
 .cash {
   flex-shrink: 0;
@@ -196,9 +214,11 @@
     padding: var(--snt-space-4) var(--snt-space-8) var(--snt-space-8);
   }
 
-  /* In line with the item name. */
-  .cash {
+  /* In line with the item name, and set to the right like a price. */
+  .terms {
+    align-items: flex-end;
     margin-top: 14px;
+    text-align: right;
   }
 
   .footer {

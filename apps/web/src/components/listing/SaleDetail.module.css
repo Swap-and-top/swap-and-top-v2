@@ -7,6 +7,13 @@
   flex-wrap: wrap;
 }
 
+/** Save and share: pushed to the far end of the price row. */
+.actions {
+  display: flex;
+  align-self: center;
+  margin-left: auto;
+}
+
 .title {
   font-size: var(--snt-text-lg);
   font-weight: var(--snt-weight-semibold);

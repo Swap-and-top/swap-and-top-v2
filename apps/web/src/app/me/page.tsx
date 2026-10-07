@@ -16,6 +16,8 @@ import {
   pendingConfirmationCount,
   useDealStore,
   useSavedStore,
+  getListing,
+  useOfferStore,
 } from '@snt/core';
 import {
   AppHeader,
@@ -41,12 +43,21 @@ import {
   SearchIcon,
   SettingsIcon,
   ShieldCheckIcon,
+  SwapIcon,
 } from '@snt/ui/icons';
 import styles from './page.module.css';
 
 export default function MePage() {
   const { ids } = useSavedStore();
   const { confirmedDeals } = useDealStore();
+  const offers = useOfferStore((store) => store.offers);
+  /** Offers made, plus those waiting on the user's own listings. */
+  const offerTotal = offers.filter(
+    (offer) =>
+      offer.state !== 'withdrawn' &&
+      (offer.fromUserId === currentUser.id ||
+        getListing(offer.listingId)?.ownerId === currentUser.id),
+  ).length;
 
   /** The first pending confirmation is what the badge links to. */
   const pending = mockDealConfirmations.find(
@@ -102,6 +113,12 @@ export default function MePage() {
               icon={<CheckIcon size={19} weight={1.9} />}
               label="Deals to confirm"
               badge={<CountBadge count={pendingConfirmationCount} />}
+            />
+            <ListRow
+              href="/me/offers"
+              icon={<SwapIcon size={19} />}
+              label="Offers"
+              value={String(offerTotal)}
             />
             <ListRow
               href="/saved"
