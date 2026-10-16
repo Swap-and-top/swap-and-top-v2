@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Toaster } from 'sonner';
-import { InputModality, SignInHost } from '@snt/ui';
+import { SignInHost } from '@snt/ui';
 
 // Order matters: tokens first, then the reset that uses them, then app styles.
 import '@snt/ui/styles/tokens.css';
@@ -83,8 +83,6 @@ export default function RootLayout({
         {/* The one sign-in sheet, shown whenever a guest tries something that
             needs an account. */}
         <SignInHost />
-        {/* Keyboard or pointer: focus rings show for the keyboard only. */}
-        <InputModality />
         {/* Short confirmations — "Added to your wishlist". Bottom left on a
             desktop; on a phone sonner runs them the full width of the screen,
             at the bottom, clear of the bottom bar. Green when the thing

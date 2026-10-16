@@ -258,12 +258,10 @@
 }
 
 .input:focus {
+  /* The faded blue ring marks the box in use — however it was reached. Not
+     the browser's own focus outline as well, which would stand off round it
+     as a second ring. */
   outline: none;
-}
-
-/* The ring only for someone moving through with Tab (see InputModality);
-   tapped or clicked into, a box needs no ring to say so. */
-:global(html[data-input='keyboard']) .input:focus {
   box-shadow: var(--snt-focus-ring);
 }
 

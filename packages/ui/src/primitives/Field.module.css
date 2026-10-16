@@ -54,17 +54,13 @@
 
 /*
  * Active: the same faded blue ring as the search bar, in place of the box's
- * own outline, so every text box in the app is marked the same way — but
- * only for someone moving through with Tab (see InputModality). Tapped or
- * clicked into, the box needs no ring to say so.
+ * own outline, so every text box in the app is marked the same way. Not the
+ * browser's focus outline as well, which would stand off round it.
  */
 .input:focus {
-  outline: none;
-}
-
-:global(html[data-input='keyboard']) .input:focus {
   border-color: transparent;
   box-shadow: var(--snt-focus-ring);
+  outline: none;
 }
 
 /** Smaller input, used inside two-column rows. */

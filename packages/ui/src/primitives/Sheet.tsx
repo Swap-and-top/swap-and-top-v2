@@ -29,6 +29,7 @@ import styles from './Sheet.module.css';
 
 const CloseContext = createContext<() => void>(() => {});
 
+
 /** Closes the sheet this is inside, animating it away. */
 export function useCloseSheet(): () => void {
   return useContext(CloseContext);
@@ -52,6 +53,7 @@ export function Sheet({
   const [closing, setClosing] = useState(false);
   const done = useRef(false);
 
+
   /** Tells the owner, once, that the sheet has gone. */
   function finish() {
     if (done.current) return;
@@ -67,7 +69,7 @@ export function Sheet({
   function close() {
     if (closing) return;
     setClosing(true);
-    window.setTimeout(finish, 300);
+    window.setTimeout(finish, 500);
   }
 
   useEffect(() => {
@@ -86,7 +88,10 @@ export function Sheet({
   return createPortal(
     <dialog
       ref={dialog}
-      className={[styles.sheet, closing ? styles.closing : '']
+      className={[
+        styles.sheet,
+        closing ? styles.closing : '',
+      ]
         .filter(Boolean)
         .join(' ')}
       aria-labelledby={titleId}

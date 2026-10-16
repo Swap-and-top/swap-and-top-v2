@@ -482,16 +482,16 @@ function PhotoViewer({
     const to = pictureRect(photo);
     if (photo && from && to && !calm()) {
       photo.animate([{ transform: zoomFrom(from, to) }, { transform: 'none' }], {
-        duration: 340,
+        duration: 420,
         easing: 'cubic-bezier(0.2, 0, 0, 1)',
       });
       shade.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
-        duration: 280,
+        duration: 420,
         easing: 'ease',
       });
       for (const control of controls()) {
         control.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: 200,
+          duration: 240,
           delay: 160,
           fill: 'backwards',
         });
@@ -545,16 +545,16 @@ function PhotoViewer({
       });
     }
     shade.current?.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: 280,
+      duration: 380,
       easing: 'ease',
       fill: 'forwards',
     });
     const zoom = photo.animate(
       [{ transform: 'none' }, { transform: zoomFrom(from, to) }],
-      { duration: 300, easing, fill: 'forwards' },
+      { duration: 380, easing, fill: 'forwards' },
     );
     // Gone once it lands — or just after, if the end is never reported.
-    const done = window.setTimeout(onClose, 420);
+    const done = window.setTimeout(onClose, 500);
     void zoom.finished.then(
       () => {
         window.clearTimeout(done);

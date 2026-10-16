@@ -98,7 +98,6 @@ export { CardActions } from './cards/CardActions';
 export { ListingCard } from './cards/ListingCard';
 export { useWishlist } from './cards/useWishlist';
 export { SignInGate, SignInHost } from './auth/SignIn';
-export { InputModality } from './primitives/InputModality';
 export { Sheet } from './primitives/Sheet';
 export { OfferButton } from './offers/OfferButton';
 export { OfferCard } from './offers/OfferCard';

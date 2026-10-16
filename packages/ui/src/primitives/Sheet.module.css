@@ -21,12 +21,25 @@
   color: var(--snt-ink);
   overflow-y: auto;
   overscroll-behavior: contain;
-  animation: rise 280ms cubic-bezier(0.2, 0, 0, 1);
+  /* Lifted off the page behind: a soft, deep shadow, cast upwards from a
+     sheet on the bottom edge. */
+  box-shadow: 0 -10px 40px rgb(24 52 74 / 0.22);
+  /* In unhurried: 420ms, easing out. */
+  animation: rise 420ms cubic-bezier(0.2, 0, 0, 1);
 }
 
+/*
+ * The page behind, as the photo viewer shows it — blurred, under a blue
+ * tint — a shade darker here, so a sheet stands clear of what it covers.
+ * A sheet opened over another (sign in, asked for from the offer form) has
+ * its own, which blurs and dims the first sheet too: plainly not the one in
+ * use.
+ */
 .sheet::backdrop {
-  background: rgb(24 52 74 / 0.45);
-  animation: dim 280ms ease;
+  background: rgb(120 165 205 / 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: dim 420ms ease;
 }
 
 @keyframes rise {
@@ -42,14 +55,14 @@
   }
 }
 
-/* Closing: the way it came, in reverse — down and out, a little quicker. */
+/* Closing: the way it came, in reverse — 380ms, easing to rest. */
 .closing {
-  animation: sink 220ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: sink 380ms cubic-bezier(0.3, 0, 0, 1) forwards;
   pointer-events: none;
 }
 
 .closing::backdrop {
-  animation: undim 220ms ease forwards;
+  animation: undim 380ms ease forwards;
 }
 
 @keyframes sink {
@@ -117,6 +130,8 @@
 
 @media (min-width: 640px) {
   .sheet {
+    /* A panel in the middle: the shadow falls all round, mostly below. */
+    box-shadow: 0 18px 56px rgb(24 52 74 / 0.28);
     /* Wide enough for "Describe what you're offering" on one line. */
     width: 540px;
     max-width: calc(100vw - 32px);
