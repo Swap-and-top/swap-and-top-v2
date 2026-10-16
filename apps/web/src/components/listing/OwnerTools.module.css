@@ -1,0 +1,28 @@
+/** Live, Sold…: a small pill. */
+.status {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  justify-self: start;
+  gap: var(--snt-space-3);
+  padding: var(--snt-space-1) var(--snt-space-5);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/* Live: green, with a dot. */
+.live {
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+}
+
+.live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}

@@ -17,6 +17,7 @@ import {
   useDealStore,
   useSavedStore,
   getListing,
+  mockListings,
   useOfferStore,
   useSessionStore,
 } from '@snt/core';
@@ -63,6 +64,13 @@ export default function MePage() {
         getListing(offer.listingId)?.ownerId === currentUser.id),
   ).length;
 
+  /** What the user has posted, and how much of it is wanted posts. */
+  const myListings = mockListings.filter(
+    (listing) =>
+      listing.ownerId === currentUser.id && listing.status !== 'removed',
+  );
+  const myWanted = myListings.filter((listing) => listing.type === 'request');
+
   /** The first pending confirmation is what the badge links to. */
   const pending = mockDealConfirmations.find(
     (item) => item.state === 'pending' && item.buyerAnswer === 'unanswered',
@@ -93,7 +101,7 @@ export default function MePage() {
               <StatStrip
                 className={styles.stats}
                 stats={[
-                  { value: 3, label: 'listings' },
+                  { value: myListings.length, label: 'listings' },
                   { value: 12, label: 'number reveals' },
                   {
                     value: confirmedDeals,
@@ -106,16 +114,16 @@ export default function MePage() {
 
             <ListGroup>
               <ListRow
-                href="/"
+                href="/me/listings"
                 icon={<ListIcon size={19} />}
                 label="My listings"
-                value="3"
+                value={String(myListings.length)}
               />
               <ListRow
-                href="/wanted"
+                href="/me/listings"
                 icon={<SearchIcon size={19} />}
                 label="My wanted posts"
-                value="1"
+                value={String(myWanted.length)}
               />
               <ListRow
                 href={pending ? `/deals/${pending.id}/confirm` : '/me'}

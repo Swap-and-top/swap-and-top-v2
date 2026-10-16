@@ -141,7 +141,7 @@ export default function ConsoleStockPage() {
                 />
 
                 <span className={styles.views}>
-                  {listing.viewCount || '—'}
+                  {listing.viewCount || 0}
                 </span>
 
                 <span className={styles.reveals}>
@@ -153,7 +153,7 @@ export default function ConsoleStockPage() {
                       reveals
                     </>
                   ) : (
-                    '—'
+                    'No reveals'
                   )}
                 </span>
               </span>

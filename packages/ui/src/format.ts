@@ -10,12 +10,12 @@
 
 import type { CashDirection, Condition } from '@snt/core';
 
-/** How a card words condition beside a price: "Used Good". */
+/** How a card words condition beside a price: "Used good". */
 export const CARD_CONDITION: Record<Condition, string> = {
-  'like-new': 'Like New',
-  good: 'Used Good',
-  fair: 'Used Fair',
-  'for-parts': 'For Parts',
+  'boxed-new': 'Boxed new',
+  'like-new': 'Used like new',
+  good: 'Used good',
+  fair: 'Used fair',
 };
 
 const MONTHS = [
@@ -76,12 +76,20 @@ export interface SwapTerms {
 export function swapTerms(
   direction: CashDirection,
   amount: number | undefined,
+  /** Worded for the person who posted it, looking at their own swap. */
+  forOwner = false,
 ): SwapTerms {
   if (!amount || direction === 'straight') {
     return { cashNote: 'Straight swap', cashSide: null };
   }
   if (direction === 'i-add') {
-    return { cashNote: `They add $${amount}`, cashSide: 'has' };
+    return {
+      cashNote: forOwner ? `You add $${amount}` : `They add $${amount}`,
+      cashSide: 'has',
+    };
   }
-  return { cashNote: `You add $${amount}`, cashSide: 'wants' };
+  return {
+    cashNote: forOwner ? `You get $${amount} on top` : `You add $${amount}`,
+    cashSide: 'wants',
+  };
 }

@@ -15,12 +15,12 @@ import {
   CONDITION_LABELS,
   getShop,
   getUser,
+  useViewerId,
   type SaleListing,
 } from '@snt/core';
 import {
   AppHeader,
   Badge,
-  Button,
   Caption,
   CardActions,
   ImageCarousel,
@@ -34,16 +34,20 @@ import {
   SpecGrid,
   specRowsFor,
 } from '@snt/ui';
-import { MessageIcon, SwapIcon } from '@snt/ui/icons';
+import { SwapIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
+import { EditListingButton, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SaleDetail.module.css';
 
 export function SaleDetail({ listing }: { listing: SaleListing }) {
   const shop = getShop(listing.shopId);
   const owner = getUser(listing.ownerId);
+  /** Your own listing: your panel in place of a buyer's actions. */
+  const mine = useViewerId() === listing.ownerId;
 
   const dropped =
-    listing.previousPrice !== undefined && listing.previousPrice > listing.price;
+    listing.previousPrice !== undefined &&
+    listing.previousPrice > listing.price;
 
   return (
     <Screen surface>
@@ -58,6 +62,10 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
       />
 
       <ScreenBody>
+        {/* On your own listing, its status comes first. */}
+        {mine ? (
+          <StatusTag status={listing.status} className={styles.status} />
+        ) : null}
         <div className={styles.priceRow}>
           <Price amount={listing.price} size="lg" />
           {listing.item.condition ? (
@@ -77,7 +85,8 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
               listingId={listing.id}
               href={`/listing/${listing.slug}`}
               title={listing.title}
-              report
+              save={!mine}
+              report={!mine}
             />
           </span>
         </div>
@@ -88,35 +97,48 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
         <div className={styles.meta}>
           {listing.location} · Listed {listing.postedLabel}
           {listing.negotiable ? ' · negotiable' : ''}
+          {mine
+            ? ` · ${listing.viewCount} ${listing.viewCount === 1 ? 'view' : 'views'} today · ${contactsShown(listing)}`
+            : ''}
         </div>
 
         <div className={styles.specs}>
           <SpecGrid rows={specRowsFor(listing.item)} />
         </div>
 
-        <div className={styles.identity}>
-          {shop ? <ShopRow shop={shop} /> : owner ? <PosterRow user={owner} /> : null}
-        </div>
+        {mine ? (
+          <div className={styles.identity}>
+            <EditListingButton />
+          </div>
+        ) : (
+          <>
+            <div className={styles.identity}>
+              {shop ? (
+                <ShopRow shop={shop} />
+              ) : owner ? (
+                <PosterRow user={owner} />
+              ) : null}
+            </div>
 
-        {/* What to do about it, right under who is selling it. */}
-        <div className={styles.contact}>
-          <ListingActions
-            caption={
-              <Caption>
-                No account needed · meet in public, check the device before paying
-              </Caption>
-            }
-          >
-            <RevealAction
-              listingId={listing.id}
-              ownerId={listing.ownerId}
-              signedInOnly={listing.contactSignedInOnly}
-            />
-            <Button variant="secondary" size="lg" iconOnly aria-label="Message on WhatsApp">
-              <MessageIcon size={20} />
-            </Button>
-          </ListingActions>
-        </div>
+            {/* What to do about it, right under who is selling it. */}
+            <div className={styles.contact}>
+              <ListingActions
+                caption={
+                  <Caption>
+                    No account needed · meet in public, check the device before
+                    paying
+                  </Caption>
+                }
+              >
+                <RevealAction
+                  listingId={listing.id}
+                  ownerId={listing.ownerId}
+                  signedInOnly={listing.contactSignedInOnly}
+                />
+              </ListingActions>
+            </div>
+          </>
+        )}
 
         {/* Turns a purchase intent into swap demand. */}
         <Link href="/post" className={styles.tradePrompt}>

@@ -101,12 +101,16 @@ export function OfferCard({
           <span className={styles.itemLabel}>
             {readerIsOwner ? 'They offer' : 'You offered'}
           </span>
-          <span className={styles.itemName}>{offer.item.name}</span>
-          {offer.item.condition ? (
-            <span className={styles.itemNote}>
-              {CONDITION_LABELS[offer.item.condition]}
-            </span>
-          ) : null}
+          {/* The condition beside the name while there is room, under it
+              when there is not. */}
+          <span className={styles.itemLine}>
+            <span className={styles.itemName}>{offer.item.name}</span>
+            {offer.item.condition ? (
+              <span className={styles.itemNote}>
+                {CONDITION_LABELS[offer.item.condition]}
+              </span>
+            ) : null}
+          </span>
         </div>
         <span
           className={[

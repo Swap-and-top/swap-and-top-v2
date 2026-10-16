@@ -16,6 +16,7 @@ import {
   type RequestListing,
   offerCountFor,
   useOfferStore,
+  useViewerId,
 } from '@snt/core';
 import {
   AppHeader,
@@ -39,12 +40,16 @@ import {
 } from '@snt/ui';
 import { InfoIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
+import { EditListingButton, StatusTag, contactsShown } from './OwnerTools';
 import styles from './RequestDetail.module.css';
 
 export function RequestDetail({ listing }: { listing: RequestListing }) {
   const owner = getUser(listing.ownerId);
   const offers = useOfferStore((store) => store.offers);
   const responses = offerCountFor(offers, listing.id, listing.responseCount);
+  /** Your own post: worded from your side, with your panel in place of a
+      buyer's actions. */
+  const mine = useViewerId() === listing.ownerId;
 
   return (
     <Screen surface>
@@ -54,10 +59,13 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
 
       <ScreenBody>
         <Stack gap={6}>
+          {/* On your own post, its status comes first. */}
+          {mine ? <StatusTag status={listing.status} /> : null}
+
           {/* What they want on the left; save and share at the right. */}
           <div className={styles.lead}>
             <div className={styles.leadText}>
-              <Eyebrow>Looking for</Eyebrow>
+              <Eyebrow>{mine ? 'You are looking for' : 'Looking for'}</Eyebrow>
               <Body>
                 <ItemName side="wanted">{listing.wants.name}</ItemName>
               </Body>
@@ -67,19 +75,36 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
               href={`/listing/${listing.slug}`}
               title={listing.title}
               tone="wanted"
-              report
+              save={!mine}
+              report={!mine}
             />
           </div>
 
           <div>
             {/* With something to swap, the budget is cash they add on top. */}
-            <Eyebrow>{listing.tradeIn ? 'They add up to' : 'Budget'}</Eyebrow>
+            <Eyebrow>
+              {listing.tradeIn
+                ? mine
+                  ? 'You add up to'
+                  : 'They add up to'
+                : mine
+                  ? 'Your budget'
+                  : 'Budget'}
+            </Eyebrow>
             <Price amount={listing.budget} size="lg" />
+            {/* How your post is doing: yours to see. */}
+            {mine ? (
+              <div className={styles.ownerMeta}>
+                {listing.viewCount}{' '}
+                {listing.viewCount === 1 ? 'view' : 'views'} today ·{' '}
+                {contactsShown(listing)}
+              </div>
+            ) : null}
           </div>
 
           {listing.tradeIn ? (
             <Panel padded>
-              <Eyebrow tight>Has</Eyebrow>
+              <Eyebrow tight>{mine ? 'You have' : 'Has'}</Eyebrow>
               <Body>
                 <ItemName side="owned">{listing.tradeIn.name}</ItemName>
               </Body>
@@ -87,21 +112,29 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
             </Panel>
           ) : null}
 
-          {owner ? <PosterRow user={owner} /> : null}
+          {mine ? <EditListingButton /> : null}
+
+          {!mine && owner ? <PosterRow user={owner} /> : null}
 
           {/* What to do about it, right under who posted it. */}
-          <ListingActions
-            caption={<Caption>Meet in public · check the item before you pay</Caption>}
-          >
-            {/* Opens the offer sheet. On your own post it leads to its offers. */}
-            <OfferButton listing={listing} size="lg" block />
-            <RevealAction
-              listingId={listing.id}
-              ownerId={listing.ownerId}
-              signedInOnly={listing.contactSignedInOnly}
-              block={false}
-            />
-          </ListingActions>
+          {mine ? null : (
+            <ListingActions
+              caption={
+                <Caption>
+                  Meet in public · check the item before you pay
+                </Caption>
+              }
+            >
+              {/* Opens the offer sheet. */}
+              <OfferButton listing={listing} size="lg" block />
+              <RevealAction
+                listingId={listing.id}
+                ownerId={listing.ownerId}
+                signedInOnly={listing.contactSignedInOnly}
+                block={false}
+              />
+            </ListingActions>
+          )}
 
           {/* Only the owner sees these: the offers made on this post. */}
           <OffersReceived listing={listing} />

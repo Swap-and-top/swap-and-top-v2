@@ -208,7 +208,7 @@ export default function ConsoleLeadsPage() {
               ) : (
                 <div className={styles.matchBody}>
                   <span className={styles.placeholder}>
-                    Dealers routinely source to order — this is still a lead.
+                    Dealers routinely source to order, so this is still a lead.
                   </span>
                 </div>
               )}

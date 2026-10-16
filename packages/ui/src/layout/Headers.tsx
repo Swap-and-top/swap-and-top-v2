@@ -44,7 +44,7 @@ export function AppHeader({
       <AutoHideHeader className={styles.app}>
         <div className={styles.inner}>
           <div className={styles.appTop}>
-            <Link href="/" className={styles.logo} aria-label="Swap & Top — home">
+            <Link href="/" className={styles.logo} aria-label="Swap & Top home">
               {/* The stacked, compact logo on a narrow phone; the full one
                   from 400px up. Only one is shown at a time. */}
               <CompactLogo height={36} className={styles.logoCompact} />

@@ -323,14 +323,11 @@
   scroll-margin-top: var(--snt-space-12);
 }
 
-.count {
-  margin-left: var(--snt-space-4);
-  font-weight: var(--snt-weight-normal);
-}
-
-.count::before {
-  content: '·';
-  margin-right: var(--snt-space-4);
+/** "Offers on your listing (2)", over the offers on it. */
+.receivedTitle {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
 }
 
 .none {
@@ -412,10 +409,18 @@
   overflow-wrap: anywhere;
 }
 
+/** The name, then its condition beside it, wrapping under when tight. */
+.itemLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--snt-space-1) var(--snt-space-4);
+}
+
 .itemNote {
-  margin-top: var(--snt-space-1);
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
+  white-space: nowrap;
 }
 
 .cash {

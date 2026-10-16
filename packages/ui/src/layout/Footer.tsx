@@ -23,7 +23,7 @@ export function Footer() {
     <footer className={styles.footer}>
       <div className={styles.main}>
         <div className={styles.content}>
-          <Link href="/" className={styles.logo} aria-label="Swap & Top — home">
+          <Link href="/" className={styles.logo} aria-label="Swap & Top home">
             <CompactLogo height={49} className={styles.logoCompact} />
             <Logo height={36} className={styles.logoFull} />
           </Link>

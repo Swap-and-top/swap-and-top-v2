@@ -61,3 +61,8 @@
 .contact {
   margin-top: var(--snt-space-6);
 }
+
+/* Your own listing's status, over its price. */
+.status {
+  margin-bottom: var(--snt-space-5);
+}

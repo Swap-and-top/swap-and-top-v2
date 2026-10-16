@@ -66,10 +66,21 @@
   display: block;
 }
 
+/* Two actions under a listing share the width equally, half each — a grid,
+   so a button's own padding cannot tip the split. */
+.listingActions .footerActions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+}
+
 /* Two long buttons cannot share a phone's width: one above the other. */
 @media (max-width: 519px) {
-  .listingActionsStack .footerActions {
-    flex-direction: column;
+  .listingActionsStack .footerActions,
+  /* An action that needs the whole width on a phone asks for it — e.g. a
+     contact button carrying several icons. */
+  .listingActions .footerActions:has(> [data-stack-on-phone]) {
+    grid-auto-flow: row;
   }
 }
 

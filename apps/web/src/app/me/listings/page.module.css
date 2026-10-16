@@ -1,0 +1,12 @@
+.title {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/** The cards, spaced as in the feed. */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-card-gap);
+}

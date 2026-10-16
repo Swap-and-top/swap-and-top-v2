@@ -16,7 +16,8 @@ export type Category =
   | 'parts'
   | 'accessories';
 
-export type Condition = 'like-new' | 'good' | 'fair' | 'for-parts';
+/** The four conditions a seller picks from: new in its box, then used. */
+export type Condition = 'boxed-new' | 'like-new' | 'good' | 'fair';
 
 export type ListingStatus =
   | 'draft'
@@ -181,8 +182,8 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 };
 
 export const CONDITION_LABELS: Record<Condition, string> = {
-  'like-new': 'Like new',
-  good: 'Good',
-  fair: 'Fair',
-  'for-parts': 'For parts',
+  'boxed-new': 'Boxed new',
+  'like-new': 'Used like new',
+  good: 'Used good',
+  fair: 'Used fair',
 };

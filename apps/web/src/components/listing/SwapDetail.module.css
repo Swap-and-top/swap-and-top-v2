@@ -32,8 +32,8 @@
 }
 
 /**
- * "Has" or "Looking for", over the band and in its colour: centred on a
- * phone, at the left from tablet up.
+ * "Has" or "Looking for", over the band and in its colour, centred at
+ * every width.
  */
 .sideLabel {
   font-size: var(--snt-text-base);
@@ -183,11 +183,6 @@
   .media {
     flex: 0 0 40%;
   }
-
-  .sideLabel {
-    text-align: left;
-  }
-
 }
 
 /**
@@ -200,6 +195,12 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   column-gap: var(--snt-space-6);
+}
+
+/* Your own swap's status, on a line of its own over who adds cash. */
+.status {
+  grid-column: 1 / -1;
+  margin-bottom: var(--snt-space-4);
 }
 
 .terms {
@@ -224,6 +225,12 @@
   display: flex;
   flex-wrap: wrap;
   margin-top: var(--snt-space-1);
+  /* Every fact carries its dot in front, and the line is drawn out to the
+     left by one dot's width and clipped: the dot at the start of each line,
+     the first's or a wrapped one's, falls outside and is hidden. */
+  --meta-dot: calc(var(--snt-space-3) * 2 + 0.3em);
+  margin-left: calc(var(--meta-dot) * -1);
+  clip-path: inset(0 0 0 var(--meta-dot));
   font-size: var(--snt-text-xs);
   line-height: var(--snt-leading-snug);
   color: var(--snt-ink-muted);
@@ -233,9 +240,18 @@
   white-space: nowrap;
 }
 
-.meta li + li::before {
+.meta li::before {
   content: '·';
+  display: inline-block;
+  width: 0.3em;
   margin-inline: var(--snt-space-3);
+  text-align: center;
+}
+
+/* Edit listing, on your own swap: the last thing in the card. */
+.edit {
+  grid-column: 1 / -1;
+  margin-top: var(--snt-space-8);
 }
 
 /* --- body --- */

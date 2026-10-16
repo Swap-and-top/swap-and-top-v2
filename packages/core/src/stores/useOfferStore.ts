@@ -28,7 +28,7 @@ const SAMPLE_OFFERS: Offer[] = [
     cashAmount: 260,
     cashFrom: 'owner',
     message:
-      'Core i7, 16GB, 512GB SSD — in the shop now. $260 on top of your MacBook and it is yours today.',
+      'Core i7, 16GB, 512GB SSD, in the shop now. $260 on top of your MacBook and it is yours today.',
     state: 'pending',
     sentLabel: '3h ago',
     counted: true,

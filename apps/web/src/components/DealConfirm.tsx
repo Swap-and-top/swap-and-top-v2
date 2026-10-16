@@ -118,7 +118,7 @@ export function DealConfirm({
                 block
                 onClick={() => answer(confirmation.id, 'not-yet')}
               >
-                Not yet — ask me later
+                Not yet, ask me later
               </Button>
             </div>
 
@@ -142,7 +142,7 @@ export function DealConfirm({
             <CheckIcon size={22} weight={2.6} />
             <div className={styles.answeredBody}>
               <div className={styles.answeredTitle}>
-                {given === 'yes' ? 'Counted' : 'Thanks — nothing recorded'}
+                {given === 'yes' ? 'Counted' : 'Thanks, nothing recorded'}
               </div>
               <div className={styles.answeredNote}>
                 {given === 'yes'
@@ -166,7 +166,7 @@ export function DealConfirm({
           </div>
           <p className={styles.recordNote}>
             This is how buyers judge a private seller. There are no badges for
-            who you are or what you do — only what you have actually done.
+            who you are or what you do, only what you have actually done.
           </p>
         </div>
       </ScreenBody>

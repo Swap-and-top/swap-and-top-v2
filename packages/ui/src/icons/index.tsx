@@ -216,6 +216,37 @@ export const PhoneIcon = (props: IconProps) => (
   </Svg>
 );
 
+/**
+ * WhatsApp, drawn in the app's own outline style rather than the brand's
+ * mark: a round speech bubble with a tail at the bottom left, and a handset
+ * in it.
+ */
+export const WhatsAppIcon = (props: IconProps) => (
+  <Svg weight={1.8} {...props}>
+    <path d="M3.6 20.4l1.2-4.1A8.6 8.6 0 1 1 7.8 19.2z" />
+    <path d="M9 8.4c.3-.4.8-.4 1 0l.7 1.4c.1.3 0 .6-.2.8l-.5.5a6 6 0 0 0 2.9 2.9l.5-.5c.2-.2.5-.3.8-.2l1.4.7c.4.2.4.7 0 1-.6.6-1.4 1-2.3.8A7.3 7.3 0 0 1 8.2 10.7c-.2-.9.2-1.7.8-2.3z" />
+  </Svg>
+);
+
+/** An envelope, for email. */
+export const MailIcon = (props: IconProps) => (
+  <Svg weight={1.8} {...props}>
+    <rect x="3" y="5.5" width="18" height="13" rx="2" />
+    <path d="M3.5 7l8.5 6 8.5-6" />
+  </Svg>
+);
+
+/**
+ * Messenger, in the app's outline style: a round speech bubble with its
+ * tail at the bottom left, and the zigzag bolt across it.
+ */
+export const MessengerIcon = (props: IconProps) => (
+  <Svg weight={1.8} {...props}>
+    <path d="M12 3.5c-4.8 0-8.5 3.5-8.5 8 0 2.5 1.1 4.6 3 6v3l2.9-1.6c.8.2 1.7.3 2.6.3 4.8 0 8.5-3.5 8.5-7.9S16.8 3.5 12 3.5z" />
+    <path d="M7.5 13.5l3-3.2 2.2 2 3.8-2.8-3 3.2-2.2-2z" />
+  </Svg>
+);
+
 export const MessageIcon = (props: IconProps) => (
   <Svg weight={1.8} {...props}>
     <path d="M4 18.5V7a2.5 2.5 0 0 1 2.5-2.5h11A2.5 2.5 0 0 1 20 7v6.5a2.5 2.5 0 0 1-2.5 2.5H8z" />

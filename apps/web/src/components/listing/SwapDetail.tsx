@@ -24,6 +24,7 @@ import {
   getUser,
   offerCountFor,
   useOfferStore,
+  useViewerId,
   type Item,
   type SwapListing,
 } from '@snt/core';
@@ -44,15 +45,19 @@ import {
 } from '@snt/ui';
 import { CategoryIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
+import { EditListingButton, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SwapDetail.module.css';
 
 export function SwapDetail({ listing }: { listing: SwapListing }) {
   const owner = getUser(listing.ownerId);
   const offers = useOfferStore((store) => store.offers);
   const offerCount = offerCountFor(offers, listing.id, listing.offerCount);
+  /** Your own swap: worded from your side, with your panel in place of a
+      buyer's actions. */
+  const mine = useViewerId() === listing.ownerId;
 
-  /** Who pays — worded as on the cards. */
-  const terms = swapTerms(listing.cashDirection, listing.cashAmount);
+  /** Who pays, worded as on the cards, or from your side on your own. */
+  const terms = swapTerms(listing.cashDirection, listing.cashAmount, mine);
 
   return (
     <Screen surface>
@@ -68,13 +73,13 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
         <Panel xl className={styles.card}>
           <SwapSideBand
             tone="has"
-            label="Has"
+            label={mine ? 'You have' : 'Has'}
             item={listing.has}
             cash={terms.cashSide === 'has' ? listing.cashAmount : undefined}
           />
           <SwapSideBand
             tone="wants"
-            label="Looking for"
+            label={mine ? 'You want' : 'Looking for'}
             item={listing.wants}
             cash={terms.cashSide === 'wants' ? listing.cashAmount : undefined}
           />
@@ -83,6 +88,10 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
               where it is and how it is doing — with save, share and report
               opposite the first line. */}
           <div className={styles.summary}>
+            {/* On your own swap, its status heads its facts. */}
+            {mine ? (
+              <StatusTag status={listing.status} className={styles.status} />
+            ) : null}
             {/* In the colour of the side the cash comes with: blue when they
                 add it to what they have, green when you add it to what they
                 are looking for. A straight swap stays plain. */}
@@ -101,7 +110,8 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
               listingId={listing.id}
               href={`/listing/${listing.slug}`}
               title={listing.title}
-              report
+              save={!mine}
+              report={!mine}
             />
             <ul className={styles.meta}>
               <li>{listing.location}</li>
@@ -110,45 +120,63 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
                 {listing.viewCount}{' '}
                 {listing.viewCount === 1 ? 'view' : 'views'} today
               </li>
-              <li>
-                {offerCount} {offerCount === 1 ? 'offer' : 'offers'}
-              </li>
+              {/* On your own swap the offers are listed under it, with their
+                  count, so here the line says how many asked for your
+                  details instead. */}
+              {mine ? (
+                <li>{contactsShown(listing)}</li>
+              ) : (
+                <li>
+                  {offerCount} {offerCount === 1 ? 'offer' : 'offers'}
+                </li>
+              )}
             </ul>
+            {/* Changing it, in the card, under all of it. */}
+            {mine ? (
+              <div className={styles.edit}>
+                <EditListingButton />
+              </div>
+            ) : null}
           </div>
         </Panel>
       </div>
 
       <ScreenBody>
-        <div className={styles.identity}>
-          {owner ? <PosterRow user={owner} /> : null}
-        </div>
+        {mine ? null : (
+          <>
+            <div className={styles.identity}>
+              {owner ? <PosterRow user={owner} /> : null}
+            </div>
 
-        {/* What to do about it, right under who posted it. */}
-        <div className={styles.actions}>
-          <ListingActions
-            stack
-            caption={
-              <Caption>
-                Meet in public · check the device is not locked before swapping
-              </Caption>
-            }
-          >
-            {/* A swap is a proposal, so the reply is a counter-proposal: this
-                opens the offer sheet. On your own swap it leads to its offers. */}
-            <OfferButton
-              listing={listing}
-              label="Make an offer"
-              size="lg"
-              block
-            />
-            <RevealAction
-              listingId={listing.id}
-              ownerId={listing.ownerId}
-              signedInOnly={listing.contactSignedInOnly}
-              block={false}
-            />
-          </ListingActions>
-        </div>
+            {/* What to do about it, right under who posted it. */}
+            <div className={styles.actions}>
+              <ListingActions
+                stack
+                caption={
+                  <Caption>
+                    Meet in public · check the device is not locked before
+                    swapping
+                  </Caption>
+                }
+              >
+                {/* A swap is a proposal, so the reply is a counter-proposal:
+                    this opens the offer sheet. */}
+                <OfferButton
+                  listing={listing}
+                  label="Make an offer"
+                  size="lg"
+                  block
+                />
+                <RevealAction
+                  listingId={listing.id}
+                  ownerId={listing.ownerId}
+                  signedInOnly={listing.contactSignedInOnly}
+                  block={false}
+                />
+              </ListingActions>
+            </div>
+          </>
+        )}
 
         {/* Only the owner sees these: the offers made on this swap. */}
         <div className={styles.offers}>
@@ -223,24 +251,24 @@ function SwapSideBand({
           {facts.length > 0 ? (
             <dl className={styles.facts}>
               {short.map((fact) => (
-              <div key={fact.label} className={styles.fact}>
-                <dt>{fact.label}</dt>
-                <dd>{fact.value}</dd>
-              </div>
-            ))}
-            {short.length % 2 === 1 ? (
-              <div className={styles.fact} aria-hidden />
-            ) : null}
-            {prose.map((fact) => (
-              <div
-                key={fact.label}
-                className={[styles.fact, styles.factWide].join(' ')}
-              >
-                <dt>{fact.label}</dt>
-                <dd>{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
+                <div key={fact.label} className={styles.fact}>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))}
+              {short.length % 2 === 1 ? (
+                <div className={styles.fact} aria-hidden />
+              ) : null}
+              {prose.map((fact) => (
+                <div
+                  key={fact.label}
+                  className={[styles.fact, styles.factWide].join(' ')}
+                >
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
           ) : null}
         </div>
       </div>

@@ -96,7 +96,7 @@ export default function PostDetailsPage() {
         {kind !== 'request' ? (
           <div className={styles.group}>
             <Eyebrow>
-              Photos of what you have — {draft.photoCount} of 8
+              Photos of what you have: {draft.photoCount} of 8
             </Eyebrow>
             <div className={styles.photos}>
               {Array.from({ length: draft.photoCount }).map((_, index) => (
@@ -180,7 +180,7 @@ export default function PostDetailsPage() {
           {kind === 'swap' ? (
             <Field
               label="What you want"
-              hint="Loose is fine — “any i7, 16GB, SSD” matches more than one exact model."
+              hint="Loose is fine. “Any i7, 16GB, SSD” matches more than one exact model."
               value={draft.wantTitle}
               onChange={(event) =>
                 draft.setField('wantTitle', event.target.value)

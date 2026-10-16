@@ -41,14 +41,14 @@ export default function CardReferencePage() {
       <div className={styles.rows}>
         <section className={styles.row}>
           <div className={styles.sampleCol}>
-            <div className={styles.label}>1 — User sale</div>
+            <div className={styles.label}>1. User sale</div>
             <div className={styles.sample}>
               <SaleCard listing={userSale} seller={getUser(userSale.ownerId)} />
             </div>
           </div>
           <p className={styles.note}>
             The plainest card. Photo, price, condition, one spec line, seller and
-            age. No badge — and the absence of a shop row is itself the signal: a
+            age. No badge, and the absence of a shop row is itself the signal: a
             buyer can tell instantly this is a private seller, which changes what
             they expect about price and negotiation.
           </p>
@@ -56,7 +56,7 @@ export default function CardReferencePage() {
 
         <section className={styles.row}>
           <div className={styles.sampleCol}>
-            <div className={styles.label}>2 — Dealer sale</div>
+            <div className={styles.label}>2. Dealer sale</div>
             <div className={styles.sample}>
               <SaleCard listing={dealerSale} shop={getShop(dealerSale.shopId)} />
             </div>
@@ -64,7 +64,7 @@ export default function CardReferencePage() {
           <p className={styles.note}>
             Adds a shop row: logo, name, verified badge, stock count. Reads as
             commercial and accountable. Paid placement is labelled{' '}
-            <strong>Sponsored</strong> on the image, never hidden — and slots are
+            <strong>Sponsored</strong> on the image, never hidden, and slots are
             interleaved through the feed rather than sorted to the top.
           </p>
         </section>
@@ -72,7 +72,7 @@ export default function CardReferencePage() {
         <section className={styles.row}>
           <div className={styles.sampleCol}>
             <div className={[styles.label, styles.labelAccent].join(' ')}>
-              3 — Swap (the signature)
+              3. Swap (the signature)
             </div>
             <div className={styles.sample}>
               <SwapCard listing={swap} seller={getUser(swap.ownerId)} />
@@ -88,7 +88,7 @@ export default function CardReferencePage() {
 
         <section className={styles.row}>
           <div className={styles.sampleCol}>
-            <div className={styles.label}>4 — Wanted (the dealer product)</div>
+            <div className={styles.label}>4. Wanted (the dealer product)</div>
             <div className={styles.sample}>
               <WantedCard listing={wanted} requester={getUser(wanted.ownerId)} />
             </div>

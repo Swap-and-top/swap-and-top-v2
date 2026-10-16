@@ -3,7 +3,8 @@
 /**
  * AccountButton — the account end of the header.
  *
- * Signed in, it is the account circle, and opens Me. Signed out, it says so
+ * Signed in, it is the account circle — white, with their initials in the
+ * gradient's green — and opens Me. Signed out, it says so
  * plainly: an outlined person in an outlined circle, "Sign in" under it, all
  * in white on the gradient — and it goes to the sign-in page, which brings
  * them back here once they are in.
@@ -11,15 +12,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSessionStore } from '@snt/core';
+import { getUser, useSessionStore, useViewerId } from '@snt/core';
 import styles from './Headers.module.css';
 
 export function AccountButton({ href }: { href: string }) {
   const pathname = usePathname();
   const signedIn = useSessionStore((state) => state.signedIn);
+  const viewerId = useViewerId();
 
   if (signedIn) {
-    return <Link href={href} aria-label="Your account" className={styles.account} />;
+    const name = viewerId ? getUser(viewerId)?.displayName : undefined;
+    return (
+      <Link href={href} aria-label="Your account" className={styles.account}>
+        {name ? <span aria-hidden>{initialsOf(name)}</span> : null}
+      </Link>
+    );
   }
 
   // Back here once they are in.
@@ -46,4 +53,15 @@ export function AccountButton({ href }: { href: string }) {
       <span>Sign in</span>
     </Link>
   );
+}
+
+/** "Hillary Malinga" → "HM"; "Tarisai M." → "TM". At most two letters. */
+function initialsOf(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((part) => part.replace(/[^\p{L}]/gu, '').charAt(0))
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 }

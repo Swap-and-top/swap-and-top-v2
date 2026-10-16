@@ -11,3 +11,10 @@
   flex-grow: 1;
   min-width: 0;
 }
+
+/** How your own post is doing, under its budget: one quiet line. */
+.ownerMeta {
+  margin-top: var(--snt-space-3);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}

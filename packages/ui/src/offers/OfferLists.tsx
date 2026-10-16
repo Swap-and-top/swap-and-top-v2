@@ -16,7 +16,6 @@ import {
   useViewerId,
   type DemandListing,
 } from '@snt/core';
-import { Eyebrow } from '../primitives/Text';
 import { OfferCard } from './OfferCard';
 import styles from './Offers.module.css';
 
@@ -30,10 +29,10 @@ export function OffersReceived({ listing }: { listing: DemandListing }) {
 
   return (
     <section id="offers" className={styles.list}>
-      <Eyebrow>
-        Offers on your listing
-        <span className={styles.count}>{received.length}</span>
-      </Eyebrow>
+      {/* In the blue of what is yours, with how many in brackets. */}
+      <h2 className={styles.receivedTitle}>
+        Offers on your listing ({received.length})
+      </h2>
       {received.length > 0 ? (
         received.map((offer) => (
           <OfferCard key={offer.id} offer={offer} view="received" />

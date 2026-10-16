@@ -61,7 +61,7 @@ const poppins = localFont({
 export const metadata: Metadata = {
   title: 'Swap & Top',
   description:
-    'Find gadgets easily in Zimbabwe — and trade the one you have towards the one you want.',
+    'Find gadgets easily in Zimbabwe, and trade the one you have towards the one you want.',
 };
 
 export const viewport: Viewport = {

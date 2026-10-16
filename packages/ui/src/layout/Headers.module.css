@@ -115,17 +115,27 @@
   filter: brightness(0.96);
 }
 
-/** The account circle. Plain white until profile photos exist. */
+/** The account circle: white, with their initials in the green the header's
+    gradient ends in — until profile photos exist. */
 .account {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 36px;
   border-radius: var(--snt-radius-pill);
   background: var(--snt-bg-surface);
+  color: var(--snt-brand-green);
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: 0.3px;
   transition: box-shadow var(--snt-transition);
 }
 
 .account:hover {
+  color: var(--snt-brand-green);
   box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
 }
 

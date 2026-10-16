@@ -7,7 +7,12 @@
  */
 
 import { create } from 'zustand';
-import type { Category, Condition, Listing } from '../types/listing';
+import {
+  CONDITION_LABELS,
+  type Category,
+  type Condition,
+  type Listing,
+} from '../types/listing';
 
 export interface SpecFilters {
   processor: string[];
@@ -66,7 +71,7 @@ export const SPEC_OPTIONS: Record<
     {
       group: 'condition',
       label: 'Condition',
-      values: ['Like new', 'Good', 'Fair', 'For parts'],
+      values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
     },
   ],
   desktops: [
@@ -89,7 +94,7 @@ export const SPEC_OPTIONS: Record<
     {
       group: 'condition',
       label: 'Condition',
-      values: ['Like new', 'Good', 'Fair', 'For parts'],
+      values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
     },
   ],
   phones: [
@@ -102,7 +107,7 @@ export const SPEC_OPTIONS: Record<
     {
       group: 'condition',
       label: 'Condition',
-      values: ['Like new', 'Good', 'Fair', 'For parts'],
+      values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
     },
   ],
   consoles: [
@@ -114,7 +119,7 @@ export const SPEC_OPTIONS: Record<
     {
       group: 'condition',
       label: 'Condition',
-      values: ['Like new', 'Good', 'Fair', 'For parts'],
+      values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
     },
   ],
   parts: [
@@ -126,14 +131,14 @@ export const SPEC_OPTIONS: Record<
     {
       group: 'condition',
       label: 'Condition',
-      values: ['Like new', 'Good', 'Fair', 'For parts'],
+      values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
     },
   ],
   accessories: [
     {
       group: 'condition',
       label: 'Condition',
-      values: ['Like new', 'Good', 'Fair', 'For parts'],
+      values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
     },
   ],
 };
@@ -181,7 +186,8 @@ function specHaystack(listing: Listing): string {
       item.brand ?? '',
       item.model ?? '',
       ...Object.values(item.specs),
-      item.condition ?? '',
+      // In words, as the condition filter offers it: "used good".
+      item.condition ? CONDITION_LABELS[item.condition] : '',
     ])
     .join(' ')
     .toLowerCase();

@@ -19,6 +19,7 @@ import {
   getUser,
   isDemand,
   liveListings,
+  useViewerId,
   type Category,
 } from '@snt/core';
 import {
@@ -55,7 +56,10 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
     withType: false,
   });
 
+  const viewer = useViewerId();
+  // Your own posts are not in your feed: they are under My listings.
   const demand = liveListings
+    .filter((listing) => listing.ownerId !== viewer)
     .filter(isDemand)
     .filter((listing) => category === 'all' || listing.category === category);
 

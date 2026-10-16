@@ -37,11 +37,11 @@ export async function generateMetadata({
 
   let price = '';
   if (listing.type === 'sale') {
-    price = ` — $${listing.price}`;
+    price = `, $${listing.price}`;
   } else if (listing.type === 'request') {
-    price = ` — budget $${listing.budget}`;
+    price = `, budget $${listing.budget}`;
   } else if (listing.type === 'swap' && listing.cashAmount) {
-    price = ` — plus $${listing.cashAmount}`;
+    price = `, plus $${listing.cashAmount}`;
   }
 
   return {

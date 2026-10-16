@@ -31,7 +31,7 @@ export function SignInPage({ next }: { next: string }) {
   function submit(event: FormEvent) {
     event.preventDefault();
     signIn();
-    toast.success('You are signed in');
+    toast.success('Sign in successful');
     router.push(next);
   }
 

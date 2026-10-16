@@ -21,6 +21,7 @@ import {
   filterFeed,
   interleaveSponsored,
   liveListings,
+  useViewerId,
   type Category,
   type TypeFilter,
 } from '@snt/core';
@@ -86,7 +87,10 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
     useFeedFiltersInUrl(initial);
   const stickyTop = useStickyTabsOffset();
 
-  const filtered = filterFeed(liveListings, { category, type });
+  const viewer = useViewerId();
+  // Your own listings are not in your feed: they are under My listings.
+  const others = liveListings.filter((listing) => listing.ownerId !== viewer);
+  const filtered = filterFeed(others, { category, type });
   /** Sponsored listings are interleaved and labelled, never sorted to the top. */
   const feed = interleaveSponsored(filtered);
 

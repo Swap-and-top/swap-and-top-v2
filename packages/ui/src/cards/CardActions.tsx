@@ -19,6 +19,7 @@ export function CardActions({
   title,
   tone = 'owned',
   report = false,
+  save = true,
 }: {
   listingId: string;
   /** The listing's path, shared as a full URL. */
@@ -35,6 +36,8 @@ export function CardActions({
    * something to read and so something to object to; not on feed cards.
    */
   report?: boolean;
+  /** The save star. Off on your own listing: there is nothing to save. */
+  save?: boolean;
 }) {
   const { saved, toggleSaved } = useWishlist(listingId);
 
@@ -62,17 +65,19 @@ export function CardActions({
         tone === 'wanted' ? styles.wanted : styles.owned,
       ].join(' ')}
     >
-      <button
-        type="button"
-        className={[styles.button, saved ? styles.saved : '']
-          .filter(Boolean)
-          .join(' ')}
-        aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
-        aria-pressed={saved}
-        onClick={toggleSaved}
-      >
-        <SaveStarIcon size={18} filled={saved} />
-      </button>
+      {save ? (
+        <button
+          type="button"
+          className={[styles.button, saved ? styles.saved : '']
+            .filter(Boolean)
+            .join(' ')}
+          aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
+          aria-pressed={saved}
+          onClick={toggleSaved}
+        >
+          <SaveStarIcon size={18} filled={saved} />
+        </button>
+      ) : null}
       <button
         type="button"
         className={styles.button}

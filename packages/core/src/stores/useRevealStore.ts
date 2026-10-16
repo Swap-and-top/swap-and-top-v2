@@ -33,14 +33,90 @@ export function contactNumberFor(userId: string): string {
   return PLACEHOLDER_NUMBERS[userId] ?? FALLBACK_NUMBER;
 }
 
+/**
+ * The ways a seller can be reached, as they chose when posting: any of
+ * calls, WhatsApp (both on their number), email, and Facebook Messenger.
+ */
+export type ContactWay = 'call' | 'whatsapp' | 'email' | 'messenger';
+
+export interface ContactWays {
+  /** The number, for calls — and WhatsApp, unless that has its own. */
+  phone: string;
+  /** A different number for WhatsApp, for someone who keeps it on another
+      line. Most leave it empty, and WhatsApp uses `phone`. */
+  whatsappPhone?: string;
+  call: boolean;
+  whatsapp: boolean;
+  email?: string;
+  /**
+   * Their Messenger link (m.me/…). Signing in with Facebook does not give
+   * it to us, so the seller pastes it in themselves.
+   */
+  messenger?: string;
+}
+
+/** A sample of each kind of choice. Obviously fake. */
+const SAMPLE_WAYS: Record<string, Omit<ContactWays, 'phone'>> = {
+  // Every way.
+  'u-kopje': {
+    call: true,
+    whatsapp: true,
+    email: 'sales@kopje.example',
+    messenger: 'https://m.me/kopje.example',
+  },
+  // Calls, WhatsApp on a different line, and email.
+  'u-tarisai': {
+    call: true,
+    whatsapp: true,
+    whatsappPhone: '+263 71 234 5678',
+    email: 'tarisai@example.com',
+  },
+  // WhatsApp only.
+  'u-blessing': { call: false, whatsapp: true },
+  // Calls only.
+  'u-rudo': { call: true, whatsapp: false },
+};
+
+export function contactWaysFor(userId: string): ContactWays {
+  return {
+    phone: contactNumberFor(userId),
+    ...(SAMPLE_WAYS[userId] ?? { call: true, whatsapp: true }),
+  };
+}
+
+/** The number WhatsApp is on: its own, if they gave one. */
+export function whatsappNumberOf(ways: ContactWays): string {
+  return ways.whatsappPhone ?? ways.phone;
+}
+
+/** One reveal: which listing, whose, and which way. */
+export interface ContactReveal {
+  listingId: string;
+  ownerId: string;
+  way: ContactWay;
+  at: number;
+}
+
 interface RevealState {
-  /** Listing id → the number shown. */
-  revealed: Record<string, string>;
-  /** How many reveals this device has used today, against the limit. */
+  /**
+   * Listing id → the ways revealed on it. Each way is revealed on its own:
+   * showing someone's number does not give away their email.
+   */
+  revealed: Record<string, ContactWay[]>;
+  /**
+   * Sellers whose details this device has seen today, against the limit. It
+   * counts sellers' listings, not ways: looking at a seller's WhatsApp and
+   * then their email is one, not two.
+   */
   usedToday: number;
-  reveal: (listingId: string, ownerId: string) => void;
-  isRevealed: (listingId: string) => boolean;
-  numberFor: (listingId: string) => string | undefined;
+  /**
+   * Every reveal, by way — what tells a seller how people reach them: how
+   * many wanted their WhatsApp, their email, their Messenger.
+   */
+  events: ContactReveal[];
+  reveal: (listingId: string, ownerId: string, way: ContactWay) => void;
+  /** Whether anything on this listing has been revealed, or this one way. */
+  isRevealed: (listingId: string, way?: ContactWay) => boolean;
 }
 
 /** Numbers a guest may see in a day before being asked to sign in. */
@@ -57,17 +133,23 @@ export function revealsLeft(usedToday: number, signedIn: boolean): number {
 export const useRevealStore = create<RevealState>((set, get) => ({
   revealed: {},
   usedToday: 0,
-  reveal: (listingId, ownerId) =>
+  events: [],
+  reveal: (listingId, ownerId, way) =>
     set((state) => {
-      if (state.revealed[listingId]) return state;
+      const shown = state.revealed[listingId] ?? [];
+      if (shown.includes(way)) return state;
       return {
-        revealed: {
-          ...state.revealed,
-          [listingId]: PLACEHOLDER_NUMBERS[ownerId] ?? FALLBACK_NUMBER,
-        },
-        usedToday: state.usedToday + 1,
+        revealed: { ...state.revealed, [listingId]: [...shown, way] },
+        // A seller's first way revealed is what counts against the limit.
+        usedToday: shown.length === 0 ? state.usedToday + 1 : state.usedToday,
+        events: [
+          ...state.events,
+          { listingId, ownerId, way, at: Date.now() },
+        ],
       };
     }),
-  isRevealed: (listingId) => Boolean(get().revealed[listingId]),
-  numberFor: (listingId) => get().revealed[listingId],
+  isRevealed: (listingId, way) => {
+    const shown = get().revealed[listingId] ?? [];
+    return way ? shown.includes(way) : shown.length > 0;
+  },
 }));
