@@ -13,7 +13,13 @@
  * card opens the listing.
  */
 
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '../icons';
 import { ImagePlaceholder } from './Placeholder';
@@ -24,6 +30,46 @@ import styles from './PhotoGallery.module.css';
  * individual's sale or swap is blue, a Wanted post green, a shop's untinted.
  */
 export type PhotoTone = 'person' | 'wanted' | 'shop';
+
+/**
+ * Where a photo's picture actually sits on screen. A photo shown whole inside
+ * a frame of another shape ("contain") leaves blurred space round it; this is
+ * the picture itself, not the frame.
+ */
+function pictureRect(img: HTMLImageElement | null | undefined): DOMRect | null {
+  if (!img) return null;
+  const box = img.getBoundingClientRect();
+  if (getComputedStyle(img).objectFit !== 'contain' || !img.naturalWidth) {
+    return box;
+  }
+  const scale = Math.min(
+    box.width / img.naturalWidth,
+    box.height / img.naturalHeight,
+  );
+  const width = img.naturalWidth * scale;
+  const height = img.naturalHeight * scale;
+  return new DOMRect(
+    box.left + (box.width - width) / 2,
+    box.top + (box.height - height) / 2,
+    width,
+    height,
+  );
+}
+
+/**
+ * The transform that puts a picture at rest at `to` exactly over `from`:
+ * scaled about its top-left corner (see .viewerPhoto) and moved so the two
+ * centres meet.
+ */
+function zoomFrom(from: DOMRect, to: DOMRect): string {
+  const scale = from.width / to.width;
+  const x = from.left + from.width / 2 - (to.left + (to.width * scale) / 2);
+  const y = from.top + from.height / 2 - (to.top + (to.height * scale) / 2);
+  return `translate(${x}px, ${y}px) scale(${scale})`;
+}
+
+const calm = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * The rubber band at the ends of a photo strip. Swipe towards a photo that is
@@ -198,10 +244,16 @@ export function PhotoGallery({
     el.scrollTo({ left: clamped * el.clientWidth, behavior });
   }
 
-  /** Closing the viewer leaves the card on the photo it was showing. */
-  function closeViewer(last: number) {
-    setViewing(null);
-    goTo(last, 'instant');
+  /**
+   * Where the card's picture of photo `index` is — the viewer zooms out of
+   * it and back into it. The card is first turned to that photo, under the
+   * viewer, so closing lands on the photo that was on show.
+   */
+  function cardPicture(index: number): DOMRect | null {
+    goTo(index, 'instant');
+    return pictureRect(
+      track.current?.querySelector<HTMLImageElement>(`[data-photo="${index}"]`),
+    );
   }
 
   return (
@@ -240,6 +292,7 @@ export function PhotoGallery({
                 loading={i === 0 ? undefined : 'lazy'}
                 draggable={false}
                 className={[styles.photo, styles.fitted].join(' ')}
+                data-photo={i}
               />
             </button>
           );
@@ -290,7 +343,8 @@ export function PhotoGallery({
           alt={alt}
           tone={tone}
           startIndex={viewing}
-          onClose={closeViewer}
+          origin={cardPicture}
+          onClose={() => setViewing(null)}
         />
       ) : null}
     </div>
@@ -317,6 +371,7 @@ export function PhotoThumb({
   className?: string;
 }) {
   const [viewing, setViewing] = useState(false);
+  const photo = useRef<HTMLImageElement>(null);
 
   if (images.length === 0) return null;
 
@@ -329,7 +384,13 @@ export function PhotoThumb({
         aria-label={`View ${alt} photos`}
         onClick={() => setViewing(true)}
       >
-        <img src={images[0]} alt="" draggable={false} className={styles.photo} />
+        <img
+          ref={photo}
+          src={images[0]}
+          alt=""
+          draggable={false}
+          className={styles.photo}
+        />
         {images.length > 1 ? (
           <span className={styles.thumbCount} aria-hidden>
             {images.length}
@@ -343,6 +404,11 @@ export function PhotoThumb({
           alt={alt}
           tone={tone}
           startIndex={0}
+          // It zooms out of the thumbnail, and back into it from the first
+          // photo, which is the one the thumbnail shows.
+          origin={(index) =>
+            index === 0 ? (photo.current?.getBoundingClientRect() ?? null) : null
+          }
           onClose={() => setViewing(false)}
         />
       ) : null}
@@ -365,28 +431,72 @@ function PhotoViewer({
   alt,
   tone,
   startIndex,
+  origin,
   onClose,
 }: {
   images: readonly string[];
   alt: string;
   tone: PhotoTone;
   startIndex: number;
-  /** Called with the photo on show, so the gallery can follow. */
-  onClose: (index: number) => void;
+  /**
+   * Where photo `index` sits on the page behind — the viewer zooms the photo
+   * out of there on opening and back into it on closing. Null: no zoom.
+   */
+  origin?: (index: number) => DOMRect | null;
+  /** Called once the viewer has gone. */
+  onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const track = useRef<HTMLDivElement>(null);
+  const shade = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(startIndex);
+  const closing = useRef(false);
   const many = images.length > 1;
   useRubberBand(track);
 
-  useEffect(() => {
+  const photoAt = (i: number) =>
+    track.current?.querySelector<HTMLImageElement>(`[data-viewer-photo="${i}"]`);
+  /** The controls over the photo: counter, close, arrows, dots. */
+  const controls = () =>
+    Array.from(
+      dialog.current?.querySelectorAll<HTMLElement>('[data-control]') ?? [],
+    );
+
+  // Before paint, so the photo is already over its place on the card when
+  // the viewer is first seen, and zooms up from there.
+  useLayoutEffect(() => {
     const el = dialog.current;
     if (!el) return;
-    el.showModal();
+    if (!el.open) el.showModal();
     // Open on the photo that was tapped.
     const strip = track.current;
     if (strip) strip.scrollLeft = startIndex * strip.clientWidth;
+
+    // The zoom in: the photo grows from its place on the card to its place
+    // here, as the dimmed page and the controls fade in round it.
+    const photo = photoAt(startIndex);
+    // Measured at rest: any zoom already under way (an effect run twice in
+    // development) is stopped first, or it would be measured mid-flight.
+    photo?.getAnimations().forEach((animation) => animation.cancel());
+    const from = origin?.(startIndex);
+    const to = pictureRect(photo);
+    if (photo && from && to && !calm()) {
+      photo.animate([{ transform: zoomFrom(from, to) }, { transform: 'none' }], {
+        duration: 340,
+        easing: 'cubic-bezier(0.2, 0, 0, 1)',
+      });
+      shade.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 280,
+        easing: 'ease',
+      });
+      for (const control of controls()) {
+        control.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: 200,
+          delay: 160,
+          fill: 'backwards',
+        });
+      }
+    }
     // The page behind stays put while the viewer is open.
     const root = document.documentElement;
     const previous = root.style.overflow;
@@ -409,22 +519,74 @@ function PhotoViewer({
     el.scrollTo({ left: clamped * el.clientWidth, behavior: 'smooth' });
   }
 
+  /**
+   * The zoom out, the zoom in reversed: the photo on show shrinks back down
+   * onto its place on the card, as the dimmed page and the controls fade
+   * away; then the viewer goes. However it is closed — the cross, a tap
+   * beside the photo, Escape.
+   */
+  function close() {
+    if (closing.current) return;
+    closing.current = true;
+
+    const photo = photoAt(index);
+    const from = origin?.(index);
+    const to = pictureRect(photo);
+    if (!photo || !from || !to || calm()) {
+      onClose();
+      return;
+    }
+
+    const easing = 'cubic-bezier(0.3, 0, 0, 1)';
+    for (const control of controls()) {
+      control.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: 120,
+        fill: 'forwards',
+      });
+    }
+    shade.current?.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: 280,
+      easing: 'ease',
+      fill: 'forwards',
+    });
+    const zoom = photo.animate(
+      [{ transform: 'none' }, { transform: zoomFrom(from, to) }],
+      { duration: 300, easing, fill: 'forwards' },
+    );
+    // Gone once it lands — or just after, if the end is never reported.
+    const done = window.setTimeout(onClose, 420);
+    void zoom.finished.then(
+      () => {
+        window.clearTimeout(done);
+        onClose();
+      },
+      () => {},
+    );
+  }
+
   return createPortal(
     <dialog
       ref={dialog}
-      className={[styles.viewer, styles[tone]].join(' ')}
+      className={styles.viewer}
       aria-label={`${alt} photos`}
       onCancel={(event) => {
         // Escape: close through React rather than letting the dialog shut
         // itself, so the gallery hears about it.
         event.preventDefault();
-        onClose(index);
+        close();
       }}
       onKeyDown={(event) => {
         if (event.key === 'ArrowLeft') goTo(index - 1);
         if (event.key === 'ArrowRight') goTo(index + 1);
       }}
     >
+      {/* The dimmed, blurred page behind the photo — its own layer, so it
+          can fade while the photo zooms. */}
+      <div
+        ref={shade}
+        className={[styles.viewerShade, styles[tone]].join(' ')}
+        aria-hidden
+      />
       <div
         ref={track}
         className={styles.viewerTrack}
@@ -436,7 +598,7 @@ function PhotoViewer({
             className={styles.viewerSlide}
             // A tap beside the photo, not on it, closes the viewer.
             onClick={(event) => {
-              if (event.target === event.currentTarget) onClose(index);
+              if (event.target === event.currentTarget) close();
             }}
           >
             <img
@@ -444,13 +606,14 @@ function PhotoViewer({
               alt={many ? `${alt}, photo ${i + 1} of ${images.length}` : alt}
               draggable={false}
               className={styles.viewerPhoto}
+              data-viewer-photo={i}
             />
           </div>
         ))}
       </div>
 
       {many ? (
-        <div className={styles.counter} aria-live="polite">
+        <div className={styles.counter} aria-live="polite" data-control>
           {index + 1} / {images.length}
         </div>
       ) : null}
@@ -458,8 +621,9 @@ function PhotoViewer({
       <button
         type="button"
         className={styles.close}
+        data-control
         aria-label="Close photos"
-        onClick={() => onClose(index)}
+        onClick={close}
         autoFocus
       >
         <CloseIcon size={20} weight={2.2} />
@@ -470,6 +634,7 @@ function PhotoViewer({
           <button
             type="button"
             className={[styles.viewerArrow, styles.prev].join(' ')}
+            data-control
             aria-label="Previous photo"
             onClick={() => goTo(index - 1)}
             hidden={index === 0}
@@ -479,6 +644,7 @@ function PhotoViewer({
           <button
             type="button"
             className={[styles.viewerArrow, styles.next].join(' ')}
+            data-control
             aria-label="Next photo"
             onClick={() => goTo(index + 1)}
             hidden={index === images.length - 1}
@@ -486,7 +652,10 @@ function PhotoViewer({
             <ChevronRightIcon size={22} weight={2.2} />
           </button>
 
-          <div className={[styles.dots, styles.viewerDots].join(' ')}>
+          <div
+            className={[styles.dots, styles.viewerDots].join(' ')}
+            data-control
+          >
             {images.map((src, i) => (
               <button
                 key={src + i}

@@ -38,7 +38,8 @@
   padding: 0;
   border: 0;
   background: none;
-  cursor: zoom-in;
+  /* A plain pointer: a tap opens it, like a link. */
+  cursor: pointer;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -106,7 +107,8 @@
   border-radius: var(--snt-radius-sm);
   overflow: hidden;
   background: var(--snt-bg-placeholder);
-  cursor: zoom-in;
+  /* A plain pointer: a tap opens it, like a link. */
+  cursor: pointer;
 }
 
 .thumb:focus-visible {
@@ -138,6 +140,8 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
+  /* The current dot is larger; the others sit level with its middle. */
+  align-items: center;
   gap: var(--snt-space-2);
   padding: var(--snt-space-2) var(--snt-space-3);
   border-radius: var(--snt-radius-pill);
@@ -156,6 +160,7 @@
   cursor: pointer;
   transition:
     width var(--snt-transition),
+    height var(--snt-transition),
     background var(--snt-transition);
 }
 
@@ -166,9 +171,10 @@
   inset: -8px -2px;
 }
 
-/** The current photo: solid, and stretched into a short bar. */
+/** The current photo: solid, and a size larger — still round. */
 .dotActive {
-  width: 14px;
+  width: 9px;
+  height: 9px;
   background: #fff;
 }
 
@@ -231,10 +237,19 @@
   padding: 0;
   border: 0;
   background: transparent;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   color: #fff;
   overflow: hidden;
+}
+
+/*
+ * The blurred, tinted page behind the photo. A layer of its own rather than
+ * the viewer's background, so it can fade in and out while the photo zooms.
+ */
+.viewerShade {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .viewer::backdrop {
@@ -254,6 +269,7 @@
 /* A shop's photos: blur only, no tint — the viewer's default. */
 
 .viewerTrack {
+  position: relative;
   display: flex;
   height: 100%;
   overflow-x: auto;
@@ -280,6 +296,8 @@
 
 /** The whole photo, never cropped. */
 .viewerPhoto {
+  /* Zoomed about its corner, which the zoom's maths assumes. */
+  transform-origin: 0 0;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;

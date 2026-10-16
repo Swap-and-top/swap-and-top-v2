@@ -31,3 +31,4 @@ html [data-sonner-toaster][data-sonner-theme] {
   --error-text: var(--snt-ink-on-dark);
   font-family: var(--snt-font-body);
 }
+

@@ -258,15 +258,26 @@
 }
 
 .input:focus {
+  outline: none;
+}
+
+/* The ring only for someone moving through with Tab (see InputModality);
+   tapped or clicked into, a box needs no ring to say so. */
+:global(html[data-input='keyboard']) .input:focus {
   box-shadow: var(--snt-focus-ring);
 }
 
 .textarea {
   height: auto;
+  /* Three lines to start; it grows with the text (see fitToText) up to
+     about six, then scrolls inside rather than pushing the sheet taller.
+     Not resized by hand. */
+  max-height: 128px;
   padding: var(--snt-space-5) var(--snt-space-8);
   border-radius: var(--snt-radius-lg);
   line-height: var(--snt-leading-snug);
-  resize: vertical;
+  overflow-y: auto;
+  resize: none;
 }
 
 /** An amount: the dollar sign sits inside the box, before the figure. */

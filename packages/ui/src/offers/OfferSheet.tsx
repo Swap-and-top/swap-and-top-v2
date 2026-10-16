@@ -118,6 +118,15 @@ export function OfferSheet({
   );
 }
 
+/**
+ * Sizes a message box to what is in it: never shorter than its three rows,
+ * never taller than its CSS max-height, past which it scrolls inside.
+ */
+function fitToText(box: HTMLTextAreaElement) {
+  box.style.height = 'auto';
+  box.style.height = `${box.scrollHeight}px`;
+}
+
 function OfferForm({ listing }: { listing: DemandListing }) {
   // Sent, the sheet sinks away like any other close.
   const onSent = useCloseSheet();
@@ -328,11 +337,17 @@ function OfferForm({ listing }: { listing: DemandListing }) {
         <span className={styles.label}>
           Message <span className={styles.optional}>(optional)</span>
         </span>
+        {/* Grows a line at a time as it is filled, up to a set height —
+            past that it scrolls inside itself, so the sheet never grows
+            past the screen. */}
         <textarea
           className={[styles.input, styles.textarea].join(' ')}
           value={message}
-          onChange={(event) => setMessage(event.target.value)}
-          placeholder="Any extra info"
+          onChange={(event) => {
+            setMessage(event.target.value);
+            fitToText(event.currentTarget);
+          }}
+          placeholder="Any extra information"
           maxLength={MESSAGE_MAX}
           rows={3}
         />

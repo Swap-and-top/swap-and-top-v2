@@ -28,6 +28,10 @@
 .trigger:focus-visible,
 .triggerOpen {
   outline: none;
+}
+
+/* Ringed only for the keyboard (see InputModality). */
+:global(html[data-input='keyboard']) .trigger:focus-visible {
   box-shadow: var(--snt-focus-ring);
 }
 
