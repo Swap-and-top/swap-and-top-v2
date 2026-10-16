@@ -1,0 +1,131 @@
+/**
+ * Sheet: a bottom sheet on a phone, a centred panel from tablet up.
+ */
+
+/*
+ * A native dialog. On a phone it is a sheet: the full width, standing on the
+ * bottom edge, rising into place. From tablet up it is a panel in the middle.
+ */
+.sheet {
+  /* The card's own inks, as on any white panel. */
+  --snt-ink: var(--snt-card-ink);
+  --snt-ink-muted: var(--snt-card-ink-muted);
+  width: 100vw;
+  max-width: 100vw;
+  max-height: 92dvh;
+  margin: auto 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--snt-radius-xl) var(--snt-radius-xl) 0 0;
+  background: var(--snt-bg-card);
+  color: var(--snt-ink);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: rise 280ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.sheet::backdrop {
+  background: rgb(24 52 74 / 0.45);
+  animation: dim 280ms ease;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+@keyframes dim {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Closing: the way it came, in reverse — down and out, a little quicker. */
+.closing {
+  animation: sink 220ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+
+.closing::backdrop {
+  animation: undim 220ms ease forwards;
+}
+
+@keyframes sink {
+  to {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+@keyframes undim {
+  to {
+    opacity: 0;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-8) var(--snt-gutter)
+    calc(var(--snt-space-10) + env(safe-area-inset-bottom, 0px));
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+}
+
+.heading {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.close {
+  /* Never squeezed by a long heading beside it. */
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+/* As the search bar's close button: dark blue, the cross white. */
+@media (hover: hover) {
+  .close:hover {
+    background: var(--snt-control-active);
+    color: var(--snt-ink-on-dark);
+  }
+}
+
+@media (min-width: 640px) {
+  .sheet {
+    /* Wide enough for "Describe what you're offering" on one line. */
+    width: 540px;
+    max-width: calc(100vw - 32px);
+    margin: auto;
+    border-radius: var(--snt-radius-xl);
+  }
+
+  .body {
+    padding: var(--snt-space-10) var(--snt-space-12) var(--snt-space-12);
+  }
+}
+

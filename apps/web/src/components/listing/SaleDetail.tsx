@@ -25,11 +25,11 @@ import {
   CardActions,
   ImageCarousel,
   ItemName,
+  ListingActions,
   PosterRow,
   Price,
   Screen,
   ScreenBody,
-  ScreenFooter,
   ShopRow,
   SpecGrid,
   specRowsFor,
@@ -98,25 +98,32 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
           {shop ? <ShopRow shop={shop} /> : owner ? <PosterRow user={owner} /> : null}
         </div>
 
+        {/* What to do about it, right under who is selling it. */}
+        <div className={styles.contact}>
+          <ListingActions
+            caption={
+              <Caption>
+                No account needed · meet in public, check the device before paying
+              </Caption>
+            }
+          >
+            <RevealAction
+              listingId={listing.id}
+              ownerId={listing.ownerId}
+              signedInOnly={listing.contactSignedInOnly}
+            />
+            <Button variant="secondary" size="lg" iconOnly aria-label="Message on WhatsApp">
+              <MessageIcon size={20} />
+            </Button>
+          </ListingActions>
+        </div>
+
         {/* Turns a purchase intent into swap demand. */}
         <Link href="/post" className={styles.tradePrompt}>
           <SwapIcon size={18} weight={2} />
           Got something to trade in? Ask for a swap price
         </Link>
       </ScreenBody>
-
-      <ScreenFooter
-        caption={
-          <Caption>
-            No account needed · meet in public, check the device before paying
-          </Caption>
-        }
-      >
-        <RevealAction listingId={listing.id} ownerId={listing.ownerId} />
-        <Button variant="secondary" size="lg" iconOnly aria-label="Message on WhatsApp">
-          <MessageIcon size={20} />
-        </Button>
-      </ScreenFooter>
     </Screen>
   );
 }

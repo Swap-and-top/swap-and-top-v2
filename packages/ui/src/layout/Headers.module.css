@@ -48,10 +48,28 @@
   color: var(--snt-ink-on-dark);
 }
 
+/* The full, one-line logo: wherever there is 400px of width for it. */
 .logoArt {
-  display: block;
+  display: none;
   height: 28px;
   width: auto;
+}
+
+/* The stacked, compact logo: on a narrow phone, the full height of the row. */
+.logoCompact {
+  display: block;
+  height: 36px;
+  width: auto;
+}
+
+@media (min-width: 400px) {
+  .logoArt {
+    display: block;
+  }
+
+  .logoCompact {
+    display: none;
+  }
 }
 
 /*

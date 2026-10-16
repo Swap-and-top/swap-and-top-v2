@@ -253,3 +253,8 @@
 .offers:not(:empty) {
   margin-top: var(--snt-space-8);
 }
+
+/** The actions, under who posted it. */
+.actions {
+  margin-top: var(--snt-space-6);
+}

@@ -15,19 +15,29 @@ export function isPriceOffer(listing: DemandListing): boolean {
   return listing.type === 'request' && !listing.tradeIn;
 }
 
-/** What the listing asks for, in a line, for the top of the offer form. */
-export function askLine(listing: DemandListing): string {
+/**
+ * What the listing asks for, for the top of the offer form: the item wanted,
+ * and the terms in a line under it — the budget, or what they have and who
+ * adds cash.
+ */
+export function askParts(listing: DemandListing): {
+  item: string;
+  terms: string;
+} {
   if (listing.type === 'swap') {
     const cash = listing.cashAmount
       ? listing.cashDirection === 'i-add'
-        ? ` · they add $${listing.cashAmount}`
-        : ` · you add $${listing.cashAmount}`
-      : ' · straight swap';
-    return `Has ${listing.has.name}, looking for ${listing.wants.name}${cash}`;
+        ? `They add $${listing.cashAmount}`
+        : `You add $${listing.cashAmount}`
+      : 'Straight swap';
+    return { item: listing.wants.name, terms: `Has ${listing.has.name} · ${cash}` };
   }
-  return listing.tradeIn
-    ? `Looking for ${listing.wants.name} · has ${listing.tradeIn.name} · adds up to $${listing.budget}`
-    : `Looking for ${listing.wants.name} · budget up to $${listing.budget}`;
+  return {
+    item: listing.wants.name,
+    terms: listing.tradeIn
+      ? `Has ${listing.tradeIn.name} · adds up to $${listing.budget}`
+      : `Budget up to $${listing.budget}`,
+  };
 }
 
 /** The cash field on the form: its label, who the cash comes from, a start. */

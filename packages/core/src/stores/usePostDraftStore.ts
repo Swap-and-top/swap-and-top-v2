@@ -38,6 +38,8 @@ interface PostDraftState {
   contactChannels: ContactChannel[];
   /** Whether the listing may appear in dealer lead feeds. Defaults on. */
   allowDealerOffers: boolean;
+  /** Whether only signed-in users may see the number. Defaults off. */
+  contactSignedInOnly: boolean;
 
   setKind: (kind: PostKind) => void;
   setCategory: (category: Category) => void;
@@ -61,6 +63,7 @@ interface PostDraftState {
   removePhoto: () => void;
   toggleChannel: (channel: ContactChannel) => void;
   setAllowDealerOffers: (allow: boolean) => void;
+  setContactSignedInOnly: (only: boolean) => void;
   reset: () => void;
 }
 
@@ -80,6 +83,7 @@ const initial = {
   cashAmount: '240',
   contactChannels: ['whatsapp', 'call'] as ContactChannel[],
   allowDealerOffers: true,
+  contactSignedInOnly: false,
 };
 
 export const usePostDraftStore = create<PostDraftState>((set) => ({
@@ -99,6 +103,7 @@ export const usePostDraftStore = create<PostDraftState>((set) => ({
         : [...state.contactChannels, channel],
     })),
   setAllowDealerOffers: (allowDealerOffers) => set({ allowDealerOffers }),
+  setContactSignedInOnly: (contactSignedInOnly) => set({ contactSignedInOnly }),
   reset: () => set(initial),
 }));
 

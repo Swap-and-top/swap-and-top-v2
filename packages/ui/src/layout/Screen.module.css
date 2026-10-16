@@ -61,6 +61,18 @@
   border-top: 1px solid var(--snt-line-subtle);
 }
 
+/** A listing's actions, in the flow of the page under the listing. */
+.listingActions {
+  display: block;
+}
+
+/* Two long buttons cannot share a phone's width: one above the other. */
+@media (max-width: 519px) {
+  .listingActionsStack .footerActions {
+    flex-direction: column;
+  }
+}
+
 .footerActions {
   display: flex;
   gap: var(--snt-space-5);

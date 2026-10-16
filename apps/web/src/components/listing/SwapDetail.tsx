@@ -29,9 +29,9 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
-  Button,
   Caption,
   CardActions,
+  ListingActions,
   OfferButton,
   OffersReceived,
   Panel,
@@ -39,18 +39,15 @@ import {
   PosterRow,
   Screen,
   ScreenBody,
-  ScreenFooter,
   specRowsFor,
   swapTerms,
 } from '@snt/ui';
-import { CategoryIcon, PhoneIcon } from '@snt/ui/icons';
-import { useRevealStore } from '@snt/core';
+import { CategoryIcon } from '@snt/ui/icons';
+import { RevealAction } from '../RevealAction';
 import styles from './SwapDetail.module.css';
 
 export function SwapDetail({ listing }: { listing: SwapListing }) {
   const owner = getUser(listing.ownerId);
-  const { reveal, revealed } = useRevealStore();
-  const number = revealed[listing.id];
   const offers = useOfferStore((store) => store.offers);
   const offerCount = offerCountFor(offers, listing.id, listing.offerCount);
 
@@ -126,37 +123,38 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
           {owner ? <PosterRow user={owner} /> : null}
         </div>
 
+        {/* What to do about it, right under who posted it. */}
+        <div className={styles.actions}>
+          <ListingActions
+            stack
+            caption={
+              <Caption>
+                Meet in public · check the device is not locked before swapping
+              </Caption>
+            }
+          >
+            {/* A swap is a proposal, so the reply is a counter-proposal: this
+                opens the offer sheet. On your own swap it leads to its offers. */}
+            <OfferButton
+              listing={listing}
+              label="Make an offer"
+              size="lg"
+              block
+            />
+            <RevealAction
+              listingId={listing.id}
+              ownerId={listing.ownerId}
+              signedInOnly={listing.contactSignedInOnly}
+              block={false}
+            />
+          </ListingActions>
+        </div>
+
         {/* Only the owner sees these: the offers made on this swap. */}
         <div className={styles.offers}>
           <OffersReceived listing={listing} />
         </div>
       </ScreenBody>
-
-      <ScreenFooter
-        caption={
-          <Caption>
-            Meet in public · check the device is not locked before swapping
-          </Caption>
-        }
-      >
-        {/* A swap is a proposal, so the reply is a counter-proposal: this
-            opens the offer sheet. On your own swap it leads to its offers. */}
-        <OfferButton
-          listing={listing}
-          label="I have this — make an offer"
-          size="lg"
-          block
-        />
-        <Button
-          variant="secondary"
-          size="lg"
-          iconOnly
-          aria-label={number ? `Number shown: ${number}` : 'Show number'}
-          onClick={() => reveal(listing.id, listing.ownerId)}
-        >
-          <PhoneIcon size={20} />
-        </Button>
-      </ScreenFooter>
     </Screen>
   );
 }

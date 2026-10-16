@@ -7,16 +7,33 @@
  * Optimistic: the star changes at once, before the server has answered. A
  * green toast confirms it once it has; if the save fails the star goes back
  * and a red toast says so.
+ *
+ * A wishlist needs an account. A guest who taps the star is asked to sign in,
+ * and the listing is saved once they have.
  */
 
 import { toast } from 'sonner';
-import { saveOptimistically, useSavedStore } from '@snt/core';
+import {
+  requireSignIn,
+  saveOptimistically,
+  useSavedStore,
+  useSessionStore,
+} from '@snt/core';
 
 export function useWishlist(listingId: string) {
-  const saved = useSavedStore((state) => state.ids.includes(listingId));
+  const signedIn = useSessionStore((state) => state.signedIn);
+  const inList = useSavedStore((state) => state.ids.includes(listingId));
+  // A wishlist belongs to an account: a guest has none, so no star is filled.
+  const saved = signedIn && inList;
 
-  async function toggleSaved() {
-    const next = !saved;
+  /** Saving needs an account; a guest is asked to sign in, then it saves. */
+  function toggleSaved() {
+    requireSignIn('Sign in to save listings to your wishlist.', () => {
+      void toggle(!saved);
+    });
+  }
+
+  async function toggle(next: boolean) {
     try {
       await saveOptimistically(listingId, next);
       toast.success(next ? 'Added to your wishlist' : 'Removed from your wishlist');

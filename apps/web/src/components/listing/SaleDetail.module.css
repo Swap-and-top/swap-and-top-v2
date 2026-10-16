@@ -56,3 +56,8 @@
 .identity {
   margin-top: var(--snt-space-6);
 }
+
+/** The actions, under the seller. */
+.contact {
+  margin-top: var(--snt-space-6);
+}

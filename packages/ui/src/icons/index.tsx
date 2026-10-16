@@ -347,14 +347,54 @@ export const ReportIcon = (props: IconProps) => (
  * Wanted, as a listing type: binoculars — someone on the lookout for a
  * thing. The outline is Lucide's binoculars (ISC licence).
  */
-export const BinocularsIcon = (props: IconProps) => (
+export const BinocularsIcon = ({
+  filled = false,
+  ...props
+}: IconProps & { filled?: boolean }) => {
+  // Filled: the two barrels and their eyepieces go solid, and the band across
+  // them is knocked out in the card's white so they still read as binoculars.
+  const solid = filled ? 'currentColor' : 'none';
+  return (
+    <Svg {...props}>
+      <path d="M10 10h4" />
+      <path fill={solid} d="M19 7V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3" />
+      <path
+        fill={solid}
+        d="M20 21a2 2 0 0 0 2-2v-3.851c0-1.39-2-2.962-2-4.829V8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v11a2 2 0 0 0 2 2z"
+      />
+      <path
+        fill={solid}
+        d="M4 21a2 2 0 0 1-2-2v-3.851c0-1.39 2-2.962 2-4.829V8a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2z"
+      />
+      <path fill={solid} d="M9 7V4a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v3" />
+      <path
+        d="M22 16H2"
+        stroke={filled ? 'var(--snt-bg-card)' : undefined}
+      />
+    </Svg>
+  );
+};
+
+/**
+ * Making an offer: a hand held out, holding up a banknote — offering cash.
+ * Filled, like the binoculars on a Wanted label. The hand is the one from
+ * ReceiveHandIcon (after Lucide's hand-coins, ISC licence), with a note in
+ * place of the coins; the note's middle and the line of the thumb are
+ * knocked out in the card's white so both still read.
+ */
+export const CashHandIcon = (props: IconProps) => (
   <Svg {...props}>
-    <path d="M10 10h4" />
-    <path d="M19 7V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3" />
-    <path d="M20 21a2 2 0 0 0 2-2v-3.851c0-1.39-2-2.962-2-4.829V8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v11a2 2 0 0 0 2 2z" />
-    <path d="M22 16H2" />
-    <path d="M4 21a2 2 0 0 1-2-2v-3.851c0-1.39 2-2.962 2-4.829V8a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2z" />
-    <path d="M9 7V4a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v3" />
+    {/* The note, held up clear of the hand. */}
+    <rect x="9.5" y="2" width="12" height="6.5" rx="1.25" fill="currentColor" />
+    <circle cx="15.5" cy="5.25" r="1.5" fill="var(--snt-bg-card)" stroke="none" />
+    {/* The hand, palm up, under it. */}
+    <path
+      fill="currentColor"
+      d="M3 17l5.6-5.4c.3-.4.8-.6 1.4-.6h3a2 2 0 1 1 0 4l1.45-.61 4.2-3.9a2 2 0 0 1 2.75 2.91l-4.6 4.4c-.7.8-1.7 1.2-2.8 1.2h-4c-.6 0-1.1.2-1.4.6L7 21z"
+    />
+    <path d="M10.5 15h2.5" stroke="var(--snt-bg-card)" />
+    {/* The cuff at the wrist. */}
+    <path d="M2 16l6 6" />
   </Svg>
 );
 

@@ -26,6 +26,7 @@ import {
   OffersMade,
   Screen,
   ScreenBody,
+  SignInGate,
   Tabs,
   type TabItem,
 } from '@snt/ui';
@@ -66,30 +67,36 @@ export default function OffersPage() {
       </AppHeader>
 
       <ScreenBody>
-        {view === 'made' ? (
-          <OffersMade />
-        ) : withOffers.length > 0 ? (
-          <div className={styles.groups}>
-            {withOffers.map(({ listing, received }) => (
-              <section key={listing.id} className={styles.group}>
-                {/* Which of your listings these are for. */}
-                <Eyebrow>
-                  <Link href={`/listing/${listing.slug}`} className={styles.for}>
-                    {listing.title}
-                  </Link>
-                </Eyebrow>
-                {received.map((offer) => (
-                  <OfferCard key={offer.id} offer={offer} view="received" />
-                ))}
-              </section>
-            ))}
-          </div>
-        ) : (
-          <p className={styles.none}>
-            No offers on your listings yet. They will appear here, side by
-            side, as they come in.
-          </p>
-        )}
+        <SignInGate
+          title="Your offers"
+          body="Sign in to see offers on your listings, and the offers you have made."
+          reason="Sign in to see your offers."
+        >
+          {view === 'made' ? (
+            <OffersMade />
+          ) : withOffers.length > 0 ? (
+            <div className={styles.groups}>
+              {withOffers.map(({ listing, received }) => (
+                <section key={listing.id} className={styles.group}>
+                  {/* Which of your listings these are for. */}
+                  <Eyebrow>
+                    <Link href={`/listing/${listing.slug}`} className={styles.for}>
+                      {listing.title}
+                    </Link>
+                  </Eyebrow>
+                  {received.map((offer) => (
+                    <OfferCard key={offer.id} offer={offer} view="received" />
+                  ))}
+                </section>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.none}>
+              No offers on your listings yet. They will appear here, side by
+              side, as they come in.
+            </p>
+          )}
+        </SignInGate>
       </ScreenBody>
 
       <BottomNav />

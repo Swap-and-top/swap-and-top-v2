@@ -10,10 +10,10 @@
  */
 
 import {
-  CURRENT_USER_ID,
   offersMadeBy,
   offersOn,
   useOfferStore,
+  useViewerId,
   type DemandListing,
 } from '@snt/core';
 import { Eyebrow } from '../primitives/Text';
@@ -23,7 +23,8 @@ import styles from './Offers.module.css';
 /** Offers on one listing, for its owner. Renders nothing for anyone else. */
 export function OffersReceived({ listing }: { listing: DemandListing }) {
   const offers = useOfferStore((store) => store.offers);
-  if (listing.ownerId !== CURRENT_USER_ID) return null;
+  const viewer = useViewerId();
+  if (!viewer || listing.ownerId !== viewer) return null;
 
   const received = offersOn(offers, listing.id);
 
@@ -49,7 +50,8 @@ export function OffersReceived({ listing }: { listing: DemandListing }) {
 /** Every offer the current user has made, newest first. */
 export function OffersMade() {
   const offers = useOfferStore((store) => store.offers);
-  const made = offersMadeBy(offers, CURRENT_USER_ID);
+  const viewer = useViewerId();
+  const made = viewer ? offersMadeBy(offers, viewer) : [];
 
   if (made.length === 0) {
     return (

@@ -24,6 +24,7 @@ import {
   CardActions,
   Eyebrow,
   ItemName,
+  ListingActions,
   Note,
   OfferButton,
   OffersReceived,
@@ -32,7 +33,6 @@ import {
   Price,
   Screen,
   ScreenBody,
-  ScreenFooter,
   SpecGrid,
   specRowsFor,
   Stack,
@@ -89,6 +89,20 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
 
           {owner ? <PosterRow user={owner} /> : null}
 
+          {/* What to do about it, right under who posted it. */}
+          <ListingActions
+            caption={<Caption>Meet in public · check the item before you pay</Caption>}
+          >
+            {/* Opens the offer sheet. On your own post it leads to its offers. */}
+            <OfferButton listing={listing} size="lg" block />
+            <RevealAction
+              listingId={listing.id}
+              ownerId={listing.ownerId}
+              signedInOnly={listing.contactSignedInOnly}
+              block={false}
+            />
+          </ListingActions>
+
           {/* Only the owner sees these: the offers made on this post. */}
           <OffersReceived listing={listing} />
 
@@ -102,18 +116,6 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
           </Note>
         </Stack>
       </ScreenBody>
-
-      <ScreenFooter
-        caption={<Caption>No account needed · meet in public</Caption>}
-      >
-        {/* Opens the offer sheet. On your own post it leads to its offers. */}
-        <OfferButton listing={listing} size="lg" block />
-        <RevealAction
-          listingId={listing.id}
-          ownerId={listing.ownerId}
-          block={false}
-        />
-      </ScreenFooter>
     </Screen>
   );
 }

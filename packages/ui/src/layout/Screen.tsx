@@ -53,6 +53,36 @@ export function ScreenBody({
   );
 }
 
+/**
+ * A listing's actions — make an offer, show number — set in the page, right
+ * under the listing they belong to, rather than pinned to the bottom of the
+ * screen. The first action takes the spare width; a caption sits under them.
+ */
+export function ListingActions({
+  children,
+  caption,
+  stack = false,
+}: {
+  children: ReactNode;
+  caption?: ReactNode;
+  /**
+   * On a phone, one action above the other, each the full width — for two
+   * worded buttons that are too long to share a line there.
+   */
+  stack?: boolean;
+}) {
+  return (
+    <div
+      className={[styles.listingActions, stack ? styles.listingActionsStack : '']
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <div className={styles.footerActions}>{children}</div>
+      {caption ? <div className={styles.footerCaption}>{caption}</div> : null}
+    </div>
+  );
+}
+
 /** Sticky action bar. Primary action first, then an icon-only secondary. */
 export function ScreenFooter({
   children,

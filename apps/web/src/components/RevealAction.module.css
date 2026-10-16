@@ -27,6 +27,8 @@
 }
 
 .label {
+  /* On its own line, over the number. */
+  display: block;
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-semibold);
   letter-spacing: var(--snt-tracking-label);
@@ -37,4 +39,22 @@
 .body {
   flex-grow: 1;
   min-width: 0;
+}
+
+/** The number, with the invitation to join under it for a guest. */
+.revealedWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/** Quiet: an offer, made once they already have what they came for. */
+.nudge {
+  align-self: flex-start;
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-accent-bold);
+  text-align: left;
 }

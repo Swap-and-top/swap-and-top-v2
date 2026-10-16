@@ -18,7 +18,8 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ChevronLeftIcon, CloseIcon } from '../icons';
 import { AutoHideHeader } from './AutoHideHeader';
-import { Logo } from './Logo';
+import { CompactLogo, Logo } from './Logo';
+import { PostButton } from './PostButton';
 import styles from './Headers.module.css';
 
 /** The top-level header: logo, post, account — and the screen's own controls. */
@@ -43,11 +44,15 @@ export function AppHeader({
         <div className={styles.inner}>
           <div className={styles.appTop}>
             <Link href="/" className={styles.logo} aria-label="Swap & Top — home">
+              {/* The stacked, compact logo on a narrow phone; the full one
+                  from 400px up. Only one is shown at a time. */}
+              <CompactLogo height={36} className={styles.logoCompact} />
               <Logo height={36} className={styles.logoArt} />
             </Link>
-            <Link href={postHref} className={styles.postButton}>
+            {/* Asks a guest to sign in first; see PostButton. */}
+            <PostButton href={postHref} className={styles.postButton}>
               Post New Item
-            </Link>
+            </PostButton>
             <Link
               href={accountHref}
               aria-label="Your account"

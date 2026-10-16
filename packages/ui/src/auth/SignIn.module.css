@@ -1,0 +1,94 @@
+/** The sign-in sheet's contents. */
+
+.reason {
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-snug);
+}
+
+/** What an account is for: a short ticked list. */
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-snug);
+}
+
+.benefits li {
+  position: relative;
+  padding-left: var(--snt-space-9);
+}
+
+.benefits li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-wanted-ink);
+}
+
+.preview {
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
+  text-align: center;
+}
+
+/* --- other ways in ------------------------------------------------------- */
+
+.providers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+/** A provider's button: the app's pill, in the provider's own colours. */
+.provider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-5);
+  width: 100%;
+  height: 48px;
+  border-radius: var(--snt-radius-pill);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-semibold);
+  transition: filter var(--snt-transition);
+}
+
+.provider:hover {
+  filter: brightness(0.96);
+}
+
+/* Google: white, outlined, dark type — as Google asks for its button. */
+.google {
+  border: 1px solid var(--snt-line);
+  background: #fff;
+  color: #1f1f1f;
+}
+
+/* Facebook: its blue, with white type. */
+.facebook {
+  background: #1877f2;
+  color: #fff;
+}
+
+/** "or", with a rule either side, between those and the plain way in. */
+.or {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.or::before,
+.or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--snt-line);
+}

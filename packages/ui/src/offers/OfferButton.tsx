@@ -11,10 +11,10 @@
 
 import { useState } from 'react';
 import {
-  CURRENT_USER_ID,
   myOfferOn,
   offersOn,
   useOfferStore,
+  useViewerId,
   type DemandListing,
 } from '@snt/core';
 import { Button, ButtonLink, type ButtonSize } from '../primitives/Button';
@@ -35,8 +35,9 @@ export function OfferButton({
 }) {
   const [open, setOpen] = useState(false);
   const offers = useOfferStore((store) => store.offers);
+  const viewer = useViewerId();
 
-  if (listing.ownerId === CURRENT_USER_ID) {
+  if (viewer && listing.ownerId === viewer) {
     const received = offersOn(offers, listing.id).length;
     return (
       <ButtonLink
@@ -51,7 +52,7 @@ export function OfferButton({
     );
   }
 
-  const mine = myOfferOn(offers, listing.id);
+  const mine = myOfferOn(offers, listing.id, viewer);
 
   return (
     <>

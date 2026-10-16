@@ -28,6 +28,7 @@ import {
   Stack,
   Tabs,
   type TabItem,
+  SignInGate,
 } from '@snt/ui';
 
 type SavedTab = 'all' | 'available' | 'gone';
@@ -64,19 +65,25 @@ export default function SavedPage() {
       </AppHeader>
 
       <ScreenBody>
-        {shown.length > 0 ? (
-          <Stack gap={5}>
-            {shown.map((listing) => (
-              <CompactListingRow key={listing.id} listing={listing} />
-            ))}
-          </Stack>
-        ) : (
-          <EmptyState
-            title="Your wishlist is empty"
-            body="Tap the star on any listing to keep it here. You will be told when the price drops."
-            action={<ButtonLink href="/" variant="secondary">Browse listings</ButtonLink>}
-          />
-        )}
+        <SignInGate
+          title="Your wishlist"
+          body="Sign in to keep the listings you star in one place, and to be told when a price drops."
+          reason="Sign in to see your wishlist."
+        >
+          {shown.length > 0 ? (
+            <Stack gap={5}>
+              {shown.map((listing) => (
+                <CompactListingRow key={listing.id} listing={listing} />
+              ))}
+            </Stack>
+          ) : (
+            <EmptyState
+              title="Your wishlist is empty"
+              body="Tap the star on any listing to keep it here. You will be told when the price drops."
+              action={<ButtonLink href="/" variant="secondary">Browse listings</ButtonLink>}
+            />
+          )}
+        </SignInGate>
       </ScreenBody>
 
       <BottomNav />

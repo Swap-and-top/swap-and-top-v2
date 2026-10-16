@@ -164,12 +164,17 @@ export function offersMadeBy(offers: Offer[], userId: string): Offer[] {
   return offers.filter((offer) => offer.fromUserId === userId);
 }
 
-/** The current user's standing offer on a listing, if they have made one. */
-export function myOfferOn(offers: Offer[], listingId: string): Offer | undefined {
+/** A user's standing offer on a listing, if they have made one. */
+export function myOfferOn(
+  offers: Offer[],
+  listingId: string,
+  userId: string | undefined,
+): Offer | undefined {
+  if (!userId) return undefined;
   return offers.find(
     (offer) =>
       offer.listingId === listingId &&
-      offer.fromUserId === CURRENT_USER_ID &&
+      offer.fromUserId === userId &&
       stands(offer),
   );
 }

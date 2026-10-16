@@ -3,7 +3,9 @@
  *
  * The reveal is a button rather than text on the page, for three reasons:
  * attribution, seller retention, and scraper defence. No account is needed —
- * the only friction is a per-device rate limit a normal buyer never notices.
+ * the only friction is a daily limit per device: a few numbers for a guest,
+ * plenty for someone signed in. A casual buyer never meets it; someone
+ * working through the listings has to join.
  *
  * In the real system the reveal is a server action that records an event with
  * the listing, a device hash, the viewer's role and the promotion slot at the
@@ -34,20 +36,27 @@ export function contactNumberFor(userId: string): string {
 interface RevealState {
   /** Listing id → the number shown. */
   revealed: Record<string, string>;
-  /** How many reveals this device has used, against the rate limit. */
+  /** How many reveals this device has used today, against the limit. */
   usedToday: number;
-  dailyLimit: number;
   reveal: (listingId: string, ownerId: string) => void;
   isRevealed: (listingId: string) => boolean;
   numberFor: (listingId: string) => string | undefined;
-  remaining: () => number;
+}
+
+/** Numbers a guest may see in a day before being asked to sign in. */
+export const GUEST_DAILY_REVEALS = 3;
+/** The same for a signed-in user: enough that only a scraper reaches it. */
+export const MEMBER_DAILY_REVEALS = 30;
+
+/** How many more numbers this device may see today. */
+export function revealsLeft(usedToday: number, signedIn: boolean): number {
+  const limit = signedIn ? MEMBER_DAILY_REVEALS : GUEST_DAILY_REVEALS;
+  return Math.max(0, limit - usedToday);
 }
 
 export const useRevealStore = create<RevealState>((set, get) => ({
   revealed: {},
   usedToday: 0,
-  /** Generous enough that a real buyer never notices it. */
-  dailyLimit: 10,
   reveal: (listingId, ownerId) =>
     set((state) => {
       if (state.revealed[listingId]) return state;
@@ -61,5 +70,4 @@ export const useRevealStore = create<RevealState>((set, get) => ({
     }),
   isRevealed: (listingId) => Boolean(get().revealed[listingId]),
   numberFor: (listingId) => get().revealed[listingId],
-  remaining: () => Math.max(0, get().dailyLimit - get().usedToday),
 }));

@@ -731,6 +731,8 @@ const ps4Slim: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '4h ago',
   contactChannels: ['whatsapp'],
+  /** This seller shows their number to signed-in users only. */
+  contactSignedInOnly: true,
   allowDealerOffers: true,
   viewCount: 52,
   revealCount: 2,

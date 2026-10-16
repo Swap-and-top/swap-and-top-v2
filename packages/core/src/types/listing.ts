@@ -95,6 +95,11 @@ export interface ListingBase {
    */
   postedLabel: string;
   contactChannels: ContactChannel[];
+  /**
+   * The poster's choice to show their number to signed-in users only. Off by
+   * default: the number is open to anyone, within the daily limit.
+   */
+  contactSignedInOnly?: boolean;
   /** Whether this may appear in dealer lead feeds. Defaults on. */
   allowDealerOffers: boolean;
   viewCount: number;

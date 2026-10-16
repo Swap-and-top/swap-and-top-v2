@@ -129,6 +129,13 @@ export default function PostReviewPage() {
               checked={draft.allowDealerOffers}
               onChange={draft.setAllowDealerOffers}
             />
+
+            {/* The seller's own choice; off unless they ask for it. */}
+            <CheckboxField
+              label="Only show my number to signed-in users"
+              checked={draft.contactSignedInOnly}
+              onChange={draft.setContactSignedInOnly}
+            />
           </div>
 
           <p className={styles.disclosure}>
