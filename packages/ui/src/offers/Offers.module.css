@@ -111,13 +111,21 @@
 
 /** Field labels: sentence case, bold, in the bold blue — as in the filters. */
 .label {
-  padding: 0;
+  /* Set in to line up with the writing in the box under it, as the first
+     app's labels were — they read as part of the box, not above the page. */
+  padding: 0 0 0 var(--snt-space-8);
   /* As a legend ("What you are offering") it is outside the group's own
      spacing, so it brings its own — the same as a label over its box. */
   margin-bottom: var(--snt-space-3);
   font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
+}
+
+/* "What you are offering" sits over tiles, not a text box, so it starts
+   where they do, at the edge — no set-in. */
+.label.flush {
+  padding-left: 0;
 }
 
 .optional {

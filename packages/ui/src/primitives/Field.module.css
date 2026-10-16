@@ -7,6 +7,8 @@
 
 .label {
   display: block;
+  /* Set in to line up with the writing in the box under it. */
+  padding-left: var(--snt-space-6);
   font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-bold);
   letter-spacing: var(--snt-tracking-label);

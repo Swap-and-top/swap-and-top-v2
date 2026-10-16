@@ -35,13 +35,6 @@
   color: var(--snt-wanted-ink);
 }
 
-.preview {
-  font-size: var(--snt-text-xs);
-  line-height: var(--snt-leading-snug);
-  color: var(--snt-ink-muted);
-  text-align: center;
-}
-
 /* --- other ways in ------------------------------------------------------- */
 
 .providers {

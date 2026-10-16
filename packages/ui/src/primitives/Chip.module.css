@@ -17,6 +17,20 @@
   margin-inline: calc(var(--snt-gutter) * -1);
 }
 
+/* Filling: each chip takes a share of any room to spare, its label centred;
+   it never shrinks below its own size, so a narrow row scrolls instead. */
+.rowFill > .chip {
+  flex-grow: 1;
+  justify-content: center;
+}
+
+/* While a mouse drags the row: a closed hand, and no text selected. */
+.row[data-dragging],
+.row[data-dragging] .chip {
+  cursor: grabbing;
+  user-select: none;
+}
+
 .row::-webkit-scrollbar {
   display: none;
 }

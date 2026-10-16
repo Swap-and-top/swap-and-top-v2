@@ -16,11 +16,16 @@
   color: var(--snt-ink-on-dark);
 }
 
-/** Centres the header's contents on the content column. */
+/** Centres the header's contents, on a row wider than the content column. */
 .inner {
-  max-width: calc(var(--snt-column-max) + var(--snt-gutter) * 2);
+  max-width: calc(var(--snt-header-max) + var(--snt-gutter) * 2);
   margin-inline: auto;
   padding-inline: var(--snt-gutter);
+}
+
+/* What sits under the app header — search, chips — keeps to the column. */
+.inner.appBody {
+  max-width: calc(var(--snt-column-max) + var(--snt-gutter) * 2);
 }
 
 /* --- app header ----------------------------------------------------------- */
@@ -122,6 +127,35 @@
 
 .account:hover {
   box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
+}
+
+/*
+ * Signed out: an outlined person in an outlined circle, "Sign in" under it,
+ * in white — about the height of the circle it stands in for.
+ */
+.signIn {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 0;
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  transition: opacity var(--snt-transition);
+}
+
+.signIn:hover {
+  color: var(--snt-ink-on-dark);
+  opacity: 0.85;
+}
+
+.signInMark {
+  display: block;
 }
 
 /** The screen's own controls, on white under the gradient. */

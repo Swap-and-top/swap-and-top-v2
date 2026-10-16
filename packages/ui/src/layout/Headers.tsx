@@ -19,6 +19,7 @@ import type { ReactNode } from 'react';
 import { ChevronLeftIcon, CloseIcon } from '../icons';
 import { AutoHideHeader } from './AutoHideHeader';
 import { CompactLogo, Logo } from './Logo';
+import { AccountButton } from './AccountButton';
 import { PostButton } from './PostButton';
 import styles from './Headers.module.css';
 
@@ -53,11 +54,8 @@ export function AppHeader({
             <PostButton href={postHref} className={styles.postButton}>
               Post New Item
             </PostButton>
-            <Link
-              href={accountHref}
-              aria-label="Your account"
-              className={styles.account}
-            />
+            {/* The account circle, or — signed out — a way to sign in. */}
+            <AccountButton href={accountHref} />
           </div>
         </div>
       </AutoHideHeader>

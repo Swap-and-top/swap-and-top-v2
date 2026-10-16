@@ -14,12 +14,18 @@
  * line is simply there on load and never appears or slides in.
  */
 
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import styles from './Tabs.module.css';
 
 export interface TabItem<T extends string> {
   value: T;
   label: string;
+  /**
+   * A small icon before the label — as the type tabs carry on a phone. Given
+   * as a function, it is told whether its tab is the active one, so it can
+   * be drawn filled there.
+   */
+  icon?: ReactNode | ((active: boolean) => ReactNode);
 }
 
 export function Tabs<T extends string>({
@@ -106,7 +112,16 @@ export function Tabs<T extends string>({
             .join(' ')}
           onClick={() => onChange(tab.value)}
         >
-          {tab.label}
+          {tab.icon ? (
+            <span className={styles.withIcon}>
+              {typeof tab.icon === 'function'
+                ? tab.icon(tab.value === active)
+                : tab.icon}
+              {tab.label}
+            </span>
+          ) : (
+            tab.label
+          )}
         </button>
       ))}
 

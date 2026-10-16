@@ -250,8 +250,11 @@
   --snt-bottom-nav-h: 64px;
   --snt-console-nav-h: 62px;
   --snt-console-sidebar-w: 226px;
-  /** The marketplace content column. The header's contents align to it. */
+  /** The marketplace content column. */
   --snt-column-max: 672px;
+  /** The header's own row — logo, Post, account — as wide as the sign-in
+      page's card, so it is wider than the column under it. */
+  --snt-header-max: 900px;
   --snt-content-max: 1360px;
 
   /* --- motion -------------------------------------------------------- */

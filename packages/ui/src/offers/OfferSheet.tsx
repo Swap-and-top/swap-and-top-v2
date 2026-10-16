@@ -205,7 +205,7 @@ function OfferForm({ listing }: { listing: DemandListing }) {
       </h3>
 
       <fieldset className={styles.group}>
-        <legend className={styles.label}>What you are offering</legend>
+        <legend className={[styles.label, styles.flush].join(' ')}>What you are offering</legend>
         {/* Two ways to say what you are offering, side by side: pick one,
             and only what that one needs shows under them. Both need one
             label and one row, so switching moves nothing below. */}

@@ -141,8 +141,10 @@
   border-radius: var(--snt-radius-pill);
 }
 
-/** Their labels: sentence case, bold, in the bold blue. */
+/** Their labels: sentence case, bold, in the bold blue, set in to line up
+ *  with the writing in the pill. */
 .prices label {
+  padding-left: var(--snt-space-9);
   color: var(--snt-accent-bold);
   font-weight: var(--snt-weight-bold);
   letter-spacing: 0;

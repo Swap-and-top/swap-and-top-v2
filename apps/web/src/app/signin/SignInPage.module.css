@@ -1,0 +1,314 @@
+/**
+ * Sign in — the first app's log-in page, to its measurements, but with this app's
+ * surfaces: a white card with no shadow, and this app's text boxes. The
+ * first app's set-in labels and writing are kept.
+ *
+ * Its colours, in its own words: blue text #2572a2 (paler #74a4c7 when
+ * idle), bold blue #3983b1, green #1f978d.
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--snt-bg-app);
+}
+
+.mainWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  color: #2572a2;
+}
+
+.content {
+  width: 100%;
+  padding: 20px;
+  border-radius: 0 0 40px 40px;
+}
+
+/* --- the welcome: tablet up only ------------------------------------------ */
+
+.picture {
+  display: none;
+}
+
+/* --- the card -------------------------------------------------------------- */
+
+/* White and flat, like every card in the app. */
+.form {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 30px 30px;
+  border-radius: 30px;
+  background: var(--snt-bg-card);
+}
+
+.door {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.door img {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.heading {
+  margin-top: 5px;
+  font-size: 1em;
+  font-weight: var(--snt-weight-bold);
+  text-align: center;
+}
+
+.field {
+  display: block;
+}
+
+.label {
+  display: block;
+  /* Set in to line up with the writing in the box, as in the first app. */
+  margin: 20px 0 6px 20px;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/*
+ * This app's text box: a pale blue pill, no border, no shadow, the faded
+ * ring while in use. The writing is set in 20px, as in the first app, to
+ * line up with the label above it.
+ */
+.box {
+  display: flex;
+  align-items: center;
+  height: var(--snt-touch);
+  padding: 0 20px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  cursor: text;
+  transition: box-shadow var(--snt-transition);
+}
+
+.box:focus-within {
+  box-shadow: var(--snt-focus-ring);
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-md);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--snt-control-idle);
+  opacity: 1;
+}
+
+/* An iPhone zooms the page on a box under 16px: keep it at 16 there. */
+@supports (-webkit-touch-callout: none) {
+  .input {
+    font-size: 1rem;
+  }
+}
+
+/** Show or hide the password: the first app's eye, in the bold blue. */
+.eye {
+  display: flex;
+  flex-shrink: 0;
+  margin-left: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.eye svg {
+  width: 18px;
+  fill: #3983b1;
+  overflow: visible;
+}
+
+.forgot {
+  align-self: flex-start;
+  margin: 6px 20px 15px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #2572a2;
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+/*
+ * --- the buttons, as on the sign-in sheet: 48px pills, flat, no shadow --
+ * Sign in keeps the brand gradient and Create new account the header's
+ * yellow; Google and Facebook are exactly the sheet's.
+ */
+
+.signIn,
+.create,
+.platform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-5);
+  width: 100%;
+  height: 48px;
+  padding: 0 var(--snt-space-8);
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-semibold);
+  cursor: pointer;
+  transition: filter var(--snt-transition);
+}
+
+.signIn:hover,
+.create:hover,
+.platform:hover {
+  filter: brightness(0.96);
+}
+
+.signIn {
+  background-image: linear-gradient(-45deg, var(--snt-brand-blue), var(--snt-brand-green));
+  color: var(--snt-ink-on-dark);
+}
+
+.create {
+  margin-top: var(--snt-space-4);
+  background: var(--snt-brand-yellow);
+  color: var(--snt-post-ink);
+}
+
+/** "or", grey, with a grey rule either side — as on the sign-in sheet. */
+.or {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  margin: var(--snt-space-6) 0;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.orLine {
+  flex: 1;
+  height: 1px;
+  background: var(--snt-line);
+}
+
+.platformLogo {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+}
+
+.platformLogo svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Google: white, outlined, dark type — as Google asks for its button. */
+.google {
+  border: 1px solid var(--snt-line);
+  background: #fff;
+  color: #1f1f1f;
+}
+
+/* Facebook: its blue, with white type. */
+.facebook {
+  margin-top: var(--snt-space-4);
+  background: #1877f2;
+  color: #fff;
+}
+
+
+/* --- tablet up: the card beside the welcome, on the gradient -------------- */
+
+@media (min-width: 768px) {
+  .page {
+    justify-content: center;
+  }
+
+  .mainWrapper {
+    flex: 1;
+    min-height: initial;
+    margin: 20px;
+  }
+
+  .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 40px;
+    border-radius: 40px;
+    background-image: linear-gradient(-90deg, #255dab, #1cb67f);
+    overflow: hidden;
+  }
+
+  .picture {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .welcome {
+    position: absolute;
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 30px;
+    font-style: italic;
+    filter: drop-shadow(15px 10px 15px rgb(0 0 0 / 0.5));
+  }
+
+  .welcomeLine {
+    color: #fff;
+    font-weight: var(--snt-weight-bold);
+    text-align: center;
+  }
+
+  .medium {
+    margin-top: 15px;
+    font-size: 1.8em;
+  }
+
+  .large {
+    margin-top: -10px;
+    font-size: 3em;
+  }
+
+  .hero {
+    position: absolute;
+    top: 68px;
+    width: 800px;
+    max-width: none;
+    margin-right: 100px;
+    overflow: visible;
+  }
+
+  /* The phone's door and heading give way to the welcome. */
+  .door,
+  .heading {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .content {
+    max-width: 900px;
+  }
+}

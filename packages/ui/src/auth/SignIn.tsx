@@ -5,19 +5,18 @@
  *
  * `SignInHost` sits once in the app and shows the sign-in sheet whenever
  * something asks for it (see `requireSignIn` in @snt/core), saying why an
- * account is needed there, and carries on with what the visitor was doing
- * once they are in.
+ * account is needed there. Signing in brings the visitor back to the page
+ * they were on.
  *
- * It is honest about being a preview. Real sign-in — a phone number and a
- * one-time code — is not built, so the sheet takes no details at all: it
- * says so, and lets the visitor carry on as a sample member to see how the
- * signed-in app behaves.
+ * It offers the ways in — Google, Facebook (neither connected yet) and
+ * "Continue with email", which goes to the sign-in page and back.
  *
  * `SignInGate` is for a whole screen that belongs to an account — the
  * wishlist, offers, Me.
  */
 
 import type { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useSessionStore, useSignInPromptStore } from '@snt/core';
 import { EmptyState } from '../layout/Screen';
@@ -39,6 +38,7 @@ export function SignInHost() {
 
   return (
     <Sheet
+      narrow
       title="Sign in to continue"
       // As v1's sign-in prompt had it: the logo in the brand gradient, and
       // the heading under it, both centred — this is the app's own door.
@@ -50,21 +50,23 @@ export function SignInHost() {
       }
       onClose={close}
     >
-      <SignInBody reason={prompt.reason} then={prompt.then} />
+      <SignInBody reason={prompt.reason} />
     </Sheet>
   );
 }
 
-function SignInBody({ reason, then }: { reason: string; then?: () => void }) {
-  const signIn = useSessionStore((state) => state.signIn);
-  // Signed in, the sheet sinks away like any other close.
+function SignInBody({ reason }: { reason: string }) {
+  const router = useRouter();
   const closeSheet = useCloseSheet();
 
-  function proceed() {
-    signIn();
-    toast.success('You are signed in');
-    then?.();
+  /**
+   * "Continue with email": to the sign-in page, which brings them back to
+   * this page once they are in. The sheet sinks away as they go.
+   */
+  function toSignInPage() {
+    const here = window.location.pathname + window.location.search;
     closeSheet();
+    router.push(`/signin?next=${encodeURIComponent(here)}`);
   }
 
   return (
@@ -100,19 +102,17 @@ function SignInBody({ reason, then }: { reason: string; then?: () => void }) {
 
       <div className={styles.or}>or</div>
 
-      <Button size="lg" block onClick={proceed}>
-        Continue as a sample member
+      {/* The usual third way in, after Google and Facebook: email, on the
+          sign-in page. */}
+      <Button size="lg" block onClick={toSignInPage}>
+        Continue with email
       </Button>
-      <p className={styles.preview}>
-        This is a preview: signing in with your phone number is not live yet,
-        so nothing is asked of you and nothing is saved.
-      </p>
     </>
   );
 }
 
 /** Google's "G", in its own four colours. */
-function GoogleMark() {
+export function GoogleMark() {
   return (
     <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden focusable="false">
       <path
@@ -136,7 +136,7 @@ function GoogleMark() {
 }
 
 /** Facebook's "f", in white, for its blue button. */
-function FacebookMark() {
+export function FacebookMark() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden focusable="false">
       <path

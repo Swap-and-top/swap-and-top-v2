@@ -38,6 +38,7 @@ export function useCloseSheet(): () => void {
 export function Sheet({
   title,
   heading,
+  narrow = false,
   onClose,
   children,
 }: {
@@ -45,6 +46,8 @@ export function Sheet({
   title: string;
   /** Something richer to show at the top in place of the plain title. */
   heading?: ReactNode;
+  /** A narrower panel on a wide screen, for a short, simple sheet. */
+  narrow?: boolean;
   onClose: () => void;
   children: ReactNode;
 }) {
@@ -90,6 +93,7 @@ export function Sheet({
       ref={dialog}
       className={[
         styles.sheet,
+        narrow ? styles.narrow : '',
         closing ? styles.closing : '',
       ]
         .filter(Boolean)

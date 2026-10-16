@@ -37,6 +37,7 @@ import {
   Tabs,
   type TabItem,
 } from '@snt/ui';
+import { BinocularsIcon, GridIcon, SwapIcon, TagIcon } from '@snt/ui/icons';
 import type { FeedFilterParams } from '../components/feedFilterParams';
 import { SearchEntry } from '../components/SearchEntry';
 import { useFeedFiltersInUrl } from '../components/useFeedFiltersInUrl';
@@ -53,10 +54,29 @@ const CATEGORIES: (Category | 'all')[] = [
 ];
 
 const TYPES: TabItem<TypeFilter>[] = [
-  { value: 'all', label: 'All Types' },
-  { value: 'swap', label: 'Swaps' },
-  { value: 'sale', label: 'For Sale' },
-  { value: 'request', label: 'Wanted' },
+  // The same icons as the bottom bar that carries these on a phone; the
+  // active tab's is filled in. The swap arrows have no inside to fill, so
+  // they go heavier instead.
+  {
+    value: 'all',
+    label: 'All Types',
+    icon: (active) => <GridIcon size={18} filled={active} />,
+  },
+  {
+    value: 'swap',
+    label: 'Swaps',
+    icon: (active) => <SwapIcon size={18} weight={active ? 2.6 : 1.9} />,
+  },
+  {
+    value: 'sale',
+    label: 'For Sale',
+    icon: (active) => <TagIcon size={18} filled={active} />,
+  },
+  {
+    value: 'request',
+    label: 'Wanted',
+    icon: (active) => <BinocularsIcon size={18} filled={active} />,
+  },
 ];
 
 /** The feed. Its server half, page.tsx, reads the filters from the address. */
@@ -85,7 +105,7 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
           {/* Opens the full-screen search over this page. */}
           <SearchEntry />
 
-          <ChipRow label="Filter by category">
+          <ChipRow fill label="Filter by category">
             {CATEGORIES.map((value) => (
               <Chip
                 key={value}

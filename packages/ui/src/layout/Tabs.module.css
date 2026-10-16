@@ -102,6 +102,22 @@
   }
 }
 
+/** An icon and its label, side by side, centred in the tab. */
+.withIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  max-width: 100%;
+  /* A filled icon's knocked-out parts — the tag's hole, the binoculars'
+     band — show the page behind the tabs, not a card's white. */
+  --snt-bg-card: var(--snt-bg-app);
+  --snt-bg-surface: var(--snt-bg-app);
+}
+
+.withIcon > svg {
+  flex-shrink: 0;
+}
+
 /**
  * Even-width variant: each tab takes an equal share of the column, so the
  * strip reads as one control.

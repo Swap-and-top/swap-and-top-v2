@@ -142,5 +142,10 @@
   .body {
     padding: var(--snt-space-10) var(--snt-space-12) var(--snt-space-12);
   }
+
+  /* A short sheet — signing in — narrower, so it doesn't sprawl. */
+  .narrow {
+    width: 400px;
+  }
 }
 

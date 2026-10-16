@@ -69,7 +69,7 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
           </div>
         </div>
 
-        <ChipRow label="Filter by category">
+        <ChipRow fill label="Filter by category">
           {CATEGORIES.map((value) => (
             <Chip
               key={value}
