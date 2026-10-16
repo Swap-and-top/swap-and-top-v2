@@ -88,8 +88,8 @@
 /*
  * The filters slide: a one-row grid whose row grows from nothing to the
  * height of its contents, pushing the results down as it goes, and shrinks
- * back the same way. Timed like the search panel — out with a long ease, back
- * a little quicker.
+ * back the same way. Timed like everything that opens in the app: 420ms
+ * out, 380ms back.
  */
 .reveal {
   display: grid;
@@ -98,15 +98,15 @@
   margin-inline: -4px;
   visibility: hidden;
   transition:
-    grid-template-rows 240ms cubic-bezier(0.4, 0, 1, 1),
-    visibility 0s 240ms;
+    grid-template-rows 380ms cubic-bezier(0.3, 0, 0, 1),
+    visibility 0s 380ms;
 }
 
 .revealOpen {
   grid-template-rows: 1fr;
   visibility: visible;
   transition:
-    grid-template-rows 280ms cubic-bezier(0.2, 0, 0, 1),
+    grid-template-rows 420ms cubic-bezier(0.2, 0, 0, 1),
     visibility 0s;
 }
 

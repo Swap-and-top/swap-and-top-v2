@@ -8,6 +8,9 @@
  * Behaves like a select: click or Enter/Space opens it; the arrow keys move
  * through the options and Enter picks one; Escape, Tab or a click elsewhere
  * closes it. It is a button and a listbox to a screen reader.
+ *
+ * The list drops down out of the pill as it opens and folds back up into it
+ * as it closes, at the same pace as the app's sheets.
  */
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
@@ -38,6 +41,23 @@ export function Dropdown<T extends string>({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  /** Folding back up: still on screen until it has gone. */
+  const [closing, setClosing] = useState(false);
+  const closeTimer = useRef<number | undefined>(undefined);
+
+  /** Folds the list back up into the pill, then takes it away. */
+  function close() {
+    if (!open || closing) return;
+    setClosing(true);
+    // In case the end of the fold is never reported.
+    closeTimer.current = window.setTimeout(finishClose, 500);
+  }
+
+  function finishClose() {
+    window.clearTimeout(closeTimer.current);
+    setClosing(false);
+    setOpen(false);
+  }
   const [active, setActive] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -49,7 +69,7 @@ export function Dropdown<T extends string>({
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: PointerEvent) => {
-      if (!root.current?.contains(event.target as Node)) setOpen(false);
+      if (!root.current?.contains(event.target as Node)) close();
     };
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
@@ -57,13 +77,15 @@ export function Dropdown<T extends string>({
 
   function openList() {
     setActive(Math.max(0, options.findIndex((option) => option.value === value)));
+    window.clearTimeout(closeTimer.current);
+    setClosing(false);
     setOpen(true);
   }
 
   function pick(index: number) {
     const option = options[index];
     if (option) onChange(option.value);
-    setOpen(false);
+    close();
     button.current?.focus();
   }
 
@@ -88,9 +110,9 @@ export function Dropdown<T extends string>({
       // Close the list, not the sheet it sits in.
       event.preventDefault();
       event.stopPropagation();
-      setOpen(false);
+      close();
     } else if (event.key === 'Tab') {
-      setOpen(false);
+      close();
     }
   }
 
@@ -99,14 +121,18 @@ export function Dropdown<T extends string>({
       <button
         ref={button}
         type="button"
-        className={[styles.trigger, open ? styles.triggerOpen : '', className ?? '']
+        className={[
+          styles.trigger,
+          open && !closing ? styles.triggerOpen : '',
+          className ?? '',
+        ]
           .filter(Boolean)
           .join(' ')}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
         aria-labelledby={labelledBy}
-        onClick={() => (open ? setOpen(false) : openList())}
+        onClick={() => (open && !closing ? close() : openList())}
         onKeyDown={onKeyDown}
       >
         {/* An empty value — "Not stated" — is shown pale, as nothing chosen. */}
@@ -123,7 +149,12 @@ export function Dropdown<T extends string>({
           id={listId}
           role="listbox"
           aria-labelledby={labelledBy}
-          className={styles.list}
+          className={[styles.list, closing ? styles.listClosing : '']
+            .filter(Boolean)
+            .join(' ')}
+          onAnimationEnd={(event) => {
+            if (closing && event.target === event.currentTarget) finishClose();
+          }}
         >
           {options.map((option, index) => {
             const selected = option.value === value;

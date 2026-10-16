@@ -101,7 +101,8 @@
   color: var(--snt-ink);
   overflow-y: auto;
   overscroll-behavior: contain;
-  animation: drop 280ms cubic-bezier(0.2, 0, 0, 1);
+  /* The app's one pace for things opening over the page: 420ms in. */
+  animation: drop 420ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 @keyframes drop {
@@ -116,7 +117,8 @@
 }
 
 .panelClosing {
-  animation: rise 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  /* And 380ms out, easing to rest, as the sheets and photos do. */
+  animation: rise 380ms cubic-bezier(0.3, 0, 0, 1) forwards;
   pointer-events: none;
 }
 

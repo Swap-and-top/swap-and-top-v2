@@ -76,13 +76,32 @@
   /* No border — as nowhere in the app — just a soft blue-tinted shadow to
      lift it off what is behind. */
   box-shadow: 0 8px 24px rgb(48 121 158 / 0.2);
-  animation: open 160ms cubic-bezier(0.2, 0, 0, 1);
+  /* Fades in, settling down into place, at the sheets' opening pace. */
+  animation: drop 420ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-@keyframes open {
+/* And fades out, lifting back up, at their closing pace. */
+.listClosing {
+  animation: fold 380ms cubic-bezier(0.3, 0, 0, 1) forwards;
+  pointer-events: none;
+}
+
+/*
+ * As the sheets do it, just smaller: fading in while it moves a little way
+ * down into place; fading out while it moves a little way back up. The
+ * whole list at once — nothing is unrolled or clipped.
+ */
+@keyframes drop {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fold {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 }
 

@@ -22,13 +22,15 @@ import { toast } from 'sonner';
 import { useSessionStore, useSignInPromptStore } from '@snt/core';
 import { EmptyState } from '../layout/Screen';
 import { Button } from '../primitives/Button';
+import { CompactLogo } from '../layout/Logo';
 import { Sheet, useCloseSheet } from '../primitives/Sheet';
 import styles from './SignIn.module.css';
 
+/** Shortest first, so the list widens as it goes down. */
 const BENEFITS = [
+  'See as many sellers’ numbers as you need',
   'Save listings and hear when the price drops',
   'Send offers, and get offers on what you post',
-  'See as many sellers’ numbers as you need',
 ];
 
 export function SignInHost() {
@@ -36,7 +38,18 @@ export function SignInHost() {
   if (!prompt) return null;
 
   return (
-    <Sheet title="Sign in to continue" onClose={close}>
+    <Sheet
+      title="Sign in to continue"
+      // As v1's sign-in prompt had it: the logo in the brand gradient, and
+      // the heading under it, both centred — this is the app's own door.
+      heading={
+        <div className={styles.brandHead}>
+          <CompactLogo height={56} gradient />
+          <span className={styles.brandTitle}>Sign in to continue</span>
+        </div>
+      }
+      onClose={close}
+    >
       <SignInBody reason={prompt.reason} then={prompt.then} />
     </Sheet>
   );

@@ -1,6 +1,9 @@
 /** The sign-in sheet's contents. */
 
 .reason {
+  text-align: center;
+  /* Why an account is needed here: in the regular blue. */
+  color: var(--snt-accent);
   font-size: var(--snt-text-md);
   line-height: var(--snt-leading-snug);
 }
@@ -10,11 +13,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--snt-space-4);
-  padding: var(--snt-space-6);
-  border-radius: var(--snt-radius-md);
-  background: var(--snt-bg-inset);
+  /* Centred like everything else in the sheet, tick and all. No box round
+     the list: just its lines, in green, the colour of what you get. */
+  align-items: center;
+  text-align: center;
   font-size: var(--snt-text-base);
   line-height: var(--snt-leading-snug);
+  color: var(--snt-wanted-ink);
 }
 
 .benefits li {
@@ -91,4 +96,27 @@
   flex: 1;
   height: 1px;
   background: var(--snt-line);
+}
+
+/* --- the head: logo over heading, centred ---------------------------- */
+
+.brandHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-5);
+  /* Set apart from the line under it, which starts the sheet's body. */
+  padding-bottom: var(--snt-space-5);
+  /* Centred on the sheet, not on the space left of the close button: the
+     same width again on this side as the button and its gap take on that
+     one. */
+  margin-left: calc(32px + var(--snt-space-6));
+  padding-top: var(--snt-space-2);
+  text-align: center;
+}
+
+.brandTitle {
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
 }
