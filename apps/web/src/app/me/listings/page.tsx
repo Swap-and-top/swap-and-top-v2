@@ -9,7 +9,13 @@
  */
 
 import { useState } from 'react';
-import { currentUser, mockListings, type Listing } from '@snt/core';
+import {
+  currentUser,
+  mockListings,
+  statusOf,
+  useListingStatusStore,
+  type Listing,
+} from '@snt/core';
 import {
   AppHeader,
   BottomNav,
@@ -22,6 +28,7 @@ import {
   Tabs,
   type TabItem,
 } from '@snt/ui';
+import { StatusTag } from '../../../components/listing/OwnerTools';
 import styles from './page.module.css';
 
 type View = 'all' | 'offering' | 'wanted';
@@ -31,11 +38,14 @@ const isWanted = (listing: Listing) => listing.type === 'request';
 
 export default function MyListingsPage() {
   const [view, setView] = useState<View>('all');
+  const changes = useListingStatusStore((state) => state.changes);
 
-  const mine = mockListings.filter(
-    (listing) =>
-      listing.ownerId === currentUser.id && listing.status !== 'removed',
-  );
+  // Deleted ones are gone for good, and staff removals are not listed here.
+  const mine = mockListings.filter((listing) => {
+    if (listing.ownerId !== currentUser.id) return false;
+    const status = statusOf(listing, changes);
+    return status !== 'withdrawn' && status !== 'removed';
+  });
   const offering = mine.filter((listing) => !isWanted(listing));
   const wanted = mine.filter(isWanted);
   const shown =
@@ -68,9 +78,20 @@ export default function MyListingsPage() {
         >
           {shown.length > 0 ? (
             <div className={styles.list}>
-              {shown.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-              ))}
+              {shown.map((listing) =>
+                statusOf(listing, changes) === 'live' ? (
+                  <ListingCard key={listing.id} listing={listing} />
+                ) : (
+                  // Paused, sold or expired: said over the card, which is
+                  // dimmed a little, as it is not in the feed.
+                  <div key={listing.id} className={styles.down}>
+                    <StatusTag listing={listing} />
+                    <div className={styles.downCard}>
+                      <ListingCard listing={listing} />
+                    </div>
+                  </div>
+                ),
+              )}
             </div>
           ) : (
             <EmptyState

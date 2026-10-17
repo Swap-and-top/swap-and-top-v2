@@ -20,6 +20,8 @@ const PLACEHOLDER_NUMBERS: Record<string, string> = {
   'u-tarisai': '+263 77 234 5678',
   'u-rudo': '+263 77 345 6789',
   'u-blessing': '+263 77 456 7890',
+  'u-chipo': '+263 77 567 8901',
+  'u-avgames': '+263 77 678 9012',
 };
 
 const FALLBACK_NUMBER = '+263 77 000 0000';
@@ -75,6 +77,14 @@ const SAMPLE_WAYS: Record<string, Omit<ContactWays, 'phone'>> = {
   'u-blessing': { call: false, whatsapp: true },
   // Calls only.
   'u-rudo': { call: true, whatsapp: false },
+  // WhatsApp and email.
+  'u-chipo': { call: false, whatsapp: true, email: 'chipo@example.com' },
+  // WhatsApp, calls and Messenger.
+  'u-avgames': {
+    call: true,
+    whatsapp: true,
+    messenger: 'https://m.me/avondale.games.example',
+  },
 };
 
 export function contactWaysFor(userId: string): ContactWays {

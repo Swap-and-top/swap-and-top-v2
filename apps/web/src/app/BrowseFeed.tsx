@@ -20,7 +20,7 @@ import {
   CATEGORY_LABELS,
   filterFeed,
   interleaveSponsored,
-  liveListings,
+  useLiveListings,
   useViewerId,
   type Category,
   type TypeFilter,
@@ -89,7 +89,8 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
 
   const viewer = useViewerId();
   // Your own listings are not in your feed: they are under My listings.
-  const others = liveListings.filter((listing) => listing.ownerId !== viewer);
+  const live = useLiveListings();
+  const others = live.filter((listing) => listing.ownerId !== viewer);
   const filtered = filterFeed(others, { category, type });
   /** Sponsored listings are interleaved and labelled, never sorted to the top. */
   const feed = interleaveSponsored(filtered);

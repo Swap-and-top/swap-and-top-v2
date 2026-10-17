@@ -83,7 +83,7 @@ export default function RootLayout({
         {/* The one sign-in sheet, shown whenever a guest tries something that
             needs an account. */}
         <SignInHost />
-        {/* Short confirmations — "Added to your wishlist". Bottom left on a
+        {/* Short confirmations — "Saved". Bottom left on a
             desktop; on a phone sonner runs them the full width of the screen,
             at the bottom, clear of the bottom bar. Green when the thing
             worked, red when it did not (see globals.css). */}

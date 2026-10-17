@@ -6,7 +6,7 @@
  * offers so both sides of the flow can be walked: two on Tarisai's MacBook
  * swap and one on her wanted post, and one she has sent.
  *
- * Every change is optimistic, like the wishlist: the list changes at once and
+ * Every change is optimistic, like saving: the list changes at once and
  * is put back if the server refuses. There is no server yet — `persistOffer`
  * is where its call goes.
  */

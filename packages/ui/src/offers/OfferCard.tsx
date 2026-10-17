@@ -6,16 +6,17 @@
  * The same card on both sides. To the listing's owner it shows who is
  * offering and lets them accept or decline. To the person who made it, it
  * shows which listing it was for and lets them withdraw it. Once accepted,
- * either way, it turns into the introduction: the other person's number and
- * a way straight into WhatsApp. That is where an offer is meant to end — it
- * opens the conversation, it does not replace it.
+ * either way, it turns into the introduction: the ways the other person can
+ * be reached, shown at once, with a first WhatsApp message ready. That is
+ * where an offer is meant to end — it opens the conversation, it does not
+ * replace it.
  */
 
 import Link from 'next/link';
 import { toast } from 'sonner';
 import {
   CONDITION_LABELS,
-  contactNumberFor,
+  contactWaysFor,
   getListing,
   getShop,
   getUser,
@@ -25,12 +26,15 @@ import {
   type OfferState,
 } from '@snt/core';
 import { SellerIcon } from '../cards/SellerIcon';
-import { MessageIcon } from '../icons';
-import { Button, ButtonLink } from '../primitives/Button';
+import { ContactWayList, waysOffered } from '../contact/ContactWays';
+import { Button } from '../primitives/Button';
 import { Panel } from '../primitives/Surface';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
-import { cashLine, OFFER_STATE_LABELS, whatsappHref } from './offerWords';
+import { cashLine, OFFER_STATE_LABELS } from './offerWords';
 import styles from './Offers.module.css';
+
+/** How long a message with Undo stays up: two seconds past the usual 2.5. */
+const UNDO_TOAST_MS = 4500;
 
 const DONE: Record<Exclude<OfferState, 'pending'>, string> = {
   accepted: 'Offer accepted',
@@ -66,13 +70,45 @@ export function OfferCard({
   async function change(next: Exclude<OfferState, 'pending'>) {
     try {
       await setOfferStateOptimistically(offer.id, next);
-      toast.success(DONE[next]);
+      // A decline or an accept can be undone at once, from the message.
+      // A decline can also be undone later, from the card. An accept only
+      // here: in the real system the other person is told, and sees your
+      // details, once this moment has passed, so until then nothing has
+      // been shared and the undo is real. After it, it cannot be taken back.
+      if (next === 'declined' || next === 'accepted') {
+        toast.success(DONE[next], {
+          action: { label: 'Undo', onClick: () => void undo(next) },
+          duration: UNDO_TOAST_MS,
+        });
+      } else {
+        toast.success(DONE[next]);
+      }
     } catch {
       toast.error('That did not go through. Try again.');
     }
   }
 
-  const number = contactNumberFor(otherId);
+  /** An accepted or declined offer back to waiting, to decide again. */
+  async function undo(was: 'accepted' | 'declined') {
+    try {
+      await setOfferStateOptimistically(offer.id, 'pending');
+      toast.success(
+        was === 'declined'
+          ? 'Decline undone. You can accept it now.'
+          : 'Accept undone. Nothing was shared.',
+      );
+    } catch {
+      toast.error('That did not go through. Try again.');
+    }
+  }
+
+  // The other person's ways: the owner's, as on the listing; the offerer's,
+  // as they chose for this offer from the ways on their account.
+  const otherWays = contactWaysFor(otherId);
+  const given = waysOffered(otherWays);
+  const reachable = readerIsOwner && offer.reachOn
+    ? given.filter((way) => offer.reachOn!.includes(way))
+    : given;
   const opener = readerIsOwner
     ? `Hi, I accepted your offer of the ${offer.item.name} on Swap & Top.`
     : `Hi, you accepted my offer of the ${offer.item.name} on Swap & Top.`;
@@ -160,27 +196,45 @@ export function OfferCard({
       {/* Accepted: the introduction. Each sees the other's number, and a
           first WhatsApp message is ready to send. */}
       {offer.state === 'accepted' ? (
-        <div className={styles.accepted}>
-          <div className={styles.contact}>
-            <span className={styles.contactLabel}>
-              Accepted · contact {otherName}
-            </span>
-            <span className={styles.number}>{number}</span>
+        <>
+          {/* Its state in a pill, as a listing's Live or Paused is. */}
+          <span className={[styles.statePill, styles.pillAccepted].join(' ')}>
+            {OFFER_STATE_LABELS.accepted}
+          </span>
+          {/* The introduction: their ways, shown at once, as rows like
+              the contact sheet's, WhatsApp with a first message ready. */}
+          <div className={styles.introduction}>
+            <span className={styles.contactLabel}>Contact {otherName}</span>
+            <ContactWayList
+              ways={otherWays}
+              only={reachable}
+              revealed
+              message={opener}
+            />
           </div>
-          <ButtonLink
-            href={whatsappHref(number, opener)}
-            size="sm"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MessageIcon size={16} />
-            WhatsApp
-          </ButtonLink>
-        </div>
+        </>
       ) : null}
 
+      {/* Declined in a red pill; withdrawn in a plain grey one. The owner
+          can undo a decline, if they change their mind. */}
       {offer.state === 'declined' || offer.state === 'withdrawn' ? (
-        <div className={styles.closed}>{OFFER_STATE_LABELS[offer.state]}</div>
+        <div className={styles.closedRow}>
+          <span
+            className={[
+              styles.statePill,
+              offer.state === 'declined' ? styles.pillDeclined : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {OFFER_STATE_LABELS[offer.state]}
+          </span>
+          {offer.state === 'declined' && readerIsOwner ? (
+            <Button size="sm" variant="secondary" onClick={() => void undo('declined')}>
+              Undo decline
+            </Button>
+          ) : null}
+        </div>
       ) : null}
     </Panel>
   );

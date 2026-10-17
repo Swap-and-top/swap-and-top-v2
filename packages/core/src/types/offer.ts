@@ -7,6 +7,7 @@
  * themselves, on WhatsApp or the phone. See docs/features/swap-and-top.md.
  */
 
+import type { ContactWay } from '../stores/useRevealStore';
 import type { Condition } from './listing';
 
 export type OfferState = 'pending' | 'accepted' | 'declined' | 'withdrawn';
@@ -35,6 +36,12 @@ export interface Offer {
   cashAmount: number;
   cashFrom: OfferCashFrom;
   message?: string;
+  /**
+   * How the offerer can be reached, chosen from the ways on their account
+   * when they sent it. Shown to the owner only once the offer is accepted.
+   * Missing on older offers, which then use every way they have.
+   */
+  reachOn?: ContactWay[];
   state: OfferState;
   /** Pre-formatted age, as on listings — see `ListingBase.postedLabel`. */
   sentLabel: string;
@@ -48,5 +55,5 @@ export interface Offer {
 /** What the offer form produces. */
 export type OfferDraft = Pick<
   Offer,
-  'listingId' | 'item' | 'cashAmount' | 'cashFrom' | 'message'
+  'listingId' | 'item' | 'cashAmount' | 'cashFrom' | 'message' | 'reachOn'
 >;

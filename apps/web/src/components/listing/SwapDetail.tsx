@@ -45,7 +45,7 @@ import {
 } from '@snt/ui';
 import { CategoryIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
-import { EditListingButton, StatusTag, contactsShown } from './OwnerTools';
+import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SwapDetail.module.css';
 
 export function SwapDetail({ listing }: { listing: SwapListing }) {
@@ -90,7 +90,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
           <div className={styles.summary}>
             {/* On your own swap, its status heads its facts. */}
             {mine ? (
-              <StatusTag status={listing.status} className={styles.status} />
+              <StatusTag listing={listing} className={styles.status} />
             ) : null}
             {/* In the colour of the side the cash comes with: blue when they
                 add it to what they have, green when you add it to what they
@@ -134,7 +134,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
             {/* Changing it, in the card, under all of it. */}
             {mine ? (
               <div className={styles.edit}>
-                <EditListingButton />
+                <OwnerControls listing={listing} />
               </div>
             ) : null}
           </div>

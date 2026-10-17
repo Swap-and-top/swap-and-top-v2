@@ -461,21 +461,11 @@
   color: var(--snt-accent-bold);
 }
 
-/** Accepted: the other person's number, and the way into WhatsApp. */
-.accepted {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--snt-space-6);
-  padding: var(--snt-space-5) var(--snt-space-6);
-  border-radius: var(--snt-radius-md);
-  background: var(--snt-success-tint);
-}
-
-.contact {
+/** Accepted: who to contact, over their ways. */
+.introduction {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  gap: var(--snt-space-4);
 }
 
 .contactLabel {
@@ -484,15 +474,83 @@
   color: var(--snt-wanted-ink);
 }
 
-.number {
-  font-family: var(--snt-font-display);
-  font-size: var(--snt-text-lg);
-  font-weight: var(--snt-weight-bold);
-  font-variant-numeric: tabular-nums;
-}
-
-.closed {
+/**
+ * An offer's outcome, in a small pill like a listing's Live or Paused: green
+ * once accepted, red once declined, grey if withdrawn. Words only.
+ */
+.statePill {
+  align-self: flex-start;
+  padding: var(--snt-space-1) var(--snt-space-5);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-ink-muted);
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-semibold);
-  color: var(--snt-ink-muted);
+}
+
+/** A closed offer's pill, and Undo decline beside it for one the owner declined. */
+.closedRow {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+}
+
+/* Centred on the button beside it, rather than at the top of the row. */
+.closedRow > .statePill {
+  align-self: center;
+}
+
+.pillAccepted {
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+}
+
+/* The red goes a shade deeper than the alert red, to read on its tint. */
+.pillDeclined {
+  background: #fdeceb;
+  color: #b42318;
+}
+
+/* --- how the owner can reach you ------------------------------------------ */
+
+/* The pills sit a little closer under their heading than a box does. */
+.waysField {
+  gap: var(--snt-space-2);
+}
+
+/** The ways, as pills on the form itself, from its left edge. */
+.waysPick {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--snt-space-3);
+}
+
+/** Each way a small pill, filled blue when it is on; a tap switches it. */
+.wayToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  height: 30px;
+  padding: 0 var(--snt-space-6);
+  border: 1px solid var(--snt-control-idle);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
+  color: var(--snt-control-idle-ink);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.wayToggle.wayOn {
+  border-color: var(--snt-control-active);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}
+
+/* The last way on cannot be turned off: one way must stay. */
+.wayToggle:disabled {
+  cursor: default;
 }

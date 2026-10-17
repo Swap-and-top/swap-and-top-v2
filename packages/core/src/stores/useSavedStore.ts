@@ -5,14 +5,15 @@ import { create } from 'zustand';
 interface SavedState {
   ids: string[];
   toggle: (listingId: string) => void;
-  /** Puts a listing on the wishlist or takes it off, whatever it was. */
+  /** Puts a listing on the saved list or takes it off, whatever it was. */
   setSaved: (listingId: string, saved: boolean) => void;
   isSaved: (listingId: string) => boolean;
 }
 
 export const useSavedStore = create<SavedState>((set, get) => ({
   /** Seeded to match the Saved artboard. */
-  ids: ['l-thinkpad-t480', 'l-macbook-swap', 'l-rx-580'],
+  // Other people's listings only: your own are under My listings.
+  ids: ['l-thinkpad-t480', 'l-iphone-11', 'l-rx-580'],
   toggle: (listingId) =>
     set((state) => ({
       ids: state.ids.includes(listingId)
@@ -30,7 +31,7 @@ export const useSavedStore = create<SavedState>((set, get) => ({
 /**
  * Tells the server a listing was saved or unsaved. There is no server yet:
  * this simply succeeds, so the screens around it can be built
- * the way they will work — change the wishlist at once, then confirm or undo
+ * the way they will work — change the saved list at once, then confirm or undo
  * when this settles. When the API exists, its call goes here and nothing
  * else changes. It must reject when the save did not happen.
  */
@@ -42,7 +43,7 @@ export async function persistSaved(
 }
 
 /**
- * Saves or unsaves a listing optimistically: the wishlist changes straight
+ * Saves or unsaves a listing optimistically: the saved list changes straight
  * away, and is put back as it was if the server refuses. Resolves once the
  * change is confirmed; rejects — after undoing it — if it is not.
  */

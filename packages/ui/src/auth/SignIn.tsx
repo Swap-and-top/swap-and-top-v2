@@ -12,7 +12,7 @@
  * "Continue with email", which goes to the sign-in page and back.
  *
  * `SignInGate` is for a whole screen that belongs to an account — the
- * wishlist, offers, Me.
+ * saved listings, offers, Me.
  */
 
 import type { ReactNode } from 'react';

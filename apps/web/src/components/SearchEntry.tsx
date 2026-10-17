@@ -33,7 +33,7 @@ import {
 import { createPortal } from 'react-dom';
 import {
   CATEGORY_LABELS,
-  liveListings,
+  useLiveListings,
   NO_SPEC_FILTERS,
   searchListings,
   suggestSearchTerms,
@@ -285,7 +285,8 @@ function SearchPanel({
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   // The listing type narrows everything below it, suggestions included.
-  const ofType = liveListings.filter(
+  const live = useLiveListings();
+  const ofType = live.filter(
     (listing) => type === 'all' || listing.type === type,
   );
   const terms = suggestSearchTerms(ofType, typed, category);

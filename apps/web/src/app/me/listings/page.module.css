@@ -10,3 +10,14 @@
   flex-direction: column;
   gap: var(--snt-card-gap);
 }
+
+/** A listing that is down: its status over it, the card a little faded. */
+.down {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+}
+
+.downCard {
+  opacity: 0.7;
+}

@@ -10,7 +10,7 @@
  *
  * On the feed it is handed the current type and switches it in place. On any
  * other screen its items go to the feed, showing the type that was tapped.
- * Posting, the account and the wishlist are reached from the header.
+ * Posting, the account and saved listings are reached from the header.
  */
 
 import Link from 'next/link';

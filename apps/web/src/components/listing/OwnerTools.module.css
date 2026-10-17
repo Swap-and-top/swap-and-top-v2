@@ -26,3 +26,117 @@
   border-radius: 50%;
   background: currentColor;
 }
+
+/* Paused: red, with a pause mark. The red goes a shade deeper than the
+   app's alert red for the small text, to stay readable on its tint. */
+.paused {
+  background: #fdeceb;
+  color: #b42318;
+}
+
+/* Sold, swapped or found: done, in the blue of what is yours, with a tick. */
+.done {
+  background: var(--snt-accent-tint);
+  color: var(--snt-accent-bold);
+}
+
+.status > svg {
+  flex-shrink: 0;
+}
+
+/** Edit (or Relist) and Manage, half each. */
+.controls {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--snt-space-5);
+}
+
+/* --- the Manage sheet ----------------------------------------------------- */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+}
+
+/** One choice: what it does, and a quiet note of what that means. */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--snt-space-4) var(--snt-space-8);
+  border-radius: var(--snt-radius-md);
+  /* A light fill in the row's own colour: blue here, red for Delete. */
+  background: var(--snt-accent-tint);
+  color: var(--snt-control-active);
+  text-align: left;
+  transition: background var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    filter: brightness(0.97);
+  }
+}
+
+.row > svg {
+  flex-shrink: 0;
+}
+
+.rowLabel {
+  flex-grow: 1;
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+}
+
+.rowNote {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+  white-space: nowrap;
+}
+
+/* Delete: in the app's alert red, so it is never chosen by mistake. */
+.danger,
+.danger:hover {
+  background: #fdeceb;
+  color: var(--snt-alert);
+}
+
+/** Before a delete: what it means, and a way out. */
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+}
+
+.confirmText {
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink);
+}
+
+/** "Delete listing", heading the sheet once Delete is chosen: in red. */
+.deleteTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-alert);
+}
+
+/* Delete in red, beside Keep it in the usual blue outline. Scoped to the
+   check, so it outweighs the button's own colours whichever loads first. */
+.confirm .deleteButton,
+.confirm .deleteButton:hover:not(:disabled) {
+  background: var(--snt-alert);
+  color: var(--snt-ink-on-dark);
+}
+
+.confirm .deleteButton:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+

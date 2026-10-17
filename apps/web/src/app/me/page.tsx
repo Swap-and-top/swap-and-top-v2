@@ -18,6 +18,8 @@ import {
   useSavedStore,
   getListing,
   mockListings,
+  statusOf,
+  useListingStatusStore,
   useOfferStore,
   useSessionStore,
 } from '@snt/core';
@@ -65,10 +67,12 @@ export default function MePage() {
   ).length;
 
   /** What the user has posted, and how much of it is wanted posts. */
-  const myListings = mockListings.filter(
-    (listing) =>
-      listing.ownerId === currentUser.id && listing.status !== 'removed',
-  );
+  const changes = useListingStatusStore((state) => state.changes);
+  const myListings = mockListings.filter((listing) => {
+    if (listing.ownerId !== currentUser.id) return false;
+    const status = statusOf(listing, changes);
+    return status !== 'withdrawn' && status !== 'removed';
+  });
   const myWanted = myListings.filter((listing) => listing.type === 'request');
 
   /** The first pending confirmation is what the badge links to. */
@@ -140,7 +144,7 @@ export default function MePage() {
               <ListRow
                 href="/saved"
                 icon={<SaveStarIcon size={19} />}
-                label="Wishlist"
+                label="Saved"
                 value={String(ids.length)}
               />
             </ListGroup>

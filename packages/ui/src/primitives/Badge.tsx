@@ -57,6 +57,7 @@ export function Badge({
 
 const STATUS_TONE: Record<ListingStatus, BadgeTone> = {
   live: 'success',
+  paused: 'neutral',
   sold: 'neutral',
   draft: 'neutral',
   expired: 'neutral',
@@ -66,6 +67,7 @@ const STATUS_TONE: Record<ListingStatus, BadgeTone> = {
 
 const STATUS_LABEL: Record<ListingStatus, string> = {
   live: 'Live',
+  paused: 'Paused',
   sold: 'Sold',
   draft: 'Draft',
   expired: 'Expired',

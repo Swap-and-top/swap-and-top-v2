@@ -133,7 +133,7 @@ These refine the PDF's own values (25–27px padding, fixed 168/142px photos, a 
 
 Every marketplace screen starts with the gradient.
 
-- **App header** — Browse, Wanted, Wishlist, Me. The gradient holds only the logo row — logo, Post New Item, account — the same height on every screen. Whatever the screen adds — the search pill (filled grey), the chip row, the type tabs, a title — sits on white directly beneath it. Chips, tabs, titles and search fields have a white-on-gradient style too, used only if one is ever placed on the gradient.
+- **App header** — Browse, Wanted, Saved, Me. The gradient holds only the logo row — logo, Post New Item, account — the same height on every screen. Whatever the screen adds — the search pill (filled grey), the chip row, the type tabs, a title — sits on white directly beneath it. Chips, tabs, titles and search fields have a white-on-gradient style too, used only if one is ever placed on the gradient.
 - **Screen header** — detail screens. A shorter gradient bar with a white back button, title and actions.
 - **Step header** — the posting flow. A screen header with a white progress bar.
 

@@ -20,17 +20,21 @@ import { useId, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import {
   CONDITION_LABELS,
-  liveListings,
+  contactWaysFor,
+  useLiveListings,
   myOfferOn,
   requireSignIn,
   sendOfferOptimistically,
   useOfferStore,
   useViewerId,
   type Category,
+  type Listing,
   type Condition,
+  type ContactWay,
   type DemandListing,
   type OfferItem,
 } from '@snt/core';
+import { WAY_META, waysOffered } from '../contact/ContactWays';
 import { BinocularsIcon, CashHandIcon } from '../icons';
 import { Button } from '../primitives/Button';
 import { Dropdown } from '../primitives/Dropdown';
@@ -45,11 +49,12 @@ const MESSAGE_MAX = 200;
 /** Things of the current user's that could be put forward: what they sell,
  *  and what they have up for a swap. */
 function ownItems(
+  live: Listing[],
   userId: string | undefined,
   except: string,
 ): (OfferItem & { category: Category })[] {
   if (!userId) return [];
-  return liveListings
+  return live
     .filter((listing) => listing.ownerId === userId && listing.id !== except)
     .flatMap((listing) => {
       const item =
@@ -130,7 +135,14 @@ function fitToText(box: HTMLTextAreaElement) {
 function OfferForm({ listing }: { listing: DemandListing }) {
   // Sent, the sheet sinks away like any other close.
   const onSent = useCloseSheet();
-  const own = ownItems(useViewerId(), listing.id);
+  const viewer = useViewerId();
+  const own = ownItems(useLiveListings(), viewer, listing.id);
+  /** The ways on the offerer's account, and which of them this offer uses:
+      just the first, WhatsApp where they have it, until they pick more. It
+      starts with one so it is plain the others can be added. */
+  const myWays = viewer ? waysOffered(contactWaysFor(viewer)) : [];
+  const [reachOn, setReachOn] = useState<ContactWay[] | null>(null);
+  const chosenWays = reachOn ?? myWays.slice(0, 1);
   const setup = cashSetup(listing);
   const priced = isPriceOffer(listing);
 
@@ -186,6 +198,9 @@ function OfferForm({ listing }: { listing: DemandListing }) {
         cashAmount: amount,
         cashFrom: amount > 0 ? setup.from : 'none',
         message: message.trim() || undefined,
+        // A guest signs in only as they send, so they have no ways yet on
+        // screen: then it is left to their account's own.
+        reachOn: chosenWays.length > 0 ? chosenWays : undefined,
       });
       toast.success('Offer sent');
       onSent();
@@ -270,7 +285,15 @@ function OfferForm({ listing }: { listing: DemandListing }) {
                 />
               </div>
               <label className={styles.field}>
-              <span className={styles.label}>{setup.label}</span>
+              <span className={styles.label}>
+                {setup.label}
+                {setup.optional ? (
+                  <>
+                    {' '}
+                    <span className={styles.optional}>(optional)</span>
+                  </>
+                ) : null}
+              </span>
               <span className={styles.money}>
                 <span aria-hidden>$</span>
                 <input
@@ -314,7 +337,15 @@ function OfferForm({ listing }: { listing: DemandListing }) {
               />
             </div>
             <label className={styles.field}>
-              <span className={styles.label}>{setup.label}</span>
+              <span className={styles.label}>
+                {setup.label}
+                {setup.optional ? (
+                  <>
+                    {' '}
+                    <span className={styles.optional}>(optional)</span>
+                  </>
+                ) : null}
+              </span>
               <span className={styles.money}>
                 <span aria-hidden>$</span>
                 <input
@@ -352,6 +383,57 @@ function OfferForm({ listing }: { listing: DemandListing }) {
           rows={3}
         />
       </label>
+
+      {/* How the owner can reach them if they accept: the ways on their
+          account, all of them unless they choose fewer for this offer. It
+          is shown to the owner only once the offer is accepted. */}
+      {myWays.length > 0 ? (
+        <div className={[styles.field, styles.waysField].join(' ')}>
+          {/* At the edge, like "What you are offering": it heads pills, not
+              a text box. */}
+          <span className={[styles.label, styles.flush].join(' ')}>
+            They can reach you on{' '}
+            {/* How many are on, so it is plain the pills can be tapped. */}
+            <span className={styles.optional}>
+              ({chosenWays.length} selected)
+            </span>
+          </span>
+          {/* Always the pills: a tap switches a way on or off for this
+              offer, with nothing to open first. */}
+          <div className={styles.waysPick}>
+            {myWays.map((way) => {
+              const { label, Icon } = WAY_META[way];
+              const on = chosenWays.includes(way);
+              // At least one way stays on: an accepted offer must lead
+              // somewhere.
+              const last = on && chosenWays.length === 1;
+              return (
+                <button
+                  key={way}
+                  type="button"
+                  className={[styles.wayToggle, on ? styles.wayOn : '']
+                    .filter(Boolean)
+                    .join(' ')}
+                  aria-pressed={on}
+                  disabled={last}
+                  onClick={() =>
+                    setReachOn(
+                      on
+                        ? chosenWays.filter((w) => w !== way)
+                        : myWays.filter(
+                            (w) => w === way || chosenWays.includes(w),
+                          ),
+                    )
+                  }
+                >
+                  <Icon size={16} weight={24 / 16} />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
 
       <Button type="submit" size="lg" block disabled={!ready}>
         {sending ? 'Sending…' : 'Send offer'}

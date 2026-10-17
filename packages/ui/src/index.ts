@@ -103,7 +103,14 @@ export {
   SignInGate,
   SignInHost,
 } from './auth/SignIn';
-export { Sheet } from './primitives/Sheet';
+export { Sheet, useCloseSheet } from './primitives/Sheet';
+export {
+  ContactWayList,
+  ContactWayRow,
+  WAY_META,
+  WAY_ORDER,
+  waysOffered,
+} from './contact/ContactWays';
 export { Footer } from './layout/Footer';
 export { OfferButton } from './offers/OfferButton';
 export { OfferCard } from './offers/OfferCard';

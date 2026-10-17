@@ -32,3 +32,19 @@ html [data-sonner-toaster][data-sonner-theme] {
   font-family: var(--snt-font-body);
 }
 
+/*
+ * A button on a coloured toast (Undo): white, with its words in the toast's
+ * own colour, green on green and red on red, so it reads as part of it.
+ */
+html [data-sonner-toaster] [data-sonner-toast][data-type='success'] [data-button] {
+  background: var(--snt-bg-surface);
+  color: var(--snt-action);
+  font-weight: var(--snt-weight-semibold);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-type='error'] [data-button] {
+  background: var(--snt-bg-surface);
+  color: var(--snt-alert);
+  font-weight: var(--snt-weight-semibold);
+}
+

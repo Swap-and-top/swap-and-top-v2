@@ -40,7 +40,7 @@ import {
 } from '@snt/ui';
 import { InfoIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
-import { EditListingButton, StatusTag, contactsShown } from './OwnerTools';
+import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './RequestDetail.module.css';
 
 export function RequestDetail({ listing }: { listing: RequestListing }) {
@@ -60,7 +60,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
       <ScreenBody>
         <Stack gap={6}>
           {/* On your own post, its status comes first. */}
-          {mine ? <StatusTag status={listing.status} /> : null}
+          {mine ? <StatusTag listing={listing} /> : null}
 
           {/* What they want on the left; save and share at the right. */}
           <div className={styles.lead}>
@@ -112,7 +112,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
             </Panel>
           ) : null}
 
-          {mine ? <EditListingButton /> : null}
+          {mine ? <OwnerControls listing={listing} /> : null}
 
           {!mine && owner ? <PosterRow user={owner} /> : null}
 

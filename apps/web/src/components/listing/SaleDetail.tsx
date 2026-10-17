@@ -36,7 +36,7 @@ import {
 } from '@snt/ui';
 import { SwapIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
-import { EditListingButton, StatusTag, contactsShown } from './OwnerTools';
+import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SaleDetail.module.css';
 
 export function SaleDetail({ listing }: { listing: SaleListing }) {
@@ -64,7 +64,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
       <ScreenBody>
         {/* On your own listing, its status comes first. */}
         {mine ? (
-          <StatusTag status={listing.status} className={styles.status} />
+          <StatusTag listing={listing} className={styles.status} />
         ) : null}
         <div className={styles.priceRow}>
           <Price amount={listing.price} size="lg" />
@@ -108,7 +108,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
 
         {mine ? (
           <div className={styles.identity}>
-            <EditListingButton />
+            <OwnerControls listing={listing} />
           </div>
         ) : (
           <>

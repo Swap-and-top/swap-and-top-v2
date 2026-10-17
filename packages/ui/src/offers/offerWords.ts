@@ -43,6 +43,8 @@ export function askParts(listing: DemandListing): {
 /** The cash field on the form: its label, who the cash comes from, a start. */
 export function cashSetup(listing: DemandListing): {
   label: string;
+  /** Shown after the label, as "(optional)" is everywhere on the form. */
+  optional?: boolean;
   from: OfferCashFrom;
   amount: string;
 } {
@@ -59,10 +61,8 @@ export function cashSetup(listing: DemandListing): {
     };
   }
   return {
-    label:
-      listing.cashDirection === 'straight'
-        ? 'Cash you add (optional)'
-        : 'Cash you add',
+    label: 'Cash you add',
+    optional: listing.cashDirection === 'straight',
     from: 'offerer',
     amount: listing.cashAmount ? String(listing.cashAmount) : '',
   };
@@ -101,8 +101,3 @@ export const OFFER_STATE_LABELS: Record<OfferState, string> = {
   declined: 'Declined',
   withdrawn: 'Withdrawn',
 };
-
-/** A WhatsApp link to a number, opening with a first message ready to send. */
-export function whatsappHref(number: string, message: string): string {
-  return `https://wa.me/${number.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
-}

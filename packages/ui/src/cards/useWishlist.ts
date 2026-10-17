@@ -28,7 +28,7 @@ export function useWishlist(listingId: string) {
 
   /** Saving needs an account; a guest is asked to sign in, then it saves. */
   function toggleSaved() {
-    requireSignIn('Sign in to save listings to your wishlist.', () => {
+    requireSignIn('Sign in to save listings.', () => {
       void toggle(!saved);
     });
   }
@@ -36,12 +36,12 @@ export function useWishlist(listingId: string) {
   async function toggle(next: boolean) {
     try {
       await saveOptimistically(listingId, next);
-      toast.success(next ? 'Added to your wishlist' : 'Removed from your wishlist');
+      toast.success(next ? 'Saved' : 'Removed from saved');
     } catch {
       toast.error(
         next
-          ? 'Could not add this to your wishlist. Try again.'
-          : 'Could not remove this from your wishlist. Try again.',
+          ? 'Could not save this. Try again.'
+          : 'Could not remove this from saved. Try again.',
       );
     }
   }

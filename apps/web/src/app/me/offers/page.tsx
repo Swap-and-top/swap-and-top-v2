@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import {
   currentUser,
-  liveListings,
+  useLiveListings,
   offersOn,
   useOfferStore,
   type DemandListing,
@@ -44,7 +44,8 @@ export default function OffersPage() {
   const offers = useOfferStore((store) => store.offers);
 
   /** The user's own swaps and requests — the listings offers can land on. */
-  const mine = liveListings.filter(
+  const live = useLiveListings();
+  const mine = live.filter(
     (listing): listing is DemandListing =>
       listing.ownerId === currentUser.id &&
       (listing.type === 'swap' || listing.type === 'request'),

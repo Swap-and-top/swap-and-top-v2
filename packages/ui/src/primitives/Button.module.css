@@ -59,15 +59,17 @@
   color: var(--snt-ink-on-dark);
 }
 
+/** The quieter partner of the green button: blue words in a faded blue
+    outline, which goes solid on hover. */
 .secondary {
   background: var(--snt-bg-surface);
-  color: var(--snt-ink);
-  border: 1px solid var(--snt-line);
+  color: var(--snt-control-active);
+  border: 1px solid rgb(47 117 153 / 0.4);
 }
 
 .secondary:hover:not(:disabled) {
-  border-color: var(--snt-ink);
-  color: var(--snt-ink);
+  border-color: var(--snt-control-active);
+  color: var(--snt-control-active);
 }
 
 /** Outlined in ink — a secondary action with more weight, e.g. Bulk import. */

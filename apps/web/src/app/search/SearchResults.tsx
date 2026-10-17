@@ -13,7 +13,7 @@
 
 import { useEffect, useState } from 'react';
 import {
-  liveListings,
+  useLiveListings,
   NO_SPEC_FILTERS,
   searchListings,
 } from '@snt/core';
@@ -55,8 +55,9 @@ export function SearchResults({ initial }: { initial: SearchQuery }) {
     }
   }, [initial.q, category, type, min, max]);
 
+  const live = useLiveListings();
   const results = searchListings(
-    liveListings.filter((listing) => type === 'all' || listing.type === type),
+    live.filter((listing) => type === 'all' || listing.type === type),
     {
       ...NO_SPEC_FILTERS,
       query: initial.q,

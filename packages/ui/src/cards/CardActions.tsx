@@ -9,6 +9,7 @@
  */
 
 import { toast } from 'sonner';
+import { getListing, useViewerId } from '@snt/core';
 import { ReportIcon, SaveStarIcon, ShareIcon } from '../icons';
 import { useWishlist } from './useWishlist';
 import styles from './CardActions.module.css';
@@ -36,10 +37,14 @@ export function CardActions({
    * something to read and so something to object to; not on feed cards.
    */
   report?: boolean;
-  /** The save star. Off on your own listing: there is nothing to save. */
+  /** The save star. Never on your own listing, wherever it is shown:
+      there is nothing to watch for, and it is under My listings already. */
   save?: boolean;
 }) {
   const { saved, toggleSaved } = useWishlist(listingId);
+  const viewer = useViewerId();
+  const mine = viewer !== undefined && getListing(listingId)?.ownerId === viewer;
+  const showSave = save && !mine;
 
   /**
    * The phone's own share sheet where there is one — WhatsApp is where these
@@ -65,13 +70,13 @@ export function CardActions({
         tone === 'wanted' ? styles.wanted : styles.owned,
       ].join(' ')}
     >
-      {save ? (
+      {showSave ? (
         <button
           type="button"
           className={[styles.button, saved ? styles.saved : '']
             .filter(Boolean)
             .join(' ')}
-          aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
+          aria-label={saved ? 'Remove from saved' : 'Save'}
           aria-pressed={saved}
           onClick={toggleSaved}
         >

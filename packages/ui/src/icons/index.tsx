@@ -228,6 +228,24 @@ export const WhatsAppIcon = (props: IconProps) => (
   </Svg>
 );
 
+/** A bin, for deleting. */
+export const TrashIcon = (props: IconProps) => (
+  <Svg weight={1.8} {...props}>
+    <path d="M4 6.5h16" />
+    <path d="M9.5 6.5V4.8c0-.7.6-1.3 1.3-1.3h2.4c.7 0 1.3.6 1.3 1.3v1.7" />
+    <path d="M6 6.5l.9 12.3c.1 1 .9 1.7 1.9 1.7h6.4c1 0 1.8-.7 1.9-1.7L18 6.5" />
+    <path d="M10 10.5v6M14 10.5v6" />
+  </Svg>
+);
+
+/** Two upright bars, for pausing. */
+export const PauseIcon = (props: IconProps) => (
+  <Svg weight={1.8} {...props}>
+    <rect x="6" y="4.5" width="4" height="15" rx="1.2" />
+    <rect x="14" y="4.5" width="4" height="15" rx="1.2" />
+  </Svg>
+);
+
 /** An envelope, for email. */
 export const MailIcon = (props: IconProps) => (
   <Svg weight={1.8} {...props}>

@@ -22,6 +22,8 @@ export type Condition = 'boxed-new' | 'like-new' | 'good' | 'fair';
 export type ListingStatus =
   | 'draft'
   | 'live'
+  /** Taken down for now by its owner, who can bring it back. */
+  | 'paused'
   | 'sold'
   | 'expired'
   | 'withdrawn'
