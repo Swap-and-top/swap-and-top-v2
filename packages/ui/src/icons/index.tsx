@@ -339,6 +339,8 @@ const CATEGORY_ICONS = {
   consoles: ConsoleIcon,
   parts: PartIcon,
   accessories: AccessoryIcon,
+  // Anything else: a box. (Wrapped, as the box is drawn further down.)
+  other: (props: IconProps) => <BoxIcon {...props} />,
 } as const;
 
 /** The icon for a listing category. */

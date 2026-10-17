@@ -141,6 +141,13 @@ export const SPEC_OPTIONS: Record<
       values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
     },
   ],
+  other: [
+    {
+      group: 'condition',
+      label: 'Condition',
+      values: ['Boxed new', 'Used like new', 'Used good', 'Used fair'],
+    },
+  ],
 };
 
 export const useSearchStore = create<SearchState>((set) => ({

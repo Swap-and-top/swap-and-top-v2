@@ -14,7 +14,9 @@ export type Category =
   | 'desktops'
   | 'consoles'
   | 'parts'
-  | 'accessories';
+  | 'accessories'
+  /** Anything not covered yet: described in words, with no spec set. */
+  | 'other';
 
 /** The four conditions a seller picks from: new in its box, then used. */
 export type Condition = 'boxed-new' | 'like-new' | 'good' | 'fair';
@@ -32,7 +34,7 @@ export type ListingStatus =
 /** Which way the cash flows in a swap, always from the poster's point of view. */
 export type CashDirection = 'i-add' | 'they-add' | 'straight';
 
-export type ContactChannel = 'whatsapp' | 'call' | 'sms';
+export type ContactChannel = 'whatsapp' | 'call' | 'email' | 'messenger' | 'sms';
 
 /** Whether a listing currently occupies a paid slot. Recorded on every reveal. */
 export type PromotionSlot = 'organic' | 'sponsored' | 'drop';
@@ -71,6 +73,8 @@ export interface ItemSpecs {
   partType?: string;
   capacity?: string;
   colour?: string;
+  /** For something in Other: what it is, in the seller's own words. */
+  details?: string;
 }
 
 /** Everything every listing carries, regardless of type. */
@@ -202,6 +206,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   consoles: 'Consoles',
   parts: 'Parts',
   accessories: 'Accessories',
+  other: 'Other',
 };
 
 export const CONDITION_LABELS: Record<Condition, string> = {

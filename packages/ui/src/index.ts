@@ -61,6 +61,8 @@ export {
   SpecGrid,
   specParts,
   specRowsFor,
+  specFieldsFor,
+  type SpecField,
   specSummary,
 } from './primitives/SpecGrid';
 export type { SpecRow } from './primitives/SpecGrid';
@@ -104,6 +106,9 @@ export {
   SignInHost,
 } from './auth/SignIn';
 export { Sheet, useCloseSheet } from './primitives/Sheet';
+export { Dropdown, type DropdownOption } from './primitives/Dropdown';
+export { TickTile } from './primitives/TickTile';
+export { POST_STEPS, StepBar, type Step } from './layout/StepBar';
 export {
   ContactWayList,
   ContactWayRow,

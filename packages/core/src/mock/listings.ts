@@ -559,7 +559,7 @@ const ps5Wanted: RequestListing = {
   type: 'request',
   ownerId: 'u-tarisai',
   category: 'consoles',
-  title: 'PS5 controller, working drift-free',
+  title: 'PS5 controller, working drift free',
   location: 'Mt Pleasant',
   status: 'live',
   createdAt: '2026-09-24',

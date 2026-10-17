@@ -7,19 +7,28 @@
  */
 
 import { create } from 'zustand';
-import type { CashDirection, Category, ContactChannel } from '../types/listing';
+import type {
+  CashDirection,
+  Category,
+  ContactChannel,
+  ItemSpecs,
+} from '../types/listing';
 
 export type PostKind = 'sale' | 'swap' | 'request';
 
 interface PostDraftState {
   kind: PostKind | null;
-  category: Category;
+  /** None until they pick one: nothing is chosen for them. */
+  category: Category | null;
 
   /** What the poster has. Unused for a plain request. */
   haveTitle: string;
-  processor: string;
-  ram: string;
-  storage: string;
+  /**
+   * Its details, by key. The form asks only for those its category needs
+   * (processor and RAM for a laptop, type and capacity for a part); values
+   * typed for another category are kept but not used.
+   */
+  specs: ItemSpecs;
   condition: string;
   photoCount: number;
 
@@ -31,9 +40,13 @@ interface PostDraftState {
   /** Request only. */
   budget: string;
 
-  /** Swap only. */
-  cashDirection: CashDirection;
+  /** Swap only. None until they pick which way the cash goes. */
+  cashDirection: CashDirection | null;
   cashAmount: string;
+  /** Swap only, when they add cash: the amount is a ceiling, "up to". */
+  cashUpTo: boolean;
+  /** Sale only: they would take a trade-in towards it ("Swaps accepted"). */
+  acceptsSwaps: boolean;
 
   contactChannels: ContactChannel[];
   /** Whether the listing may appear in dealer lead feeds. Defaults on. */
@@ -47,9 +60,6 @@ interface PostDraftState {
     field: Extract<
       keyof PostDraftState,
       | 'haveTitle'
-      | 'processor'
-      | 'ram'
-      | 'storage'
       | 'condition'
       | 'wantTitle'
       | 'price'
@@ -59,6 +69,9 @@ interface PostDraftState {
     value: string,
   ) => void;
   setCashDirection: (direction: CashDirection) => void;
+  setSpec: (key: keyof ItemSpecs, value: string) => void;
+  setCashUpTo: (upTo: boolean) => void;
+  setAcceptsSwaps: (accepts: boolean) => void;
   addPhoto: () => void;
   removePhoto: () => void;
   toggleChannel: (channel: ContactChannel) => void;
@@ -67,21 +80,28 @@ interface PostDraftState {
   reset: () => void;
 }
 
+/**
+ * A new post starts with nothing typed or added for them: every text box
+ * shows only a faded example of what goes in it. Every choice starts on its
+ * first option, so something is always chosen: the first category, the
+ * first condition, "I pay", WhatsApp, and dealer offers on.
+ */
 const initial = {
   kind: null,
-  category: 'laptops' as Category,
-  haveTitle: 'MacBook Air 2017',
-  processor: 'Core i5-5350U',
-  ram: '8GB',
-  storage: '128GB SSD',
-  condition: 'Good',
-  photoCount: 2,
-  wantTitle: 'Any Core i7',
+  category: 'laptops' as Category | null,
+  haveTitle: '',
+  specs: {} as ItemSpecs,
+  // A condition's key, as the condition dropdown offers them, once chosen.
+  condition: 'boxed-new',
+  photoCount: 0,
+  wantTitle: '',
   price: '',
   budget: '',
-  cashDirection: 'i-add' as CashDirection,
-  cashAmount: '240',
-  contactChannels: ['whatsapp', 'call'] as ContactChannel[],
+  cashDirection: 'i-add' as CashDirection | null,
+  cashAmount: '',
+  cashUpTo: false,
+  acceptsSwaps: false,
+  contactChannels: ['whatsapp'] as ContactChannel[],
   allowDealerOffers: true,
   contactSignedInOnly: false,
 };
@@ -92,6 +112,10 @@ export const usePostDraftStore = create<PostDraftState>((set) => ({
   setCategory: (category) => set({ category }),
   setField: (field, value) => set({ [field]: value } as Partial<PostDraftState>),
   setCashDirection: (cashDirection) => set({ cashDirection }),
+  setSpec: (key, value) =>
+    set((state) => ({ specs: { ...state.specs, [key]: value } })),
+  setCashUpTo: (cashUpTo) => set({ cashUpTo }),
+  setAcceptsSwaps: (acceptsSwaps) => set({ acceptsSwaps }),
   addPhoto: () =>
     set((state) => ({ photoCount: Math.min(8, state.photoCount + 1) })),
   removePhoto: () =>
@@ -108,14 +132,14 @@ export const usePostDraftStore = create<PostDraftState>((set) => ({
 }));
 
 export const CASH_DIRECTION_LABELS: Record<CashDirection, string> = {
-  'i-add': 'I add cash',
-  'they-add': 'They add cash',
+  'i-add': 'I pay',
+  'they-add': 'They pay',
   straight: 'Straight swap',
 };
 
 /** The amount field's label changes with direction, so nobody has to infer it. */
 export const CASH_AMOUNT_LABELS: Record<CashDirection, string> = {
-  'i-add': 'How much will you add?',
-  'they-add': 'How much should they add?',
+  'i-add': 'How much will you pay?',
+  'they-add': 'How much should they pay?',
   straight: 'No cash either way',
 };

@@ -54,7 +54,7 @@ const SAMPLE_OFFERS: Offer[] = [
     item: { name: 'ThinkPad T470s, Core i7', condition: 'fair' },
     cashAmount: 180,
     cashFrom: 'owner',
-    message: 'i7 with 16GB. Battery is tired, hence the lower top-up.',
+    message: 'i7 with 16GB. Battery is tired, hence the lower top up.',
     state: 'pending',
     sentLabel: 'Yesterday',
     counted: true,

@@ -189,7 +189,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
                 {listing.acceptsSwaps ? (
                   <OfferButton
                     listing={listing}
-                    label="Offer a trade-in"
+                    label="Offer a trade in"
                     size="lg"
                     block
                   />

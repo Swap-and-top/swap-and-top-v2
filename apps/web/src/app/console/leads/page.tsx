@@ -199,7 +199,7 @@ export default function ConsoleLeadsPage() {
                   </div>
                   {active.coversAmount ? (
                     <span className={styles.matchCovers}>
-                      Their trade-in covers ${active.coversAmount}
+                      Their trade in covers ${active.coversAmount}
                     </span>
                   ) : null}
                 </div>

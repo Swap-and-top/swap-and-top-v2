@@ -139,6 +139,8 @@
   padding: 0 var(--snt-space-9);
   border: 1px solid transparent;
   border-radius: var(--snt-radius-pill);
+  /* White, as the search bar is: they sit on the page's pale blue. */
+  background: var(--snt-bg-surface);
 }
 
 /** Their labels: sentence case, bold, in the bold blue, set in to line up

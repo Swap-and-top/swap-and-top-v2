@@ -268,7 +268,7 @@
 
 .input::placeholder {
   /* Paler than anything typed, so an empty box looks empty. */
-  color: var(--snt-control-idle);
+  color: var(--snt-placeholder);
   opacity: 1;
 }
 
@@ -306,6 +306,12 @@
   transform: translateY(-50%);
   color: var(--snt-control-idle-ink);
   pointer-events: none;
+}
+
+/* With nothing typed, the dollar sign fades with the prompt, so the box
+   does not look filled in. */
+.money:has(.input:placeholder-shown) > span {
+  color: var(--snt-placeholder);
 }
 
 .money .input {

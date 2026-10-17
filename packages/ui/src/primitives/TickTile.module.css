@@ -1,0 +1,67 @@
+/** A yes or no, as a tile: a drawn tick box, the question, and a quiet line
+    of what it means. Chosen, it takes a thin dark blue ring. */
+
+.tick {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-5) var(--snt-space-6);
+  border: 1px solid transparent;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  cursor: pointer;
+  transition: border-color var(--snt-transition);
+}
+
+.tick.tickOn {
+  border-color: var(--snt-control-active);
+}
+
+/* The real box is hidden; the drawn one stands for it. */
+.tick input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.tickBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: var(--snt-radius-sm, 5px);
+  background: var(--snt-bg-card);
+  color: var(--snt-ink-on-dark);
+}
+
+.tickOn .tickBox {
+  background: var(--snt-control-active);
+}
+
+.tick:has(input:focus-visible) .tickBox {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}
+
+.tickText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+}
+
+.tickLabel {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-control-active);
+}
+
+.tickHint {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+

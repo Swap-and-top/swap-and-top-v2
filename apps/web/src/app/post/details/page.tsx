@@ -3,42 +3,49 @@
 /**
  * Post, step two — details.
  *
+ * Set as the offer form is: one white card, sentence-case bold blue labels
+ * set in over pale rounded boxes, choices as tiles, and the button that
+ * moves on at the foot of the form rather than pinned to the screen.
+ *
  * Fields follow the chosen outcome and the chosen category. Two things matter
  * here more than they look:
  *
  *  - **Specifications are structured**, because free text cannot be filtered
  *    and specification search is the platform's main advantage.
- *  - **The cash direction control shows all three states**, and the amount
- *    field's label changes with it, so nobody has to infer the direction from
+ *  - **The cash direction shows all three choices**, and the amount box's
+ *    label changes with it, so nobody has to infer the direction from
  *    context. A dropdown would hide the choice that explains the whole flow.
  *
  * Wireframe artboard: `PostDetails`.
  */
 
-import Link from 'next/link';
+import { useId } from 'react';
 import {
   CASH_AMOUNT_LABELS,
   CASH_DIRECTION_LABELS,
   CATEGORY_LABELS,
+  CONDITION_LABELS,
   usePostDraftStore,
   type CashDirection,
   type Category,
+  type Condition,
 } from '@snt/core';
 import {
+  AppHeader,
   ButtonLink,
   Chip,
   ChipRow,
-  Eyebrow,
+  Dropdown,
   Field,
-  FieldRow,
   ImagePlaceholder,
-  ScreenBody,
+  POST_STEPS,
   Screen,
-  ScreenFooter,
-  Segmented,
-  StepHeader,
+  ScreenBody,
+  specFieldsFor,
+  StepBar,
+  TickTile,
 } from '@snt/ui';
-import { CloseIcon, PlusIcon, SwapIcon } from '@snt/ui/icons';
+import { CloseIcon, PlusIcon } from '@snt/ui/icons';
 import styles from './page.module.css';
 
 const CATEGORIES: Category[] = [
@@ -47,87 +54,105 @@ const CATEGORIES: Category[] = [
   'desktops',
   'consoles',
   'parts',
+  'accessories',
+  'other',
 ];
 
-const CASH_OPTIONS: { value: CashDirection; label: string }[] = (
-  ['i-add', 'they-add', 'straight'] as CashDirection[]
-).map((value) => ({ value, label: CASH_DIRECTION_LABELS[value] }));
+const CASH_DIRECTIONS: CashDirection[] = ['i-add', 'they-add', 'straight'];
+
+/** Each kind of post in its own colour, as on the first step. */
+const KINDS = {
+  sale: { label: 'Sell something', tone: 'sale' },
+  swap: { label: 'Swap & top', tone: 'swap' },
+  request: { label: 'Looking for something', tone: 'wanted' },
+} as const;
 
 export default function PostDetailsPage() {
   const draft = usePostDraftStore();
   const kind = draft.kind ?? 'swap';
-
-  const kindLabel =
-    kind === 'swap'
-      ? 'Swap & top'
-      : kind === 'sale'
-        ? 'Sell something'
-        : 'Looking for something';
+  const { label: kindLabel, tone } = KINDS[kind];
+  // No category yet: no details to ask for until one is picked.
+  const fields = draft.category ? specFieldsFor(draft.category) : [];
+  const conditionLabel = useId();
 
   return (
     <Screen surface>
-      <StepHeader step={2} backHref="/post" />
+      {/* The feed's own header: the site does not change face on the way
+          into posting. The steps sit in the body, under it. */}
+      <AppHeader />
 
       <ScreenBody>
-        <div className={styles.kindStrip}>
-          <SwapIcon size={15} weight={2.1} />
-          <span className={styles.kindLabel}>{kindLabel}</span>
-          <Link href="/post" className={styles.change}>
-            Change
-          </Link>
-        </div>
+        <StepBar current={2} steps={POST_STEPS} />
 
-        <div className={styles.group}>
-          <Eyebrow className={styles.groupLabel}>Category</Eyebrow>
-          <ChipRow label="Choose a category">
-            {CATEGORIES.map((value) => (
-              <Chip
-                key={value}
-                selected={draft.category === value}
-                onClick={() => draft.setCategory(value)}
-              >
-                {CATEGORY_LABELS[value]}
-              </Chip>
-            ))}
-          </ChipRow>
-        </div>
+        <div className={styles.form}>
+          {/* What is being posted, in its own colour. To choose again,
+              the browser's back, or the Choose step above. */}
+          <h1 className={[styles.kind, styles[tone]].join(' ')}>{kindLabel}</h1>
 
-        {/* Requests need no photographs — the poster does not own the thing. */}
-        {kind !== 'request' ? (
           <div className={styles.group}>
-            <Eyebrow>
-              Photos of what you have: {draft.photoCount} of 8
-            </Eyebrow>
-            <div className={styles.photos}>
-              {Array.from({ length: draft.photoCount }).map((_, index) => (
-                <div key={index} className={styles.photoThumb}>
-                  <ImagePlaceholder height={68} width={68} small />
-                  <button
-                    type="button"
-                    aria-label={`Remove photo ${index + 1}`}
-                    className={styles.removePhoto}
-                    onClick={draft.removePhoto}
-                  >
-                    <CloseIcon size={13} weight={2.2} />
-                  </button>
-                </div>
+            <span className={[styles.label, styles.flush].join(' ')}>
+              Category
+            </span>
+            {/* Scrolls sideways within the card, cut at its edges. */}
+            <div className={styles.chips}>
+            <ChipRow fill label="Choose a category">
+              {CATEGORIES.map((value) => (
+                <Chip
+                  key={value}
+                  selected={draft.category === value}
+                  onClick={() => draft.setCategory(value)}
+                >
+                  {CATEGORY_LABELS[value]}
+                </Chip>
               ))}
-              <button
-                type="button"
-                aria-label="Add photo"
-                className={styles.addPhoto}
-                onClick={draft.addPhoto}
-                disabled={draft.photoCount >= 8}
-              >
-                <PlusIcon size={21} />
-              </button>
+            </ChipRow>
             </div>
           </div>
-        ) : null}
 
-        <div className={styles.fields}>
+          {/* Requests need no photographs: the poster does not own the
+              thing. */}
+          {kind !== 'request' ? (
+            <div className={styles.group}>
+              <span className={[styles.label, styles.flush].join(' ')}>
+                Photos of what you have{' '}
+                <span className={styles.optional}>
+                  ({draft.photoCount} of 8)
+                </span>
+              </span>
+              <div className={styles.photos}>
+                {Array.from({ length: draft.photoCount }).map((_, index) => (
+                  <div key={index} className={styles.photoThumb}>
+                    <ImagePlaceholder height={68} width={68} small />
+                    <button
+                      type="button"
+                      aria-label={`Remove photo ${index + 1}`}
+                      className={styles.removePhoto}
+                      onClick={draft.removePhoto}
+                    >
+                      <CloseIcon size={12} weight={2.4} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  aria-label="Add photo"
+                  className={styles.addPhoto}
+                  onClick={draft.addPhoto}
+                  disabled={draft.photoCount >= 8}
+                >
+                  <PlusIcon size={21} />
+                </button>
+              </div>
+            </div>
+          ) : null}
+
           <Field
-            label={kind === 'request' ? 'What you are looking for' : 'What you have'}
+            label={
+              kind === 'request' ? 'What you are looking for' : 'What you have'
+            }
+            placeholder={
+              kind === 'request' ? 'e.g. Any Core i7, 16GB' : 'e.g. MacBook Air 2017'
+            }
             value={kind === 'request' ? draft.wantTitle : draft.haveTitle}
             onChange={(event) =>
               draft.setField(
@@ -137,50 +162,75 @@ export default function PostDetailsPage() {
             }
           />
 
+          {/* The details this category asks for, two to a row, with the
+              condition among them. Other has none: it is described in
+              words. A wanted post is described by its title alone. */}
           {kind !== 'request' ? (
-            <>
-              <FieldRow>
+            <div className={styles.specs}>
+              {fields.map((field) => (
                 <Field
-                  label="Processor"
-                  size="sm"
-                  value={draft.processor}
+                  key={field.key}
+                  label={field.label}
+                  placeholder={`e.g. ${field.example}`}
+                  value={draft.specs[field.key] ?? ''}
                   onChange={(event) =>
-                    draft.setField('processor', event.target.value)
+                    draft.setSpec(field.key, event.target.value)
                   }
                 />
-                <Field
-                  label="RAM"
-                  size="sm"
-                  value={draft.ram}
-                  onChange={(event) => draft.setField('ram', event.target.value)}
+              ))}
+              {/* The same four conditions as everywhere, in the same
+                  dropdown as the offer form. */}
+              <div className={styles.field}>
+                <span id={conditionLabel} className={styles.label}>
+                  Condition
+                </span>
+                <Dropdown<Condition>
+                  labelledBy={conditionLabel}
+                  value={
+                    draft.condition in CONDITION_LABELS
+                      ? (draft.condition as Condition)
+                      : undefined
+                  }
+                  onChange={(value) => draft.setField('condition', value)}
+                  placeholder="e.g. Used good"
+                  options={(Object.keys(CONDITION_LABELS) as Condition[]).map(
+                    (value) => ({ value, label: CONDITION_LABELS[value] }),
+                  )}
                 />
-              </FieldRow>
-
-              <FieldRow>
+              </div>
+              {/* A sale's price sits beside the condition, a box like the
+                  rest. */}
+              {kind === 'sale' ? (
                 <Field
-                  label="Storage"
-                  size="sm"
-                  value={draft.storage}
+                  label="Price"
+                  strong
+                  inputMode="numeric"
+                  placeholder="e.g. $250"
+                  value={draft.price}
                   onChange={(event) =>
-                    draft.setField('storage', event.target.value)
+                    draft.setField('price', event.target.value)
                   }
                 />
+              ) : null}
+              {draft.category === 'other' ? (
                 <Field
-                  label="Condition"
-                  size="sm"
-                  value={draft.condition}
+                  className={styles.wide}
+                  label="Details"
+                  placeholder="e.g. Canon EOS 200D, with its lens and charger"
+                  value={draft.specs.details ?? ''}
                   onChange={(event) =>
-                    draft.setField('condition', event.target.value)
+                    draft.setSpec('details', event.target.value)
                   }
                 />
-              </FieldRow>
-            </>
+              ) : null}
+            </div>
           ) : null}
 
           {kind === 'swap' ? (
             <Field
               label="What you want"
-              hint="Loose is fine. “Any i7, 16GB, SSD” matches more than one exact model."
+              hint="Loose is fine: it matches more than one exact model."
+              placeholder="e.g. Any i7, 16GB, SSD"
               value={draft.wantTitle}
               onChange={(event) =>
                 draft.setField('wantTitle', event.target.value)
@@ -188,15 +238,68 @@ export default function PostDetailsPage() {
             />
           ) : null}
 
+          {kind === 'swap' ? (
+            <fieldset className={styles.group}>
+              <legend className={[styles.label, styles.flush].join(' ')}>
+                Payment
+              </legend>
+              {/* All three ways, side by side as tiles, so the choice that
+                  explains the whole flow is never hidden. */}
+              <div className={styles.tiles}>
+                {CASH_DIRECTIONS.map((direction) => (
+                  <label key={direction} className={styles.tile}>
+                    <input
+                      type="radio"
+                      name="cash-direction"
+                      checked={draft.cashDirection === direction}
+                      onChange={() => draft.setCashDirection(direction)}
+                    />
+                    <span>{CASH_DIRECTION_LABELS[direction]}</span>
+                  </label>
+                ))}
+              </div>
+
+              {draft.cashDirection && draft.cashDirection !== 'straight' ? (
+                // The amount and, when they pay, "This is my maximum", side
+                // by side; one above the other on a narrow phone.
+                <div className={styles.payment}>
+                  <Field
+                    label={CASH_AMOUNT_LABELS[draft.cashDirection]}
+                    strong
+                    inputMode="numeric"
+                    placeholder="e.g. $50"
+                    value={draft.cashAmount}
+                    onChange={(event) =>
+                      draft.setField('cashAmount', event.target.value)
+                    }
+                  />
+                  {/* When they pay, it can be a ceiling: "+ up to $600", for
+                      someone who knows what they will spend. */}
+                  {draft.cashDirection === 'i-add' ? (
+                    <TickTile
+                      checked={draft.cashUpTo}
+                      onChange={draft.setCashUpTo}
+                      label="This is my maximum"
+                      hint="Shown as “up to”."
+                    />
+                  ) : null}
+                </div>
+              ) : null}
+            </fieldset>
+          ) : null}
+
           {kind === 'sale' ? (
-            <Field
-              label="Price"
-              strong
-              inputMode="numeric"
-              placeholder="$0"
-              value={draft.price}
-              onChange={(event) => draft.setField('price', event.target.value)}
-            />
+            <>
+              {/* A gentle way into swaps, at the moment it is useful: the
+                  listing says "Swaps accepted", and buyers can offer a
+                  trade in. */}
+              <TickTile
+                checked={draft.acceptsSwaps}
+                onChange={draft.setAcceptsSwaps}
+                label="Would you take a trade in?"
+                hint="Buyers can offer something they have, with cash on top."
+              />
+            </>
           ) : null}
 
           {kind === 'request' ? (
@@ -204,47 +307,18 @@ export default function PostDetailsPage() {
               label="Budget"
               strong
               inputMode="numeric"
-              placeholder="$0"
+              placeholder="e.g. $300"
               value={draft.budget}
               onChange={(event) => draft.setField('budget', event.target.value)}
             />
           ) : null}
+
+          {/* On to the review, under the last thing to fill in. */}
+          <ButtonLink href="/post/review" size="lg" block className={styles.next}>
+            Next: review
+          </ButtonLink>
         </div>
-
-        {kind === 'swap' ? (
-          <div className={styles.cash}>
-            <Eyebrow>The cash</Eyebrow>
-            <div className={styles.cashSegments}>
-              <Segmented
-                label="Which way does the cash go?"
-                options={CASH_OPTIONS}
-                value={draft.cashDirection}
-                onChange={draft.setCashDirection}
-              />
-            </div>
-
-            {draft.cashDirection !== 'straight' ? (
-              <div className={styles.cashAmount}>
-                <Field
-                  label={CASH_AMOUNT_LABELS[draft.cashDirection]}
-                  strong
-                  inputMode="numeric"
-                  value={draft.cashAmount}
-                  onChange={(event) =>
-                    draft.setField('cashAmount', event.target.value)
-                  }
-                />
-              </div>
-            ) : null}
-          </div>
-        ) : null}
       </ScreenBody>
-
-      <ScreenFooter>
-        <ButtonLink href="/post/review" size="lg" block>
-          Next: review
-        </ButtonLink>
-      </ScreenFooter>
     </Screen>
   );
 }

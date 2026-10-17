@@ -71,7 +71,7 @@ export function WantedCard({
             .join(' ')}
         >
           {/* Each word carries its mark: binoculars for a thing looked for,
-              the swap arrows for a trade-in offered with it. */}
+              the swap arrows for a trade in offered with it. */}
           <BinocularsIcon size={14} weight={2} filled />
           Wanted
           {tradeIn ? (

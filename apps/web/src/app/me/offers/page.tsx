@@ -45,7 +45,7 @@ export default function OffersPage() {
   const offers = useOfferStore((store) => store.offers);
 
   /** The user's own listings that take offers: swaps and requests, and
-      sales that take trade-ins. */
+      sales that take trade ins. */
   const live = useLiveListings();
   const mine = live.filter(
     (listing): listing is OfferableListing =>

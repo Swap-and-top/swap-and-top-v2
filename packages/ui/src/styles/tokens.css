@@ -79,6 +79,9 @@
   --snt-owned-ink: #2572a2;
   /* Green holds 4.5:1 both as text on white and under white text. */
   --snt-wanted-ink: #1b847c;
+  /** The swap itself, between the two: halfway from the blue of what you
+      have to the green of what you want. 4.8:1 as text on white. */
+  --snt-swap-ink: #257d8a;
   /** The solid tiles on a swap card: what they have, what they want. */
   --snt-owned-fill: #2572a2;
   --snt-wanted-fill: #1b847c;
@@ -118,6 +121,9 @@
    * Idle: outlines, labels and the rule under the tabs when not selected.
    */
   --snt-control-active: #2f7599;
+  /** The prompt in an empty text box: a faded blue, so an empty box plainly
+      holds nothing yet. The same in every text box in the app. */
+  --snt-placeholder: #a3bbcf;
   /*
    * The ring round the text box being typed in — the search bar and every
    * form field alike: the active blue, faded, so it marks without shouting.

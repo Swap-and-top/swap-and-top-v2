@@ -47,6 +47,8 @@ const CATEGORIES: (Category | 'all')[] = [
   'desktops',
   'consoles',
   'parts',
+  'accessories',
+  'other',
 ];
 
 /** Wanted. Its server half, page.tsx, reads the category from the address. */

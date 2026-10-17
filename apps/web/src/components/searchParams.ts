@@ -85,6 +85,7 @@ export const CATEGORY_OPTIONS: FilterOption<SearchCategory>[] = [
       'consoles',
       'parts',
       'accessories',
+      'other',
     ] as Category[]
   ).map((value) => ({ value, label: CATEGORY_LABELS[value] })),
 ];

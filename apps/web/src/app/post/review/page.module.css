@@ -1,7 +1,26 @@
-/** Post, step three — review. Wireframe artboard: `PostReview`. */
+/**
+ * Post, step three: review. Wireframe artboard: `PostReview`.
+ *
+ * The card as it will look in the feed, then one white card of how people
+ * can reach you, set as the offer form is, with the button at its foot.
+ */
 
-.previewLabel {
+/** A label: sentence case, bold, in the bold blue. */
+.label {
+  display: block;
   margin-bottom: var(--snt-space-4);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.label.flush {
+  margin-bottom: 0;
+}
+
+.optional {
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
 }
 
 /* --- the live card preview --- */
@@ -25,25 +44,62 @@
   margin-top: var(--snt-space-1);
 }
 
-/* --- contact block --- */
+/* --- the form -------------------------------------------------------------- */
 
-.contact {
-  margin-top: var(--snt-space-8);
-}
-
-.checks {
+.form {
   display: flex;
   flex-direction: column;
-  margin-top: var(--snt-space-4);
+  gap: var(--snt-space-8);
+  margin-top: var(--snt-space-8);
+  padding: var(--snt-space-9) var(--snt-card-pad) var(--snt-space-10);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
 }
 
-.disclosure {
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+}
+
+/** The ways, as pills: filled blue when on, a tap switches one. */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-3);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  height: 30px;
+  padding: 0 var(--snt-space-6);
+  border: 1px solid var(--snt-control-idle);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
+  color: var(--snt-control-idle-ink);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.pill.pillOn {
+  border-color: var(--snt-control-active);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}
+
+/* The last way on cannot be turned off: one way must stay. */
+.pill:disabled {
+  cursor: default;
+}
+
+/** A quiet line of what happens. */
+.small {
   font-size: var(--snt-text-xs);
-  color: var(--snt-ink-muted);
   line-height: var(--snt-leading-normal);
-  margin-top: var(--snt-space-5);
-}
-
-.lifecycle {
-  margin-top: var(--snt-space-7);
+  color: var(--snt-ink-muted);
 }

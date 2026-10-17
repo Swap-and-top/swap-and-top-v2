@@ -93,7 +93,7 @@ export function RevealAction({
     }
     if (signedInOnly) {
       requireSignIn(
-        'This seller shows their contact details to signed-in users only.',
+        'This seller shows their contact details to signed in users only.',
         go,
       );
       return;

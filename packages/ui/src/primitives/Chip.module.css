@@ -22,6 +22,9 @@
 .rowFill > .chip {
   flex-grow: 1;
   justify-content: center;
+  /* A little less at the sides than a lone chip, so the whole set, Other
+     included, fits the column on a wide screen without being cut. */
+  padding-inline: var(--snt-space-6);
 }
 
 /* While a mouse drags the row: a closed hand, and no text selected. */

@@ -81,8 +81,8 @@ export function ConsoleShell({
       // Trade-ins offered towards stock that takes swaps: offers to accept
       // or decline, as the people asking see them on the listing.
       href: '/console/trade-ins',
-      label: 'Trade-ins',
-      shortLabel: 'Trade-ins',
+      label: 'Trade ins',
+      shortLabel: 'Trade ins',
       icon: (active) => <SwapIcon size={20} weight={active ? 2.1 : 1.9} />,
       count: tradeInCount,
     },
@@ -132,7 +132,7 @@ export function ConsoleShell({
               >
                 {item.icon(active)}
                 <span className={styles.sidebarLabel}>{item.label}</span>
-                {(item.label === 'Leads' || item.label === 'Trade-ins') && item.count ? (
+                {(item.label === 'Leads' || item.label === 'Trade ins') && item.count ? (
                   <CountBadge count={item.count} />
                 ) : item.count ? (
                   <span className={styles.sidebarCount}>{item.count}</span>
@@ -189,7 +189,7 @@ export function ConsoleShell({
             >
               {item.icon(active)}
               <span>{item.shortLabel}</span>
-              {(item.label === 'Leads' || item.label === 'Trade-ins') && item.count ? (
+              {(item.label === 'Leads' || item.label === 'Trade ins') && item.count ? (
                 <span className={styles.navBadge}>
                   <CountBadge count={item.count} />
                 </span>

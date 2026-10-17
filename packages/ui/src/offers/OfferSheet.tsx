@@ -100,7 +100,7 @@ export function OfferSheet({
             .join(' ')}
         >
           {/* Marked as on its card in the feed: Wanted in green; a sale,
-              which a trade-in is offered towards, in the blue of For sale. */}
+              which a trade in is offered towards, in the blue of For sale. */}
           <span className={styles.askLabel}>
             {forSale ? (
               <TagIcon size={16} filled />
@@ -228,7 +228,7 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
           offering something, in the blue of what is yours. */}
       <h3 className={styles.formTitle}>
         <CashHandIcon size={17} />
-        {listing.type === 'sale' ? 'Offer a trade-in' : 'Make an offer'}
+        {listing.type === 'sale' ? 'Offer a trade in' : 'Make an offer'}
       </h3>
 
       <fieldset className={styles.group}>

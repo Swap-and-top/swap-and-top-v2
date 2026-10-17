@@ -37,39 +37,57 @@ export function SpecGrid({ rows }: { rows: SpecRow[] }) {
   );
 }
 
-/** Which specs matter, and in which order, per category. */
-const ORDER: Record<string, { key: keyof Item['specs']; label: string }[]> = {
+/** One detail a category asks for: its key, its label, and an example. */
+export interface SpecField {
+  key: keyof Item['specs'];
+  label: string;
+  /** A real example, shown faintly in the empty box on the post form. */
+  example: string;
+}
+
+/**
+ * Which specs matter, and in which order, per category: what a listing
+ * shows, what the post form asks for, and what search filters by. Other
+ * has none: it is described in words instead.
+ */
+const ORDER: Record<string, SpecField[]> = {
   laptops: [
-    { key: 'processor', label: 'Processor' },
-    { key: 'ram', label: 'RAM' },
-    { key: 'storage', label: 'Storage' },
-    { key: 'graphics', label: 'Graphics' },
-    { key: 'screen', label: 'Screen' },
-    { key: 'battery', label: 'Battery' },
+    { key: 'processor', label: 'Processor', example: 'Core i5-8250U' },
+    { key: 'ram', label: 'RAM', example: '16GB' },
+    { key: 'storage', label: 'Storage', example: '256GB SSD' },
+    { key: 'graphics', label: 'Graphics', example: 'Integrated' },
+    { key: 'screen', label: 'Screen', example: '14in 1080p' },
+    { key: 'battery', label: 'Battery', example: 'Holds 4h' },
   ],
   desktops: [
-    { key: 'processor', label: 'Processor' },
-    { key: 'ram', label: 'RAM' },
-    { key: 'storage', label: 'Storage' },
-    { key: 'graphics', label: 'Graphics' },
-    { key: 'formFactor', label: 'Form factor' },
+    { key: 'processor', label: 'Processor', example: 'Core i7-8700' },
+    { key: 'ram', label: 'RAM', example: '16GB' },
+    { key: 'storage', label: 'Storage', example: '512GB SSD' },
+    { key: 'graphics', label: 'Graphics', example: 'GTX 1660' },
+    { key: 'formFactor', label: 'Form factor', example: 'Tower' },
   ],
   phones: [
-    { key: 'storage', label: 'Storage' },
-    { key: 'ram', label: 'RAM' },
-    { key: 'battery', label: 'Battery' },
-    { key: 'colour', label: 'Colour' },
+    { key: 'storage', label: 'Storage', example: '128GB' },
+    { key: 'ram', label: 'RAM', example: '6GB' },
+    { key: 'battery', label: 'Battery', example: '89% health' },
+    { key: 'colour', label: 'Colour', example: 'Black' },
   ],
   consoles: [
-    { key: 'storage', label: 'Storage' },
-    { key: 'controllers', label: 'Controllers' },
+    { key: 'storage', label: 'Storage', example: '1TB' },
+    { key: 'controllers', label: 'Controllers', example: '2' },
   ],
   parts: [
-    { key: 'partType', label: 'Type' },
-    { key: 'capacity', label: 'Capacity' },
+    { key: 'partType', label: 'Type', example: 'Graphics card' },
+    { key: 'capacity', label: 'Capacity', example: '8GB' },
   ],
-  accessories: [{ key: 'colour', label: 'Colour' }],
+  accessories: [{ key: 'colour', label: 'Colour', example: 'White' }],
+  other: [],
 };
+
+/** The details a category asks for, in order. */
+export function specFieldsFor(category: Item['category']): SpecField[] {
+  return ORDER[category] ?? [];
+}
 
 export function specRowsFor(item: Item): SpecRow[] {
   const rows: SpecRow[] = [];
@@ -81,6 +99,11 @@ export function specRowsFor(item: Item): SpecRow[] {
 
   if (item.condition) {
     rows.push({ label: 'Condition', value: CONDITION_LABELS[item.condition] });
+  }
+
+  /** Something in Other is described in words, a row of its own. */
+  if (item.specs.details) {
+    rows.push({ label: 'Details', value: item.specs.details, wide: true });
   }
 
   /** Defects are surfaced, never buried. Hiding flaws produces failed meetings. */

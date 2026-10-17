@@ -110,7 +110,7 @@
 }
 
 .input::placeholder {
-  color: var(--snt-control-idle);
+  color: var(--snt-placeholder);
   opacity: 1;
 }
 

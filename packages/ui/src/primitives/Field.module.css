@@ -7,60 +7,53 @@
 
 .label {
   display: block;
-  /* Set in to line up with the writing in the box under it. */
-  padding-left: var(--snt-space-6);
+  /* Set in to line up with the writing in the box under it. Sentence case,
+     bold, in the bold blue: the labels of every form, as on the offer
+     form. */
+  padding-left: var(--snt-space-8);
   font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-label);
-  text-transform: uppercase;
-  color: var(--snt-ink-muted);
-  margin-bottom: var(--snt-space-4);
+  color: var(--snt-accent-bold);
+  margin-bottom: var(--snt-space-3);
 }
 
 .hint {
   display: block;
-  font-size: var(--snt-text-sm);
+  font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-normal);
-  letter-spacing: 0;
-  text-transform: none;
   color: var(--snt-ink-muted);
-  margin-bottom: var(--snt-space-3);
+  margin-top: var(--snt-space-1);
 }
 
+/*
+ * The app's text box: a pale rounded pill with no outline, what is typed in
+ * the dark control blue. The same as on the offer form.
+ */
 .input {
   width: 100%;
   height: var(--snt-touch);
-  padding: 0 var(--snt-space-6);
-  border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-md);
-  background: var(--snt-bg-surface);
-  color: var(--snt-ink);
-  font-size: var(--snt-text-lg);
-  transition:
-    border-color var(--snt-transition),
-    box-shadow var(--snt-transition);
+  padding: 0 var(--snt-space-8);
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-md);
+  outline: none;
+  transition: box-shadow var(--snt-transition);
 }
 
-/*
- * The prompt in an empty box is blue, like the search bar's; what is typed
- * over it is the ordinary grey. The same in every text box.
- */
+/* The prompt in an empty box is paler than anything typed, so an empty box
+   looks empty. */
 .input::placeholder {
-  color: var(--snt-control-idle-ink);
+  color: var(--snt-placeholder);
   opacity: 1;
 }
 
-.input:hover {
-  border-color: var(--snt-ink-muted);
-}
-
 /*
- * Active: the same faded blue ring as the search bar, in place of the box's
- * own outline, so every text box in the app is marked the same way. Not the
- * browser's focus outline as well, which would stand off round it.
+ * Active: the faded blue ring, as on the search bar, so every text box in
+ * the app is marked the same way. Not the browser's own outline as well.
  */
 .input:focus {
-  border-color: transparent;
   box-shadow: var(--snt-focus-ring);
   outline: none;
 }
@@ -68,14 +61,12 @@
 /** Smaller input, used inside two-column rows. */
 .inputSm {
   height: 40px;
-  font-size: var(--snt-text-md);
 }
 
-/** Large emphasised value, e.g. a swap top-up amount. */
+/* An amount (a price, a swap's cash) is typed at the same size as any
+   other box: every text box in the app is set the same. */
 .inputStrong {
-  font-family: var(--snt-font-display);
-  font-size: var(--snt-text-2xl);
-  font-weight: var(--snt-weight-bold);
+  font-variant-numeric: tabular-nums;
 }
 
 /** Search field — pill shaped. */
@@ -87,12 +78,11 @@
 :global([data-surface='brand']) .inputPill {
   height: 40px;
   padding: 0 var(--snt-space-9);
-  border-color: transparent;
+  background: var(--snt-bg-surface);
   font-size: var(--snt-text-base);
 }
 
 :global([data-surface='brand']) .inputPill:focus {
-  border-color: transparent;
   box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
 }
 

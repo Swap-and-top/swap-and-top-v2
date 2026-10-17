@@ -43,8 +43,9 @@
 }
 
 .placeholder {
-  /* Paler than a real choice, so nothing chosen looks like nothing chosen. */
-  color: var(--snt-control-idle);
+  /* Paler than a real choice, so nothing chosen looks like nothing chosen:
+     the same faded blue as an empty text box's prompt. */
+  color: var(--snt-placeholder);
 }
 
 /** Pointing down, set in from the end of the pill, in the blue. */

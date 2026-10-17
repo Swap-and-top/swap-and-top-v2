@@ -13,12 +13,13 @@
 import { useRouter } from 'next/navigation';
 import { usePostDraftStore, type PostKind } from '@snt/core';
 import {
+  AppHeader,
   Body,
   Note,
-  PageHeading,
   Screen,
   ScreenBody,
-  StepHeader,
+  POST_STEPS,
+  StepBar,
 } from '@snt/ui';
 import {
   ChevronRightIcon,
@@ -33,7 +34,9 @@ interface Option {
   kind: PostKind;
   title: string;
   description: string;
-  featured?: boolean;
+  /** Its colour: blue for what is for sale, green for what is wanted, the
+      swap in the teal between them. Its title, icon and arrow take it. */
+  tone: 'sale' | 'swap' | 'wanted';
   glyph: React.ReactNode;
 }
 
@@ -42,6 +45,7 @@ const OPTIONS: Option[] = [
     kind: 'sale',
     title: 'Sell something',
     description: 'Set a price. Buyers call or message you directly.',
+    tone: 'sale',
     glyph: <ShopIcon size={21} weight={1.8} />,
   },
   {
@@ -49,13 +53,14 @@ const OPTIONS: Option[] = [
     title: 'Swap & top',
     description:
       'Trade what you have towards what you want, adding or receiving cash.',
-    featured: true,
+    tone: 'swap',
     glyph: <SwapIcon size={21} weight={2} />,
   },
   {
     kind: 'request',
     title: 'Looking for something',
     description: 'Say what you want and your budget. Dealers come to you.',
+    tone: 'wanted',
     glyph: <SearchIcon size={21} weight={1.8} />,
   },
 ];
@@ -71,10 +76,13 @@ export default function PostTypePage() {
 
   return (
     <Screen surface>
-      <StepHeader step={1} backHref="/" closeInstead />
+      {/* The feed's own header: the site does not change face on the way
+          into posting. The steps sit in the body, under it. */}
+      <AppHeader />
 
       <ScreenBody>
-        <PageHeading>What do you want to do?</PageHeading>
+        <StepBar current={1} steps={POST_STEPS} />
+        <h1 className={styles.heading}>What do you want to do?</h1>
         <Body className={styles.intro}>
           Posting is free. Your listing goes live straight away.
         </Body>
@@ -87,29 +95,15 @@ export default function PostTypePage() {
               onClick={() => choose(option.kind)}
               className={[
                 styles.option,
-                option.featured ? styles.optionFeatured : '',
+                styles[option.tone],
               ]
                 .filter(Boolean)
                 .join(' ')}
             >
-              <span
-                className={[
-                  styles.glyph,
-                  option.featured ? styles.glyphFeatured : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                {option.glyph}
-              </span>
+              <span className={styles.glyph}>{option.glyph}</span>
 
               <span className={styles.optionBody}>
-                <span className={styles.optionHead}>
-                  <span className={styles.optionTitle}>{option.title}</span>
-                  {option.featured ? (
-                    <span className={styles.ourThing}>Our thing</span>
-                  ) : null}
-                </span>
+                <span className={styles.optionTitle}>{option.title}</span>
                 <span className={styles.optionDescription}>
                   {option.description}
                 </span>

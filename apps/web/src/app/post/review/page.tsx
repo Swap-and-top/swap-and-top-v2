@@ -23,41 +23,53 @@ import {
   type ContactChannel,
 } from '@snt/core';
 import {
+  AppHeader,
   Button,
-  CheckboxField,
-  Eyebrow,
   ImagePlaceholder,
-  Note,
   Panel,
+  POST_STEPS,
   Price,
   Screen,
   ScreenBody,
-  ScreenFooter,
-  StepHeader,
+  specFieldsFor,
+  StepBar,
   SwapTiles,
+  TickTile,
 } from '@snt/ui';
-import { InfoIcon } from '@snt/ui/icons';
+import {
+  MailIcon,
+  MessengerIcon,
+  PhoneIcon,
+  WhatsAppIcon,
+} from '@snt/ui/icons';
 import styles from './page.module.css';
 
-const CHANNELS: { value: ContactChannel; label: string }[] = [
-  { value: 'whatsapp', label: 'WhatsApp' },
-  { value: 'call', label: 'Phone call' },
-  { value: 'sms', label: 'SMS' },
+/** How people can reach you, as pills, as on the offer form. */
+const CHANNELS: { value: ContactChannel; label: string; Icon: typeof PhoneIcon }[] = [
+  { value: 'whatsapp', label: 'WhatsApp', Icon: WhatsAppIcon },
+  { value: 'call', label: 'Calls', Icon: PhoneIcon },
+  { value: 'email', label: 'Email', Icon: MailIcon },
+  { value: 'messenger', label: 'Messenger', Icon: MessengerIcon },
 ];
 
 export default function PostReviewPage() {
   const router = useRouter();
   const draft = usePostDraftStore();
   const kind = draft.kind ?? 'swap';
+  const chosen = CHANNELS.filter((channel) =>
+    draft.contactChannels.includes(channel.value),
+  );
 
   return (
-    <Screen>
-      <StepHeader step={3} backHref="/post/details" />
+    <Screen surface>
+      {/* The feed's own header: the site does not change face on the way
+          into posting. The steps sit in the body, under it. */}
+      <AppHeader />
 
       <ScreenBody>
-        <Eyebrow className={styles.previewLabel}>
-          How it will look in the feed
-        </Eyebrow>
+        <StepBar current={3} steps={POST_STEPS} />
+
+        <span className={styles.label}>How it will look in the feed</span>
 
         <Panel xl clip className={styles.card}>
           {kind === 'swap' ? (
@@ -65,29 +77,32 @@ export default function PostReviewPage() {
               <SwapTiles
                 has={{
                   name: draft.haveTitle || 'Your item',
-                  category: draft.category,
-                  specs: {
-                    processor: draft.processor,
-                    ram: draft.ram,
-                    storage: draft.storage,
-                  },
+                  category: draft.category ?? 'other',
+                  // Only the details its category asks for.
+                  specs: Object.fromEntries(
+                    (draft.category ? specFieldsFor(draft.category) : []).map((field) => [
+                      field.key,
+                      draft.specs[field.key] ?? '',
+                    ]),
+                  ),
                 }}
                 wants={{
                   name: draft.wantTitle || 'What you want',
-                  category: draft.category,
+                  category: draft.category ?? 'other',
                   specs: {},
                 }}
-                cashDirection={draft.cashDirection}
+                cashDirection={draft.cashDirection ?? undefined}
                 cashAmount={
-                  draft.cashDirection !== 'straight'
+                  draft.cashDirection && draft.cashDirection !== 'straight'
                     ? Number(draft.cashAmount.replace(/[^0-9]/g, '')) || undefined
                     : undefined
                 }
+                cashUpTo={draft.cashDirection === 'i-add' && draft.cashUpTo}
               />
             </div>
           ) : (
             <>
-              <ImagePlaceholder height={142} flush />
+              {kind === 'sale' ? <ImagePlaceholder height={142} flush /> : null}
               <div className={styles.saleBody}>
                 <Price
                   amount={
@@ -109,63 +124,78 @@ export default function PostReviewPage() {
           )}
         </Panel>
 
-        <Panel padded className={styles.contact}>
-          <Eyebrow>How people can reach you</Eyebrow>
-
-          <div className={styles.checks}>
-            {CHANNELS.map((channel) => (
-              <CheckboxField
-                key={channel.value}
-                label={channel.label}
-                checked={draft.contactChannels.includes(channel.value)}
-                onChange={() => draft.toggleChannel(channel.value)}
-              />
-            ))}
-
-            {/* Consent, not a surprise. Keeps the lead product honest. */}
-            <CheckboxField
-              divided
-              label="Let dealers send me offers"
-              checked={draft.allowDealerOffers}
-              onChange={draft.setAllowDealerOffers}
-            />
-
-            {/* The seller's own choice; off unless they ask for it. */}
-            <CheckboxField
-              label="Only show my number to signed-in users"
-              checked={draft.contactSignedInOnly}
-              onChange={draft.setContactSignedInOnly}
-            />
+        {/* The rest is one white card, set as the offer form is, with the
+            button at its foot. */}
+        <div className={styles.form}>
+          <div className={styles.group}>
+            <span className={[styles.label, styles.flush].join(' ')}>
+              They can reach you on{' '}
+              <span className={styles.optional}>
+                ({chosen.length} selected)
+              </span>
+            </span>
+            <div className={styles.pills}>
+              {CHANNELS.map(({ value, label, Icon }) => {
+                const on = draft.contactChannels.includes(value);
+                // At least one way stays on: a listing must lead somewhere.
+                const last = on && chosen.length === 1;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={on}
+                    disabled={last}
+                    className={[styles.pill, on ? styles.pillOn : '']
+                      .filter(Boolean)
+                      .join(' ')}
+                    onClick={() => draft.toggleChannel(value)}
+                  >
+                    <Icon size={16} weight={24 / 16} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className={styles.small}>
+              Your details stay hidden until someone taps Show contacts. You
+              will see how many people did.
+            </p>
           </div>
 
-          <p className={styles.disclosure}>
-            Your number is hidden until someone taps Show number. You will see
-            how many people did.
+          {/* Consent, not a surprise. Keeps the lead product honest. */}
+          <TickTile
+            checked={draft.allowDealerOffers}
+            onChange={draft.setAllowDealerOffers}
+            label="Let dealers send me offers"
+            hint="Shops that stock what you want can make you an offer."
+          />
+
+          {/* The seller's own choice; off unless they ask for it. */}
+          <TickTile
+            checked={draft.contactSignedInOnly}
+            onChange={draft.setContactSignedInOnly}
+            label="Only show my details to signed in users"
+            hint="Guests are asked to sign in first."
+          />
+
+          <p className={styles.small}>
+            Goes live straight away. Listings that break the rules are taken
+            down when reported. Expires in 30 days.
           </p>
-        </Panel>
 
-        <Note
-          icon={<InfoIcon size={17} />}
-          tone="subtle"
-          className={styles.lifecycle}
-        >
-          Goes live immediately. Listings that break the rules are taken down
-          when reported. Expires in 30 days.
-        </Note>
+          {/* Post it, under the last thing to choose. */}
+          <Button
+            size="lg"
+            block
+            onClick={() => {
+              draft.reset();
+              router.push('/');
+            }}
+          >
+            Post listing
+          </Button>
+        </div>
       </ScreenBody>
-
-      <ScreenFooter>
-        <Button
-          size="lg"
-          block
-          onClick={() => {
-            draft.reset();
-            router.push('/');
-          }}
-        >
-          Post listing
-        </Button>
-      </ScreenFooter>
     </Screen>
   );
 }

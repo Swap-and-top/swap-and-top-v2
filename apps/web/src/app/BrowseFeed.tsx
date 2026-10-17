@@ -52,6 +52,7 @@ const CATEGORIES: (Category | 'all')[] = [
   'consoles',
   'parts',
   'accessories',
+  'other',
 ];
 
 const TYPES: TabItem<TypeFilter>[] = [

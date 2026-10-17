@@ -1,42 +1,131 @@
-/** Post, step two — details. Wireframe artboard: `PostDetails`. */
+/**
+ * Post, step two: details. Wireframe artboard: `PostDetails`.
+ *
+ * Set as the offer form is (see Offers.module.css): one white card, the
+ * labels bold blue and set in over pale rounded boxes, choices as tiles.
+ */
 
-.kindStrip {
+/** The form: one white card, its parts spaced evenly down it. */
+.form {
   display: flex;
-  align-items: center;
-  gap: var(--snt-space-3);
-  padding: var(--snt-space-4) var(--snt-space-6);
-  border-radius: var(--snt-radius-md);
-  background: var(--snt-accent-tint);
-  color: var(--snt-accent-bold);
-  font-size: var(--snt-text-base);
-  font-weight: var(--snt-weight-semibold);
+  flex-direction: column;
+  gap: var(--snt-space-8);
+  padding: var(--snt-space-9) var(--snt-card-pad) var(--snt-space-10);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
 }
 
-.kindLabel {
-  flex-grow: 1;
+/* --- what is being posted ------------------------------------------------- */
+
+/* In its own colour, as on the first step: blue, teal or green. */
+.sale {
+  --kind-ink: var(--snt-accent-bold);
 }
 
-.change {
-  font-size: var(--snt-text-sm);
-  font-weight: var(--snt-weight-semibold);
+.swap {
+  --kind-ink: var(--snt-swap-ink);
 }
+
+.wanted {
+  --kind-ink: var(--snt-wanted-ink);
+}
+
+.kind {
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--kind-ink);
+}
+
+/* The details a category asks for: two to a row; prose a row of its own. */
+.specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-8) var(--snt-space-5);
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+/* --- labels, as on the offer form ----------------------------------------- */
 
 .group {
-  margin-top: var(--snt-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
-.groupLabel {
-  margin-bottom: var(--snt-space-4);
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-/* --- photos --- */
+/** A label: sentence case, bold, in the bold blue, set in over its box. */
+.label {
+  padding-left: var(--snt-space-8);
+  margin-bottom: var(--snt-space-3);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* Over chips, photos or tiles rather than a text box: at the edge. */
+.label.flush {
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.optional {
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
+/* The category chips: the row runs to the card's edges and is cut there,
+   so it scrolls within the card, its first chip in line with the labels. */
+.chips {
+  margin: 0 calc(var(--snt-card-pad) * -1);
+  padding: 0 var(--snt-card-pad);
+  overflow: hidden;
+}
+
+/* Payment: the amount and "This is my maximum", half and half, the tick
+   level with the box; one above the other on a narrow phone. */
+.payment {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: var(--snt-space-5);
+}
+
+@media (max-width: 420px) {
+  .payment {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --- photos -------------------------------------------------------------- */
 
 .photos {
   display: flex;
-  gap: var(--snt-space-4);
-  margin-top: var(--snt-space-4);
+  flex-wrap: wrap;
+  gap: var(--snt-space-5);
 }
 
+.photoThumb {
+  position: relative;
+}
+
+.photoThumb > :first-child {
+  border-radius: var(--snt-radius-md);
+  overflow: hidden;
+}
+
+/** Add a photo: a pale rounded square with a blue plus. */
 .addPhoto {
   display: flex;
   align-items: center;
@@ -44,27 +133,24 @@
   width: 68px;
   height: 68px;
   flex-shrink: 0;
-  border: 1px dashed var(--snt-accent);
   border-radius: var(--snt-radius-md);
-  background: var(--snt-bg-surface);
-  color: var(--snt-accent);
-  transition: background var(--snt-transition);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  transition: box-shadow var(--snt-transition);
 }
 
-.addPhoto:hover {
-  background: var(--snt-accent-tint);
+@media (hover: hover) {
+  .addPhoto:hover:not(:disabled) {
+    box-shadow: var(--snt-focus-ring);
+  }
 }
 
 .addPhoto:disabled {
-  border-color: var(--snt-line);
-  color: var(--snt-ink-muted);
+  color: var(--snt-control-idle);
   cursor: not-allowed;
 }
 
-.photoThumb {
-  position: relative;
-}
-
+/** Remove a photo: a small white circle with a blue cross, on its corner. */
 .removePhoto {
   position: absolute;
   top: -6px;
@@ -75,31 +161,79 @@
   width: 22px;
   height: 22px;
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-ink);
-  color: var(--snt-ink-on-dark);
+  background: var(--snt-bg-card);
+  color: var(--snt-control-active);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
 }
 
-/* --- the cash block --- */
+/* --- the cash: three tiles, as the offer form's choices ------------------- */
 
-.cash {
-  margin-top: var(--snt-space-8);
-  padding: var(--snt-space-7);
-  border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-lg);
-  background: var(--snt-bg-surface);
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--snt-space-4);
 }
 
-.cashSegments {
-  margin-top: var(--snt-space-5);
+/* On a narrow phone, one above the other. */
+@media (max-width: 494px) {
+  .tiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
-.cashAmount {
-  margin-top: var(--snt-space-7);
-}
-
-.fields {
+/** A choice: not chosen, pale blue; chosen, the dark blue with a thin ring. */
+.tile {
   display: flex;
-  flex-direction: column;
-  gap: var(--snt-space-6);
-  margin-top: var(--snt-space-6);
+  align-items: center;
+  gap: var(--snt-space-4);
+  min-height: var(--snt-touch);
+  padding: var(--snt-space-4) var(--snt-space-5);
+  border: 1px solid transparent;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-idle);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+  line-height: var(--snt-leading-tight);
+  cursor: pointer;
+  transition: border-color var(--snt-transition);
+}
+
+.tile:has(input:checked) {
+  border-color: var(--snt-control-active);
+  color: var(--snt-control-active);
+}
+
+/* The radio, drawn: a white circle; chosen, a thin ring round a dot. */
+.tile input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+  cursor: pointer;
+}
+
+.tile input:checked {
+  border: 1px solid var(--snt-control-active);
+  background: radial-gradient(
+    circle,
+    var(--snt-control-active) 0 4px,
+    var(--snt-bg-card) 4.5px
+  );
+}
+
+.tile input:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}
+
+/* --- on to the review ---------------------------------------------------- */
+
+.next {
+  margin-top: var(--snt-space-2);
 }

@@ -27,23 +27,37 @@
     background var(--snt-transition);
 }
 
-.option:hover {
-  background: var(--snt-bg-subtle);
-  color: var(--snt-ink);
+/* Hovered: the faintest wash of the choice's own colour over its white,
+   barely there, so the card keeps its look. Only with a mouse, so it does
+   not stay on after a tap on a phone. */
+@media (hover: hover) {
+  .option:hover {
+    background: color-mix(in srgb, var(--option-ink) 4%, var(--snt-bg-card));
+  }
 }
 
-/**
- * The swap option is emphasised: it is the platform's distinctive feature and
- * the one most likely to be new to whoever is reading it.
+/** "What do you want to do?": in the app's blue. */
+.heading {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/*
+ * Each choice in its own colour, taken by its title, icon and arrow: blue
+ * for selling, green for looking for something, and the swap in the teal
+ * between them.
  */
-.optionFeatured {
-  border-color: var(--snt-accent);
-  background: var(--snt-accent-tint);
+.sale {
+  --option-ink: var(--snt-accent-bold);
 }
 
-.optionFeatured:hover {
-  border-color: var(--snt-accent);
-  background: var(--snt-bg-highlight);
+.wanted {
+  --option-ink: var(--snt-wanted-ink);
+}
+
+.swap {
+  --option-ink: var(--snt-swap-ink);
 }
 
 .glyph {
@@ -54,13 +68,8 @@
   height: 42px;
   flex-shrink: 0;
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-surface);
-  color: var(--snt-ink);
-}
-
-.glyphFeatured {
-  background: var(--snt-brand-gradient);
-  color: var(--snt-ink-on-dark);
+  background: var(--snt-bg-inset);
+  color: var(--option-ink);
 }
 
 .optionBody {
@@ -68,33 +77,15 @@
   min-width: 0;
 }
 
-.optionHead {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-4);
-  flex-wrap: wrap;
-}
-
 .optionTitle {
+  display: block;
   font-size: var(--snt-text-xl);
   font-weight: var(--snt-weight-bold);
-}
-
-.ourThing {
-  display: inline-flex;
-  align-items: center;
-  height: 18px;
-  padding: 0 var(--snt-space-4);
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-brand-yellow);
-  color: var(--snt-wanted-ink);
-  font-size: var(--snt-text-2xs);
-  font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-label);
-  text-transform: uppercase;
+  color: var(--option-ink);
 }
 
 .optionDescription {
+  display: block;
   font-size: var(--snt-text-base);
   color: var(--snt-ink-muted);
   line-height: var(--snt-leading-snug);
@@ -104,7 +95,7 @@
 .chevron {
   flex-shrink: 0;
   margin-top: var(--snt-space-6);
-  color: var(--snt-ink-muted);
+  color: var(--option-ink);
   display: flex;
 }
 

@@ -56,7 +56,7 @@ Three options, each with a one-line explanation of what happens next.
 | **Swap & top** | Trade what you have towards what you want, adding or receiving cash. | A swap listing |
 | **Looking for something** | Say what you want and your budget. Dealers come to you. | A request |
 
-**Swap & top is visually emphasised** — accent border, tinted background, a small "our thing" marker. It is the platform's distinctive feature and the option most likely to be new to the user.
+**The three choices are shown as equals**, each in its own colour: Sell something in blue, Looking for something in green, and Swap & top in the teal between them. An earlier design emphasised Swap & top (an accent border, a tinted background, an "our thing" marker), but people arrive here already knowing what they want to do, and steering a seller or a buyer towards a swap only slows them down. The swap earns its attention where it is relevant instead: in the feed, on a sale marked Swaps accepted, and in trade-in offers.
 
 The screen also states plainly that **posting is free** and the listing **goes live straight away**. Both reduce hesitation.
 

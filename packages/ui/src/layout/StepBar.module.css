@@ -1,0 +1,103 @@
+/** The steps of a flow: numbered circles joined by lines, at the top. */
+.bar {
+  margin-bottom: var(--snt-space-10);
+}
+
+.steps {
+  display: flex;
+  align-items: flex-start;
+}
+
+.step {
+  flex-shrink: 0;
+}
+
+/** A step: its circle, its name under it. */
+.stepLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-2);
+  width: 64px;
+  color: inherit;
+}
+
+.stepLink:hover {
+  color: inherit;
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--snt-radius-pill);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.label {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  white-space: nowrap;
+}
+
+/* Done: filled blue, ticked; a way back. */
+.done .circle {
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}
+
+.done .label {
+  color: var(--snt-control-active);
+}
+
+.done .stepLink:hover .circle {
+  filter: brightness(0.92);
+}
+
+/* Here: filled blue with its number, and a soft ring so it stands out. */
+.here .circle {
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  box-shadow: 0 0 0 4px var(--snt-accent-tint);
+}
+
+.here .label {
+  color: var(--snt-accent-bold);
+}
+
+/* To come: a plain white circle, its number and name in a faded grey that
+   still reads, so it is plain they are not reached yet. */
+.ahead {
+  --step-faded: #8f8f8f;
+}
+
+.ahead .circle {
+  background: var(--snt-bg-surface);
+  color: var(--step-faded);
+}
+
+.ahead .label {
+  color: var(--step-faded);
+}
+
+/** The line between two steps, level with the circles' middles; blue once
+    reached, pale before. */
+.line {
+  flex: 1 1 auto;
+  height: 2px;
+  margin: 13px calc(var(--snt-space-6) * -1) 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-idle);
+  opacity: 0.45;
+}
+
+.line.lineDone {
+  background: var(--snt-control-active);
+  opacity: 1;
+}
