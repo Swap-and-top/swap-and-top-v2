@@ -14,13 +14,13 @@ import {
   offersOn,
   useOfferStore,
   useViewerId,
-  type DemandListing,
+  type OfferableListing,
 } from '@snt/core';
 import { OfferCard } from './OfferCard';
 import styles from './Offers.module.css';
 
 /** Offers on one listing, for its owner. Renders nothing for anyone else. */
-export function OffersReceived({ listing }: { listing: DemandListing }) {
+export function OffersReceived({ listing }: { listing: OfferableListing }) {
   const offers = useOfferStore((store) => store.offers);
   const viewer = useViewerId();
   if (!viewer || listing.ownerId !== viewer) return null;

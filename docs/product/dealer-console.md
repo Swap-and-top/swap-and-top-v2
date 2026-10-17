@@ -13,7 +13,7 @@ A separate surface from the marketplace, with a different character: a working t
 
 It is two things at once:
 
-1. **Swap & Top's dealer interface** — stock, leads, promotion
+1. **Swap & Top's dealer interface** — stock, leads, trade-ins, promotion
 2. **A Greta Works Digital product** — a system for running a small gadget shop, with standalone value
 
 That dual identity is intentional and is the bridge between the two companies. See [../business/company-structure.md](../business/company-structure.md).
@@ -44,7 +44,7 @@ Most small Harare shops are run from a phone behind a counter. A dealer will nev
 | --- | --- | --- |
 | Priority | **Primary build** | Second |
 | Earns its place by | Being usable one-handed, behind a counter, mid-conversation | Bulk work — pricing a dozen machines, imports, two-pane leads |
-| Sections | Stock, Leads, Promote, Shop | Adds Performance as its own section |
+| Sections | Stock, Leads, Trade-ins, Promote, Shop | Adds Performance as its own section |
 
 ---
 
@@ -104,7 +104,11 @@ The requester's own record is shown on the lead — confirmed deals, account age
 
 ---
 
-### 3. Promote
+### 3. Trade-ins
+
+Trade-ins offered towards stock marked **Swaps accepted**, grouped by the item they are for. Each is an offer, as on a swap: what the buyer has, the cash they add, their message. Accept or decline it; accepting shows the buyer's contact ways, and a decline can be undone. The section's count in the navigation is the trade-ins still waiting for a reply. See [../features/sell.md](../features/sell.md).
+
+### 4. Promote
 
 Where money is spent. Four blocks:
 
@@ -121,13 +125,13 @@ The middle one is the renewal argument. *"At least twelve confirmed deals last m
 
 ---
 
-### 4. Shop profile
+### 5. Shop profile
 
 Shop name, logo, location, opening hours, description, verification status. Feeds the public shopfront at `/shop/<slug>`.
 
 ---
 
-### 5. Performance — desktop only
+### 6. Performance — desktop only
 
 Reveals over time, views-to-reveals ratio per item, which categories attract attention, which price bands move. Deliberately not on mobile, where the summary numbers in Promote are enough.
 

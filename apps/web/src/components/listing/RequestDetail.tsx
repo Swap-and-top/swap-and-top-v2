@@ -3,12 +3,12 @@
 /**
  * Request listing detail.
  *
- * The lightest of the three, because a request has no photographs and no
- * specification table of its own — only what is wanted, a budget, and possibly a
- * trade-in. The primary action is "I have this", which is the lead.
- *
- * There is no dedicated artboard for this screen; it follows the Wanted card's
- * structure at full size.
+ * Set as a sale listing is (see SaleDetail): one white card with the item,
+ * the budget, the details in a ruled grid, and a last row of where and
+ * when. A wanted item is never photographed, so the card has no picture:
+ * it starts with the item, in the green of what is wanted. A wanted post is
+ * cash only; someone with something to trade in posts a swap. The primary
+ * action is "I have this", which is the lead.
  */
 
 import {
@@ -17,112 +17,121 @@ import {
   offerCountFor,
   useOfferStore,
   useViewerId,
+  type Item,
 } from '@snt/core';
 import {
   AppHeader,
-  Body,
   Caption,
   CardActions,
-  Eyebrow,
-  ItemName,
   ListingActions,
   Note,
   OfferButton,
   OffersReceived,
-  Panel,
   PosterRow,
-  Price,
   Screen,
   ScreenBody,
-  SpecGrid,
   specRowsFor,
   Stack,
 } from '@snt/ui';
 import { InfoIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
+import card from './SaleDetail.module.css';
 import styles from './RequestDetail.module.css';
 
 export function RequestDetail({ listing }: { listing: RequestListing }) {
   const owner = getUser(listing.ownerId);
   const offers = useOfferStore((store) => store.offers);
   const responses = offerCountFor(offers, listing.id, listing.responseCount);
-  /** Your own post: worded from your side, with your panel in place of a
+  /** Your own post: worded from your side, with your controls in place of a
       buyer's actions. */
   const mine = useViewerId() === listing.ownerId;
+
+  const budgetLabel = mine ? 'Your budget, up to' : 'Budget up to';
 
   return (
     <Screen surface>
       {/* The same header as the feed, so the site does not change face on
-          the way into a listing. Save and share are in the page. */}
+          the way into a listing. */}
       <AppHeader />
 
-      <ScreenBody>
-        <Stack gap={6}>
-          {/* On your own post, its status comes first. */}
-          {mine ? <StatusTag listing={listing} /> : null}
-
-          {/* What they want on the left; save and share at the right. */}
-          <div className={styles.lead}>
-            <div className={styles.leadText}>
-              <Eyebrow>{mine ? 'You are looking for' : 'Looking for'}</Eyebrow>
-              <Body>
-                <ItemName side="wanted">{listing.wants.name}</ItemName>
-              </Body>
-            </div>
-            <CardActions
-              listingId={listing.id}
-              href={`/listing/${listing.slug}`}
-              title={listing.title}
-              tone="wanted"
-              save={!mine}
-              report={!mine}
-            />
-          </div>
-
-          <div>
-            {/* With something to swap, the budget is cash they add on top. */}
-            <Eyebrow>
-              {listing.tradeIn
-                ? mine
-                  ? 'You add up to'
-                  : 'They add up to'
-                : mine
-                  ? 'Your budget'
-                  : 'Budget'}
-            </Eyebrow>
-            <Price amount={listing.budget} size="lg" />
-            {/* How your post is doing: yours to see. */}
+      <div className={card.panel}>
+        <section className={card.card}>
+          <div className={card.body}>
+            {/* On your own post, its status comes first. */}
             {mine ? (
-              <div className={styles.ownerMeta}>
-                {listing.viewCount}{' '}
-                {listing.viewCount === 1 ? 'view' : 'views'} today ·{' '}
-                {contactsShown(listing)}
+              <div className={card.statusRow}>
+                <StatusTag listing={listing} />
+              </div>
+            ) : null}
+
+            {/* The item wanted, its budget opposite. */}
+            <div className={card.heading}>
+              <div className={styles.what}>
+                <span className={styles.kicker}>
+                  {mine ? 'You are looking for' : 'Looking for'}
+                </span>
+                <h1 className={[card.name, styles.wantedName].join(' ')}>
+                  {listing.wants.name}
+                </h1>
+              </div>
+              <span className={styles.budget}>
+                <span className={styles.kicker}>{budgetLabel}</span>
+                <span className={card.price}>${listing.budget}</span>
+              </span>
+            </div>
+
+            <FactGrid item={listing.wants} />
+
+            {/* The last row: where and when, with save, share and report
+                opposite. */}
+            <div className={card.summary}>
+              <ul className={card.meta}>
+                <li>{listing.location}</li>
+                <li>{listing.postedLabel}</li>
+                {mine ? (
+                  <>
+                    <li>
+                      {listing.viewCount}{' '}
+                      {listing.viewCount === 1 ? 'view' : 'views'} today
+                    </li>
+                    <li>{contactsShown(listing)}</li>
+                  </>
+                ) : (
+                  <li>
+                    {responses} {responses === 1 ? 'response' : 'responses'}
+                  </li>
+                )}
+              </ul>
+              <CardActions
+                listingId={listing.id}
+                href={`/listing/${listing.slug}`}
+                title={listing.title}
+                tone="wanted"
+                save={!mine}
+                report={!mine}
+              />
+            </div>
+
+            {/* Changing it, in the card, under all of it. */}
+            {mine ? (
+              <div className={card.edit}>
+                <OwnerControls listing={listing} />
               </div>
             ) : null}
           </div>
+        </section>
+      </div>
 
-          {listing.tradeIn ? (
-            <Panel padded>
-              <Eyebrow tight>{mine ? 'You have' : 'Has'}</Eyebrow>
-              <Body>
-                <ItemName side="owned">{listing.tradeIn.name}</ItemName>
-              </Body>
-              <SpecGrid rows={specRowsFor(listing.tradeIn)} />
-            </Panel>
-          ) : null}
-
-          {mine ? <OwnerControls listing={listing} /> : null}
-
+      <ScreenBody>
+        <Stack gap={6}>
           {!mine && owner ? <PosterRow user={owner} /> : null}
 
           {/* What to do about it, right under who posted it. */}
           {mine ? null : (
             <ListingActions
               caption={
-                <Caption>
-                  Meet in public · check the item before you pay
-                </Caption>
+                <Caption>Meet in public · check the item before you pay</Caption>
               }
             >
               {/* Opens the offer sheet. */}
@@ -140,9 +149,6 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
           <OffersReceived listing={listing} />
 
           <Note icon={<InfoIcon size={17} />} tone="subtle">
-            {responses > 0
-              ? `${responses} ${responses === 1 ? 'person has' : 'people have'} responded. `
-              : ''}
             {listing.allowDealerOffers
               ? 'This person accepts offers from dealers.'
               : 'This person has turned off dealer offers.'}
@@ -150,5 +156,34 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
         </Stack>
       </ScreenBody>
     </Screen>
+  );
+}
+
+/**
+ * An item's details in the card's ruled grid: short facts two to a row,
+ * prose a row each, an odd one out matched with an empty cell so every rule
+ * runs across.
+ */
+function FactGrid({ item }: { item: Item }) {
+  const facts = specRowsFor(item);
+  if (facts.length === 0) return null;
+  const short = facts.filter((fact) => !fact.wide);
+  const prose = facts.filter((fact) => fact.wide);
+  return (
+    <dl className={card.facts}>
+      {short.map((fact) => (
+        <div key={fact.label} className={card.fact}>
+          <dt>{fact.label}</dt>
+          <dd>{fact.value}</dd>
+        </div>
+      ))}
+      {short.length % 2 === 1 ? <div className={card.fact} aria-hidden /> : null}
+      {prose.map((fact) => (
+        <div key={fact.label} className={[card.fact, card.factWide].join(' ')}>
+          <dt>{fact.label}</dt>
+          <dd>{fact.value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

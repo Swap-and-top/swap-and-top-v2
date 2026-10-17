@@ -31,11 +31,11 @@ import {
   type Listing,
   type Condition,
   type ContactWay,
-  type DemandListing,
+  type OfferableListing,
   type OfferItem,
 } from '@snt/core';
 import { WAY_META, waysOffered } from '../contact/ContactWays';
-import { BinocularsIcon, CashHandIcon } from '../icons';
+import { BinocularsIcon, CashHandIcon, TagIcon } from '../icons';
 import { Button } from '../primitives/Button';
 import { Dropdown } from '../primitives/Dropdown';
 import { Sheet, useCloseSheet } from '../primitives/Sheet';
@@ -80,24 +80,34 @@ export function OfferSheet({
   listing,
   onClose,
 }: {
-  listing: DemandListing;
+  listing: OfferableListing;
   onClose: () => void;
 }) {
   const offers = useOfferStore((store) => store.offers);
   const mine = myOfferOn(offers, listing.id, useViewerId());
   const ask = askParts(listing);
+  const forSale = listing.type === 'sale';
 
   return (
     <Sheet
-      title={`Wanted item: ${ask.item}`}
+      title={forSale ? `Trade in for: ${ask.item}` : `Wanted item: ${ask.item}`}
       // What is being answered heads the sheet, first and largest: the item
       // wanted, then its terms. Everything under it is what you offer for it.
       heading={
-        <div className={styles.ask}>
-          {/* Marked exactly as on a Wanted card in the feed. */}
+        <div
+          className={[styles.ask, forSale ? styles.askSale : '']
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {/* Marked as on its card in the feed: Wanted in green; a sale,
+              which a trade-in is offered towards, in the blue of For sale. */}
           <span className={styles.askLabel}>
-            <BinocularsIcon size={16} weight={2} filled />
-            Wanted
+            {forSale ? (
+              <TagIcon size={16} filled />
+            ) : (
+              <BinocularsIcon size={16} weight={2} filled />
+            )}
+            {forSale ? 'For sale' : 'Wanted'}
           </span>
           {/* The item, with its budget or terms beside it. */}
           <span className={styles.askLine}>
@@ -132,7 +142,7 @@ function fitToText(box: HTMLTextAreaElement) {
   box.style.height = `${box.scrollHeight}px`;
 }
 
-function OfferForm({ listing }: { listing: DemandListing }) {
+function OfferForm({ listing }: { listing: OfferableListing }) {
   // Sent, the sheet sinks away like any other close.
   const onSent = useCloseSheet();
   const viewer = useViewerId();
@@ -150,7 +160,9 @@ function OfferForm({ listing }: { listing: DemandListing }) {
   // asked for — then there is nothing to type. Otherwise start on "describe
   // it": a laptop must never be one careless tap from answering a request
   // for a graphics card.
-  const fits = own.find((candidate) => candidate.category === listing.wants.category);
+  const wantedCategory =
+    listing.type === 'sale' ? listing.item.category : listing.wants.category;
+  const fits = own.find((candidate) => candidate.category === wantedCategory);
   const [mode, setMode] = useState<'listing' | 'describe'>(
     fits ? 'listing' : 'describe',
   );
@@ -216,7 +228,7 @@ function OfferForm({ listing }: { listing: DemandListing }) {
           offering something, in the blue of what is yours. */}
       <h3 className={styles.formTitle}>
         <CashHandIcon size={17} />
-        Make an offer
+        {listing.type === 'sale' ? 'Offer a trade-in' : 'Make an offer'}
       </h3>
 
       <fieldset className={styles.group}>

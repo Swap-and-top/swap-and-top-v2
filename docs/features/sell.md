@@ -76,13 +76,15 @@ This is a well-established re-engagement mechanic and costs almost nothing to bu
 
 ---
 
-## The trade-in prompt
+## Swaps accepted and trade-in offers
 
-Every dealer sale listing carries a quiet prompt near the bottom of the detail screen:
+A seller can mark a sale listing **Swaps accepted**: they will take something in part-exchange, with cash on top. Dealers will use it most, but any seller can set it.
 
-> **Got a laptop to trade in? Ask for a swap price**
+- The listing says so, first in its line of facts: `✓ Swaps accepted · Harare CBD · 2 hours ago · Negotiable`.
+- Beside **Show contacts** the buyer gets **Offer a trade-in**. It opens the same offer sheet used on swaps and wanted posts, headed with the item for sale and its price: what they are offering (one of their listings, or described), any cash they add, a message, and how they can be reached.
+- The offer goes straight to the seller. A dealer sees it under **Trade-ins** in the console; a private seller sees it under their listing and in Offers, like any offer. Accepting shows each the other's contact ways; the deal is finished in person.
 
-This converts a plain purchase intent into swap demand, which is the platform's more valuable object. It is a single line and it links into the posting flow with the swap type preselected.
+This replaces an earlier idea, a prompt reading *"Got a laptop to trade in? Ask for a swap price"* that opened the posting flow. Once the listing says swaps are accepted, a buyer can simply ask the seller, and posting a public swap never reached the seller at all. The trade-in offer reaches them directly and still turns purchase intent into swap demand.
 
 Wireframe frame: `DetailDealer`.
 
@@ -108,9 +110,7 @@ Wireframe frame: `DetailDealer`.
 │  🏪 Kopje Computers ✓ Verified       │
 │  42 listings · replies within an hour │
 ├──────────────────────────────────────┤
-│  ⇄ Got a laptop to trade in?         │
-├──────────────────────────────────────┤
-│ [ 📞 Show number ]              💬   │
+│ [ Offer a trade-in ] [ Show contacts ]│
 │  No account needed · meet in public  │
 └──────────────────────────────────────┘
 ```
@@ -148,7 +148,7 @@ When the dealer console exists, adding stock publishes a listing in one action. 
 - [ ] Photo carousel with 2–8 images
 - [ ] Specification grid on the detail screen
 - [ ] Price drop re-surfacing, badging and saver notification
-- [ ] Trade-in prompt on dealer listings, linking into the swap flow
+- [ ] Swaps accepted on a sale, with trade-in offers to the seller (console Trade-ins for dealers)
 - [ ] Mark sold, with removal from feed, search and sitemap
 - [ ] Stock count shown where a dealer holds several of a model
 

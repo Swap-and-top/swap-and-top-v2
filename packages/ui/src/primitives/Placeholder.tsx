@@ -18,15 +18,14 @@ export function firstPhoto(images: readonly string[] | undefined) {
 
 /**
  * The photo that represents a listing: the item for a sale or auction, what
- * the poster has for a swap, and the trade-in for a request that carries one.
- * A plain request has nothing to photograph.
+ * the poster has for a swap. A request has nothing to photograph.
  */
 export function listingPhoto(listing: Listing) {
   switch (listing.type) {
     case 'swap':
       return firstPhoto(listing.has.images);
     case 'request':
-      return firstPhoto(listing.tradeIn?.images);
+      return undefined;
     default:
       return firstPhoto(listing.item.images);
   }

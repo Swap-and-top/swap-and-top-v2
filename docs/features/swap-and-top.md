@@ -39,7 +39,7 @@ ONE POST, TWO ROLES:
 | **What they have** | Item name, full specifications for the category, condition, defects, accessories, 2–8 photos |
 | **What they want** | Item name or description, plus whichever specifications matter. No photos — they do not own it. |
 | **Cash direction** | They add cash, they receive cash, or straight swap |
-| **Cash amount** | Required unless straight swap |
+| **Cash amount** | Required unless straight swap. When they add cash it can be a ceiling, "up to $600", for someone who knows what they want and what they will spend rather than an exact figure. |
 
 The asymmetry is deliberate. The thing they have is described precisely because a counterparty is evaluating it. The thing they want can be loose — "any i7 with 16GB and an SSD" is a perfectly good request and more likely to match than a single exact model.
 
@@ -128,7 +128,7 @@ Note the primary action: **"I have this — make an offer"**, not "contact selle
 
 ## Making an offer
 
-An offer against a swap listing carries:
+An offer against a swap listing (or a wanted post, or a sale marked Swaps accepted, as a trade-in) carries:
 
 - Which item the offerer is putting forward — for a dealer, an item from their stock
 - The cash amount they propose, which may differ from the asking amount

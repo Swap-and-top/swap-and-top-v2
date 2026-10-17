@@ -1,20 +1,35 @@
-/** Wanted listing detail. */
+/**
+ * Wanted listing detail: the sale listing's card (SaleDetail.module.css),
+ * with a few touches of its own.
+ */
 
-/** What they are looking for, with save and share opposite it. */
-.lead {
+/** The item and its small label over it. */
+.what {
   display: flex;
-  align-items: flex-start;
-  gap: var(--snt-space-6);
-}
-
-.leadText {
-  flex-grow: 1;
+  flex-direction: column;
+  gap: var(--snt-space-1);
   min-width: 0;
 }
 
-/** How your own post is doing, under its budget: one quiet line. */
-.ownerMeta {
-  margin-top: var(--snt-space-3);
+/** "Looking for", "Budget up to", "Has": a small grey word over its value. */
+.kicker {
   font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-medium);
   color: var(--snt-ink-muted);
 }
+
+/* What is wanted, in the green of what is wanted. */
+.wantedName {
+  color: var(--snt-wanted-ink);
+}
+
+/* The budget opposite it: its label over the amount, set to the right. */
+.budget {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--snt-space-1);
+  text-align: right;
+}
+

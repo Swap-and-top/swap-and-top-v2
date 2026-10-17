@@ -31,8 +31,8 @@ SHARED CORE + PER-TYPE DETAIL:
     │ price   │   │ has-item │   │ wanted   │   │ start    │
     │ negoti- │   │ wants-   │   │  spec    │   │ reserve  │
     │  able   │   │  item    │   │ budget   │   │ closes   │
-    │         │   │ cash dir │   │ optional │   │ current  │
-    │         │   │ cash amt │   │  trade-in│   │  bid     │
+    │         │   │ cash dir │   │ cash     │   │ current  │
+    │         │   │ cash amt │   │  only    │   │  bid     │
     └─────────┘   └──────────┘   └──────────┘   └────┬─────┘
                                                       │
                                                  ┌────▼─────┐
@@ -105,7 +105,9 @@ Detail in [swap-and-top.md](./swap-and-top.md).
 
 Someone wants a thing and does not have it yet.
 
-**Detail carried:** what they want as specification, budget, and optionally a trade-in — which effectively makes it swap demand.
+**Detail carried:** what they want as specification, and a budget. It is cash only.
+
+**Someone who wants a thing and has something to give for it posts a swap, not a request.** An earlier design let a request carry an optional trade-in, but that said the same as a swap ("I'll give you X plus cash for Y") with only the order and the wording changed, and people could not tell which to choose. A swap's cash can be a ceiling ("I add up to $600") to cover the budget case, and swaps are already shown to dealers as demand, so nothing is lost.
 
 **Photos:** none. They do not own the thing.
 

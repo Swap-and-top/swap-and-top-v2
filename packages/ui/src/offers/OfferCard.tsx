@@ -21,7 +21,7 @@ import {
   getShop,
   getUser,
   setOfferStateOptimistically,
-  type DemandListing,
+  type OfferableListing,
   type Offer,
   type OfferState,
 } from '@snt/core';
@@ -51,10 +51,11 @@ export function OfferCard({
   view: 'received' | 'made';
 }) {
   const listing = getListing(offer.listingId);
-  if (!listing || (listing.type !== 'swap' && listing.type !== 'request')) {
+  if (!listing || listing.type === 'auction') {
     return null;
   }
-  const demand: DemandListing = listing;
+  // A swap or a request, or a sale a trade-in was offered towards.
+  const target: OfferableListing = listing;
   const readerIsOwner = view === 'received';
 
   // The other person: the offerer to the owner, the owner to the offerer.
@@ -63,9 +64,9 @@ export function OfferCard({
   const otherShop = getShop(other?.shopId);
   const otherName = otherShop?.name ?? other?.displayName ?? 'Someone';
 
-  const cash = cashLine(offer, demand, readerIsOwner);
+  const cash = cashLine(offer, target, readerIsOwner);
   const wanted =
-    demand.type === 'swap' ? demand.wants.name : demand.wants.name;
+    target.type === 'sale' ? target.item.name : target.wants.name;
 
   async function change(next: Exclude<OfferState, 'pending'>) {
     try {

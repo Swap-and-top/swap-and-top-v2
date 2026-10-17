@@ -15,7 +15,7 @@ import {
   offersOn,
   useOfferStore,
   useViewerId,
-  type DemandListing,
+  type OfferableListing,
 } from '@snt/core';
 import { Button, ButtonLink, type ButtonSize } from '../primitives/Button';
 import { OfferSheet } from './OfferSheet';
@@ -27,7 +27,7 @@ export function OfferButton({
   block,
   className,
 }: {
-  listing: DemandListing;
+  listing: OfferableListing;
   label?: string;
   size?: ButtonSize;
   block?: boolean;

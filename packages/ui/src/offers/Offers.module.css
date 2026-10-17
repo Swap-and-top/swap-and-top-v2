@@ -17,6 +17,13 @@
   padding-bottom: var(--snt-space-4);
 }
 
+/* Offering a trade-in towards a sale: its label and item in the blue of
+   what is for sale, not the green of what is wanted. */
+.askSale .askLabel,
+.askSale .askItem {
+  color: var(--snt-accent-bold);
+}
+
 /** "WANTED" after a filled binoculars — exactly as on a Wanted card. */
 .askLabel {
   display: inline-flex;

@@ -78,7 +78,7 @@ Each card carries one primary button — **"I have this"** — which is the acti
 | Category | Determines the specification set |
 | Budget | Required — it is what makes the lead qualified |
 | Location | Area |
-| Trade-in | Optional. Present, it becomes swap demand. |
+| Trade-in | None. Someone with something to trade in posts a swap, which is shown here as demand. |
 | Dealer-offers consent | Default on |
 | Photos | None — they do not own the thing |
 
@@ -115,7 +115,7 @@ A dealer's stock matches demand when:
 - The category matches
 - Every stated minimum is met or exceeded — "16GB" means 16 or more
 - Where a model is named, the item is that model or a stated equivalent
-- The dealer's price is within reach of the budget, or of the trade-in value plus offered cash
+- The dealer's price is within reach of the budget, or, for a swap, of the trade-in value plus offered cash
 
 **Be slightly generous rather than strict.** A dealer would rather dismiss a marginal lead than never see a real one. Precision can improve as listing data accumulates.
 

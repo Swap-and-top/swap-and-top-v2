@@ -44,6 +44,7 @@ export function SwapCard({
           wants={listing.wants}
           cashAmount={listing.cashAmount}
           cashDirection={listing.cashDirection}
+          cashUpTo={listing.cashUpTo}
           tileHeight={tileHeight}
         />
 
@@ -85,6 +86,7 @@ export function SwapTiles({
   wants,
   cashAmount,
   cashDirection = 'i-add',
+  cashUpTo = false,
   tileHeight,
   flush = false,
 }: {
@@ -94,10 +96,18 @@ export function SwapTiles({
   cashAmount?: number;
   /** Which side the cash comes with — see `swapTerms`. */
   cashDirection?: CashDirection;
+  /** The cash is a ceiling: "up to +$600". */
+  cashUpTo?: boolean;
   tileHeight?: number;
   flush?: boolean;
 }) {
-  const cash = cashAmount ? `+$${cashAmount}` : undefined;
+  // A ceiling reads "+ up to $600", the "+ up to" small. A set amount is
+  // "+$600".
+  const cash = cashAmount
+    ? cashUpTo
+      ? `$${cashAmount}`
+      : `+$${cashAmount}`
+    : undefined;
   const { cashSide } = swapTerms(cashDirection, cashAmount);
 
   return (
@@ -111,6 +121,7 @@ export function SwapTiles({
         label="Has"
         item={has}
         cash={cashSide === 'has' ? cash : undefined}
+        cashUpTo={cashUpTo}
         imageHeight={tileHeight}
       />
       <SwapTile
@@ -129,12 +140,15 @@ function SwapTile({
   label,
   item,
   cash,
+  cashUpTo = false,
   imageHeight,
 }: {
   tone: 'has' | 'wants';
   label: string;
   item: SwapSide;
   cash?: string;
+  /** The cash is a ceiling: shown as "up to $600". */
+  cashUpTo?: boolean;
   imageHeight?: number;
 }) {
   const specs = specParts(item);
@@ -171,7 +185,12 @@ function SwapTile({
             no cash on this side, the condition stands there alone. */}
         {cash || condition ? (
           <div className={styles.terms}>
-            {cash ? <span className={styles.cash}>{cash}</span> : null}
+            {cash ? (
+              <span className={styles.cash}>
+                {cashUpTo ? <span className={styles.upTo}>+ up to </span> : null}
+                {cash}
+              </span>
+            ) : null}
             {condition ? (
               <span className={styles.condition}>{condition}</span>
             ) : null}

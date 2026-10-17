@@ -121,6 +121,11 @@ export interface SaleListing extends ListingBase {
   stockCount?: number;
   /** Set when the price has been reduced since it was first published. */
   previousPrice?: number;
+  /**
+   * The seller takes a trade-in towards it: a buyer can swap something for
+   * it, with cash on top. Shown on the listing, with a way to ask.
+   */
+  acceptsSwaps?: boolean;
 }
 
 export interface SwapListing extends ListingBase {
@@ -132,15 +137,20 @@ export interface SwapListing extends ListingBase {
   cashDirection: CashDirection;
   /** Absent when `cashDirection` is `straight`. */
   cashAmount?: number;
+  /**
+   * The poster's cash is a ceiling, not a set amount: "I add up to $600".
+   * Only with `i-add`. This is how someone who wants something and has
+   * something to give says what they will spend.
+   */
+  cashUpTo?: boolean;
   offerCount: number;
 }
 
 export interface RequestListing extends ListingBase {
   type: 'request';
   wants: Item;
+  /** Cash only. Someone with something to trade in posts a swap instead. */
   budget: number;
-  /** Present turns a request into swap demand. */
-  tradeIn?: Item;
   responseCount: number;
 }
 
@@ -164,6 +174,17 @@ export type Listing =
 
 /** Anything that expresses demand: a request, or a swap seen from its wants side. */
 export type DemandListing = SwapListing | RequestListing;
+
+/**
+ * A listing that takes offers: a swap or a request always, and a sale when
+ * its seller takes swaps (a trade-in offer towards it).
+ */
+export type OfferableListing = DemandListing | SaleListing;
+
+export function takesOffers(listing: Listing): listing is OfferableListing {
+  if (listing.type === 'swap' || listing.type === 'request') return true;
+  return listing.type === 'sale' && Boolean(listing.acceptsSwaps);
+}
 
 export const isSale = (l: Listing): l is SaleListing => l.type === 'sale';
 export const isSwap = (l: Listing): l is SwapListing => l.type === 'swap';

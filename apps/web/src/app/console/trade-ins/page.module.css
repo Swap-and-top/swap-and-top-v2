@@ -1,0 +1,28 @@
+/** Trade-ins, grouped by the item they are for. */
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-10);
+  max-width: 672px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+.for,
+.for:hover {
+  color: inherit;
+}
+
+.none {
+  max-width: 672px;
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}

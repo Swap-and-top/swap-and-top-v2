@@ -16,7 +16,8 @@ import {
   useLiveListings,
   offersOn,
   useOfferStore,
-  type DemandListing,
+  takesOffers,
+  type OfferableListing,
 } from '@snt/core';
 import {
   AppHeader,
@@ -43,12 +44,12 @@ export default function OffersPage() {
   const [view, setView] = useState<View>('received');
   const offers = useOfferStore((store) => store.offers);
 
-  /** The user's own swaps and requests — the listings offers can land on. */
+  /** The user's own listings that take offers: swaps and requests, and
+      sales that take trade-ins. */
   const live = useLiveListings();
   const mine = live.filter(
-    (listing): listing is DemandListing =>
-      listing.ownerId === currentUser.id &&
-      (listing.type === 'swap' || listing.type === 'request'),
+    (listing): listing is OfferableListing =>
+      listing.ownerId === currentUser.id && takesOffers(listing),
   );
   const withOffers = mine
     .map((listing) => ({ listing, received: offersOn(offers, listing.id) }))

@@ -41,7 +41,7 @@ export async function generateMetadata({
   } else if (listing.type === 'request') {
     price = `, budget $${listing.budget}`;
   } else if (listing.type === 'swap' && listing.cashAmount) {
-    price = `, plus $${listing.cashAmount}`;
+    price = `, ${listing.cashUpTo ? 'plus up to' : 'plus'} $${listing.cashAmount}`;
   }
 
   return {

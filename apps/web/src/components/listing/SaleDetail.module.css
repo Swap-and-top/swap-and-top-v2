@@ -1,68 +1,208 @@
-/** Sale listing detail. Wireframe artboard: `DetailDealer`. */
+/**
+ * Sale listing detail. Wireframe artboard: `DetailDealer`.
+ *
+ * One white card joined to its photo, as a swap's side is joined to its
+ * picture (see SwapDetail.module.css), but white rather than a colour. Every
+ * rule in it runs edge to edge.
+ */
 
-.priceRow {
-  display: flex;
-  align-items: baseline;
-  gap: var(--snt-space-5);
-  flex-wrap: wrap;
-}
-
-/** Save and share: pushed to the far end of the price row. */
-.actions {
-  display: flex;
-  align-self: center;
-  margin-left: auto;
-}
-
-.title {
-  font-size: var(--snt-text-lg);
-  font-weight: var(--snt-weight-semibold);
-  line-height: var(--snt-leading-tight);
-  margin-top: var(--snt-space-3);
-}
-
-.meta {
-  font-size: var(--snt-text-base);
-  color: var(--snt-ink-muted);
-  margin-top: var(--snt-space-2);
-}
-
-.specs {
-  margin-top: var(--snt-space-7);
+.panel {
+  flex-shrink: 0;
+  padding: var(--snt-space-8) var(--snt-column-inset) 0;
 }
 
 /**
- * The trade-in prompt. One line that turns a plain purchase intent into swap
- * demand, which is the platform's more valuable object.
+ * The post: one white card, the photo at its top. Inside it, the card's own
+ * inks: the darker grey for values, the lighter for labels.
  */
-.tradePrompt {
+.card {
+  --snt-ink: var(--snt-card-ink);
+  --snt-ink-muted: var(--snt-card-ink-muted);
+  /* The rules, in the page's pale blue, as in the specification grid. */
+  --rule: var(--snt-bg-app);
+  --band-photo-h: 260px;
   display: flex;
-  align-items: center;
-  gap: var(--snt-space-4);
-  margin-top: var(--snt-space-5);
-  padding: var(--snt-space-6);
-  border-radius: var(--snt-radius-lg);
-  background: var(--snt-accent-tint);
-  color: var(--snt-accent-bold);
-  font-size: var(--snt-text-base);
-  font-weight: var(--snt-weight-semibold);
+  flex-direction: column;
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+  background: var(--snt-bg-card);
+  color: var(--snt-ink);
 }
 
-.tradePrompt:hover {
-  background: var(--snt-accent);
-  color: var(--snt-ink-on-dark);
+.media {
+  position: relative;
+  flex-shrink: 0;
+  height: var(--band-photo-h);
 }
+
+/* The photo fills its part of the card, pinned to its edges so the photo
+   strip inside it has a real height to fill. */
+.media > .photo {
+  position: absolute;
+  inset: 0;
+}
+
+/*
+ * Under the photo: set in from the card's edges by the feed card's padding,
+ * so the rules stop short of the edges just as the feed card's line above a
+ * shop does.
+ */
+.body {
+  padding: 0 var(--snt-card-pad);
+}
+
+/* Your own listing's status, over its name. */
+.statusRow {
+  padding-top: var(--snt-space-6);
+}
+
+/** The item's name in the blue of what is yours, its price opposite. */
+.heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-6) 0;
+}
+
+.name {
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: var(--snt-leading-tight);
+  color: var(--snt-accent-bold);
+  overflow-wrap: anywhere;
+}
+
+.price {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--snt-space-3);
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--snt-ink);
+}
+
+/** After a drop, the old price struck through, quieter, before the new. */
+.wasPrice {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-medium);
+  color: var(--snt-ink-muted);
+}
+
+/*
+ * The details: a two-column grid of cells, each a small grey label over its
+ * value, ruled apart. Prose (defects, accessories) takes a whole row. An odd
+ * cell out is matched with an empty one, so no rule stops short.
+ */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.fact {
+  min-width: 0;
+  padding: var(--snt-space-5) var(--snt-space-7);
+  border-top: 1px solid var(--rule);
+}
+
+/* The rule down the middle, between the two columns. The text keeps to
+   the set-in edges: the left column's flush left, the right's flush right
+   of the rule, prose rows flush left. */
+.fact:nth-child(odd):not(.factWide) {
+  padding-left: 0;
+  border-right: 1px solid var(--rule);
+}
+
+.factWide {
+  grid-column: 1 / -1;
+  padding-left: 0;
+}
+
+.fact dt {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.fact dd {
+  margin: var(--snt-space-1) 0 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  color: var(--snt-ink);
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 640px) {
+  .card {
+    --band-photo-h: 360px;
+  }
+}
+
+/* --- the last row: where and when ------------------------------------------ */
+
+/** Where, when and whether the price moves; save, share and report opposite.
+    A row of the grid, under a rule like the rest. */
+.summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--snt-space-6);
+  padding: var(--snt-space-4) 0;
+  border-top: 1px solid var(--rule);
+}
+
+/** One grey line, a dot between each, as on the swap. */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  /* Every fact carries its dot in front, and the line is drawn out to the
+     left by one dot's width and clipped: the dot at the start of each line,
+     the first's or a wrapped one's, falls outside and is hidden. */
+  --meta-dot: calc(var(--snt-space-3) * 2 + 0.3em);
+  margin-left: calc(var(--meta-dot) * -1);
+  clip-path: inset(0 0 0 var(--meta-dot));
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
+}
+
+.meta li {
+  white-space: nowrap;
+}
+
+/** "Swaps accepted", with a tick, in the green of a done thing. */
+.swapsAccepted {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-1);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-success);
+}
+
+.meta li::before {
+  content: '·';
+  display: inline-block;
+  width: 0.3em;
+  margin-inline: var(--snt-space-3);
+  text-align: center;
+}
+
+/* Edit and Manage, on your own listing: the last thing in the card. */
+.edit {
+  padding: var(--snt-space-6) 0 var(--snt-space-7);
+  border-top: 1px solid var(--rule);
+}
+
+/* --- under the card -------------------------------------------------------- */
 
 .identity {
-  margin-top: var(--snt-space-6);
+  margin-top: 0;
 }
 
 /** The actions, under the seller. */
 .contact {
   margin-top: var(--snt-space-6);
-}
-
-/* Your own listing's status, over its price. */
-.status {
-  margin-bottom: var(--snt-space-5);
 }

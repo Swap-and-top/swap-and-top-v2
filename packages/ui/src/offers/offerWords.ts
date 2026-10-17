@@ -4,15 +4,15 @@
  */
 
 import type {
-  DemandListing,
   Offer,
+  OfferableListing,
   OfferCashFrom,
   OfferState,
 } from '@snt/core';
 
 /** A plain request, with nothing traded in: the offer's cash is a price. */
-export function isPriceOffer(listing: DemandListing): boolean {
-  return listing.type === 'request' && !listing.tradeIn;
+export function isPriceOffer(listing: OfferableListing): boolean {
+  return listing.type === 'request';
 }
 
 /**
@@ -20,38 +20,44 @@ export function isPriceOffer(listing: DemandListing): boolean {
  * and the terms in a line under it — the budget, or what they have and who
  * adds cash.
  */
-export function askParts(listing: DemandListing): {
+export function askParts(listing: OfferableListing): {
   item: string;
   terms: string;
 } {
+  // A sale that takes swaps: what is for sale, at its price.
+  if (listing.type === 'sale') {
+    return { item: listing.item.name, terms: `$${listing.price} · swaps accepted` };
+  }
   if (listing.type === 'swap') {
+    const upTo = listing.cashUpTo ? ' up to' : '';
     const cash = listing.cashAmount
       ? listing.cashDirection === 'i-add'
-        ? `They add $${listing.cashAmount}`
+        ? `They add${upTo} $${listing.cashAmount}`
         : `You add $${listing.cashAmount}`
       : 'Straight swap';
     return { item: listing.wants.name, terms: `Has ${listing.has.name} · ${cash}` };
   }
   return {
     item: listing.wants.name,
-    terms: listing.tradeIn
-      ? `Has ${listing.tradeIn.name} · adds up to $${listing.budget}`
-      : `Budget up to $${listing.budget}`,
+    terms: `Budget up to $${listing.budget}`,
   };
 }
 
 /** The cash field on the form: its label, who the cash comes from, a start. */
-export function cashSetup(listing: DemandListing): {
+export function cashSetup(listing: OfferableListing): {
   label: string;
   /** Shown after the label, as "(optional)" is everywhere on the form. */
   optional?: boolean;
   from: OfferCashFrom;
   amount: string;
 } {
+  // A trade-in towards something for sale: you add cash to your item, if
+  // it is worth less. Nothing on top is fine too.
+  if (listing.type === 'sale') {
+    return { label: 'Cash you add', optional: true, from: 'offerer', amount: '' };
+  }
   if (listing.type === 'request') {
-    return listing.tradeIn
-      ? { label: 'Cash they add', from: 'owner', amount: String(listing.budget) }
-      : { label: 'Your price', from: 'owner', amount: String(listing.budget) };
+    return { label: 'Your price', from: 'owner', amount: String(listing.budget) };
   }
   if (listing.cashDirection === 'i-add') {
     return {
@@ -75,7 +81,7 @@ export function cashSetup(listing: DemandListing): {
  */
 export function cashLine(
   offer: Offer,
-  listing: DemandListing,
+  listing: OfferableListing,
   readerIsOwner: boolean,
 ): { text: string; side: 'has' | 'wants' | null } {
   if (isPriceOffer(listing)) {

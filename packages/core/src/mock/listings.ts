@@ -198,6 +198,7 @@ const thinkpad: SaleListing = {
   price: 265,
   previousPrice: 285,
   negotiable: true,
+  acceptsSwaps: true,
   stockCount: 4,
 };
 
@@ -269,6 +270,7 @@ const dellLatitude: SaleListing = {
   },
   price: 410,
   negotiable: false,
+  acceptsSwaps: true,
   stockCount: 2,
 };
 
@@ -611,13 +613,18 @@ const redmiWanted: RequestListing = {
   responseCount: 2,
 };
 
-const cadDesktopWanted: RequestListing = {
-  id: 'l-cad-desktop-wanted',
-  slug: 'wanted-desktop-for-cad-belvedere-6b71',
-  type: 'request',
+/**
+ * Someone who wants something and has something to give: a swap, with the
+ * cash as a ceiling. Swaps are shown to dealers as demand, so this is a lead
+ * as well as a swap.
+ */
+const cadDesktopSwap: SwapListing = {
+  id: 'l-cad-desktop-swap',
+  slug: 'i3-tower-for-cad-desktop-belvedere-6b71',
+  type: 'swap',
   ownerId: 'u-blessing',
   category: 'desktops',
-  title: 'A desktop for CAD work',
+  title: 'i3 tower for a desktop for CAD work',
   location: 'Belvedere',
   status: 'live',
   createdAt: '2026-09-23',
@@ -629,17 +636,7 @@ const cadDesktopWanted: RequestListing = {
   revealCount: 0,
   promotion: 'organic',
   tags: [],
-  wants: {
-    id: 'i-wanted-cad-desktop',
-    category: 'desktops',
-    name: 'Desktop, 32GB, dedicated graphics',
-    specs: { ram: '32GB', graphics: 'Dedicated' },
-    images: [],
-    wanted: true,
-  },
-  budget: 600,
-  /** A request with a trade-in attached is swap demand — the higher-value lead. */
-  tradeIn: {
+  has: {
     id: 'i-tradein-i3-tower',
     category: 'desktops',
     name: 'i3 tower, 8GB, 1TB HDD',
@@ -648,7 +645,18 @@ const cadDesktopWanted: RequestListing = {
     images: photos.towerPc,
     wanted: false,
   },
-  responseCount: 3,
+  wants: {
+    id: 'i-wanted-cad-desktop',
+    category: 'desktops',
+    name: 'Desktop, 32GB, dedicated graphics',
+    specs: { ram: '32GB', graphics: 'Dedicated' },
+    images: [],
+    wanted: true,
+  },
+  cashDirection: 'i-add',
+  cashAmount: 600,
+  cashUpTo: true,
+  offerCount: 3,
 };
 
 const sodimmWanted: RequestListing = {
@@ -896,6 +904,7 @@ const iphoneXr: SaleListing = {
   },
   price: 190,
   negotiable: false,
+  acceptsSwaps: true,
   stockCount: 5,
 };
 
@@ -1064,7 +1073,7 @@ export const mockListings: Listing[] = [
   airpodsPro,
   gtxSwap,
   ideaPad,
-  cadDesktopWanted,
+  cadDesktopSwap,
   galaxyA14,
   dualSense,
   galaxySwap,

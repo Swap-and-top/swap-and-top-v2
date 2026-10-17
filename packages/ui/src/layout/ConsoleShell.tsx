@@ -11,13 +11,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-import type { Shop } from '@snt/core';
+import { getShopListings, useOfferStore, type Shop } from '@snt/core';
 import {
   BoxIcon,
   ChartIcon,
   ChevronLeftIcon,
   ShopIcon,
   StarIcon,
+  SwapIcon,
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
 import { ShopMark } from '../primitives/Placeholder';
@@ -54,6 +55,12 @@ export function ConsoleShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
+  // Trade-in offers on the shop's stock still waiting for a reply.
+  const offers = useOfferStore((store) => store.offers);
+  const stockIds = new Set(getShopListings(shop.id).map((listing) => listing.id));
+  const tradeInCount = offers.filter(
+    (offer) => stockIds.has(offer.listingId) && offer.state === 'pending',
+  ).length;
 
   const items: ConsoleNavItem[] = [
     {
@@ -69,6 +76,15 @@ export function ConsoleShell({
       shortLabel: 'Leads',
       icon: (active) => <ChartIcon size={20} weight={active ? 1.9 : 1.7} />,
       count: newLeadCount,
+    },
+    {
+      // Trade-ins offered towards stock that takes swaps: offers to accept
+      // or decline, as the people asking see them on the listing.
+      href: '/console/trade-ins',
+      label: 'Trade-ins',
+      shortLabel: 'Trade-ins',
+      icon: (active) => <SwapIcon size={20} weight={active ? 2.1 : 1.9} />,
+      count: tradeInCount,
     },
     {
       href: '/console/promote',
@@ -116,7 +132,7 @@ export function ConsoleShell({
               >
                 {item.icon(active)}
                 <span className={styles.sidebarLabel}>{item.label}</span>
-                {item.label === 'Leads' && item.count ? (
+                {(item.label === 'Leads' || item.label === 'Trade-ins') && item.count ? (
                   <CountBadge count={item.count} />
                 ) : item.count ? (
                   <span className={styles.sidebarCount}>{item.count}</span>
@@ -173,7 +189,7 @@ export function ConsoleShell({
             >
               {item.icon(active)}
               <span>{item.shortLabel}</span>
-              {item.label === 'Leads' && item.count ? (
+              {(item.label === 'Leads' || item.label === 'Trade-ins') && item.count ? (
                 <span className={styles.navBadge}>
                   <CountBadge count={item.count} />
                 </span>

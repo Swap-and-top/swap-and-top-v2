@@ -78,13 +78,15 @@ export function swapTerms(
   amount: number | undefined,
   /** Worded for the person who posted it, looking at their own swap. */
   forOwner = false,
+  /** The poster's cash is a ceiling: "They add up to $600". */
+  upTo = false,
 ): SwapTerms {
   if (!amount || direction === 'straight') {
     return { cashNote: 'Straight swap', cashSide: null };
   }
   if (direction === 'i-add') {
     return {
-      cashNote: forOwner ? `You add $${amount}` : `They add $${amount}`,
+      cashNote: `${forOwner ? 'You add' : 'They add'}${upTo ? ' up to' : ''} $${amount}`,
       cashSide: 'has',
     };
   }

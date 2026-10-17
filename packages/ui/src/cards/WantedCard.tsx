@@ -36,11 +36,19 @@ export function WantedCard({
   requester?: User;
 }) {
   const offers = useOfferStore((store) => store.offers);
-  const tradeIn = listing.type === 'swap' ? listing.has : listing.tradeIn;
+  // A swap shown as demand: what they have is the trade-in. A plain request
+  // has none: it is cash only.
+  const tradeIn = listing.type === 'swap' ? listing.has : undefined;
   const terms =
     listing.type === 'swap'
-      ? swapTerms(listing.cashDirection, listing.cashAmount)
+      ? swapTerms(
+          listing.cashDirection,
+          listing.cashAmount,
+          false,
+          listing.cashUpTo,
+        )
       : undefined;
+  const cashUpTo = listing.type === 'swap' && Boolean(listing.cashUpTo);
   // The cash rides with what they have only when they are the ones adding it.
   const cash =
     listing.type === 'swap' && terms?.cashSide === 'has'
@@ -96,13 +104,7 @@ export function WantedCard({
             {listing.type === 'request' ? (
               <>
                 <span>{listing.location}</span>
-                {/* With something to swap, the budget is cash they add on
-                    top of it — worded like a swap, capped rather than fixed. */}
-                <span>
-                  {tradeIn
-                    ? `They add up to $${listing.budget}`
-                    : `Budget up to $${listing.budget}`}
-                </span>
+                <span>Budget up to ${listing.budget}</span>
               </>
             ) : (
               <>
@@ -132,13 +134,13 @@ export function WantedCard({
               {tradeIn.name}
             </ItemName>
           </div>
-          {cash ? <CashAmount amount={cash} /> : null}
-          {listing.type === 'request' ? (
+          {cash && cashUpTo ? (
             // "+ up to $600": cash on top, capped rather than fixed.
             <span className={styles.upTo}>
-              + <span className={styles.upToWords}>up to</span> $
-              {listing.budget}
+              <span className={styles.upToWords}>+ up to</span> ${cash}
             </span>
+          ) : cash ? (
+            <CashAmount amount={cash} />
           ) : null}
         </div>
       ) : null}

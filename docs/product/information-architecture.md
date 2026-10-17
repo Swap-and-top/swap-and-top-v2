@@ -78,7 +78,7 @@ Each row maps to a frame on the wireframe canvas. Names match exactly.
 | Browse feed | `Main` | Mixed feed, category and type chips, infinite scroll | Guest |
 | Search and filters | `Search` | Full-screen specification filters per category | Guest |
 | Wanted feed | `Wanted` | Requests and swap demand, with "I have this" actions | Guest |
-| Listing detail — dealer sale | `DetailDealer` | Photos, price, spec table, shop row, reveal, trade-in prompt | Guest |
+| Listing detail — dealer sale | `DetailDealer` | Photos, price, spec table, shop row, reveal, trade-in offer where swaps are accepted | Guest |
 | Listing detail — swap | `DetailSwap` | The have-⇄-wants panel, trade-in specs, offer and reveal | Guest |
 | Post step 1 — type | `PostType` | Sell / Swap & top / Looking for | Account |
 | Post step 2 — details | `PostDetails` | Category, photos, specifications, cash direction and amount | Account |

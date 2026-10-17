@@ -26,7 +26,8 @@ export function LeadCard({
   onReveal?: () => void;
 }) {
   const { demand } = lead;
-  const tradeIn = demand.type === 'swap' ? demand.has : demand.tradeIn;
+  // A swap's "has" is its trade-in; a plain request is cash only.
+  const tradeIn = demand.type === 'swap' ? demand.has : undefined;
   const cash = demand.type === 'swap' ? demand.cashAmount : undefined;
   const budget = demand.type === 'request' ? demand.budget : undefined;
 

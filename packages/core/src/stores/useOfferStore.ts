@@ -16,6 +16,20 @@ import { CURRENT_USER_ID } from '../mock/users';
 import type { Offer, OfferDraft, OfferState } from '../types/offer';
 
 const SAMPLE_OFFERS: Offer[] = [
+  // A trade-in offer to a dealer: towards Kopje Computers' ThinkPad, which
+  // takes swaps. It shows on the dealer console's Trade-ins.
+  {
+    id: 'o-chipo-thinkpad-tradein',
+    listingId: 'l-thinkpad-t480',
+    fromUserId: 'u-chipo',
+    item: { name: 'MacBook Air 2015, Core i5', condition: 'fair' },
+    cashAmount: 150,
+    cashFrom: 'offerer',
+    message: 'Works well, small dent on the lid. Can bring it in today.',
+    reachOn: ['whatsapp'],
+    state: 'pending',
+    sentLabel: '1h ago',
+  },
   {
     id: 'o-kopje-latitude',
     listingId: 'l-macbook-swap',

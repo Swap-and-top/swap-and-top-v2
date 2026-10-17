@@ -136,9 +136,7 @@ export default function ConsoleLeadsPage() {
 
             {(() => {
               const tradeIn =
-                active.demand.type === 'swap'
-                  ? active.demand.has
-                  : active.demand.tradeIn;
+                active.demand.type === 'swap' ? active.demand.has : undefined;
               const cash =
                 active.demand.type === 'swap'
                   ? active.demand.cashAmount
@@ -252,10 +250,8 @@ export default function ConsoleLeadsPage() {
 function subtitleFor(lead: Lead): string {
   if (lead.demand.type === 'swap') {
     const cash = lead.demand.cashAmount;
-    return `Has ${lead.demand.has.name}${cash ? ` · adds $${cash}` : ''}`;
+    const upTo = lead.demand.cashUpTo ? ' up to' : '';
+    return `Has ${lead.demand.has.name}${cash ? ` · adds${upTo} $${cash}` : ''}`;
   }
-  const tradeIn = lead.demand.tradeIn;
-  return `Budget up to $${lead.demand.budget}${
-    tradeIn ? ` · has ${tradeIn.name}` : ' · no trade-in'
-  }`;
+  return `Budget up to $${lead.demand.budget} · cash only`;
 }

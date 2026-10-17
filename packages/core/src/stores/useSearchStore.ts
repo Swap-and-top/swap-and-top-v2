@@ -176,7 +176,7 @@ function specHaystack(listing: Listing): string {
     listing.type === 'swap'
       ? [listing.has, listing.wants]
       : listing.type === 'request'
-        ? [listing.wants, listing.tradeIn]
+        ? [listing.wants]
         : [listing.item];
 
   return items
@@ -273,7 +273,7 @@ export function suggestSearchTerms(
       listing.type === 'swap'
         ? [listing.has, listing.wants]
         : listing.type === 'request'
-          ? [listing.wants, listing.tradeIn]
+          ? [listing.wants]
           : [listing.item];
     for (const item of items) {
       if (!item) continue;

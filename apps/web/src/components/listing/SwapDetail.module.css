@@ -100,6 +100,10 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  /* Set in from the band's edges, rules too, as on a sale listing and the
+     feed card's line above a shop: the side edges, and the bottom, so the
+     rule down the middle stops short of the band's foot as well. */
+  padding: 0 var(--snt-space-7) var(--snt-space-6);
 }
 
 /** The item's name, and any cash with this side. */
@@ -108,7 +112,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--snt-space-5) var(--snt-space-7);
+  padding: var(--snt-space-5) 0;
 }
 
 /** The item's name, with any cash that comes with this side opposite it. */
@@ -134,6 +138,14 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* "up to": small and plain, set as the details are (Used good, Core i3),
+   so the amount still leads. */
+.cashUpTo {
+  font-family: var(--snt-font-body);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+}
+
 /*
  * The details, in the shape of the specification table on a sale listing: a
  * two-column grid of cells, each a small label over its value, with rules
@@ -153,13 +165,16 @@
   border-top: 1px solid var(--rule);
 }
 
-/* The rule down the middle, between the two columns. */
+/* The rule down the middle, between the two columns. The text keeps to
+   the set-in edges: the left column's flush left, prose rows too. */
 .fact:nth-child(odd):not(.factWide) {
+  padding-left: 0;
   border-right: 1px solid var(--rule);
 }
 
 .factWide {
   grid-column: 1 / -1;
+  padding-left: 0;
 }
 
 .fact dt {

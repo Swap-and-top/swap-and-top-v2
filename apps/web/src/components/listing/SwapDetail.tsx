@@ -57,7 +57,12 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
   const mine = useViewerId() === listing.ownerId;
 
   /** Who pays, worded as on the cards, or from your side on your own. */
-  const terms = swapTerms(listing.cashDirection, listing.cashAmount, mine);
+  const terms = swapTerms(
+    listing.cashDirection,
+    listing.cashAmount,
+    mine,
+    listing.cashUpTo,
+  );
 
   return (
     <Screen surface>
@@ -76,6 +81,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
             label={mine ? 'You have' : 'Has'}
             item={listing.has}
             cash={terms.cashSide === 'has' ? listing.cashAmount : undefined}
+            cashUpTo={listing.cashUpTo}
           />
           <SwapSideBand
             tone="wants"
@@ -197,12 +203,15 @@ function SwapSideBand({
   label,
   item,
   cash,
+  cashUpTo = false,
 }: {
   tone: 'has' | 'wants';
   label: string;
   item: Item;
   /** Cash that comes with this side, if any. */
   cash?: number;
+  /** The cash is a ceiling: "up to +$600". */
+  cashUpTo?: boolean;
 }) {
   const facts = specRowsFor(item);
   // Short facts sit two to a row, then the prose ones a row each. An odd
@@ -242,7 +251,17 @@ function SwapSideBand({
           <div className={styles.heading}>
             <div className={styles.nameRow}>
               <h3 className={styles.name}>{item.name}</h3>
-              {cash ? <span className={styles.cash}>+${cash}</span> : null}
+              {cash ? (
+                <span className={styles.cash}>
+                  {/* A ceiling reads "+ up to $600", "+ up to" small. */}
+                  {cashUpTo ? (
+                    <span className={styles.cashUpTo}>+ up to </span>
+                  ) : (
+                    '+'
+                  )}
+                  ${cash}
+                </span>
+              ) : null}
             </div>
           </div>
 

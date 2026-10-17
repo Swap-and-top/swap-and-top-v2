@@ -132,8 +132,11 @@
   white-space: nowrap;
 }
 
+/* "up to": small and plain, as the details are, so the amount leads. */
 .upToWords {
-  font-weight: var(--snt-weight-medium);
+  font-family: var(--snt-font-body);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-normal);
 }
 
 .tradeInBody {

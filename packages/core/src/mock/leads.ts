@@ -53,7 +53,7 @@ export const mockLeads: Lead[] = [
   },
   {
     id: 'lead-4',
-    demand: demand('l-cad-desktop-wanted'),
+    demand: demand('l-cad-desktop-swap'),
     requester: getUser('u-blessing') ?? fallbackUser,
     isNew: false,
     receivedAt: 'Yesterday',
