@@ -1,8 +1,21 @@
-/** Console promote. Wireframe artboard: `ConsolePromoteM`. */
+/**
+ * Console promote. Wireframe artboard: `ConsolePromoteM`.
+ *
+ * Set as the rest of the app is: white cards with no outline, names in the
+ * bold blue, icons on a pale blue tile.
+ */
 
+/* On the page's pale blue the numbers sit in a white strip, parted by
+   pale lines. */
 .stats {
   margin-top: var(--snt-space-7);
   max-width: 520px;
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.stats > * + * {
+  border-left-color: var(--snt-bg-app) !important;
 }
 
 .cards {
@@ -15,10 +28,9 @@
   display: flex;
   align-items: flex-start;
   gap: var(--snt-space-5);
-  padding: var(--snt-space-7);
-  background: var(--snt-bg-surface);
-  border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-lg);
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  background: var(--snt-bg-card);
+  border-radius: var(--snt-radius-xl);
 }
 
 .glyph {
@@ -37,13 +49,8 @@
 }
 
 .glyphAccent {
-  background: var(--snt-accent-tint);
-  color: var(--snt-accent-strong);
-}
-
-.glyphDark {
-  background: var(--snt-dark);
-  color: var(--snt-ink-on-dark);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
 }
 
 .body {
@@ -60,7 +67,8 @@
 
 .name {
   font-size: var(--snt-text-lg);
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
 }
 
 .description {
@@ -86,10 +94,10 @@
 /* --- best performer --- */
 
 .performer {
-  padding: var(--snt-space-7);
-  background: var(--snt-bg-surface);
-  border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-lg);
+  margin-top: var(--snt-space-5);
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  background: var(--snt-bg-card);
+  border-radius: var(--snt-radius-xl);
 }
 
 .performerRow {
@@ -106,7 +114,8 @@
 
 .performerName {
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-medium);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
 }
 
 .performerMeta {

@@ -19,6 +19,7 @@ export type ButtonVariant =
   | 'outline'
   | 'subtle'
   | 'dark'
+  | 'blue'
   | 'success'
   | 'dashed';
 

@@ -46,7 +46,7 @@ export function LeadCard({
 
       {budget !== undefined ? (
         <div className={styles.sub}>
-          Budget up to ${budget} · cash ready{tradeIn ? '' : ' · no trade in'}
+          Budget up to ${budget} · cash ready{tradeIn ? '' : ' · nothing to swap'}
         </div>
       ) : null}
 

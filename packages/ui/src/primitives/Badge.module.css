@@ -5,25 +5,26 @@
  * alone is not a signal people can rely on.
  */
 
+/**
+ * A small pill in sentence case, as a listing's status is (Live, Paused,
+ * Sold): no capitals, no tracking.
+ */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: var(--snt-space-1);
-  height: 18px;
-  padding: 0 var(--snt-space-3);
-  border-radius: var(--snt-radius-xs);
-  font-size: var(--snt-text-2xs);
-  font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-label);
-  text-transform: uppercase;
+  height: 20px;
+  padding: 0 var(--snt-space-4);
+  border-radius: var(--snt-radius-pill);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
   white-space: nowrap;
 }
 
 /** Slightly larger, for a badge sitting beside a price. */
 .lg {
-  height: 20px;
-  padding: 0 var(--snt-space-4);
-  font-size: var(--snt-text-xs);
+  height: 22px;
+  padding: 0 var(--snt-space-5);
 }
 
 /** Pill shape with normal casing — used for a condition label. */
@@ -40,8 +41,8 @@
 /* --- tones --- */
 
 .neutral {
-  background: var(--snt-bg-subtle);
-  color: #3d3d38;
+  background: var(--snt-bg-inset);
+  color: var(--snt-ink-muted);
 }
 
 .outline {
@@ -60,6 +61,12 @@
 .accent {
   background: var(--snt-accent-tint);
   color: var(--snt-accent-strong);
+}
+
+/** Paused: red, as on a listing's own status tag. */
+.danger {
+  background: #fdeceb;
+  color: #b42318;
 }
 
 /** New lead. Solid, because it is the one thing a dealer must not miss. */
@@ -100,4 +107,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* --- a status with its mark in front ------------------------------------- */
+
+.marked {
+  gap: var(--snt-space-3);
+}
+
+.marked > svg {
+  flex-shrink: 0;
+}
+
+/** Live: a small dot in the pill's own green. */
+.dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
 }

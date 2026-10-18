@@ -7,6 +7,7 @@
 
 import type { ReactNode } from 'react';
 import type { ListingStatus } from '@snt/core';
+import { CheckIcon, MegaphoneIcon } from '../icons';
 import styles from './Badge.module.css';
 
 export type BadgeTone =
@@ -15,6 +16,7 @@ export type BadgeTone =
   | 'success'
   | 'accent'
   | 'accentSolid'
+  | 'danger'
   | 'dark';
 
 export interface BadgeProps {
@@ -56,9 +58,10 @@ export function Badge({
 }
 
 const STATUS_TONE: Record<ListingStatus, BadgeTone> = {
+  // As on a listing's own status tag: live green, paused red, sold blue.
   live: 'success',
-  paused: 'neutral',
-  sold: 'neutral',
+  paused: 'danger',
+  sold: 'accent',
   draft: 'neutral',
   expired: 'neutral',
   withdrawn: 'neutral',
@@ -75,6 +78,47 @@ const STATUS_LABEL: Record<ListingStatus, string> = {
   removed: 'Removed',
 };
 
+/**
+ * The small mark before a status, as on a listing's own status tag: a dot
+ * for live, a pause for paused, a tick for sold, a pencil for a draft still
+ * being written, and a megaphone for a sponsored slot, the megaphone of Promote.
+ */
+function StatusMark({ status }: { status: ListingStatus | 'sponsored' }) {
+  switch (status) {
+    case 'live':
+      return <span className={styles.dot} aria-hidden />;
+    case 'paused':
+      return (
+        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
+          <rect x="1.5" y="1" width="2.4" height="8" rx="0.8" fill="currentColor" />
+          <rect x="6.1" y="1" width="2.4" height="8" rx="0.8" fill="currentColor" />
+        </svg>
+      );
+    case 'sold':
+      return <CheckIcon size={12} weight={3} />;
+    case 'sponsored':
+      return <MegaphoneIcon size={12} weight={2.4} />;
+    case 'draft':
+      return (
+        <svg
+          width="11"
+          height="11"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <path d="M15.5 4.5l4 4L9 19H5v-4z" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
 /** Console stock rows. Sponsored overrides the status, because it is the point. */
 export function StatusBadge({
   status,
@@ -85,13 +129,15 @@ export function StatusBadge({
 }) {
   if (sponsored) {
     return (
-      <Badge tone="accent" size="lg">
+      <Badge tone="accent" size="lg" className={styles.marked}>
+        <StatusMark status="sponsored" />
         Sponsored
       </Badge>
     );
   }
   return (
-    <Badge tone={STATUS_TONE[status]} size="lg">
+    <Badge tone={STATUS_TONE[status]} size="lg" className={styles.marked}>
+      <StatusMark status={status} />
       {STATUS_LABEL[status]}
     </Badge>
   );

@@ -7,7 +7,6 @@
 import Link from 'next/link';
 import type { Listing, SwapListing } from '@snt/core';
 import { getShop, getUser } from '@snt/core';
-import { Badge } from '../primitives/Badge';
 import { ImagePlaceholder, listingPhoto } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, ItemName, Price } from '../primitives/Text';
@@ -87,7 +86,8 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
               <Price amount={listing.budget} size="sm" />
             ) : null}
 
-            {gone ? <Badge tone="neutral">Gone</Badge> : null}
+            {/* Gone: a small grey pill, as a listing's status is. */}
+            {gone ? <span className={styles.gone}>Gone</span> : null}
           </div>
 
           <div className={styles.rowMeta}>

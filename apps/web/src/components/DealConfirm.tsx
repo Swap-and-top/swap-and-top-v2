@@ -10,8 +10,8 @@
  *     otherwise people answer strategically instead of honestly.
  *  2. **It is not a complaint channel.** A "no" means no deal happened, not
  *     that someone behaved badly. If something went wrong that is a report,
- *     which is a separate mechanism with reasons, review and appeal — hence the
- *     link rather than a fourth button.
+ *     which is a separate mechanism with reasons, review and appeal — hence a
+ *     small button apart from the answers rather than a fourth answer.
  *
  * Wireframe artboard: `DealConfirm`.
  */
@@ -25,17 +25,14 @@ import {
   type DealConfirmation,
 } from '@snt/core';
 import {
-  Body,
+  AppHeader,
   Button,
-  Eyebrow,
+  ButtonLink,
   ImagePlaceholder,
   listingPhoto,
   Note,
-  PageHeading,
-  Panel,
   Screen,
   ScreenBody,
-  ScreenHeader,
   specSummary,
 } from '@snt/ui';
 import { CheckIcon, ChevronRightIcon, ShieldIcon } from '@snt/ui/icons';
@@ -57,16 +54,19 @@ export function DealConfirm({
 
   return (
     <Screen>
-      <ScreenHeader backHref="/me" title="Deal check" centreTitle />
+      {/* The feed's own header, as on every page. */}
+      <AppHeader />
 
       <ScreenBody>
-        <PageHeading>Did the deal go through?</PageHeading>
-        <Body className={styles.intro}>
+        {/* The question, the listing it is about, and the answers: one
+            white card, as the forms are. */}
+        <section className={styles.card}>
+        <h1 className={styles.heading}>Did the deal go through?</h1>
+        <p className={styles.intro}>
           You got {sellerName}&rsquo;s number three days ago.
-        </Body>
+        </p>
 
         {listing ? (
-          <Panel>
             <Link href={`/listing/${listing.slug}`} className={styles.summary}>
               <ImagePlaceholder
                 src={listingPhoto(listing)}
@@ -89,7 +89,6 @@ export function DealConfirm({
                 <ChevronRightIcon size={17} />
               </span>
             </Link>
-          </Panel>
         ) : null}
 
         {given === 'unanswered' || given === 'not-yet' ? (
@@ -113,7 +112,7 @@ export function DealConfirm({
                 No, it did not happen
               </Button>
               <Button
-                variant="subtle"
+                variant="secondary"
                 size="lg"
                 block
                 onClick={() => answer(confirmation.id, 'not-yet')}
@@ -131,10 +130,13 @@ export function DealConfirm({
               has no consequence for anyone.
             </Note>
 
+            {/* A report is its own thing, apart from the answers: a small
+                button under the note, not a fourth answer. */}
             <div className={styles.report}>
-              <Link href="/me" className={styles.reportLink}>
-                Something go wrong? Report this listing
-              </Link>
+              <span className={styles.reportAsk}>Something go wrong?</span>
+              <ButtonLink href="/me" variant="secondary" size="sm">
+                Report this listing
+              </ButtonLink>
             </div>
           </>
         ) : (
@@ -152,9 +154,11 @@ export function DealConfirm({
             </div>
           </div>
         )}
+        </section>
 
-        <div className={styles.record}>
-          <Eyebrow>Your record</Eyebrow>
+        {/* What it adds up to: a card of its own. */}
+        <section className={[styles.card, styles.record].join(' ')}>
+          <h2 className={styles.label}>Your record</h2>
           <div className={styles.recordRow}>
             <span className={styles.recordCount}>
               <CheckIcon size={17} weight={2.6} />
@@ -168,7 +172,7 @@ export function DealConfirm({
             This is how buyers judge a private seller. There are no badges for
             who you are or what you do, only what you have actually done.
           </p>
-        </div>
+        </section>
       </ScreenBody>
     </Screen>
   );

@@ -27,7 +27,7 @@ import {
   ImagePlaceholder,
   StatStrip,
 } from '@snt/ui';
-import { BellIcon, ClockIcon, StarIcon } from '@snt/ui/icons';
+import { BellIcon, ClockIcon, MegaphoneIcon } from '@snt/ui/icons';
 import styles from './page.module.css';
 
 function glyphFor(product: PromotionProduct) {
@@ -39,13 +39,13 @@ function glyphFor(product: PromotionProduct) {
       };
     case 'sponsored-slot':
       return {
-        icon: <StarIcon size={18} weight={1.9} />,
+        icon: <MegaphoneIcon size={18} weight={1.9} />,
         className: styles.glyphAccent,
       };
     default:
       return {
         icon: <ClockIcon size={18} weight={1.8} />,
-        className: styles.glyphDark,
+        className: styles.glyphAccent,
       };
   }
 }
@@ -98,7 +98,7 @@ export default function ConsolePromotePage() {
                 {product.actionLabel ? (
                   <div className={styles.actions}>
                     <Button
-                      variant={product.id === 'drop-slot' ? 'outline' : 'primary'}
+                      variant={product.id === 'drop-slot' ? 'secondary' : 'primary'}
                       size="sm"
                     >
                       {product.actionLabel}

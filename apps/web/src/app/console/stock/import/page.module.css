@@ -1,0 +1,249 @@
+/**
+ * Console, Bulk import. Each step a white card, as the forms are; the check
+ * a table set as the stock table is, under the same dark blue band.
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+  max-width: 900px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-9) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+@media (min-width: 1024px) {
+  .card {
+    padding: var(--snt-space-10);
+  }
+}
+
+.heading {
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.intro {
+  margin-top: calc(var(--snt-space-3) * -1);
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+.template {
+  align-self: flex-start;
+}
+
+/* --- choose or drop a file: a pale box, a faint blue when one is over it -- */
+
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-2);
+  padding: var(--snt-space-10) var(--snt-space-6);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  transition: box-shadow var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .drop:hover {
+    box-shadow: var(--snt-focus-ring);
+  }
+}
+
+.dropOver {
+  box-shadow: var(--snt-focus-ring);
+  background: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-inset));
+}
+
+.dropTitle {
+  margin-top: var(--snt-space-3);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+}
+
+.dropHint {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+/* "or paste it", between two pale lines. */
+.or {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.or::before,
+.or::after {
+  content: '';
+  flex-grow: 1;
+  height: 1px;
+  background: var(--snt-bg-app);
+}
+
+/* --- paste: the text box look, taller --- */
+
+.pasteLabel {
+  margin-bottom: calc(var(--snt-space-4) * -1);
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.paste {
+  width: 100%;
+  padding: var(--snt-space-6) var(--snt-space-8);
+  border: 0;
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-inset);
+  color: var(--snt-ink);
+  font: inherit;
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-normal);
+  resize: vertical;
+}
+
+.paste::placeholder {
+  color: var(--snt-placeholder);
+}
+
+.paste:focus {
+  outline: none;
+  box-shadow: var(--snt-focus-ring);
+}
+
+.problem {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-alert);
+}
+
+/* --- the check: one row per line of the sheet --- */
+
+.table {
+  display: flex;
+  flex-direction: column;
+  margin: 0 calc(var(--snt-card-pad) * -1);
+}
+
+.headerRow {
+  display: none;
+}
+
+/* Phone: each row a small block, parted by pale lines set in from the
+   edges. */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--snt-space-2) var(--snt-space-5);
+  align-items: center;
+  padding: var(--snt-space-5) var(--snt-card-pad);
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-card-pad) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.headerRow + .row {
+  background-image: none;
+}
+
+/* The item's name and price: the shop's own things, in the blue. */
+.name {
+  grid-column: 1 / -1;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* A row with no name: said in grey, not in an item's blue. */
+.missing {
+  grid-column: 1 / -1;
+  font-size: var(--snt-text-md);
+  color: var(--snt-ink-muted);
+}
+
+.cell {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.price {
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.result {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 1024px) {
+  /* A table under the dark blue band, as Stock's is. */
+  .table {
+    margin: 0;
+    border-radius: var(--snt-radius-lg);
+    overflow: hidden;
+  }
+
+  .headerRow,
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 1.1fr) 70px 80px 150px;
+    justify-items: start;
+    gap: var(--snt-space-6);
+    padding: var(--snt-space-5) var(--snt-space-7);
+  }
+
+  .headerRow {
+    background: var(--snt-accent-strong);
+    color: var(--snt-ink-on-dark);
+    font-size: var(--snt-text-sm);
+    font-weight: var(--snt-weight-bold);
+  }
+
+  .row {
+    background-size: calc(100% - var(--snt-space-7) * 2) 1px;
+  }
+
+  .name,
+  .missing,
+  .result {
+    grid-column: auto;
+  }
+
+  .cell {
+    font-size: var(--snt-text-base);
+  }
+
+  .end {
+    justify-self: end;
+  }
+}
+
+/* A second button under the first, as close to it as pairs are. */
+.under {
+  margin-top: calc(var(--snt-space-6) * -1 + var(--snt-space-4));
+}
+
+/* Two buttons, half each. */
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4);
+}

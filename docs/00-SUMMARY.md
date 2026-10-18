@@ -11,7 +11,7 @@
 
 Swap & Top is a marketplace for second-hand gadgets in Zimbabwe — phones, laptops, desktops, consoles and computer parts.
 
-It does one thing no other platform here does properly: it lets you **trade the gadget you already own towards the one you want, adding or receiving cash to make up the difference.** That is the "swap and top" idea, and it came from a real, repeated question — customers looking at gadget adverts kept asking the seller whether he would do a swap deal.
+It does one thing no other platform here does properly: it lets you **swap the gadget you already own towards the one you want, adding or receiving cash to make up the difference.** That is the "swap and top" idea, and it came from a real, repeated question — customers looking at gadget adverts kept asking the seller whether he would do a swap deal.
 
 Alongside swapping, people can straightforwardly **sell** things and **say what they are looking for**. Later on there will be **auctions**.
 
@@ -41,11 +41,11 @@ This is deliberate. Handling other people's money means escrow, refunds, dispute
 
 ## 💡 The idea that makes it work
 
-A swap post is not just a listing. It is a **precise statement of demand with a trade-in attached.**
+A swap post is not just a listing. It is a **precise statement of demand with something to swap attached.**
 
 > "I have a MacBook Air 2017, I want any i7 with 16GB, and I will add $240."
 
-That tells a dealer exactly what someone wants, exactly what they are trading in, and exactly how much cash they have. That is a very good sales lead.
+That tells a dealer exactly what someone wants, exactly what they would swap, and exactly how much cash they have. That is a very good sales lead.
 
 Facebook Marketplace cannot do this. Facebook is a board of things for sale — demand is invisible. On Swap & Top, demand is a first-class citizen.
 
@@ -61,8 +61,8 @@ We charge dealers for two things instead:
 
 | What dealers pay for | Why they pay |
 | --- | --- |
-| **Lead alerts** — told immediately when someone posts a request matching their stock | In trade-in deals the first credible offer usually wins. Speed is money. |
-| **Dealer console** — a simple system to run their stock, sales and trade-ins | Most shops run on paper and WhatsApp. This saves them real time. |
+| **Lead alerts** — told immediately when someone posts a request matching their stock | In swap deals the first credible offer usually wins. Speed is money. |
+| **Dealer console** — a simple system to run their stock, sales and swap offers | Most shops run on paper and WhatsApp. This saves them real time. |
 | **Sponsored slots** — a labelled placement in the browsing feed | Once there is traffic, visibility is worth buying. |
 | **Friday Drop slots** — a place in a weekly batch of checked deals | Attention is concentrated at a set time, so the slot is worth more. |
 

@@ -2,8 +2,10 @@
  * Console leads — the screen that sells the platform.
  *
  * Phone: a feed of lead cards, which is how dealers already read WhatsApp.
- * Desktop from `lg`: two panes, the request list beside the selected request's
- * detail and an offer composer. Reviewing a queue is much faster that way.
+ * Desktop from `lg`: two white cards, the request list beside the selected
+ * request's detail and an offer composer. Set as the rest of the app is: no
+ * outlines, thin pale lines that stop short of the edges, what someone wants
+ * in green and what someone has in blue.
  */
 
 .alertPill {
@@ -20,31 +22,11 @@
   font-weight: var(--snt-weight-semibold);
 }
 
+/* The marketplace's tabs, from the console's left edge rather than centred
+   in the feed's column. */
 .tabs {
-  display: flex;
-  gap: var(--snt-space-9);
+  --snt-column-inset: 0px;
   margin-top: var(--snt-space-5);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.tab {
-  flex-shrink: 0;
-  height: 40px;
-  border-bottom: 2px solid transparent;
-  color: var(--snt-ink-muted);
-  font-size: var(--snt-text-md);
-  white-space: nowrap;
-}
-
-.tabActive {
-  border-bottom-color: var(--snt-accent);
-  color: var(--snt-ink);
-  font-weight: var(--snt-weight-semibold);
 }
 
 /* --- phone: a feed of cards --- */
@@ -55,14 +37,14 @@
   gap: var(--snt-space-5);
 }
 
-/* --- desktop: two panes --- */
+/* --- desktop: two cards --- */
 
 .panes {
   display: none;
 }
 
 .placeholder {
-  font-size: var(--snt-text-md);
+  font-size: var(--snt-text-base);
   color: var(--snt-ink-muted);
 }
 
@@ -74,36 +56,56 @@
   .panes {
     display: grid;
     grid-template-columns: 382px minmax(0, 1fr);
-    background: var(--snt-bg-surface);
-    border: 1px solid var(--snt-line);
+    gap: var(--snt-space-7);
+    align-items: start;
+  }
+
+  .list,
+  .detail {
+    background: var(--snt-bg-card);
     border-radius: var(--snt-radius-xl);
-    overflow: hidden;
-    min-height: 560px;
   }
 
   .list {
-    border-right: 1px solid var(--snt-line);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    padding-block: var(--snt-space-3);
   }
 
+  /* Rows parted by a pale line, set in from the card's edges. */
   .listItem {
     display: block;
     width: 100%;
     padding: var(--snt-space-6) var(--snt-space-8);
-    border-bottom: 1px solid var(--snt-line-subtle);
-    border-left: 3px solid transparent;
     text-align: left;
     transition: background var(--snt-transition);
   }
 
-  .listItem:hover {
-    background: var(--snt-bg-app);
+  .listItem + .listItem {
+    background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+    background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+    background-position: center top;
+    background-repeat: no-repeat;
   }
 
-  .listItemActive {
-    background: var(--snt-bg-highlight);
-    border-left-color: var(--snt-accent);
+  @media (hover: hover) {
+    .listItem:hover {
+      background-color: color-mix(
+        in srgb,
+        var(--snt-control-active) 4%,
+        var(--snt-bg-card)
+      );
+    }
+  }
+
+  /* The open one: a faint blue, as a chosen chip is. */
+  .listItem.listItemActive {
+    background-color: color-mix(
+      in srgb,
+      var(--snt-control-active) 8%,
+      var(--snt-bg-card)
+    );
   }
 
   .listHead {
@@ -125,7 +127,8 @@
 
   .listTitle {
     font-size: var(--snt-text-lg);
-    font-weight: var(--snt-weight-semibold);
+    font-weight: var(--snt-weight-bold);
+    line-height: var(--snt-leading-tight);
     margin-top: var(--snt-space-3);
   }
 
@@ -135,17 +138,20 @@
     margin-top: var(--snt-space-2);
   }
 
-  /* --- detail pane --- */
+  /* --- detail card --- */
 
   .detail {
     padding: var(--snt-space-10) var(--snt-space-12);
   }
 
+  /* What they want: the big line, in green. */
   .detailTitle {
     font-family: var(--snt-font-display);
     font-size: var(--snt-text-4xl);
     font-weight: var(--snt-weight-bold);
-    margin-top: var(--snt-space-4);
+    line-height: var(--snt-leading-tight);
+    color: var(--snt-wanted-ink);
+    margin-top: var(--snt-space-3);
   }
 
   .detailMeta {
@@ -156,24 +162,29 @@
 
   .detailCards {
     display: flex;
-    gap: var(--snt-space-7);
+    gap: var(--snt-space-5);
     margin-top: var(--snt-space-9);
+  }
+
+  /* What they have and the cash on top: pale boxes, as the text boxes are. */
+  .tradeInCard,
+  .cashCard {
+    padding: var(--snt-space-7);
+    border-radius: var(--snt-radius-lg);
+    background: var(--snt-bg-inset);
   }
 
   .tradeInCard {
     flex-grow: 1;
     flex-basis: 0;
     min-width: 0;
-    padding: var(--snt-space-7);
-    border: 1px solid var(--snt-line);
-    border-radius: var(--snt-radius-lg);
   }
 
   .tradeInName {
-    font-size: var(--snt-text-lg);
-    /* Every item name is bold. */
+    display: block;
+    font-size: var(--snt-text-xl);
     font-weight: var(--snt-weight-bold);
-    margin-top: var(--snt-space-4);
+    margin-top: var(--snt-space-3);
   }
 
   .tradeInSpecs {
@@ -190,10 +201,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--snt-space-7);
-    border: 1px solid var(--snt-accent);
-    border-radius: var(--snt-radius-lg);
-    background: var(--snt-accent-tint);
   }
 
   .cashValue {
@@ -210,26 +217,21 @@
     margin-top: var(--snt-space-1);
   }
 
-  /* --- match --- */
+  /* --- match: the dealer's own item, in the blue of things owned --- */
 
   .matchPanel {
-    margin-top: var(--snt-space-9);
-    border: 1px solid var(--snt-line);
+    margin-top: var(--snt-space-5);
     border-radius: var(--snt-radius-lg);
-    overflow: hidden;
+    background: var(--snt-bg-inset);
   }
 
   .matchHead {
     display: flex;
     align-items: center;
     gap: var(--snt-space-3);
-    padding: var(--snt-space-5) var(--snt-space-7);
-    background: var(--snt-bg-app);
-    border-bottom: 1px solid var(--snt-line);
+    padding: var(--snt-space-6) var(--snt-space-7) 0;
     font-size: var(--snt-text-sm);
     font-weight: var(--snt-weight-bold);
-    letter-spacing: var(--snt-tracking-label);
-    text-transform: uppercase;
     color: var(--snt-success);
   }
 
@@ -237,7 +239,7 @@
     display: flex;
     align-items: center;
     gap: var(--snt-space-6);
-    padding: var(--snt-space-6) var(--snt-space-7);
+    padding: var(--snt-space-3) var(--snt-space-7) var(--snt-space-6);
   }
 
   .matchInfo {
@@ -246,8 +248,9 @@
   }
 
   .matchName {
-    font-size: var(--snt-text-md);
-    font-weight: var(--snt-weight-medium);
+    font-size: var(--snt-text-lg);
+    font-weight: var(--snt-weight-bold);
+    color: var(--snt-accent-bold);
   }
 
   .matchSpecs {
@@ -280,7 +283,11 @@
     min-width: 0;
   }
 
+  /* The person asking, under a pale line, as the listing pages set the
+     seller. */
   .requester {
     margin-top: var(--snt-space-9);
+    padding-top: var(--snt-space-7);
+    border-top: 1px solid var(--snt-bg-app);
   }
 }

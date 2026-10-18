@@ -60,7 +60,7 @@ The first user base, and the source of the platform's character.
 
 **What they want:**
 
-- Trade the thing they own towards the thing they want
+- Swap the thing they own towards the thing they want
 - Sell something quickly for cash
 - Say what they are looking for and have offers come to them
 - Not get scammed, and not meet a stranger somewhere unsafe
@@ -84,18 +84,18 @@ The only group that pays, and simultaneously the thing that makes swaps actually
 | Type | Why they matter |
 | --- | --- |
 | **Computer and laptop shops** | Highest ticket value, richest specifications, where our search advantage is widest |
-| **Repair shops** | See devices constantly, already take trade-ins, sit on parts stock |
+| **Repair shops** | See devices constantly, already take swaps, sit on parts stock |
 | **Phone shops** | Highest volume, most numerous |
 | **Console and gaming sellers** | Smaller but passionate niche with real swap culture |
 
 **What they want:**
 
 - Buyers they cannot reach through their own WhatsApp list
-- To be first to a trade-in opportunity, because the first credible offer usually wins
+- To be first to a swap opportunity, because the first credible offer usually wins
 - A way to keep stock straight without paper
 - To look trustworthy to a stranger
 
-**Why they are the liquidity, not just the revenue:** a dealer is happy to trade *down*. They take the older device plus cash, hand over the better one from stock, and resell the trade-in. That is their business model, and it makes them the natural counterparty to the dominant direction of swap demand. Without them, a campus feed fills with trade-up requests nobody answers.
+**Why they are the liquidity, not just the revenue:** a dealer is happy to trade *down*. They take the older device plus cash, hand over the better one from stock, and resell the device they swapped in. That is their business model, and it makes them the natural counterparty to the dominant direction of swap demand. Without them, a campus feed fills with trade-up requests nobody answers.
 
 **What they will pay for:** see [monetization.md](./monetization.md). Briefly — lead alerts and a stock console earn immediately; sponsored placement only earns once traffic exists.
 

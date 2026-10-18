@@ -33,11 +33,9 @@
   border: none;
 }
 
-/** Accent outline: a new lead, or the emphasised swap option. */
+/** A new lead: a white card like the rest; its "New" pill says it is new. */
 .accent {
-  /* An inset ring rather than a border, so it adds no size. */
-  box-shadow: inset 0 0 0 1px var(--snt-accent);
-  background: var(--snt-accent-tint);
+  background: var(--snt-bg-card);
 }
 
 /** Dark panel: the console entry row on the account hub. */

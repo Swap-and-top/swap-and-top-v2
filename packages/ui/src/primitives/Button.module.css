@@ -106,6 +106,18 @@
   color: var(--snt-ink-on-dark);
 }
 
+/** Solid blue, white words: the console's tools, in the blue of its frame. */
+.blue {
+  background: var(--snt-accent-strong);
+  color: var(--snt-ink-on-dark);
+  border: none;
+}
+
+.blue:hover:not(:disabled) {
+  background: color-mix(in srgb, black 10%, var(--snt-accent-strong));
+  color: var(--snt-ink-on-dark);
+}
+
 /** Confirming a deal. Green, because it is a completion not a call to action. */
 .success {
   background: var(--snt-success);

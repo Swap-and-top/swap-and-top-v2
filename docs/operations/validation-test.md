@@ -88,7 +88,7 @@ This is a peer conversation, not a cold pitch. Use it.
 
 ### What to do in the shop
 
-1. **Open the Wanted feed, filtered to what they sell.** *"These people posted this week looking for what you have. Here's what each is trading in and how much cash they'll add."*
+1. **Open the Wanted feed, filtered to what they sell.** *"These people posted this week looking for what you have. Here's what each would swap and how much cash they'll add."*
 2. *"Right now they're ringing round town or scrolling Facebook. I can send them to you first."*
 3. **Show their shopfront.** *"This is how your shop looks to a buyer."*
 4. **Take their stock list.** *"Send it to me and I'll load it. Costs you nothing."*
@@ -99,7 +99,7 @@ This is a peer conversation, not a cold pitch. Use it.
 | Question | Tests |
 | --- | --- |
 | *"Would you pay to be told first when someone wants what you stock?"* | Lead alerts |
-| *"Separately — how do you track your stock and trade-ins today?"* | The dealer console |
+| *"Separately — how do you track your stock and swaps today?"* | The dealer console |
 
 The second question is the one most likely to produce a yes, and it is the better business. Ask it every time.
 

@@ -1,12 +1,12 @@
 /** Small typographic pieces that repeat across every screen. */
 
 /** Uppercase section label, e.g. PROCESSOR, WANTED, YOUR RECORD. */
+/** A small heading over a group: sentence case, bold, in the bold blue, as
+    the labels on the forms are. */
 .eyebrow {
-  /* font-size: var(--snt-text-sm); */
+  font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-bold);
-  /* letter-spacing: var(--snt-tracking-label); */
-  /* text-transform: uppercase; */
-  color: var(--snt-ink-muted);
+  color: var(--snt-accent-bold);
 }
 
 /** The smallest eyebrow, used inside cards for HAS / WANTS. */
@@ -77,10 +77,10 @@
 /** Screen title. */
 .screenTitle {
   font-family: var(--snt-font-display);
-  font-size: var(--snt-text-3xl);
+  font-size: var(--snt-text-2xl);
   font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-display);
-  color: var(--snt-ink);
+  /* In the bold blue, as every page's heading is. */
+  color: var(--snt-accent-bold);
 }
 
 /** In a brand header the title is white. */
@@ -91,10 +91,10 @@
 /** Page heading inside a flow, e.g. "Did the deal go through?". */
 .pageHeading {
   font-family: var(--snt-font-display);
-  font-size: var(--snt-text-4xl);
+  font-size: var(--snt-text-2xl);
   font-weight: var(--snt-weight-bold);
   line-height: 1.25;
-  color: var(--snt-ink);
+  color: var(--snt-accent-bold);
 }
 
 /** Body copy inside an explanatory block. */

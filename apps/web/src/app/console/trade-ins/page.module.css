@@ -12,9 +12,10 @@
   gap: var(--snt-space-5);
 }
 
+/* Which listing these are for: in the bold blue, as headings are. */
 .for,
 .for:hover {
-  color: inherit;
+  color: var(--snt-accent-bold);
 }
 
 .none {

@@ -52,6 +52,14 @@
   color: var(--snt-accent);
 }
 
+/* Initials in the circle: bold, in the bold blue. */
+.avatarInitials {
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+  letter-spacing: 0.3px;
+}
+
 /** Shop mark: square, near-black, initials. */
 .shopMark {
   display: flex;

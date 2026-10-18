@@ -53,7 +53,7 @@ Three states, always expressed from the poster's point of view.
 | --- | --- | --- |
 | **They add cash** | Trading up. Their device is worth less, they make up the difference. | The large majority |
 | **They receive cash** | Trading down. They want money back along with the swap. | A minority, usually people who need cash |
-| **Straight swap** | Even trade. | Uncommon |
+| **Straight swap** | Even swap, no cash. | Uncommon |
 
 ### The ratio is a metric worth watching
 
@@ -72,7 +72,7 @@ THE DOUBLE COINCIDENCE PROBLEM:
   Result: peer-to-peer swaps rarely match.
 ```
 
-This is the classic reason barter loses to money. The party who is happy to trade down is a **dealer** — they take the older device plus cash, hand over the better one from stock, and resell the trade-in. That is their business model.
+This is the classic reason barter loses to money. The party who is happy to trade down is a **dealer** — they take the older device plus cash, hand over the better one from stock, and resell the device they swapped in. That is their business model.
 
 **Two consequences:**
 
@@ -105,7 +105,7 @@ Wireframe frame: `DetailSwap`.
 │  THEY HAVE            THEY WANT      │
 │  MacBook Air 2017     Any i7 16GB    │
 ├──────────────────────────────────────┤
-│  WHAT THEY ARE TRADING IN            │
+│  WHAT THEY ARE SWAPPING              │
 │  Processor    │ RAM                  │
 │  Storage      │ Condition            │
 │  Defects noted                       │
@@ -122,13 +122,13 @@ Wireframe frame: `DetailSwap`.
 
 Note the primary action: **"I have this — make an offer"**, not "contact seller." The swap is a proposal, so the natural response is a counter-proposal. Revealing the number is the secondary action.
 
-**Defects are shown prominently** rather than buried. A trade-in's flaws are exactly what a counterparty needs to know, and hiding them produces failed meetings and reports.
+**Defects are shown prominently** rather than buried. The flaws of what someone swaps are exactly what a counterparty needs to know, and hiding them produces failed meetings and reports.
 
 ---
 
 ## Making an offer
 
-An offer against a swap listing (or a wanted post, or a sale marked Swaps accepted, as a trade-in) carries:
+An offer against a swap listing (or a wanted post, or a sale marked Swaps accepted, as a swap offer) carries:
 
 - Which item the offerer is putting forward — for a dealer, an item from their stock
 - The cash amount they propose, which may differ from the asking amount
@@ -145,9 +145,9 @@ The listing owner sees offers on their own listing and in their account hub. Off
 Automatically, with no extra action from the poster.
 
 1. A swap listing is published with the dealer-offers consent enabled (the default)
-2. It is indexed as demand: what is wanted, what is coming back in trade, how much cash
+2. It is indexed as demand: what is wanted, what is coming back in the swap, how much cash
 3. Dealers whose stock matches the wanted specification are alerted
-4. The dealer sees the lead with the trade-in and the cash on offer, and an explicit note of which of their items matches
+4. The dealer sees the lead with what they would swap and the cash on offer, and an explicit note of which of their items matches
 
 If the poster disables dealer offers, the listing remains fully public and contactable but does not enter dealer lead feeds. See [wanted-and-leads.md](./wanted-and-leads.md).
 
@@ -160,15 +160,15 @@ A dealer's stock matches a swap's wanted specification when:
 - The category matches
 - Every specified minimum is met or exceeded — "16GB" means 16 or more, not exactly 16
 - Where a model is named, the dealer's item is that model or a stated equivalent
-- The dealer's price is within reach of the trade-in value plus the offered cash
+- The dealer's price is within reach of the value of what they swap plus the offered cash
 
-That last condition prevents obviously pointless matches, and requires a rough trade-in valuation. Early on this is approximate; as listing data accumulates it improves. Being slightly generous is better than being strict — a dealer would rather dismiss a marginal lead than never see it.
+That last condition prevents obviously pointless matches, and requires a rough valuation of what is swapped. Early on this is approximate; as listing data accumulates it improves. Being slightly generous is better than being strict — a dealer would rather dismiss a marginal lead than never see it.
 
 ---
 
 ## Why this generalises
 
-Trade-in-plus-cash is not a gadget novelty. It is **how cars are traded everywhere in the world**. That confirms the primitive is sound and points at the eventual category expansion. Vehicles are deferred — see [../product/roadmap.md](../product/roadmap.md) — but the mechanic will carry over unchanged.
+Swap-plus-cash is not a gadget novelty. It is **how cars are traded everywhere in the world**. That confirms the primitive is sound and points at the eventual category expansion. Vehicles are deferred — see [../product/roadmap.md](../product/roadmap.md) — but the mechanic will carry over unchanged.
 
 ---
 

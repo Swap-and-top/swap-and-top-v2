@@ -1,9 +1,18 @@
-/** Dealer shopfront. Wireframe artboard: `Shopfront`. */
+/**
+ * Dealer shopfront. Wireframe artboard: `Shopfront`.
+ *
+ * The feed's header, then the shop in one white card, as the profile page
+ * is: its mark, its name in the bold blue, what it sells and when it is
+ * open, its numbers in the pale strip, and its two actions half each.
+ */
 
-.identity {
-  background: var(--snt-bg-surface);
-  padding: var(--snt-space-8) var(--snt-column-inset) var(--snt-space-8);
-  flex-shrink: 0;
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-7);
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
 }
 
 .head {
@@ -19,34 +28,58 @@
 
 .name {
   font-family: var(--snt-font-display);
-  font-size: var(--snt-text-3xl);
+  font-size: var(--snt-text-2xl);
   font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-display);
+  color: var(--snt-accent-bold);
 }
 
 .badgeRow {
   margin-top: var(--snt-space-1);
 }
 
+/** Share: the icon alone, in the blue, as on listings. */
+.share {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-pill);
+  color: var(--snt-control-active);
+  transition: background var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .share:hover {
+    background: var(--snt-bg-inset);
+  }
+}
+
 .description {
   font-size: var(--snt-text-base);
   color: var(--snt-ink-muted);
   line-height: var(--snt-leading-normal);
-  margin-top: var(--snt-space-6);
 }
 
-.stats {
-  margin-top: var(--snt-space-7);
-}
-
+/* Show contacts and Follow, half each. */
 .actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--snt-space-5);
-  margin-top: var(--snt-space-7);
 }
 
-.actions > :first-child {
-  flex-grow: 1;
+/* On a phone, Show contacts with several icons needs the whole width, as
+   on listings: the two stack. */
+@media (max-width: 519px) {
+  .actions:has(> [data-stack-on-phone]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.tabs {
+  margin-top: var(--snt-space-8);
 }
 
 .grid {

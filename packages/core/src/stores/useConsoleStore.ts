@@ -9,9 +9,35 @@
 
 import { create } from 'zustand';
 import type { LeadTab } from '../types/lead';
-import type { ListingStatus } from '../types/listing';
+import type { Category, ListingStatus } from '../types/listing';
 
 export type StockFilter = 'all' | ListingStatus;
+
+/** How the stock list is ordered. */
+export type StockSort = 'newest' | 'price-low' | 'price-high' | 'reveals';
+
+export const STOCK_SORT_LABELS: Record<StockSort, string> = {
+  newest: 'Newest first',
+  'price-low': 'Price, lowest first',
+  'price-high': 'Price, highest first',
+  reveals: 'Most reveals',
+};
+
+/** The stock list's filters, as the Filters sheet sets them. */
+export interface StockFilters {
+  status: StockFilter;
+  category: 'all' | Category;
+  sort: StockSort;
+  /** Only items that take a trade in. */
+  swapsOnly: boolean;
+}
+
+export const NO_STOCK_FILTERS: StockFilters = {
+  status: 'all',
+  category: 'all',
+  sort: 'newest',
+  swapsOnly: false,
+};
 
 interface ConsoleState {
   leadTab: LeadTab;
@@ -19,6 +45,9 @@ interface ConsoleState {
   activeLeadId: string | null;
   stockQuery: string;
   stockFilter: StockFilter;
+  stockFilters: StockFilters;
+  /** The desktop sidebar folded to its icons. Kept as the dealer moves on. */
+  sidebarCollapsed: boolean;
   /** Offer composer, on the desktop lead detail pane. */
   offerPrice: string;
   offerMessage: string;
@@ -26,6 +55,8 @@ interface ConsoleState {
   setActiveLead: (leadId: string | null) => void;
   setStockQuery: (query: string) => void;
   setStockFilter: (filter: StockFilter) => void;
+  setStockFilters: (filters: StockFilters) => void;
+  toggleSidebar: () => void;
   setOfferPrice: (price: string) => void;
   setOfferMessage: (message: string) => void;
 }
@@ -35,6 +66,8 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   activeLeadId: 'lead-1',
   stockQuery: '',
   stockFilter: 'all',
+  stockFilters: NO_STOCK_FILTERS,
+  sidebarCollapsed: false,
   offerPrice: '$255',
   offerMessage:
     'I have the Latitude 7490. Bring the Air in and we can do $255 on top.',
@@ -42,6 +75,9 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   setActiveLead: (activeLeadId) => set({ activeLeadId }),
   setStockQuery: (stockQuery) => set({ stockQuery }),
   setStockFilter: (stockFilter) => set({ stockFilter }),
+  setStockFilters: (stockFilters) => set({ stockFilters }),
+  toggleSidebar: () =>
+    set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   setOfferPrice: (offerPrice) => set({ offerPrice }),
   setOfferMessage: (offerMessage) => set({ offerMessage }),
 }));

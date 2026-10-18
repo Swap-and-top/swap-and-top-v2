@@ -90,7 +90,7 @@ export function OfferSheet({
 
   return (
     <Sheet
-      title={forSale ? `Trade in for: ${ask.item}` : `Wanted item: ${ask.item}`}
+      title={forSale ? `Swap for: ${ask.item}` : `Wanted item: ${ask.item}`}
       // What is being answered heads the sheet, first and largest: the item
       // wanted, then its terms. Everything under it is what you offer for it.
       heading={
@@ -228,7 +228,7 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
           offering something, in the blue of what is yours. */}
       <h3 className={styles.formTitle}>
         <CashHandIcon size={17} />
-        {listing.type === 'sale' ? 'Offer a trade in' : 'Make an offer'}
+        {listing.type === 'sale' ? 'Offer a swap' : 'Make an offer'}
       </h3>
 
       <fieldset className={styles.group}>

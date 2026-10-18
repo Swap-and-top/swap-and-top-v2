@@ -19,7 +19,7 @@
 
 .title {
   font-size: var(--snt-text-lg);
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);
   margin-top: var(--snt-space-4);
 }
@@ -37,7 +37,7 @@
   gap: var(--snt-space-4);
   margin-top: var(--snt-space-4);
   padding: var(--snt-space-4) var(--snt-space-5);
-  background: var(--snt-bg-app);
+  background: var(--snt-bg-inset);
   border-radius: var(--snt-radius-md);
 }
 
@@ -48,7 +48,7 @@
 
 .tradeInName {
   display: block;
-  font-size: var(--snt-text-base);
+  font-size: var(--snt-text-md);
   /* Every item name is bold. */
   font-weight: var(--snt-weight-bold);
   margin-top: var(--snt-space-1);

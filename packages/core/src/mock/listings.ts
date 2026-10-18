@@ -414,6 +414,41 @@ const eliteDeskDraft: SaleListing = {
   negotiable: true,
 };
 
+/** Paused by the shop: off the feed for now, back with one tap. */
+const iphone12Paused: SaleListing = {
+  id: 'l-iphone-12-paused',
+  slug: 'iphone-12-64gb-harare-c41e',
+  type: 'sale',
+  ownerId: 'u-kopje',
+  shopId: 's-kopje',
+  category: 'phones',
+  title: 'iPhone 12 64GB',
+  location: 'Harare CBD',
+  status: 'paused',
+  createdAt: '2026-09-18',
+  expiresAt: THIRTY_DAYS_ON,
+  postedLabel: '6 days ago',
+  contactChannels: ['whatsapp', 'call'],
+  allowDealerOffers: true,
+  viewCount: 141,
+  revealCount: 5,
+  promotion: 'organic',
+  tags: [],
+  item: {
+    id: 'i-iphone-12-paused',
+    category: 'phones',
+    name: 'iPhone 12 64GB',
+    brand: 'Apple',
+    condition: 'good',
+    specs: { storage: '64GB', ram: '4GB', battery: '84%' },
+    images: [],
+    wanted: false,
+  },
+  price: 310,
+  negotiable: true,
+  stockCount: 1,
+};
+
 const hpProBook: SaleListing = {
   id: 'l-hp-probook-450',
   slug: 'hp-probook-450-i3-8gb-avondale-2b6c',
@@ -1084,6 +1119,7 @@ export const mockListings: Listing[] = [
   dellLatitude,
   hpEliteBook,
   rx580,
+  iphone12Paused,
   eliteDeskDraft,
 ];
 

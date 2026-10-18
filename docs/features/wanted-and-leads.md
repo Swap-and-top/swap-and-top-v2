@@ -45,7 +45,7 @@ SOURCES OF DEMAND:
                   └───────────────────┘
 ```
 
-**The swap listing is the higher-value lead**, because it carries a trade-in and a cash figure. A dealer learns what the person wants, what is coming back to them, and how much money is on the table.
+**The swap listing is the higher-value lead**, because it carries something to swap and a cash figure. A dealer learns what the person wants, what is coming back to them, and how much money is on the table.
 
 **No cold start.** The lead list fills itself from the first day, because every swap post is already a request. This is the single neatest property of the whole design.
 
@@ -60,7 +60,7 @@ Wireframe frame: `Wanted`. Top-level navigation, not hidden inside search.
 Contents:
 
 - Requests, newest first
-- Swap listings shown as demand, with their trade-in strip
+- Swap listings shown as demand, with their swap strip
 - Category filter chips
 - A prominent action: **post what you are looking for**
 
@@ -78,7 +78,7 @@ Each card carries one primary button — **"I have this"** — which is the acti
 | Category | Determines the specification set |
 | Budget | Required — it is what makes the lead qualified |
 | Location | Area |
-| Trade-in | None. Someone with something to trade in posts a swap, which is shown here as demand. |
+| Something to swap | None. Someone with something to swap posts a swap, which is shown here as demand. |
 | Dealer-offers consent | Default on |
 | Photos | None — they do not own the thing |
 
@@ -90,7 +90,7 @@ Requests are the cheapest thing to post on the platform: one screen, under thirt
 
 ### What dealers pay for: speed
 
-In trade-in and second-hand deals, **the first credible offer usually wins.** A dealer who learns about a request an hour late has lost it. So the product is not access to the information — browsing the Wanted feed is free for everyone — it is **being told immediately**.
+In swap and second-hand deals, **the first credible offer usually wins.** A dealer who learns about a request an hour late has lost it. So the product is not access to the information — browsing the Wanted feed is free for everyone — it is **being told immediately**.
 
 | Free for everyone | Paid for dealers |
 | --- | --- |
@@ -115,7 +115,7 @@ A dealer's stock matches demand when:
 - The category matches
 - Every stated minimum is met or exceeded — "16GB" means 16 or more
 - Where a model is named, the item is that model or a stated equivalent
-- The dealer's price is within reach of the budget, or, for a swap, of the trade-in value plus offered cash
+- The dealer's price is within reach of the budget, or, for a swap, of the value of what they swap plus offered cash
 
 **Be slightly generous rather than strict.** A dealer would rather dismiss a marginal lead than never see a real one. Precision can improve as listing data accumulates.
 
@@ -126,7 +126,7 @@ A dealer's stock matches demand when:
 │ NEW · 12 minutes ago · UZ area                 │
 │ Wants any i7 laptop, 16GB, SSD                 │
 │ ┌────────────────────────────────────────────┐ │
-│ │ TRADING IN                                 │ │
+│ │ THEY SWAP                                  │ │
 │ │ MacBook Air 2017 i5 8GB          +$240     │ │
 │ └────────────────────────────────────────────┘ │
 │ ✓ Matches your Dell Latitude 7490              │
@@ -179,7 +179,7 @@ Mitigations:
 ## Definition of done
 
 - [ ] Request listings postable in one screen
-- [ ] Swap listings appearing as demand with their trade-in strip
+- [ ] Swap listings appearing as demand with their swap strip
 - [ ] Wanted feed at top-level navigation with category filters
 - [ ] "I have this" as the single primary action on every demand card
 - [ ] Matching against dealer stock with explicit match naming

@@ -1,9 +1,10 @@
 /**
  * The dealer console shell.
  *
- * One responsive surface, not two pages. At phone width it is a dark header, a
- * stacked list and a bottom nav. From `lg` up the nav becomes a sidebar and the
- * content area gains room for a real table.
+ * One responsive surface, not two pages. At phone width it is a blue header, a
+ * stacked list and a bottom nav. From `lg` up the nav becomes a blue sidebar
+ * and the content area gains room for a real table. The blue frame marks the
+ * console as the dealer's own tool, apart from the marketplace.
  *
  * Mobile is the primary build: most small shops are run from a phone behind a
  * counter, and nobody opens a laptop to add one item.
@@ -24,8 +25,10 @@
   gap: var(--snt-space-4);
   flex-shrink: 0;
   padding: var(--snt-space-6) var(--snt-space-7);
-  background: var(--snt-dark);
+  background: var(--snt-accent-strong);
   color: var(--snt-ink-on-dark);
+  /* The shop's mark, a lighter tile on the blue rather than black. */
+  --snt-shop-mark: color-mix(in srgb, white 18%, transparent);
 }
 
 .headerBody {
@@ -35,19 +38,26 @@
 
 .shopName {
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-bold);
 }
 
 .shopKicker {
   display: block;
   font-size: var(--snt-text-xs);
-  color: var(--snt-ink-on-dark-muted);
+  color: color-mix(in srgb, white 82%, transparent);
 }
 
+/* View shop: a small button, outlined in white on the blue. */
 .headerLink {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--snt-space-6);
+  border: 1px solid color-mix(in srgb, white 60%, transparent);
+  border-radius: var(--snt-radius-pill);
   font-size: var(--snt-text-sm);
-  font-weight: var(--snt-weight-medium);
-  color: var(--snt-ink-on-dark-subtle);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink-on-dark);
   white-space: nowrap;
 }
 
@@ -62,10 +72,10 @@
   min-width: 0;
 }
 
+/* The page's title, its count line and its tools, on the page itself, as
+   every marketplace page's heading is; no band of its own. */
 .titleBand {
-  background: var(--snt-bg-surface);
-  border-bottom: 1px solid var(--snt-line);
-  padding: var(--snt-space-6) var(--snt-gutter) var(--snt-space-7);
+  padding: var(--snt-space-8) var(--snt-gutter) 0;
 }
 
 .titleRow {
@@ -84,7 +94,7 @@
   padding: var(--snt-space-6) var(--snt-gutter) var(--snt-space-10);
 }
 
-/* --- mobile bottom nav --- */
+/* --- mobile bottom nav: set as the marketplace's (see BottomNav) --- */
 
 .bottomNav {
   position: sticky;
@@ -92,10 +102,11 @@
   z-index: 2;
   display: flex;
   align-items: stretch;
-  height: var(--snt-console-nav-h);
+  height: var(--snt-bottom-nav-h);
   flex-shrink: 0;
   background: var(--snt-bg-surface);
-  border-top: 1px solid var(--snt-line);
+  /* The same soft shadow cast upward, tinted with the control blue. */
+  box-shadow: 0 -2px 12px rgb(48 121 158 / 0.12);
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
@@ -107,22 +118,47 @@
   align-items: center;
   justify-content: center;
   gap: var(--snt-space-1);
-  position: relative;
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-medium);
   color: var(--snt-ink-muted);
+  transition: color var(--snt-transition);
 }
 
-.navItemActive {
-  color: var(--snt-accent-bold);
-  font-weight: var(--snt-weight-semibold);
+.navItem:hover {
+  color: var(--snt-ink);
 }
 
+/* The pill behind an icon: clear when idle, the control blue with a white
+   icon on the page on show. */
+.navPill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 28px;
+  border-radius: var(--snt-radius-pill);
+  transition:
+    background 200ms ease,
+    color 200ms ease;
+}
+
+.navItemActive,
+.navItemActive:hover {
+  color: var(--snt-control-active);
+  font-weight: var(--snt-weight-bold);
+}
+
+.navItemActive .navPill {
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}
+
+/* A waiting count, on the pill's top right corner. */
 .navBadge {
   position: absolute;
-  top: 8px;
-  left: 50%;
-  margin-left: 4px;
+  top: -6px;
+  right: 2px;
 }
 
 /* --- sidebar, from lg up --- */
@@ -136,7 +172,7 @@
     flex-direction: row;
   }
 
-  /* The dark header becomes the sidebar's own heading. */
+  /* The blue header becomes the sidebar's own heading. */
   .header {
     display: none;
   }
@@ -150,17 +186,119 @@
     flex-direction: column;
     flex-shrink: 0;
     width: var(--snt-console-sidebar-w);
+    /* Held to the side, the height of the screen, while the page scrolls
+       past it: Back to marketplace stays in view at its foot, and the
+       sidebar never scrolls itself. */
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100dvh;
+    overflow: hidden;
     padding: var(--snt-space-9) 0 var(--snt-space-10);
-    background: var(--snt-dark);
+    transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
+    background: var(--snt-accent-strong);
     color: var(--snt-ink-on-dark);
+    --snt-shop-mark: color-mix(in srgb, white 18%, transparent);
   }
 
   .sidebarHead {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: var(--snt-space-5);
-    padding: 0 var(--snt-space-9) var(--snt-space-8);
-    border-bottom: 1px solid var(--snt-line-dark);
+    padding: 0 var(--snt-space-7) var(--snt-space-8) var(--snt-space-9);
+    border-bottom: 1px solid color-mix(in srgb, white 20%, transparent);
+  }
+
+  /* The shop's mark at the left, the fold button at the right. */
+  .sidebarTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--snt-space-4);
+  }
+
+  .sidebarShop {
+    display: flex;
+    flex-direction: column;
+    gap: var(--snt-space-1);
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* Fold or open: the sidebar icon, on a faint tile when pointed at. */
+  .fold {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--snt-radius-md);
+    color: color-mix(in srgb, white 82%, transparent);
+    transition:
+      background var(--snt-transition),
+      color var(--snt-transition);
+  }
+
+  @media (hover: hover) {
+    .fold:hover {
+      background: color-mix(in srgb, white 12%, transparent);
+      color: var(--snt-ink-on-dark);
+    }
+  }
+
+  .sidebarItem,
+  .sidebarBack {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  /* --- folded: the shop's mark, the icons, the way back --- */
+
+  .collapsed {
+    width: var(--snt-console-sidebar-collapsed-w);
+  }
+
+  .collapsed .sidebarHead {
+    padding-inline: 0;
+  }
+
+  /* Folded: the mark, and the button under it. */
+  .collapsed .sidebarTop {
+    flex-direction: column;
+    gap: var(--snt-space-5);
+  }
+
+  .collapsed .sidebarNav,
+  .collapsed .sidebarFoot {
+    padding-inline: var(--snt-space-4);
+  }
+
+  .collapsed .sidebarItem,
+  .collapsed .sidebarBack {
+    justify-content: center;
+    padding: 0;
+  }
+
+  /* The words go, but stay for screen readers. */
+  .collapsed .sidebarShop,
+  .collapsed .sidebarLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .collapsed .sidebarCount {
+    display: none;
+  }
+
+  /* A waiting count sits on its icon's corner. */
+  .collapsed .sidebarItem > :last-child:not(svg):not(.sidebarLabel) {
+    position: absolute;
+    top: 4px;
+    right: 6px;
   }
 
   .sidebarNav {
@@ -177,7 +315,7 @@
     height: 42px;
     padding: 0 var(--snt-space-6);
     border-radius: var(--snt-radius-md);
-    color: var(--snt-ink-on-dark-muted);
+    color: color-mix(in srgb, white 82%, transparent);
     font-size: var(--snt-text-md);
     transition:
       background var(--snt-transition),
@@ -186,10 +324,11 @@
 
   .sidebarItem:hover {
     color: var(--snt-ink-on-dark);
+    background: color-mix(in srgb, white 6%, transparent);
   }
 
   .sidebarItemActive {
-    background: var(--snt-dark-raised);
+    background: color-mix(in srgb, white 16%, transparent);
     color: var(--snt-ink-on-dark);
     font-weight: var(--snt-weight-semibold);
   }
@@ -200,7 +339,7 @@
 
   .sidebarCount {
     font-size: var(--snt-text-sm);
-    color: var(--snt-ink-on-dark-muted);
+    color: color-mix(in srgb, white 82%, transparent);
   }
 
   .sidebarFoot {
@@ -215,7 +354,7 @@
     height: 40px;
     padding: 0 var(--snt-space-6);
     border-radius: var(--snt-radius-md);
-    color: var(--snt-ink-on-dark-muted);
+    color: color-mix(in srgb, white 82%, transparent);
     font-size: var(--snt-text-base);
   }
 
@@ -230,7 +369,7 @@
   }
 
   .titleBand {
-    padding: var(--snt-space-9) var(--snt-space-12) var(--snt-space-9);
+    padding: var(--snt-space-10) var(--snt-space-12) 0;
   }
 
   .content {

@@ -58,12 +58,12 @@ Every listing of every type carries these.
 | --- | --- |
 | **Sale** | Price, negotiable flag |
 | **Swap** | Reference to the offered item, reference to the wanted item specification, cash direction, cash amount |
-| **Request** | Wanted item specification, budget, optional trade-in item reference |
+| **Request** | Wanted item specification, budget (someone with something to swap posts a swap instead) |
 | **Auction** | Starting price, reserve, closing time, current high bid, bid count, extension count |
 
 ### Item
 
-A described device. Referenced by listings rather than embedded, because a swap references two of them and a request may reference one as a trade-in.
+A described device. Referenced by listings rather than embedded, because a swap references two of them: what the poster has and what they want.
 
 | Field group | Contents |
 | --- | --- |
@@ -163,7 +163,6 @@ Append-only record of every callback received from the payment provider. Provide
        │            │           │          ├──► SwapDetail ──► Item (has)
        │            │           │          │                └► Item (wants)
        │            │           │          ├──► RequestDetail ──► Item (wanted)
-       │            │           │          │                  └► Item (trade-in)
        │            │           │          └──► AuctionDetail ──► Bid (many)
        │            │           │
        │            │           ├──► RevealEvent (many) ──► DealConfirmation
@@ -200,7 +199,7 @@ Defining the auction satellite costs an hour. Discovering later that the core ca
 
 ### 3. Items referenced, not embedded
 
-A swap references two items; a request may reference a trade-in. Embedding would mean duplicating the item shape in several places and would make specification search harder.
+A swap references two items: what the poster has and what they want. Embedding would mean duplicating the item shape in several places and would make specification search harder.
 
 ### 4. Nothing is hard-deleted
 

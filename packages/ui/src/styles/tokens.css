@@ -256,6 +256,8 @@
   --snt-bottom-nav-h: 64px;
   --snt-console-nav-h: 62px;
   --snt-console-sidebar-w: 226px;
+  /** Folded to its icons. */
+  --snt-console-sidebar-collapsed-w: 72px;
   /** The marketplace content column. */
   --snt-column-max: 672px;
   /** The header's own row — logo, Post, account — as wide as the sign-in

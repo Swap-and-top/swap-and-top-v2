@@ -20,7 +20,7 @@ This folder holds the commercial reasoning behind Swap & Top v2. Everything in [
 
 1. Second-hand gadgets trade heavily in Zimbabwe, and swapping with a cash top-up is a real, repeatedly requested transaction.
 2. Ordinary users will not pay, because Facebook is free. They are the supply and the demand.
-3. Dealers will pay, because a qualified lead with a trade-in attached is worth money to them.
+3. Dealers will pay, because a qualified lead with something to swap attached is worth money to them.
 4. The feature that attracts users and the product dealers pay for are the same object: a swap post.
 
 ---

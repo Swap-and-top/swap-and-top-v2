@@ -151,7 +151,7 @@ Administrative user listing and role changes are under [Administration](#adminis
 | Update own shop | Dealer | Name, logo, description, location, hours |
 | List own stock | Dealer | With status, views and reveals per item |
 | Bulk import stock | Dealer | The fastest way to onboard a dealer |
-| List leads | Dealer | Matching demand, with trade-in detail and named stock matches |
+| List leads | Dealer | Matching demand, with swap detail and named stock matches |
 | List reveals received | Dealer | |
 | Get performance | Dealer | Reveals over time, confirmed deals, sponsored versus organic |
 

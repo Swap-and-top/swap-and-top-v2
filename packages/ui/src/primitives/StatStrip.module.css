@@ -7,10 +7,10 @@
 
 .strip {
   display: flex;
-  border: 1px solid var(--snt-line-subtle);
   border-radius: var(--snt-radius-md);
   overflow: hidden;
-  background: var(--snt-bg-surface);
+  /* A pale strip, as the text boxes are, split by white lines. */
+  background: var(--snt-bg-inset);
 }
 
 .stat {
@@ -21,14 +21,14 @@
 }
 
 .stat + .stat {
-  border-left: 1px solid var(--snt-line-subtle);
+  border-left: 2px solid var(--snt-bg-card);
 }
 
 .value {
   font-family: var(--snt-font-display);
   font-size: var(--snt-text-2xl);
   font-weight: var(--snt-weight-bold);
-  color: var(--snt-ink);
+  color: var(--snt-accent-bold);
   line-height: 1.2;
 }
 

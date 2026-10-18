@@ -196,6 +196,42 @@ export const FilterIcon = (props: IconProps) => (
   </Svg>
 );
 
+/**
+ * Fold or open a sidebar: a window with its side panel drawn in. Open, the
+ * panel is filled in; folded, only outlined.
+ */
+export const SidebarIcon = ({
+  open = true,
+  ...props
+}: IconProps & { open?: boolean }) => (
+  <Svg {...props}>
+    <rect x="3.5" y="4.5" width="17" height="15" rx="3" />
+    <path d="M9.5 4.5v15" />
+    {open ? (
+      <path
+        d="M6.5 4.5h3v15h-3a3 3 0 01-3-3v-9a3 3 0 013-3z"
+        fill="currentColor"
+        stroke="none"
+        opacity="0.45"
+      />
+    ) : null}
+  </Svg>
+);
+
+/** Bring a file in: an arrow rising out of a tray. */
+export const UploadIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M12 15V4.5M7.5 9L12 4.5 16.5 9M4.5 14.5v3.5a2 2 0 002 2h11a2 2 0 002-2v-3.5" />
+  </Svg>
+);
+
+/** Save a file: an arrow falling into a tray. */
+export const DownloadIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M12 4.5V15M7.5 10.5L12 15l4.5-4.5M4.5 14.5v3.5a2 2 0 002 2h11a2 2 0 002-2v-3.5" />
+  </Svg>
+);
+
 /** The swap mechanic. Two opposing arrows — the signature mark. */
 export const SwapIcon = (props: IconProps) => (
   <Svg weight={2.1} {...props}>
@@ -482,6 +518,15 @@ export const StorefrontIcon = (props: IconProps) => (
     <path d="M3 9a3 3 0 0 0 6 0a3 3 0 0 0 6 0a3 3 0 0 0 6 0" />
     <path d="M5 12.5V20h14v-7.5" />
     <path d="M10 20v-4.5h4V20" />
+  </Svg>
+);
+
+/** Promote and sponsored: a megaphone, calling out to buyers. */
+export const MegaphoneIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M4 10v4a1 1 0 001 1h2.5l7.5 4.5v-15L7.5 9H5a1 1 0 00-1 1z" />
+    <path d="M7.5 15l1.2 4.2a1 1 0 001 .8h1.1a.8.8 0 00.8-1l-1-3.5" />
+    <path d="M18.5 9.5a3.5 3.5 0 010 5" />
   </Svg>
 );
 

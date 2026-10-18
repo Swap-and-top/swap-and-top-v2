@@ -43,19 +43,19 @@ Being cleaner or less distracting than Facebook is **not a wedge.** Nobody aband
 
 Facebook Marketplace is a **supply board**. People post what they have and wait. If you want something, you scroll, or you post in a group where the request disappears within hours.
 
-Swap & Top treats demand as a real entity. Every swap post is a precise statement of demand with a trade-in attached:
+Swap & Top treats demand as a real entity. Every swap post is a precise statement of demand with something to swap attached:
 
 ```ascii
 A SWAP POST IS A STRUCTURED LEAD:
 ┌───────────────────────────────────────────────────────────┐
-│  "I have a MacBook Air 2017 (i5, 8GB, 128GB SSD)"         │  ← the trade-in
+│  "I have a MacBook Air 2017 (i5, 8GB, 128GB SSD)"         │  ← what they swap
 │  "I want any i7 with 16GB and an SSD"                     │  ← the demand
 │  "I will add $240"                                        │  ← the cash
 └───────────────────────────────────────────────────────────┘
         │
         ▼
   A dealer holding an i7 16GB laptop now knows:
-  what this person wants, what is coming back in trade,
+  what this person wants, what is coming back in the swap,
   and how much money is on the table.
 ```
 
@@ -81,7 +81,7 @@ Eventually: a counter where two people meet to complete a swap safely and a devi
 
 ## The swap mechanic generalises
 
-Trade-in-plus-cash is not a novelty invented for gadgets. It is **how cars are traded everywhere in the world**. That matters for two reasons:
+Swap-plus-cash is not a novelty invented for gadgets. It is **how cars are traded everywhere in the world**. That matters for two reasons:
 
 - It confirms the primitive is sound rather than gimmicky.
 - It points at the natural category expansion — vehicles, where classifieds money actually sits.
@@ -92,7 +92,7 @@ Vehicles are explicitly deferred. Different dealers, different trust requirement
 
 ## Positioning statement
 
-> **The place to find gadgets easily in Zimbabwe — and to trade the one you have towards the one you want.**
+> **The place to find gadgets easily in Zimbabwe — and to swap the one you have towards the one you want.**
 
 Note what this is and is not:
 

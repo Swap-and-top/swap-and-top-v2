@@ -13,7 +13,7 @@
 | --- | --- |
 | **Listing** | Any post on the platform, of any type. The shared entity that carries owner, photos, location, moderation state and metrics. |
 | **Listing type** | One of: sale, swap, request, auction. Determines which detail is attached to the listing. |
-| **Item** | A described device. A swap references two items; a request may reference one as a trade-in. |
+| **Item** | A described device. A swap references two items: what the poster has and what they want. |
 | **Specification** | A structured, filterable attribute of an item — processor, memory, storage, graphics, battery health, condition. Never free text where a filter depends on it. |
 | **Slug** | The readable, immutable URL fragment identifying a listing. Generated from its title and key specifications with a short unique suffix. |
 
@@ -23,12 +23,13 @@
 
 | Term | Means |
 | --- | --- |
-| **Swap & Top** | The platform's name, and the transaction type where someone trades an item towards another with cash making up the difference. |
+| **Swap & Top** | The platform's name, and the transaction type where someone swaps an item towards another with cash making up the difference. |
 | **Top up** | The cash added to a swap. |
 | **Trading up** | The poster's item is worth less; they add cash. The large majority of swaps. |
 | **Trading down** | The poster's item is worth more; they receive cash. A minority. |
-| **Straight swap** | An even trade with no cash. |
-| **Trade-in** | The item someone is giving up in a swap, seen from the counterparty's side. |
+| **Straight swap** | An even swap with no cash. |
+| **Swap offer** | An offer of something someone has, with any cash on top, towards a listing that accepts swaps. In the dealer console, the **Swap offers** section collects those made on the shop's stock. |
+| **Accepts swaps** | A sale whose seller will take something in exchange, with cash on top. Shown on the listing as "Swaps accepted"; asked on the form as "Accept swaps". |
 | **Cash direction** | Which way the money flows: the poster adds, receives, or neither. |
 
 ---
@@ -40,9 +41,9 @@
 | **Demand** | A statement of what someone wants. Produced by both requests and swaps. |
 | **Request** | A listing type: what someone wants, with a budget, and no item of their own to show. |
 | **Wanted feed** | The public surface showing demand — requests plus swaps seen as demand. |
-| **Lead** | Demand seen from a dealer's side, with the trade-in and cash detail, and a named match against their stock. What dealers pay to be alerted about. |
+| **Lead** | Demand seen from a dealer's side, with what they would swap, the cash, and a named match against their stock. What dealers pay to be alerted about. |
 | **Lead alert** | The paid notification sent to a dealer when matching demand appears. |
-| **Match** | A dealer's stock item that satisfies a piece of demand's specification, budget or trade-in value. |
+| **Match** | A dealer's stock item that satisfies a piece of demand's specification, budget or the value of what they would swap. |
 | **Offer** | A structured proposal against demand. Not binding and not escrowed. |
 | **Dealer-offers consent** | The per-listing setting controlling whether it may enter dealer lead feeds. Defaults on. |
 
@@ -154,6 +155,7 @@
 | "Contact details" in a listing payload | — | They are never there. Only the reveal action serves them. |
 | "Verified student" | Confirmed deals | Removed. Occupation is not a trust signal — see [decisions-log.md](./decisions-log.md) P11. |
 | "Rating" or "review" | Confirmed deals | There are no stars and no written reviews |
+| "Trade in", "trade-in", "trade" | Swap, swaps, swap offer, accept swaps | The platform is Swap & Top: every exchange of one thing for another is a **swap**, in the app and in these docs. Phrase it to fit: "Accept swaps", "Offer a swap", "Swap offers", "What they swap covers $120", "Swaps welcome". Code names such as `tradeIn` and the `/console/trade-ins` address may stay. |
 
 ---
 
@@ -165,4 +167,4 @@
 
 ---
 
-**Last Updated:** September 2026
+**Last Updated:** October 2026

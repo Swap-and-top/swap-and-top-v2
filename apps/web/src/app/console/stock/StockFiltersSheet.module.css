@@ -1,0 +1,28 @@
+/** The stock filters: set as the post form is, labels bold blue over chips. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* Clear beside the button that applies, at the foot of the form. */
+.actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-2);
+}

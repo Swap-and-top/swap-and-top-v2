@@ -1,0 +1,12 @@
+/** Console, Shop profile: the shopfront, at its own width, by the sidebar. */
+
+.toolbar {
+  margin-top: var(--snt-space-6);
+}
+
+/* The shopfront's column, from the console's left edge rather than centred:
+   its tabs line up with the card above them. */
+.shop {
+  --snt-column-inset: 0px;
+  max-width: var(--snt-column-max);
+}

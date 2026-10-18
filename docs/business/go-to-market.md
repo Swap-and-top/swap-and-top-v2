@@ -25,7 +25,7 @@ Almost everyone on a swap platform wants to trade **up**. A student with an olde
 
 Economists call it the double coincidence of wants. It is why money replaced barter.
 
-The party who is happy to trade down is a **dealer**. They take the older device plus cash, hand over the better one from stock, and resell the trade-in. That is their business.
+The party who is happy to trade down is a **dealer**. They take the older device plus cash, hand over the better one from stock, and resell the device they swapped in. That is their business.
 
 ```ascii
 WHY DEALERS ARE LIQUIDITY, NOT JUST REVENUE:
@@ -36,8 +36,8 @@ WHY DEALERS ARE LIQUIDITY, NOT JUST REVENUE:
   Student D ──── wants to trade UP ────┘     between each other
                                               
   Dealer ──── happy to trade DOWN ────────► matches all of them
-             (takes trade-in + cash,
-              resells the trade-in)
+             (takes the swap + cash,
+              resells what was swapped)
 ```
 
 So: **dealers and students arrive together.** Without dealers, the feed fills with unanswered trade-up requests, students conclude the place is dead within a fortnight, and they do not come back.
@@ -66,7 +66,7 @@ Note also that student-to-student **selling** has no such problem — cash clear
 In each conversation, test both revenue hypotheses:
 
 - *Will you pay to be told first when someone wants what you stock?*
-- *Separately — how do you track your stock and trade-ins today?*
+- *Separately — how do you track your stock and swaps today?*
 
 Open as a peer: the founder sold and repaired computers and was asked about swap deals constantly. That is the opening line.
 

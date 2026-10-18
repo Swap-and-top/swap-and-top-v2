@@ -111,7 +111,7 @@ ExtraBold (800) was added for the active tab and the tile labels.
 | Type tabs | Equal widths, on white under the header. One underline in the active label's dark ink slides to the active tab (240ms); the thin rule under the row spans the content column, like the cards | Same |
 | Category chips | Outlined white with grey labels; the selected one filled in the same dark ink as the active tab, with white type — never blue, which means for sale | Same |
 | Card radius | 18px | 18px |
-| Radius of boxes inside a card (swap tiles, inputs, trade-in strip) | 12px | 12px |
+| Radius of boxes inside a card (swap tiles, inputs, swap strip) | 12px | 12px |
 | Card padding | 24px | 16px |
 | Spacing inside a card | 4px grid: 4 within a group, 12 between groups | Same |
 | Gap between cards | 24px | 16px |
@@ -141,7 +141,7 @@ Every marketplace screen starts with the gradient.
 
 See [card-system.md](./card-system.md) for what each card means. Visually they share one shape: a `#F2F2F2` box with 18px corners and no border.
 
-- **Wanted** — green WANTED label, bold green title, grey budget line, and the requester's trust line (bold first name, blue tick deal count) on the left; the green "I have this" pill on the right, centred against the text. The response count sits top right with the age — "4 responses · 1h ago" A trade-in strip, when there is one, runs full width underneath, with a small photo of the trade-in at its left (a count in its corner when there are several) that opens the photo viewer. What someone wants is never pictured; what they offer can be.
+- **Wanted** — green WANTED label, bold green title, grey budget line, and the requester's trust line (bold first name, blue tick deal count) on the left; the green "I have this" pill on the right, centred against the text. The response count sits top right with the age — "4 responses · 1h ago" A swap strip, when there is one, runs full width underneath, with a small photo of what they swap at its left (a count in its corner when there are several) that opens the photo viewer. What someone wants is never pictured; what they offer can be.
 - **Dealer sale** — photo; the item name in blue with its specs in grey beneath on the left, price over condition on the right — after a price drop, the old price struck through in small grey beside it; a light rule, then the shop row: black initials square, bold name, blue tick "Verified Seller", and at the far right "4 in Stock" above the save and share icons. On a phone the name and badge stack
 - **Private sale** — photo; name and specs on the left, price and condition on the right; then one trust line: bold first name, blue tick deal count, area and age
 - **Swap** — two solid rounded tiles, blue "Has" and green "Looking for", with the cash on the side that comes with it — "Has" when the poster adds, "Looking for" when you do. Then the poster's trust line. Wanted cards and the swap detail also say who pays in words — "They add $240", "You add $60" or "Straight swap" — from one helper (`swapTerms`); "they" is always the poster and "you" whoever takes the swap. A request with something to swap is worded the same way: its budget is cash the poster adds on top, capped rather than fixed, so it reads "They add up to $600", with "+ up to $600" on the Has strip. The "Looking for" photo slot is grey with the category's icon in green: what someone wants is described, never pictured

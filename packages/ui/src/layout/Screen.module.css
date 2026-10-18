@@ -118,7 +118,8 @@
   font-family: var(--snt-font-display);
   font-size: var(--snt-text-xl);
   font-weight: var(--snt-weight-bold);
-  color: var(--snt-ink);
+  /* In the bold blue, as the app's headings are. */
+  color: var(--snt-accent-bold);
 }
 
 .emptyBody {

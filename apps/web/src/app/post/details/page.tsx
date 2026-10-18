@@ -292,11 +292,11 @@ export default function PostDetailsPage() {
             <>
               {/* A gentle way into swaps, at the moment it is useful: the
                   listing says "Swaps accepted", and buyers can offer a
-                  trade in. */}
+                  swap. */}
               <TickTile
                 checked={draft.acceptsSwaps}
                 onChange={draft.setAcceptsSwaps}
-                label="Would you take a trade in?"
+                label="Accept swaps"
                 hint="Buyers can offer something they have, with cash on top."
               />
             </>

@@ -52,7 +52,7 @@ const OPTIONS: Option[] = [
     kind: 'swap',
     title: 'Swap & top',
     description:
-      'Trade what you have towards what you want, adding or receiving cash.',
+      'Swap what you have towards what you want, adding or receiving cash.',
     tone: 'swap',
     glyph: <SwapIcon size={21} weight={2} />,
   },

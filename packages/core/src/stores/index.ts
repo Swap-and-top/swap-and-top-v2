@@ -8,3 +8,4 @@ export * from './useDealStore';
 export * from './useOfferStore';
 export * from './useSessionStore';
 export * from './useListingStatusStore';
+export * from './useStockStore';

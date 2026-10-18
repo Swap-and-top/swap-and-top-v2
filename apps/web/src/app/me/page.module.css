@@ -13,9 +13,21 @@
 
 .name {
   font-family: var(--snt-font-display);
-  font-size: var(--snt-text-3xl);
+  font-size: var(--snt-text-2xl);
   font-weight: var(--snt-weight-bold);
-  letter-spacing: var(--snt-tracking-display);
+  color: var(--snt-accent-bold);
+}
+
+/**
+ * A section's heading over its rows: sentence case, bold, in the bold blue,
+ * as the labels on the forms are, a little above the card it heads.
+ */
+.section {
+  margin: var(--snt-space-4) 0 calc(var(--snt-space-6) * -1 + var(--snt-space-3));
+  padding-left: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
 }
 
 /**

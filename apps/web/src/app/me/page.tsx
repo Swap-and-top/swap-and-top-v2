@@ -93,7 +93,8 @@ export default function MePage() {
           <Stack gap={6}>
             <Panel padded>
               <div className={styles.head}>
-                <Avatar size={52} />
+                {/* Their initials, as in the header's account circle. */}
+                <Avatar size={52} initials={initialsOf(currentUser.displayName)} />
                 <div className={styles.headBody}>
                   <div className={styles.name}>{currentUser.displayName}</div>
                   <div className={styles.trust}>
@@ -116,6 +117,7 @@ export default function MePage() {
               />
             </Panel>
 
+            <h2 className={styles.section}>Your activity</h2>
             <ListGroup>
               <ListRow
                 href="/me/listings"
@@ -150,6 +152,7 @@ export default function MePage() {
             </ListGroup>
 
             {/* Visible only to dealer accounts in the real app. */}
+            <h2 className={styles.section}>For dealers</h2>
             <ConsoleEntryRow
               href="/console/stock"
               icon={<BoxIcon size={20} />}
@@ -157,6 +160,7 @@ export default function MePage() {
               subtitle="Stock, leads and promotion"
             />
 
+            <h2 className={styles.section}>Account</h2>
             <ListGroup>
               <ListRow
                 href="/me"
@@ -187,4 +191,15 @@ export default function MePage() {
       <BottomNav />
     </Screen>
   );
+}
+
+/** "Tarisai M." → "TM": at most two letters, as in the header. */
+function initialsOf(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((part) => part.replace(/[^\p{L}]/gu, '').charAt(0))
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 }

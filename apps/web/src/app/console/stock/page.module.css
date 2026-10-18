@@ -13,6 +13,7 @@
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--snt-space-4);
   margin-top: var(--snt-space-6);
 }
@@ -22,7 +23,69 @@
   min-width: 0;
 }
 
+/* Filters: as the feed's Filter button (see SearchFilters), at the height of
+   the buttons beside it. */
+.filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-3);
+  height: 36px;
+  padding: 0 var(--snt-space-8);
+  border: 1px solid var(--snt-control-idle);
+  border-radius: var(--snt-radius-pill);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  cursor: pointer;
+  transition:
+    background var(--snt-transition),
+    border-color var(--snt-transition),
+    color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .filter:hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+.filterOn {
+  border-color: var(--snt-control-active);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/** How many filters are narrowing the list. */
+.filterCount {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  line-height: 18px;
+  text-align: center;
+}
+
+.filterOn .filterCount {
+  background: var(--snt-ink-on-dark);
+  color: var(--snt-control-active);
+}
+
+/* Phone: Filters and Bulk import half and half under the search; Add stock
+   is the wide button at the foot instead. */
 .toolbarActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4);
+  width: 100%;
+}
+
+.toolbarActions .wideOnly {
   display: none;
 }
 
@@ -45,29 +108,25 @@
   align-items: center;
   gap: var(--snt-space-2) var(--snt-space-5);
   padding: var(--snt-space-5);
+  /* A plain white card, as the marketplace's are; no outline. */
   background: var(--snt-bg-surface);
-  border: 1px solid var(--snt-line);
-  border-radius: var(--snt-radius-lg);
+  border: 1px solid transparent;
+  border-radius: var(--snt-radius-xl);
 }
 
-/** A draft has no photo and no price yet. */
-.rowDraft {
-  border-style: dashed;
-}
-
-/** The sponsored row is tinted, so paid placement is visible to the dealer too. */
-.rowSponsored {
-  background: var(--snt-bg-highlight);
-}
+/* A draft and a sponsored item are told apart by their status pill, not by
+   an outline or a tint: every row is the same plain white. */
 
 .thumb {
   grid-area: thumb;
 }
 
+/* The shop's own things: names and prices in the blue of things owned. */
 .title {
   grid-area: title;
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-medium);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
   line-height: var(--snt-leading-tight);
   min-width: 0;
 }
@@ -100,11 +159,32 @@
 
 .action {
   grid-area: action;
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+}
+
+/* Scoped to the row so it wins over the shared price's own ink. */
+.row .price {
+  color: var(--snt-accent-bold);
 }
 
 .noPrice {
   font-size: var(--snt-text-base);
   color: var(--snt-ink-muted);
+}
+
+/* Nothing matches: a quiet line and the way back, in a white card. */
+.none {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
 }
 
 .addBar {
@@ -119,22 +199,58 @@
     align-items: center;
   }
 
+  /* The search takes all the room up to Filters. */
   .search {
-    flex-grow: 0;
-    width: 260px;
+    flex-grow: 1;
+  }
+
+  .toolbar {
+    flex-wrap: nowrap;
   }
 
   .toolbarActions {
     display: flex;
+    flex-shrink: 0;
     gap: var(--snt-space-4);
-    margin-left: auto;
+    width: auto;
   }
 
-  /* The list becomes a bordered table. */
+  .toolbarActions .wideOnly {
+    display: inline-flex;
+  }
+
+  /* Add stock is in the toolbar now, so no wide button at the foot. */
+  .addBar {
+    display: none;
+  }
+}
+
+/*
+ * Between a tablet and a wide screen the sidebar takes too much room for the
+ * table's columns, so the cards stay, two to a row.
+ */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .none {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ------------------------------------------ the table, from a wide screen --- */
+
+@media (min-width: 1280px) {
+  /*
+   * The list becomes a table, set as the account page's rows are: one white
+   * card with no outline, rows parted by thin lines that stop short of its
+   * edges.
+   */
   .list {
     gap: 0;
     background: var(--snt-bg-surface);
-    border: 1px solid var(--snt-line);
     border-radius: var(--snt-radius-xl);
     overflow: hidden;
   }
@@ -143,31 +259,39 @@
   .row {
     display: grid;
     grid-template-columns:
-      44px minmax(0, 2.4fr) minmax(0, 2fr) 90px 120px 74px 84px 80px;
+      44px minmax(0, 2.4fr) minmax(0, 2fr) 90px 120px 74px 84px 160px;
     grid-template-areas: none;
     align-items: center;
+    /* Each cell keeps to its own size at the start of its column, so a
+       status pill is only as wide as its word; numbers sit at the end. */
+    justify-items: start;
     gap: var(--snt-space-7);
     padding: var(--snt-space-5) var(--snt-space-8);
     border: none;
     border-radius: 0;
   }
 
+  /* Column headings: white on a band of the dark blue across the top of
+     the card. Where the blue ends is the line under the headings. */
   .headerRow {
-    background: var(--snt-bg-app);
-    border-bottom: 1px solid var(--snt-line);
-    font-size: var(--snt-text-xs);
+    background: var(--snt-accent-strong);
+    font-size: var(--snt-text-sm);
     font-weight: var(--snt-weight-bold);
-    letter-spacing: var(--snt-tracking-label);
-    text-transform: uppercase;
-    color: var(--snt-ink-muted);
+    color: var(--snt-ink-on-dark);
   }
 
-  .row + .row {
-    border-top: 1px solid var(--snt-line-subtle);
+  /* The line between rows: the page's pale blue, set in from both edges by
+     the row's padding. */
+  .row {
+    background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+    background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+    background-position: center top;
+    background-repeat: no-repeat;
   }
 
-  .rowDraft {
-    border-style: solid;
+  /* The first row sits straight under the blue band: no line of its own. */
+  .headerRow + .row {
+    background-image: none;
   }
 
   .thumb,
@@ -190,20 +314,23 @@
 
   .views {
     display: block;
+    justify-self: end;
     font-size: var(--snt-text-md);
     text-align: right;
   }
 
   .reveals {
+    justify-self: end;
     font-size: var(--snt-text-md);
     text-align: right;
   }
 
   .alignRight {
+    justify-self: end;
     text-align: right;
   }
 
-  .addBar {
-    display: none;
+  .action {
+    justify-self: end;
   }
 }

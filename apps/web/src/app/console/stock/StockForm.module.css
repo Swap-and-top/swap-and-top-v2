@@ -1,0 +1,179 @@
+/**
+ * Console, Add stock. Set as the post form is (see post/details): one white
+ * card, labels bold blue and set in over pale rounded boxes.
+ */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+  max-width: var(--snt-column-max);
+  padding: var(--snt-space-9) var(--snt-card-pad) var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+@media (min-width: 1024px) {
+  .form {
+    padding: var(--snt-space-10) var(--snt-space-10) var(--snt-space-8);
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  min-width: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/** A label: sentence case, bold, in the bold blue. */
+.label {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* Over a box, set in to line up with the writing in it, as Field's are. */
+.setIn {
+  padding-left: var(--snt-space-8);
+  margin-bottom: var(--snt-space-3);
+}
+
+.optional {
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
+/* The category chips scroll within the card, cut at its edges. */
+.chips {
+  margin: 0 calc(var(--snt-card-pad) * -1);
+  padding: 0 var(--snt-card-pad);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .chips {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* The details: two to a row; prose a row of its own. */
+.specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-8) var(--snt-space-5);
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+/* --- photos -------------------------------------------------------------- */
+
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-5);
+}
+
+.photoThumb {
+  position: relative;
+}
+
+.photo {
+  display: block;
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: var(--snt-radius-md);
+}
+
+/** Add photos: a pale rounded square with a blue plus. */
+.addPhoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  transition: box-shadow var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .addPhoto:hover:not(:disabled) {
+    box-shadow: var(--snt-focus-ring);
+  }
+}
+
+.addPhoto:disabled {
+  color: var(--snt-control-idle);
+  cursor: not-allowed;
+}
+
+/** Remove a photo: a small white circle with a blue cross, on its corner. */
+.removePhoto {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+  color: var(--snt-control-active);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+}
+
+/* --- the foot of the form ------------------------------------------------ */
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-2);
+}
+
+.note {
+  margin-top: calc(var(--snt-space-5) * -1);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  text-align: center;
+}
+
+/* Cancel, a row of its own, as close under the two as they are to each
+   other. */
+.cancel {
+  margin-top: calc(var(--snt-space-8) * -1 + var(--snt-space-4));
+}
+
+/* An item that is not there: a quiet line over the way back. */
+.gone {
+  font-size: var(--snt-text-md);
+  color: var(--snt-ink-muted);
+}
+
+/* --- where a listed item stands --- */
+
+/* Its status: the label over two choices, as Category is. */
+.standing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+.standingChoices {
+  display: flex;
+  gap: var(--snt-space-3);
+}

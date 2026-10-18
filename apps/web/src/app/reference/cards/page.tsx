@@ -96,7 +96,7 @@ export default function CardReferencePage() {
           <p className={styles.note}>
             No photo, because they do not have the thing. Text first, then the
             budget, then one button. That button is the lead a dealer pays to be
-            alerted about. A request carrying a trade in gets a trade in strip,
+            alerted about. A request with something to swap gets a swap strip,
             which makes it the higher-value lead.
           </p>
         </section>

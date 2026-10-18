@@ -117,7 +117,7 @@ The original plan was to launch Swap & Top in both Zimbabwe and Brazil. These ar
 
 | | Zimbabwe | Brazil |
 | --- | --- | --- |
-| Competition | Facebook Marketplace, WhatsApp groups | Large established classifieds and marketplace incumbents, plus specialised trade-in players |
+| Competition | Facebook Marketplace, WhatsApp groups | Large established classifieds and marketplace incumbents, plus specialised device swap players |
 | Founder's network | Deep | None |
 | Language | Fluent | Not |
 | Capital required to enter | Low | High |

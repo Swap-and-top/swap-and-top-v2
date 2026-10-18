@@ -10,6 +10,7 @@
 import Link from 'next/link';
 import type { SaleListing, Shop, User } from '@snt/core';
 import { CARD_CONDITION } from '../format';
+import { MegaphoneIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
 import { PhotoGallery } from '../primitives/PhotoGallery';
 import { ShopMark } from '../primitives/Placeholder';
@@ -31,9 +32,15 @@ export interface SaleCardProps {
   imageHeight?: number;
 }
 
-export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) {
+export function SaleCard({
+  listing,
+  shop,
+  seller,
+  imageHeight,
+}: SaleCardProps) {
   const dropped =
-    listing.previousPrice !== undefined && listing.previousPrice > listing.price;
+    listing.previousPrice !== undefined &&
+    listing.previousPrice > listing.price;
   const specs = specParts(listing.item);
   const condition = listing.item.condition
     ? CARD_CONDITION[listing.item.condition]
@@ -54,6 +61,7 @@ export function SaleCard({ listing, shop, seller, imageHeight }: SaleCardProps) 
           {/* Paid placement is always labelled, never hidden. */}
           {listing.promotion === 'sponsored' ? (
             <Badge tone="dark" onImage>
+              <MegaphoneIcon size={12} weight={2.2} />
               Sponsored
             </Badge>
           ) : null}

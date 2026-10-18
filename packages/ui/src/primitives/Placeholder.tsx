@@ -93,10 +93,27 @@ export function ImagePlaceholder({
   );
 }
 
-export function Avatar({ size = 36 }: { size?: number }) {
+export function Avatar({
+  size = 36,
+  initials,
+}: {
+  size?: number;
+  /** Their initials, as in the header's account circle; a person icon
+      without them. */
+  initials?: string;
+}) {
   return (
     <span className={styles.avatar} style={{ width: size, height: size }} aria-hidden>
-      <PersonIcon size={Math.round(size * 0.52)} />
+      {initials ? (
+        <span
+          className={styles.avatarInitials}
+          style={{ fontSize: Math.round(size * 0.36) }}
+        >
+          {initials}
+        </span>
+      ) : (
+        <PersonIcon size={Math.round(size * 0.52)} />
+      )}
     </span>
   );
 }

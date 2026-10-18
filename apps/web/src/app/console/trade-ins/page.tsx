@@ -39,7 +39,7 @@ export default function ConsoleTradeInsPage() {
   return (
     <ConsoleShell
       shop={currentShop}
-      title="Trade ins"
+      title="Swap offers"
       meta={`${waiting} waiting for a reply · ${takingSwaps} items take swaps`}
       newLeadCount={newLeadCount}
       stockCount={stock.length}
@@ -62,8 +62,8 @@ export default function ConsoleTradeInsPage() {
         </div>
       ) : (
         <p className={styles.none}>
-          No trade ins yet. Mark an item “Swaps accepted” and buyers can offer
-          what they have towards it, straight from the listing.
+          No swap offers yet. Mark an item “Swaps accepted” and buyers can
+          offer something they have towards it, straight from the listing.
         </p>
       )}
     </ConsoleShell>

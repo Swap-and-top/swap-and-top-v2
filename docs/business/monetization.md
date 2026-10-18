@@ -38,9 +38,9 @@ Four products, listed in the order they begin to earn.
 
 ### 1. Lead alerts — dealers
 
-**What it is:** the dealer is notified the moment someone posts a request or swap matching what they stock. Includes the trade-in detail and the cash on offer.
+**What it is:** the dealer is notified the moment someone posts a request or swap matching what they stock. Includes what they would swap and the cash on offer.
 
-**Why they pay:** in trade-in deals the first credible offer usually wins. This is speed, and speed is money.
+**Why they pay:** in swap deals the first credible offer usually wins. This is speed, and speed is money.
 
 **Earns from day one.** Its value comes from the quality of a single lead, not from how much traffic the platform has. This is the product to test first.
 
@@ -52,7 +52,7 @@ Four products, listed in the order they begin to earn.
 
 ### 2. Dealer console — dealers
 
-**What it is:** a simple system to run stock, sales, trade-ins and customer records. Stock added here publishes to the marketplace in one action.
+**What it is:** a simple system to run stock, sales, swap offers and customer records. Stock added here publishes to the marketplace in one action.
 
 **Why they pay:** most small shops run on paper and WhatsApp. This saves real time, every day.
 

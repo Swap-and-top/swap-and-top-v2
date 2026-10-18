@@ -1,20 +1,54 @@
-/** Deal confirmation. Wireframe artboard: `DealConfirm`. */
+/**
+ * Deal confirmation. Wireframe artboard: `DealConfirm`.
+ *
+ * The feed's header, then the question in one white card, as the forms
+ * are, and the record in a second.
+ */
 
-.intro {
-  margin-top: var(--snt-space-4);
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-9) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
 }
 
+/** The question: in the bold blue, as the app's headings are. */
+.heading {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.intro {
+  margin-top: calc(var(--snt-space-4) * -1);
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink-muted);
+}
+
+/** The listing it is about: a pale row, its name in the blue. */
 .summary {
   display: flex;
   align-items: center;
   gap: var(--snt-space-6);
-  padding: var(--snt-space-5);
+  padding: var(--snt-space-4);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
   color: var(--snt-ink);
-  margin-top: var(--snt-space-7);
 }
 
-.summary:hover {
-  color: var(--snt-ink);
+.summary > :first-child {
+  border-radius: var(--snt-radius-sm, 6px);
+  overflow: hidden;
+}
+
+@media (hover: hover) {
+  .summary:hover {
+    color: var(--snt-ink);
+    background: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-inset));
+  }
 }
 
 .summaryBody {
@@ -25,57 +59,67 @@
 .summaryTitle {
   display: block;
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-medium);
+  font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);
+  color: var(--snt-accent-bold);
 }
 
 .summaryMeta {
   display: block;
-  font-size: var(--snt-text-sm);
+  font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
   margin-top: var(--snt-space-2);
 }
 
 .chevron {
   flex-shrink: 0;
-  color: var(--snt-ink-muted);
+  color: var(--snt-control-active);
   display: flex;
 }
 
+/** The answers, one above the other. */
 .answers {
   display: flex;
   flex-direction: column;
   gap: var(--snt-space-5);
-  margin-top: var(--snt-space-9);
+  margin-top: var(--snt-space-2);
 }
 
 .privacy {
-  margin-top: var(--snt-space-8);
+  margin-top: 0;
 }
 
 .report {
-  margin-top: var(--snt-space-6);
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--snt-space-4);
 }
 
-.reportLink {
-  font-size: var(--snt-text-base);
-  font-weight: var(--snt-weight-semibold);
+.reportAsk {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
 }
 
 /* --- your record --- */
 
 .record {
-  border-top: 1px solid var(--snt-line);
-  padding-top: var(--snt-space-8);
-  margin-top: var(--snt-space-9);
+  margin-top: var(--snt-space-8);
+  gap: var(--snt-space-4);
+}
+
+/** A card's heading: sentence case, bold, in the bold blue. */
+.label {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
 }
 
 .recordRow {
   display: flex;
   align-items: center;
   gap: var(--snt-space-5);
-  margin-top: var(--snt-space-5);
 }
 
 .recordCount {
@@ -98,10 +142,9 @@
 }
 
 .recordNote {
-  font-size: var(--snt-text-sm);
+  font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
   line-height: var(--snt-leading-normal);
-  margin-top: var(--snt-space-5);
 }
 
 /* --- answered state --- */
@@ -111,10 +154,9 @@
   align-items: center;
   gap: var(--snt-space-5);
   padding: var(--snt-space-7);
-  border-radius: var(--snt-radius-lg);
+  border-radius: var(--snt-radius-md);
   background: var(--snt-success-tint);
   color: var(--snt-success);
-  margin-top: var(--snt-space-9);
 }
 
 .answeredBody {
@@ -129,5 +171,4 @@
 .answeredNote {
   font-size: var(--snt-text-sm);
   margin-top: var(--snt-space-2);
-  opacity: 0.9;
 }

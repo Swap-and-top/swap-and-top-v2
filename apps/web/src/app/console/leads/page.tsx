@@ -26,9 +26,11 @@ import {
   ConsoleShell,
   Eyebrow,
   Field,
+  ItemName,
   LeadCard,
   PosterRow,
   specSummary,
+  Tabs,
 } from '@snt/ui';
 import { CheckIcon, InfoIcon, PhoneIcon } from '@snt/ui/icons';
 import styles from './page.module.css';
@@ -69,21 +71,17 @@ export default function ConsoleLeadsPage() {
             Lead alerts active
           </span>
 
-          <div className={styles.tabs} role="tablist" aria-label="Leads">
-            {TABS.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                role="tab"
-                aria-selected={tab === leadTab}
-                className={[styles.tab, tab === leadTab ? styles.tabActive : '']
-                  .filter(Boolean)
-                  .join(' ')}
-                onClick={() => setLeadTab(tab)}
-              >
-                {LEAD_TAB_LABELS[tab]} {TAB_COUNTS[tab]}
-              </button>
-            ))}
+          {/* The same tabs as the marketplace's, at the console's width. */}
+          <div className={styles.tabs}>
+            <Tabs<LeadTab>
+              label="Leads"
+              active={leadTab}
+              onChange={setLeadTab}
+              tabs={TABS.map((tab) => ({
+                value: tab,
+                label: `${LEAD_TAB_LABELS[tab]} ${TAB_COUNTS[tab]}`,
+              }))}
+            />
           </div>
         </>
       }
@@ -117,7 +115,8 @@ export default function ConsoleLeadsPage() {
                 </span>
               </span>
               <span className={styles.listTitle}>
-                Wants {lead.demand.wants.name}
+                Wants{' '}
+                <ItemName side="wanted">{lead.demand.wants.name}</ItemName>
               </span>
               <span className={styles.listSub}>{subtitleFor(lead)}</span>
             </button>
@@ -126,7 +125,7 @@ export default function ConsoleLeadsPage() {
 
         {active ? (
           <div className={styles.detail}>
-            <Eyebrow>Request</Eyebrow>
+            <Eyebrow>They want</Eyebrow>
             <h1 className={styles.detailTitle}>
               {active.demand.wants.name}
             </h1>
@@ -148,7 +147,9 @@ export default function ConsoleLeadsPage() {
                 <div className={styles.detailCards}>
                   <div className={styles.tradeInCard}>
                     <Eyebrow tight>Has</Eyebrow>
-                    <div className={styles.tradeInName}>{tradeIn.name}</div>
+                    <ItemName side="owned" bold className={styles.tradeInName}>
+                      {tradeIn.name}
+                    </ItemName>
                     <div className={styles.tradeInSpecs}>
                       {specSummary(tradeIn, 4)}
                       {tradeIn.defects ? (
@@ -199,7 +200,7 @@ export default function ConsoleLeadsPage() {
                   </div>
                   {active.coversAmount ? (
                     <span className={styles.matchCovers}>
-                      Their trade in covers ${active.coversAmount}
+                      What they swap covers ${active.coversAmount}
                     </span>
                   ) : null}
                 </div>

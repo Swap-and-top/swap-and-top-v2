@@ -144,3 +144,15 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/** "Gone": a small grey pill in sentence case, as a listing's status is. */
+.gone {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--snt-space-1) var(--snt-space-5);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+}

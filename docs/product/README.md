@@ -65,7 +65,7 @@ TWO SURFACES, ONE API:
 
 ## 🧭 The central product idea
 
-A swap post is a **structured statement of demand with a trade-in attached**. It is simultaneously:
+A swap post is a **structured statement of demand with something to swap attached**. It is simultaneously:
 
 - the feature that makes the platform distinctive to ordinary users
 - the lead that dealers pay to be told about

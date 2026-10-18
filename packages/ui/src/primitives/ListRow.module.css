@@ -23,18 +23,27 @@
   transition: background var(--snt-transition);
 }
 
+/* The rule between rows, in the page's pale blue, set in from both edges
+   by the row's own padding, as the lines on listing cards are. */
 .row + .row {
-  border-top: 1px solid var(--snt-bg-app);
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-6) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
 }
 
-.row:hover {
-  background: var(--snt-bg-subtle);
-  color: var(--snt-ink);
+/* Hovered: the faintest wash of the blue, only with a mouse. */
+@media (hover: hover) {
+  .row:hover {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-card));
+    color: var(--snt-ink);
+  }
 }
 
+/** Its icon, in the blue of the app's controls. */
 .icon {
   flex-shrink: 0;
-  color: var(--snt-ink-muted);
+  color: var(--snt-control-active);
   display: flex;
 }
 
@@ -58,14 +67,15 @@
 
 .chevron {
   flex-shrink: 0;
-  color: var(--snt-ink-muted);
+  color: var(--snt-control-active);
   display: flex;
 }
 
-/* --- dark variant: the console entry row --- */
+/* --- dark variant: the console entry row, in the bold blue of the app's
+   headings --- */
 
 .dark {
-  background: var(--snt-dark);
+  background: var(--snt-accent-bold);
   border: none;
   border-radius: var(--snt-radius-xl);
   color: var(--snt-ink-on-dark);
@@ -78,7 +88,7 @@
 }
 
 .dark:hover {
-  background: var(--snt-dark-raised);
+  background: color-mix(in srgb, black 8%, var(--snt-accent-bold));
   color: var(--snt-ink-on-dark);
 }
 
@@ -95,6 +105,6 @@
 .darkSubtitle {
   display: block;
   font-size: var(--snt-text-sm);
-  color: var(--snt-ink-on-dark-subtle);
+  color: color-mix(in srgb, white 82%, transparent);
   margin-top: var(--snt-space-1);
 }

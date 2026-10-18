@@ -13,7 +13,7 @@ A separate surface from the marketplace, with a different character: a working t
 
 It is two things at once:
 
-1. **Swap & Top's dealer interface** — stock, leads, trade-ins, promotion
+1. **Swap & Top's dealer interface** — stock, leads, swap offers, promotion
 2. **A Greta Works Digital product** — a system for running a small gadget shop, with standalone value
 
 That dual identity is intentional and is the bridge between the two companies. See [../business/company-structure.md](../business/company-structure.md).
@@ -44,7 +44,7 @@ Most small Harare shops are run from a phone behind a counter. A dealer will nev
 | --- | --- | --- |
 | Priority | **Primary build** | Second |
 | Earns its place by | Being usable one-handed, behind a counter, mid-conversation | Bulk work — pricing a dozen machines, imports, two-pane leads |
-| Sections | Stock, Leads, Trade-ins, Promote, Shop | Adds Performance as its own section |
+| Sections | Stock, Leads, Swap offers, Promote, Shop | Adds Performance as its own section |
 
 ---
 
@@ -73,7 +73,7 @@ The screen that sells the platform. When demonstrating to a dealer, this is what
 Each lead shows:
 
 - What the person wants, in their words
-- **The trade-in**: the device coming back and the cash on offer
+- **What they swap**: the device coming back and the cash on offer
 - Whether it **matches something in this dealer's stock**, named explicitly
 - How long ago, and the area
 - Actions: **Send an offer**, **Show number**
@@ -84,7 +84,7 @@ A LEAD AS THE DEALER SEES IT:
 │ NEW · 12 minutes ago · UZ area                 │
 │ Wants any i7 laptop, 16GB, SSD                 │
 │ ┌────────────────────────────────────────────┐ │
-│ │ TRADING IN                                 │ │
+│ │ THEY SWAP                                  │ │
 │ │ MacBook Air 2017 i5 8GB          +$240     │ │
 │ └────────────────────────────────────────────┘ │
 │ ✓ Matches your Dell Latitude 7490              │
@@ -100,13 +100,13 @@ The requester's own record is shown on the lead — confirmed deals, account age
 
 **When nothing matches**, say so plainly and offer "I can source this" — dealers routinely source to order, and that is still a lead.
 
-**Desktop version is two-pane:** the request list on the left, the selected request's detail on the right with the trade-in, the matching stock item, and an offer composer — price plus a short message. Reviewing a queue of leads is much faster this way.
+**Desktop version is two-pane:** the request list on the left, the selected request's detail on the right with what they swap, the matching stock item, and an offer composer — price plus a short message. Reviewing a queue of leads is much faster this way.
 
 ---
 
-### 3. Trade-ins
+### 3. Swap offers
 
-Trade-ins offered towards stock marked **Swaps accepted**, grouped by the item they are for. Each is an offer, as on a swap: what the buyer has, the cash they add, their message. Accept or decline it; accepting shows the buyer's contact ways, and a decline can be undone. The section's count in the navigation is the trade-ins still waiting for a reply. See [../features/sell.md](../features/sell.md).
+Swap offers made on stock marked **Swaps accepted**, grouped by the item they are for. Each is an offer, as on a swap: what the buyer has, the cash they add, their message. Accept or decline it; accepting shows the buyer's contact ways, and a decline can be undone. The section's count in the navigation is the swap offers still waiting for a reply. See [../features/sell.md](../features/sell.md).
 
 ### 4. Promote
 
@@ -170,7 +170,7 @@ If validation shows dealers will pay for the stock system, the console becomes t
 
 - [ ] Stock list with add, edit, mark sold, and per-item reveal counts
 - [ ] Confirmed deal count in the header and on the shopfront
-- [ ] Leads feed with trade-in detail and explicit stock matching
+- [ ] Leads feed with swap detail and explicit stock matching
 - [ ] Offer sending against a lead
 - [ ] Promote screen with subscription state and sponsored slot purchase
 - [ ] Shop profile feeding a server-rendered public shopfront

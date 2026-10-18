@@ -11,6 +11,7 @@
  */
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   CATEGORY_LABELS,
   type Category,
@@ -18,11 +19,11 @@ import {
   type Shop,
 } from '@snt/core';
 import {
+  AppHeader,
   Button,
   GridCardList,
   Screen,
   ScreenBody,
-  ScreenHeader,
   ShopMark,
   StatStrip,
   Tabs,
@@ -30,7 +31,6 @@ import {
   replyShort,
   type TabItem,
 } from '@snt/ui';
-import { HeaderIconButton } from '@snt/ui';
 import { ShareIcon } from '@snt/ui/icons';
 import { RevealAction } from './RevealAction';
 import styles from './Shopfront.module.css';
@@ -38,6 +38,29 @@ import styles from './Shopfront.module.css';
 type ShopTab = Category | 'all';
 
 export function Shopfront({
+  shop,
+  listings,
+}: {
+  shop: Shop;
+  listings: Listing[];
+}) {
+  return (
+    <Screen>
+      {/* The feed's own header, as on every page. */}
+      <AppHeader />
+
+      <ScreenBody>
+        <ShopfrontBody shop={shop} listings={listings} />
+      </ScreenBody>
+    </Screen>
+  );
+}
+
+/**
+ * The shop itself, without the page around it: on the public shopfront under
+ * the feed's header, and in the dealer console beside its sidebar.
+ */
+export function ShopfrontBody({
   shop,
   listings,
 }: {
@@ -65,28 +88,44 @@ export function Shopfront({
       ? listings
       : listings.filter((listing) => listing.category === tab);
 
-  return (
-    <Screen>
-      <ScreenHeader
-        backHref="/"
-        actions={
-          <HeaderIconButton label="Share shop">
-            <ShareIcon size={20} />
-          </HeaderIconButton>
-        }
-      />
+  /** The phone's own share sheet where there is one, a copied link if not. */
+  async function share() {
+    // The shop's public address, wherever it is shared from.
+    const url = `${window.location.origin}/shop/${shop.slug}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: shop.name, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success('Link copied');
+      }
+    } catch {
+      // Closing the share sheet is not an error worth showing.
+    }
+  }
 
-      <div className={styles.identity}>
+  return (
+    <>
+      {/* The shop: one white card, as the profile page is. */}
+      <section className={styles.card}>
         <div className={styles.head}>
           <ShopMark initials={shop.initials} size={56} />
           <div className={styles.headBody}>
-            <div className={styles.name}>{shop.name}</div>
+            <h1 className={styles.name}>{shop.name}</h1>
             {shop.verified ? (
               <div className={styles.badgeRow}>
                 <VerifiedDealerBadge size="md" label="Verified dealer" />
               </div>
             ) : null}
           </div>
+          <button
+            type="button"
+            className={styles.share}
+            aria-label="Share shop"
+            onClick={() => void share()}
+          >
+            <ShareIcon size={18} />
+          </button>
         </div>
 
         <p className={styles.description}>
@@ -96,7 +135,6 @@ export function Shopfront({
         </p>
 
         <StatStrip
-          className={styles.stats}
           stats={[
             { value: shop.stockCount, label: 'in stock' },
             {
@@ -108,19 +146,22 @@ export function Shopfront({
           ]}
         />
 
+        {/* Two actions, half each. */}
         <div className={styles.actions}>
           <RevealAction listingId={`shop-${shop.id}`} ownerId="u-kopje" />
-          <Button variant="secondary">Follow</Button>
+          <Button variant="secondary" size="lg" block>
+            Follow
+          </Button>
         </div>
+      </section>
+
+      <div className={styles.tabs}>
+        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Shop stock" />
       </div>
 
-      <Tabs tabs={tabs} active={tab} onChange={setTab} label="Shop stock" />
-
-      <ScreenBody top={false}>
-        <div className={styles.grid}>
-          <GridCardList listings={shown} />
-        </div>
-      </ScreenBody>
-    </Screen>
+      <div className={styles.grid}>
+        <GridCardList listings={shown} />
+      </div>
+    </>
   );
 }

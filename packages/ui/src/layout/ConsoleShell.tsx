@@ -11,13 +11,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { getShopListings, useOfferStore, type Shop } from '@snt/core';
+import {
+  getShopListings,
+  useConsoleStore,
+  useOfferStore,
+  type Shop,
+} from '@snt/core';
 import {
   BoxIcon,
   ChartIcon,
   ChevronLeftIcon,
+  SidebarIcon,
   ShopIcon,
-  StarIcon,
+  MegaphoneIcon,
   SwapIcon,
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
@@ -55,9 +61,13 @@ export function ConsoleShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
+  const collapsed = useConsoleStore((state) => state.sidebarCollapsed);
+  const toggleSidebar = useConsoleStore((state) => state.toggleSidebar);
   // Trade-in offers on the shop's stock still waiting for a reply.
   const offers = useOfferStore((store) => store.offers);
-  const stockIds = new Set(getShopListings(shop.id).map((listing) => listing.id));
+  const stockIds = new Set(
+    getShopListings(shop.id).map((listing) => listing.id),
+  );
   const tradeInCount = offers.filter(
     (offer) => stockIds.has(offer.listingId) && offer.state === 'pending',
   ).length;
@@ -81,8 +91,8 @@ export function ConsoleShell({
       // Trade-ins offered towards stock that takes swaps: offers to accept
       // or decline, as the people asking see them on the listing.
       href: '/console/trade-ins',
-      label: 'Trade ins',
-      shortLabel: 'Trade ins',
+      label: 'Swap offers',
+      shortLabel: 'Swaps',
       icon: (active) => <SwapIcon size={20} weight={active ? 2.1 : 1.9} />,
       count: tradeInCount,
     },
@@ -90,10 +100,12 @@ export function ConsoleShell({
       href: '/console/promote',
       label: 'Promote',
       shortLabel: 'Promote',
-      icon: (active) => <StarIcon size={20} weight={active ? 2.1 : 1.9} />,
+      icon: (active) => <MegaphoneIcon size={20} weight={active ? 2.1 : 1.9} />,
     },
     {
-      href: `/shop/${shop.slug}`,
+      // The shop as buyers see it, inside the console; the public page is a
+      // button away from there.
+      href: '/console/shop',
       label: 'Shop profile',
       shortLabel: 'Shop',
       icon: (active) => <ShopIcon size={20} weight={active ? 1.9 : 1.7} />,
@@ -106,10 +118,31 @@ export function ConsoleShell({
   return (
     <div className={styles.shell}>
       {/* Sidebar — from the lg breakpoint up. */}
-      <aside className={styles.sidebar}>
+      {/* Folds to its icons with the button at its head, and opens again
+          with the same button: a narrow strip of the shop's mark, the
+          icons, and the way back. */}
+      <aside
+        className={[styles.sidebar, collapsed ? styles.collapsed : '']
+          .filter(Boolean)
+          .join(' ')}
+      >
         <div className={styles.sidebarHead}>
-          <ShopMark initials={shop.initials} size={34} />
-          <span>
+          {/* The mark and the fold button on one line, the shop's name
+              under them with room to breathe. */}
+          <div className={styles.sidebarTop}>
+            <ShopMark initials={shop.initials} size={34} />
+            <button
+              type="button"
+              className={styles.fold}
+              aria-label={collapsed ? 'Open the sidebar' : 'Fold the sidebar'}
+              aria-expanded={!collapsed}
+              title={collapsed ? 'Open the sidebar' : 'Fold the sidebar'}
+              onClick={toggleSidebar}
+            >
+              <SidebarIcon size={20} open={!collapsed} />
+            </button>
+          </div>
+          <span className={styles.sidebarShop}>
             <span className={styles.shopName}>{shop.name}</span>
             <span className={styles.shopKicker}>Dealer console</span>
           </span>
@@ -123,6 +156,8 @@ export function ConsoleShell({
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
+                // Folded, the label is hidden: the icon says it on hover.
+                title={collapsed ? item.label : undefined}
                 className={[
                   styles.sidebarItem,
                   active ? styles.sidebarItemActive : '',
@@ -132,7 +167,8 @@ export function ConsoleShell({
               >
                 {item.icon(active)}
                 <span className={styles.sidebarLabel}>{item.label}</span>
-                {(item.label === 'Leads' || item.label === 'Trade ins') && item.count ? (
+                {(item.label === 'Leads' || item.label === 'Swap offers') &&
+                item.count ? (
                   <CountBadge count={item.count} />
                 ) : item.count ? (
                   <span className={styles.sidebarCount}>{item.count}</span>
@@ -143,9 +179,13 @@ export function ConsoleShell({
         </nav>
 
         <div className={styles.sidebarFoot}>
-          <Link href="/" className={styles.sidebarBack}>
+          <Link
+            href="/"
+            className={styles.sidebarBack}
+            title={collapsed ? 'Back to marketplace' : undefined}
+          >
             <ChevronLeftIcon size={16} />
-            Back to marketplace
+            <span className={styles.sidebarLabel}>Back to marketplace</span>
           </Link>
         </div>
       </aside>
@@ -187,13 +227,19 @@ export function ConsoleShell({
                 .filter(Boolean)
                 .join(' ')}
             >
-              {item.icon(active)}
+              {/* As on the marketplace's bar: the icon in a pill, filled
+                  with the blue where it is the page on show, and the
+                  label under it. A waiting count sits on the pill. */}
+              <span className={styles.navPill}>
+                {item.icon(false)}
+                {(item.label === 'Leads' || item.label === 'Swap offers') &&
+                item.count ? (
+                  <span className={styles.navBadge}>
+                    <CountBadge count={item.count} />
+                  </span>
+                ) : null}
+              </span>
               <span>{item.shortLabel}</span>
-              {(item.label === 'Leads' || item.label === 'Trade ins') && item.count ? (
-                <span className={styles.navBadge}>
-                  <CountBadge count={item.count} />
-                </span>
-              ) : null}
             </Link>
           );
         })}

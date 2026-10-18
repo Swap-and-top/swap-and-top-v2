@@ -95,7 +95,7 @@ The signature type. Someone owns a thing, wants a different thing, and cash make
 - **Cash direction** — they add, they receive, or straight swap
 - **Cash amount**
 
-**Crucially: a swap listing is simultaneously supply and demand.** It appears in the browse feed as a swap, and in the Wanted feed as demand with a trade-in attached. That dual nature is what makes it the platform's most valuable object.
+**Crucially: a swap listing is simultaneously supply and demand.** It appears in the browse feed as a swap, and in the Wanted feed as demand with something to swap attached. That dual nature is what makes it the platform's most valuable object.
 
 Detail in [swap-and-top.md](./swap-and-top.md).
 
@@ -107,7 +107,7 @@ Someone wants a thing and does not have it yet.
 
 **Detail carried:** what they want as specification, and a budget. It is cash only.
 
-**Someone who wants a thing and has something to give for it posts a swap, not a request.** An earlier design let a request carry an optional trade-in, but that said the same as a swap ("I'll give you X plus cash for Y") with only the order and the wording changed, and people could not tell which to choose. A swap's cash can be a ceiling ("I add up to $600") to cover the budget case, and swaps are already shown to dealers as demand, so nothing is lost.
+**Someone who wants a thing and has something to give for it posts a swap, not a request.** An earlier design let a request carry something optional to swap, but that said the same as a swap ("I'll give you X plus cash for Y") with only the order and the wording changed, and people could not tell which to choose. A swap's cash can be a ceiling ("I add up to $600") to cover the budget case, and swaps are already shown to dealers as demand, so nothing is lost.
 
 **Photos:** none. They do not own the thing.
 
