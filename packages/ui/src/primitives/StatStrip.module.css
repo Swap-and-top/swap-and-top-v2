@@ -9,7 +9,7 @@
   display: flex;
   border-radius: var(--snt-radius-md);
   overflow: hidden;
-  /* A pale strip, as the text boxes are, split by white lines. */
+  /* A pale strip, as the text boxes are, split by thin lines. */
   background: var(--snt-bg-inset);
 }
 
@@ -20,8 +20,20 @@
   padding: var(--snt-space-4) var(--snt-space-5);
 }
 
+/*
+ * Between the numbers: a 1px line that stops short of the strip's top and
+ * bottom, as the lines between rows elsewhere stop short of a card's sides.
+ * A shade deeper than the strip, so it shows on the pale blue; a strip on
+ * white sets --stat-rule to the page's pale blue instead.
+ */
 .stat + .stat {
-  border-left: 2px solid var(--snt-bg-card);
+  background-image: linear-gradient(
+    var(--stat-rule, color-mix(in srgb, var(--snt-control-active) 16%, var(--snt-bg-inset))),
+    var(--stat-rule, color-mix(in srgb, var(--snt-control-active) 16%, var(--snt-bg-inset)))
+  );
+  background-size: 1px calc(100% - var(--snt-space-4) * 2);
+  background-position: left center;
+  background-repeat: no-repeat;
 }
 
 .value {

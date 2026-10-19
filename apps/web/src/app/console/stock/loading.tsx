@@ -38,6 +38,7 @@ export default function Loading() {
           <span>Specs</span>
           <span>Price</span>
           <span>Status</span>
+          <span className={styles.alignRight}>In stock</span>
           <span className={styles.alignRight}>Views</span>
           <span className={styles.alignRight}>Reveals</span>
           <span />
@@ -56,6 +57,9 @@ export default function Loading() {
             <span className={styles.meta}>
               <Bone width={48} height={16} />
               <Bone shape="pill" width={56} height={22} />
+              <span className={styles.inStock}>
+                <Bone width={20} height={13} />
+              </span>
               <span className={styles.views}>
                 <Bone width={30} height={13} />
               </span>
@@ -64,7 +68,7 @@ export default function Loading() {
               </span>
             </span>
             <span className={styles.action}>
-              <Bone shape="pill" width={64} height={36} />
+              <Bone width={6} height={20} />
             </span>
           </div>
         ))}

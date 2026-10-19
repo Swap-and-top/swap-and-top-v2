@@ -1,0 +1,121 @@
+/**
+ * The three dot button and its list of actions (see ActionMenu.tsx), set as
+ * the app's dropdowns are: a white list on a soft blue shadow, no border.
+ */
+
+/* Just the three dots, in the blue; no outline. A round tap area round them,
+   which shows only as a faint fill when pointed at, pressed or open. */
+.trigger {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: transparent;
+  color: var(--snt-control-active);
+  cursor: pointer;
+  transition:
+    background var(--snt-transition),
+    transform 120ms ease-out;
+}
+
+@media (hover: hover) {
+  .trigger:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 8%, transparent);
+  }
+}
+
+.trigger:active {
+  transform: scale(0.92);
+}
+
+.triggerOpen {
+  background: color-mix(in srgb, var(--snt-control-active) 10%, transparent);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}
+
+/* The list: fixed over everything, opening as the dropdowns do. */
+.list {
+  position: fixed;
+  z-index: 900;
+  min-width: 200px;
+  padding: var(--snt-space-2);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-card);
+  box-shadow: 0 8px 24px rgb(48 121 158 / 0.2);
+  animation: snt-menu-in 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes snt-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  width: 100%;
+  min-height: 40px;
+  padding: var(--snt-space-3) var(--snt-space-5);
+  border: 0;
+  border-radius: var(--snt-radius-md);
+  background: none;
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-medium);
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover,
+.item:focus-visible {
+  outline: none;
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+}
+
+.item:active {
+  background: color-mix(in srgb, var(--snt-control-active) 10%, var(--snt-bg-card));
+}
+
+.icon {
+  display: flex;
+  width: 20px;
+  justify-content: center;
+}
+
+/* Deleting: in red, set apart by a pale line above it. */
+.danger {
+  color: var(--snt-alert);
+}
+
+.danger:hover,
+.danger:focus-visible {
+  color: var(--snt-alert);
+  background: #fdeceb;
+}
+
+.item.danger {
+  margin-top: var(--snt-space-2);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow: 0 -1px 0 var(--snt-bg-app);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list {
+    animation: none;
+  }
+}

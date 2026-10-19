@@ -114,6 +114,7 @@ export {
 export { Sheet, useCloseSheet } from './primitives/Sheet';
 export { Img, type ImgProps } from './primitives/Img';
 export { Spinner } from './primitives/Spinner';
+export { ActionMenu, type MenuAction } from './primitives/ActionMenu';
 export { PAGE_LOAD_START, startPageLoad } from './pageLoad';
 export {
   Bone,

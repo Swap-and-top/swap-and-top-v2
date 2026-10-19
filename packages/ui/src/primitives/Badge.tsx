@@ -7,7 +7,7 @@
 
 import type { ReactNode } from 'react';
 import type { ListingStatus } from '@snt/core';
-import { CheckIcon, MegaphoneIcon } from '../icons';
+import { CheckIcon, MegaphoneIcon, PencilIcon } from '../icons';
 import styles from './Badge.module.css';
 
 export type BadgeTone =
@@ -99,21 +99,7 @@ function StatusMark({ status }: { status: ListingStatus | 'sponsored' }) {
     case 'sponsored':
       return <MegaphoneIcon size={12} weight={2.4} />;
     case 'draft':
-      return (
-        <svg
-          width="11"
-          height="11"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden
-        >
-          <path d="M15.5 4.5l4 4L9 19H5v-4z" />
-        </svg>
-      );
+      return <PencilIcon size={11} />;
     default:
       return null;
   }

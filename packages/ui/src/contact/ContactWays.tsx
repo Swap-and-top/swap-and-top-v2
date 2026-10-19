@@ -108,8 +108,7 @@ export function ContactWayRow({
   const head = (
     <>
       <span className={styles.rowIcon}>
-        {/* A line of exactly 1px: the icons are drawn on a 24-unit grid. */}
-        <Icon size={20} weight={24 / 20} />
+        <Icon size={18} />
       </span>
       <span className={styles.rowLabel}>{label}</span>
     </>

@@ -10,6 +10,7 @@
  */
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   myOfferOn,
   offersOn,
@@ -26,16 +27,35 @@ export function OfferButton({
   size,
   block,
   className,
+  preview = false,
 }: {
   listing: OfferableListing;
   label?: string;
   size?: ButtonSize;
   block?: boolean;
   className?: string;
+  /**
+   * In the owner's buyer preview: the button as a buyer sees it, which says
+   * what it does rather than opening an offer on the owner's own listing.
+   */
+  preview?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const offers = useOfferStore((store) => store.offers);
   const viewer = useViewerId();
+
+  if (preview) {
+    return (
+      <Button
+        size={size}
+        block={block}
+        className={className}
+        onClick={() => toast('In the preview: buyers make their offer here.')}
+      >
+        {label}
+      </Button>
+    );
+  }
 
   if (viewer && listing.ownerId === viewer) {
     const received = offersOn(offers, listing.id).length;

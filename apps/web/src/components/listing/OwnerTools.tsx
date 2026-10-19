@@ -159,7 +159,7 @@ export function OwnerControls({ listing }: { listing: Listing }) {
           heading={
             deleting ? (
               <span className={styles.deleteTitle}>
-                <TrashIcon size={20} weight={24 / 20} />
+                <TrashIcon size={20} />
                 Delete listing
               </span>
             ) : undefined
@@ -254,7 +254,9 @@ function ManageBody({
                 change('sold', `${done.told}. It’s off the feed and search now.`)
               }
             >
-              <CheckIcon size={20} weight={24 / 20} />
+              <span className={styles.rowIcon}>
+                <CheckIcon size={18} />
+              </span>
               <span className={styles.rowLabel}>{done.action}</span>
               <span className={styles.rowNote}>Takes it off the feed</span>
             </button>
@@ -267,7 +269,9 @@ function ManageBody({
                 change('paused', 'Paused. It’s hidden until you relist it.')
               }
             >
-              <PauseIcon size={20} weight={24 / 20} />
+              <span className={styles.rowIcon}>
+                <PauseIcon size={18} />
+              </span>
               <span className={styles.rowLabel}>Pause listing</span>
               <span className={styles.rowNote}>Hide it for now</span>
             </button>
@@ -280,7 +284,9 @@ function ManageBody({
           className={[styles.row, styles.danger].join(' ')}
           onClick={() => setConfirmDelete(true)}
         >
-          <TrashIcon size={20} weight={24 / 20} />
+          <span className={styles.rowIcon}>
+            <TrashIcon size={18} />
+          </span>
           <span className={styles.rowLabel}>Delete listing</span>
           <span className={styles.rowNote}>For good</span>
         </button>

@@ -151,7 +151,7 @@ export function editedStockListing(
 
 /**
  * The shop's stock now: what it has added, newest first, then the rest, each
- * with the status its owner has since given it.
+ * with the status its owner has since given it, leaving out what was deleted.
  */
 export function useShopStock(shopId: string): Listing[] {
   const added = useStockStore((state) => state.added);
@@ -161,8 +161,13 @@ export function useShopStock(shopId: string): Listing[] {
   return [
     ...added.filter((listing) => listing.shopId === shopId),
     ...getShopListings(shopId).map((listing) => edited[listing.id] ?? listing),
-  ].map((listing) => {
-    const status = statusOf(listing, changes);
-    return status === listing.status ? listing : { ...listing, status };
-  });
+  ]
+    .map((listing) => {
+      const status = statusOf(listing, changes);
+      return status === listing.status ? listing : { ...listing, status };
+    })
+    // Deleted (withdrawn) or taken down: no longer part of the stock.
+    .filter(
+      (listing) => listing.status !== 'withdrawn' && listing.status !== 'removed',
+    );
 }

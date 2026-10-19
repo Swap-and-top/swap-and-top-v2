@@ -6,7 +6,7 @@
  * (the one just tapped is already known to the app). A sale when unsure.
  */
 
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { getListingBySlug, useStockStore } from '@snt/core';
 import {
   RequestListingSkeleton,
@@ -16,11 +16,15 @@ import {
 
 export default function Loading() {
   const { slug } = useParams<{ slug: string }>();
+  // A buyer preview carries its banner from the start.
+  const preview = usePathname().endsWith('/preview');
   const added = useStockStore((state) => state.added);
   const listing =
     getListingBySlug(slug) ?? added.find((item) => item.slug === slug);
 
-  if (listing?.type === 'swap') return <SwapListingSkeleton />;
-  if (listing?.type === 'request') return <RequestListingSkeleton />;
-  return <SaleListingSkeleton />;
+  if (listing?.type === 'swap') return <SwapListingSkeleton preview={preview} />;
+  if (listing?.type === 'request') {
+    return <RequestListingSkeleton preview={preview} />;
+  }
+  return <SaleListingSkeleton preview={preview} />;
 }

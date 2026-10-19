@@ -34,12 +34,24 @@ import { CheckIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SaleDetail.module.css';
+import { PreviewBanner } from './PreviewBanner';
 
-export function SaleDetail({ listing }: { listing: SaleListing }) {
+export function SaleDetail({
+  listing,
+  preview = false,
+}: {
+  listing: SaleListing;
+  /**
+   * A buyer preview, for the owner: the page exactly as a buyer sees it, the
+   * owner's own tools hidden, under a banner saying so.
+   */
+  preview?: boolean;
+}) {
   const shop = getShop(listing.shopId);
   const owner = getUser(listing.ownerId);
   /** Your own listing: your panel in place of a buyer's actions. */
-  const mine = useViewerId() === listing.ownerId;
+  const viewer = useViewerId();
+  const mine = !preview && viewer === listing.ownerId;
 
   const dropped =
     listing.previousPrice !== undefined &&
@@ -57,6 +69,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
       {/* The same header as the feed, so the site does not change face on
           the way into a listing. */}
       <AppHeader />
+      {preview ? <PreviewBanner /> : null}
 
       <div className={styles.panel}>
         {/* The post is one white card: the photo on top, then the item's
@@ -188,6 +201,7 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
                     cash on top. */}
                 {listing.acceptsSwaps ? (
                   <OfferButton
+                    preview={preview}
                     listing={listing}
                     label="Offer a swap"
                     size="lg"
@@ -206,7 +220,9 @@ export function SaleDetail({ listing }: { listing: SaleListing }) {
         )}
 
         {/* Only the owner sees these: the trade-ins offered towards it. */}
-        {listing.acceptsSwaps ? <OffersReceived listing={listing} /> : null}
+        {listing.acceptsSwaps && !preview ? (
+          <OffersReceived listing={listing} />
+        ) : null}
       </ScreenBody>
     </Screen>
   );

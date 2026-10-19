@@ -35,7 +35,7 @@ export function AccountButton({ href }: { href: string }) {
   return (
     <Link href={`/signin?next=${encodeURIComponent(next)}`} className={styles.signIn}>
       <svg
-        className={styles.signInMark}
+        className={`snt-icon ${styles.signInMark}`}
         viewBox="0 0 24 24"
         width="26"
         height="26"

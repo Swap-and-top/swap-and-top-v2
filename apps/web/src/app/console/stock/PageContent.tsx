@@ -11,6 +11,7 @@
  */
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import {
   currentShop,
@@ -19,19 +20,32 @@ import {
   useConsoleStore,
   useListingStatusStore,
   useShopStock,
+  type Listing,
+  type ListingStatus,
 } from '@snt/core';
 import {
+  ActionMenu,
   Button,
   ButtonLink,
   ConsoleShell,
   Field,
   ImagePlaceholder,
   listingPhoto,
+  type MenuAction,
   Price,
   StatusBadge,
   specSummary,
 } from '@snt/ui';
-import { FilterIcon, PauseIcon, PlusIcon } from '@snt/ui/icons';
+import {
+  CheckIcon,
+  EyeIcon,
+  FilterIcon,
+  PauseIcon,
+  PencilIcon,
+  PlayIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@snt/ui/icons';
 import { filterStock, filtersInUse } from './filterStock';
 import { StockFiltersSheet } from './StockFiltersSheet';
 import styles from './page.module.css';
@@ -47,23 +61,89 @@ export default function ConsoleStockPage() {
   const inUse = filtersInUse(stockFilters);
   const setStatus = useListingStatusStore((state) => state.setStatus);
 
-  /** Back on sale, said so, with a way to put it back as it was. */
-  function relist(id: string, title: string, was: 'sold' | 'paused') {
-    setStatus(id, 'live');
-    toast.success(`${title} is live again, back in the feed.`, {
-      action: { label: 'Undo', onClick: () => setStatus(id, was) },
+  /**
+   * Changes an item's status at once, says so, and offers to put it back
+   * as it was: from a row's three dot menu.
+   */
+  function change(listing: Listing, next: ListingStatus, told: string) {
+    const was = listing.status;
+    setStatus(listing.id, next);
+    toast.success(told, {
+      action: { label: 'Undo', onClick: () => setStatus(listing.id, was) },
       // Long enough to reach Undo, as on the listing's own tools.
       duration: 4500,
     });
   }
 
-  /** Out of the feed for now, said so, with a way to put it back. */
-  function pause(id: string, title: string) {
-    setStatus(id, 'paused');
-    toast.success(`${title} is paused, out of the feed until you resume it.`, {
-      action: { label: 'Undo', onClick: () => setStatus(id, 'live') },
-      duration: 4500,
-    });
+  /** What a row's menu offers, for where the item stands. */
+  function actionsFor(listing: Listing): MenuAction[] {
+    const edit = `/console/stock/edit/${listing.id}`;
+    // The listing as a buyer sees it, the owner's tools hidden.
+    const view = `/listing/${listing.slug}/preview`;
+    const name = listing.title;
+    const remove: MenuAction = {
+      label: 'Delete',
+      icon: <TrashIcon size={17} />,
+      danger: true,
+      onSelect: () => change(listing, 'withdrawn', `${name} is deleted.`),
+    };
+
+    switch (listing.status) {
+      case 'draft':
+        return [
+          { label: 'Finish draft', icon: <PencilIcon size={17} />, href: edit },
+          remove,
+        ];
+      case 'paused':
+        return [
+          { label: 'Edit item', icon: <PencilIcon size={17} />, href: edit },
+          {
+            label: 'Resume listing',
+            icon: <PlayIcon size={16} />,
+            onSelect: () =>
+              change(listing, 'live', `${name} is live again, back in the feed.`),
+          },
+          {
+            label: 'Mark as sold',
+            icon: <CheckIcon size={17} weight={2.2} />,
+            onSelect: () => change(listing, 'sold', `${name} is marked sold.`),
+          },
+          remove,
+        ];
+      case 'sold':
+        return [
+          { label: 'Edit item', icon: <PencilIcon size={17} />, href: edit },
+          {
+            label: 'Relist',
+            icon: <PlayIcon size={16} />,
+            onSelect: () =>
+              change(listing, 'live', `${name} is live again, back in the feed.`),
+          },
+          { label: 'View as a buyer', icon: <EyeIcon size={17} />, href: view },
+          remove,
+        ];
+      default:
+        return [
+          { label: 'Edit item', icon: <PencilIcon size={17} />, href: edit },
+          {
+            label: 'Pause listing',
+            icon: <PauseIcon size={15} />,
+            onSelect: () =>
+              change(
+                listing,
+                'paused',
+                `${name} is paused, out of the feed until you resume it.`,
+              ),
+          },
+          {
+            label: 'Mark as sold',
+            icon: <CheckIcon size={17} weight={2.2} />,
+            onSelect: () => change(listing, 'sold', `${name} is marked sold.`),
+          },
+          { label: 'View as a buyer', icon: <EyeIcon size={17} />, href: view },
+          remove,
+        ];
+    }
   }
 
   const count = (status: string) =>
@@ -144,6 +224,7 @@ export default function ConsoleStockPage() {
           <span>Specs</span>
           <span>Price</span>
           <span>Status</span>
+          <span className={styles.alignRight}>In stock</span>
           <span className={styles.alignRight}>Views</span>
           <span className={styles.alignRight}>Reveals</span>
           <span />
@@ -155,6 +236,13 @@ export default function ConsoleStockPage() {
 
           return (
             <div key={listing.id} className={styles.row}>
+              {/* The whole row opens the item to edit (a draft, to finish):
+                  a link stretched over it, under the menu button. */}
+              <Link
+                href={`/console/stock/edit/${listing.id}`}
+                className={styles.rowLink}
+                aria-label={`${isDraft ? 'Finish' : 'Edit'} ${listing.title}`}
+              />
               <ImagePlaceholder
                 src={listingPhoto(listing)}
                 height={44}
@@ -190,6 +278,11 @@ export default function ConsoleStockPage() {
                   sponsored={listing.promotion === 'sponsored'}
                 />
 
+                {/* How many the shop holds; one when no number is given. */}
+                <span className={styles.inStock}>
+                  {listing.type === 'sale' ? (listing.stockCount ?? 1) : 1}
+                </span>
+
                 <span className={styles.views}>{listing.viewCount || 0}</span>
 
                 <span className={styles.reveals}>
@@ -207,61 +300,10 @@ export default function ConsoleStockPage() {
               </span>
 
               <span className={styles.action}>
-                {isDraft ? (
-                  <ButtonLink
-                    href={`/console/stock/edit/${listing.id}`}
-                    variant="secondary"
-                    size="sm"
-                  >
-                    Finish
-                  </ButtonLink>
-                ) : listing.status === 'sold' || listing.status === 'paused' ? (
-                  <>
-                    {/* Sold or paused: back to live in one tap, or open it
-                        to edit as it is. */}
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() =>
-                        relist(
-                          listing.id,
-                          listing.title,
-                          listing.status as 'sold' | 'paused',
-                        )
-                      }
-                    >
-                      {listing.status === 'sold' ? 'Relist' : 'Resume'}
-                    </Button>
-                    <ButtonLink
-                      href={`/console/stock/edit/${listing.id}`}
-                      variant="secondary"
-                      size="sm"
-                    >
-                      Edit
-                    </ButtonLink>
-                  </>
-                ) : (
-                  <>
-                    {/* Live: pause it in one tap, or open it to edit. */}
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      iconOnly
-                      aria-label={`Pause ${listing.title}`}
-                      title="Pause"
-                      onClick={() => pause(listing.id, listing.title)}
-                    >
-                      <PauseIcon size={15} />
-                    </Button>
-                    <ButtonLink
-                      href={`/console/stock/edit/${listing.id}`}
-                      variant="secondary"
-                      size="sm"
-                    >
-                      Edit
-                    </ButtonLink>
-                  </>
-                )}
+                <ActionMenu
+                  label={`More for ${listing.title}`}
+                  actions={actionsFor(listing)}
+                />
               </span>
             </div>
           );

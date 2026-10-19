@@ -8,6 +8,8 @@
  *
  * Conventions:
  *  - 24×24 viewBox, rendered at `size` (default 20)
+ *  - every line exactly 1.5px on screen, whatever the icon's size (the
+ *    `snt-icon` class keeps strokes from scaling; see reset.css)
  *  - stroke only, never fill, unless `filled` is offered
  *  - decorative by default (`aria-hidden`); pass `title` to make one meaningful
  *
@@ -27,8 +29,10 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'width' | 'heig
 
 function Svg({
   size = 20,
-  weight = 1.7,
+  // Kept so callers need not change; every line is drawn at 1.5px now.
+  weight: _weight,
   title,
+  className,
   children,
   ...rest
 }: IconProps & { children: React.ReactNode }) {
@@ -37,9 +41,10 @@ function Svg({
       width={size}
       height={size}
       viewBox="0 0 24 24"
+      className={['snt-icon', className ?? ''].filter(Boolean).join(' ')}
       fill="none"
       stroke="currentColor"
-      strokeWidth={weight}
+      strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden={title ? undefined : true}
@@ -257,10 +262,17 @@ export const PhoneIcon = (props: IconProps) => (
  * mark: a round speech bubble with a tail at the bottom left, and a handset
  * in it.
  */
+/** WhatsApp, as its own mark: the speech bubble outlined, the phone solid. */
 export const WhatsAppIcon = (props: IconProps) => (
-  <Svg weight={1.8} {...props}>
+  <Svg {...props}>
     <path d="M3.6 20.4l1.2-4.1A8.6 8.6 0 1 1 7.8 19.2z" />
-    <path d="M9 8.4c.3-.4.8-.4 1 0l.7 1.4c.1.3 0 .6-.2.8l-.5.5a6 6 0 0 0 2.9 2.9l.5-.5c.2-.2.5-.3.8-.2l1.4.7c.4.2.4.7 0 1-.6.6-1.4 1-2.3.8A7.3 7.3 0 0 1 8.2 10.7c-.2-.9.2-1.7.8-2.3z" />
+    {/* The phone, solid, a little larger than drawn, about its middle. */}
+    <path
+      d="M9 8.4c.3-.4.8-.4 1 0l.7 1.4c.1.3 0 .6-.2.8l-.5.5a6 6 0 0 0 2.9 2.9l.5-.5c.2-.2.5-.3.8-.2l1.4.7c.4.2.4.7 0 1-.6.6-1.4 1-2.3.8A7.3 7.3 0 0 1 8.2 10.7c-.2-.9.2-1.7.8-2.3z"
+      fill="currentColor"
+      stroke="none"
+      transform="translate(11.9 11.8) scale(1.3) translate(-11.9 -11.8)"
+    />
   </Svg>
 );
 
@@ -271,6 +283,38 @@ export const TrashIcon = (props: IconProps) => (
     <path d="M9.5 6.5V4.8c0-.7.6-1.3 1.3-1.3h2.4c.7 0 1.3.6 1.3 1.3v1.7" />
     <path d="M6 6.5l.9 12.3c.1 1 .9 1.7 1.9 1.7h6.4c1 0 1.8-.7 1.9-1.7L18 6.5" />
     <path d="M10 10.5v6M14 10.5v6" />
+  </Svg>
+);
+
+/** Three dots one over another, for a menu of more actions. */
+export const MoreIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <circle cx="12" cy="5.5" r="1.6" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="18.5" r="1.6" fill="currentColor" stroke="none" />
+  </Svg>
+);
+
+/** A pencil, for editing. */
+export const PencilIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M15.5 4.5l4 4L9 19H5v-4z" />
+    <path d="M13.5 6.5l4 4" />
+  </Svg>
+);
+
+/** An eye, for seeing something as others do. */
+export const EyeIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+    <circle cx="12" cy="12" r="3" />
+  </Svg>
+);
+
+/** A triangle pointing on, for resuming. */
+export const PlayIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M7.5 5.2v13.6a.8.8 0 001.2.7l10.6-6.8a.8.8 0 000-1.4L8.7 4.5a.8.8 0 00-1.2.7z" />
   </Svg>
 );
 

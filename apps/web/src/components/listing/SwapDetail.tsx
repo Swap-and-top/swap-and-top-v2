@@ -47,14 +47,26 @@ import { CategoryIcon } from '@snt/ui/icons';
 import { RevealAction } from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SwapDetail.module.css';
+import { PreviewBanner } from './PreviewBanner';
 
-export function SwapDetail({ listing }: { listing: SwapListing }) {
+export function SwapDetail({
+  listing,
+  preview = false,
+}: {
+  listing: SwapListing;
+  /**
+   * A buyer preview, for the owner: the page exactly as a buyer sees it, the
+   * owner's own tools hidden, under a banner saying so.
+   */
+  preview?: boolean;
+}) {
   const owner = getUser(listing.ownerId);
   const offers = useOfferStore((store) => store.offers);
   const offerCount = offerCountFor(offers, listing.id, listing.offerCount);
   /** Your own swap: worded from your side, with your panel in place of a
       buyer's actions. */
-  const mine = useViewerId() === listing.ownerId;
+  const viewer = useViewerId();
+  const mine = !preview && viewer === listing.ownerId;
 
   /** Who pays, worded as on the cards, or from your side on your own. */
   const terms = swapTerms(
@@ -69,6 +81,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
       {/* The same header as the feed, so the site does not change face on
           the way into a listing. Save and share are in the page. */}
       <AppHeader />
+      {preview ? <PreviewBanner /> : null}
 
       {/* The swap — the reason this screen exists: what they have, then what
           they are looking for, each with its details beside its picture. */}
@@ -168,6 +181,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
                 {/* A swap is a proposal, so the reply is a counter-proposal:
                     this opens the offer sheet. */}
                 <OfferButton
+                  preview={preview}
                   listing={listing}
                   label="Make an offer"
                   size="lg"
@@ -186,7 +200,7 @@ export function SwapDetail({ listing }: { listing: SwapListing }) {
 
         {/* Only the owner sees these: the offers made on this swap. */}
         <div className={styles.offers}>
-          <OffersReceived listing={listing} />
+          {preview ? null : <OffersReceived listing={listing} />}
         </div>
       </ScreenBody>
     </Screen>

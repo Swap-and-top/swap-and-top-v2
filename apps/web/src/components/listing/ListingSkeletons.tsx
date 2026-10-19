@@ -18,6 +18,7 @@ import {
   ScreenBody,
   Stack,
 } from '@snt/ui';
+import { PreviewBanner } from './PreviewBanner';
 import sale from './SaleDetail.module.css';
 import swap from './SwapDetail.module.css';
 import request from './RequestDetail.module.css';
@@ -126,10 +127,11 @@ function SummaryBones({
   );
 }
 
-export function SaleListingSkeleton() {
+export function SaleListingSkeleton({ preview = false }: { preview?: boolean }) {
   return (
     <Screen surface>
       <AppHeader />
+      {preview ? <PreviewBanner /> : null}
       <div className={sale.panel} aria-busy aria-label="Loading listing">
         <section className={sale.card}>
           <div className={sale.media}>
@@ -157,10 +159,11 @@ export function SaleListingSkeleton() {
   );
 }
 
-export function SwapListingSkeleton() {
+export function SwapListingSkeleton({ preview = false }: { preview?: boolean }) {
   return (
     <Screen surface>
       <AppHeader />
+      {preview ? <PreviewBanner /> : null}
       <div className={swap.panel} aria-busy aria-label="Loading listing">
         <div className={swap.card} style={{ background: 'var(--snt-bg-card)', borderRadius: 'var(--snt-radius-xl)' }}>
           {[0, 1].map((side) => (
@@ -208,10 +211,11 @@ export function SwapListingSkeleton() {
   );
 }
 
-export function RequestListingSkeleton() {
+export function RequestListingSkeleton({ preview = false }: { preview?: boolean }) {
   return (
     <Screen surface>
       <AppHeader />
+      {preview ? <PreviewBanner /> : null}
       <div className={sale.panel} aria-busy aria-label="Loading listing">
         <section className={sale.card}>
           <div className={sale.body}>

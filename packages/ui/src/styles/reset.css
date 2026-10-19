@@ -118,3 +118,11 @@ video {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Icons (see icons/index.tsx): every line exactly 1.5px on screen, whatever
+ * size the icon is drawn at, rather than growing and shrinking with it.
+ */
+.snt-icon * {
+  vector-effect: non-scaling-stroke;
+}

@@ -12,10 +12,8 @@
   max-width: 520px;
   border-radius: var(--snt-radius-xl);
   background: var(--snt-bg-card);
-}
-
-.stats > * + * {
-  border-left-color: var(--snt-bg-app) !important;
+  /* On white, the lines between the numbers take the page's pale blue. */
+  --stat-rule: var(--snt-bg-app);
 }
 
 .cards {

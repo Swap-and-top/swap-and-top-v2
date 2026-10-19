@@ -38,14 +38,26 @@ import { RevealAction } from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import card from './SaleDetail.module.css';
 import styles from './RequestDetail.module.css';
+import { PreviewBanner } from './PreviewBanner';
 
-export function RequestDetail({ listing }: { listing: RequestListing }) {
+export function RequestDetail({
+  listing,
+  preview = false,
+}: {
+  listing: RequestListing;
+  /**
+   * A buyer preview, for the owner: the page exactly as a buyer sees it, the
+   * owner's own tools hidden, under a banner saying so.
+   */
+  preview?: boolean;
+}) {
   const owner = getUser(listing.ownerId);
   const offers = useOfferStore((store) => store.offers);
   const responses = offerCountFor(offers, listing.id, listing.responseCount);
   /** Your own post: worded from your side, with your controls in place of a
       buyer's actions. */
-  const mine = useViewerId() === listing.ownerId;
+  const viewer = useViewerId();
+  const mine = !preview && viewer === listing.ownerId;
 
   const budgetLabel = mine ? 'Your budget, up to' : 'Budget up to';
 
@@ -54,6 +66,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
       {/* The same header as the feed, so the site does not change face on
           the way into a listing. */}
       <AppHeader />
+      {preview ? <PreviewBanner /> : null}
 
       <div className={card.panel}>
         <section className={card.card}>
@@ -135,7 +148,12 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
               }
             >
               {/* Opens the offer sheet. */}
-              <OfferButton listing={listing} size="lg" block />
+              <OfferButton
+                listing={listing}
+                size="lg"
+                block
+                preview={preview}
+              />
               <RevealAction
                 listingId={listing.id}
                 ownerId={listing.ownerId}
@@ -146,7 +164,7 @@ export function RequestDetail({ listing }: { listing: RequestListing }) {
           )}
 
           {/* Only the owner sees these: the offers made on this post. */}
-          <OffersReceived listing={listing} />
+          {preview ? null : <OffersReceived listing={listing} />}
 
           <Note icon={<InfoIcon size={17} />} tone="subtle">
             {listing.allowDealerOffers

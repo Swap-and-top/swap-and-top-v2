@@ -11,17 +11,20 @@
 }
 
 /** One way: its icon, its name, and what a tap does — or, once shown, the
-    number or address itself. */
+    number or address itself. No fill of its own: only the icon sits on a
+    small tile of the way's colour, as the icons on Promote's cards do. */
 .row {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-6);
-  width: 100%;
-  min-height: 56px;
-  padding: var(--snt-space-4) var(--snt-space-6);
+  gap: var(--snt-space-5);
+  width: calc(100% + var(--snt-space-3) * 2);
+  min-height: 52px;
+  /* Set out a little, so the icon lines up with the words around the list
+     while a pressed row still has room for its faint fill. */
+  margin-inline: calc(var(--snt-space-3) * -1);
+  padding: var(--snt-space-3);
   border-radius: var(--snt-radius-md);
-  /* A light fill in the way's own colour (see below). */
-  background: var(--snt-accent-tint);
+  background: none;
   color: var(--snt-ink);
   text-align: left;
   transition: background var(--snt-transition);
@@ -29,39 +32,53 @@
 
 @media (hover: hover) {
   .row:hover {
-    filter: brightness(0.97);
+    background: color-mix(in srgb, var(--snt-control-active) 4%, transparent);
   }
 }
 
-.rowIcon {
-  display: flex;
-  flex-shrink: 0;
+.row:active {
+  background: color-mix(in srgb, var(--snt-control-active) 8%, transparent);
 }
 
-/* Each way in its own colour — its icon and its name together: the app's
-   blue for a call and an email, WhatsApp's green, Facebook's blue. */
+/* The icon's tile: as on Promote's cards, 34px, rounded, pale. */
+.rowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+}
+
+/* Each way in its own colour, its icon, its tile and its name together:
+   the app's blue for a call and an email, WhatsApp's green, Facebook's
+   blue. */
 .row.call,
-.row.email,
-.row.call:hover,
-.row.email:hover {
+.row.email {
   color: var(--snt-control-active);
 }
 
-.row.whatsapp,
-.row.whatsapp:hover {
-  background: var(--snt-success-tint);
+.row.whatsapp {
   color: var(--snt-success);
 }
 
-.row.messenger,
-.row.messenger:hover {
-  background: #e8f1fe;
+.row.whatsapp .rowIcon {
+  background: var(--snt-success-tint);
+}
+
+.row.messenger {
   color: #1877f2;
+}
+
+.row.messenger .rowIcon {
+  background: #e8f1fe;
 }
 
 .rowLabel {
   flex-grow: 1;
-  font-size: var(--snt-text-xl);
+  font-size: var(--snt-text-lg);
   font-weight: var(--snt-weight-bold);
 }
 

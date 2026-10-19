@@ -143,6 +143,9 @@
   flex-wrap: wrap;
 }
 
+/* In stock and views: columns of the wide table only; a phone's card has
+   no room for them. */
+.inStock,
 .views {
   display: none;
 }
@@ -159,9 +162,42 @@
 
 .action {
   grid-area: action;
+  /* Over the row's link, so the menu takes its own taps. */
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: var(--snt-space-3);
+}
+
+/*
+ * The whole row opens the item: a link stretched over it, under the menu.
+ * Out of the row's grid, since it is placed over it, not in a cell.
+ */
+.row {
+  position: relative;
+}
+
+.rowLink {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.rowLink:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: -2px;
+}
+
+/* A faint blue under the pointer, and under the finger as it presses. */
+@media (hover: hover) {
+  .row:has(.rowLink:hover) {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.row:has(.rowLink:active) {
+  background-color: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
 }
 
 /* Scoped to the row so it wins over the shared price's own ink. */
@@ -259,7 +295,7 @@
   .row {
     display: grid;
     grid-template-columns:
-      44px minmax(0, 2.4fr) minmax(0, 2fr) 90px 120px 74px 84px 160px;
+      44px minmax(0, 2.4fr) minmax(0, 2fr) 90px 120px 64px 64px 84px 44px;
     grid-template-areas: none;
     align-items: center;
     /* Each cell keeps to its own size at the start of its column, so a
@@ -312,6 +348,7 @@
     display: contents;
   }
 
+  .inStock,
   .views {
     display: block;
     justify-self: end;

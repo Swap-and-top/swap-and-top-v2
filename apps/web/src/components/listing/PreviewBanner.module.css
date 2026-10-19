@@ -1,0 +1,36 @@
+/**
+ * Buyer preview's strip: a pale blue band at the head of the page, in the
+ * column the listing sits in.
+ */
+
+.wrap {
+  padding: var(--snt-space-8) var(--snt-column-inset) 0;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-4) var(--snt-space-4) var(--snt-space-4)
+    var(--snt-space-7);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-accent-bold);
+}
+
+.banner > svg {
+  flex-shrink: 0;
+}
+
+.text {
+  flex-grow: 1;
+  min-width: 0;
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
+}
+
+.text strong {
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
