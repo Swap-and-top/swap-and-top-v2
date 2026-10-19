@@ -7,11 +7,12 @@
   display: block;
   flex-shrink: 0;
   background: var(--snt-skeleton);
-  /* Only when the wait is real: unseen for the first moment, so a page that
-     arrives quickly never flashes a skeleton, then in, softly, and pulsing. */
+  /* Only when the wait is real: unseen for the first half second, so a page
+     that arrives quickly never flashes a skeleton, then in, softly, and
+     pulsing. */
   animation:
-    snt-bone-in 260ms ease-out 200ms both,
-    snt-bone-pulse 1.2s ease-in-out 200ms infinite alternate;
+    snt-bone-in 260ms ease-out 500ms both,
+    snt-bone-pulse 1.2s ease-in-out 500ms infinite alternate;
 }
 
 @keyframes snt-bone-in {
@@ -38,7 +39,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .bone {
-    animation: snt-bone-in 0s 200ms both;
+    animation: snt-bone-in 0s 500ms both;
   }
 }
 

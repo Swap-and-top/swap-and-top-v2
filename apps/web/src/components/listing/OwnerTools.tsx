@@ -24,7 +24,7 @@ import {
   type Listing,
   type ListingStatus,
 } from '@snt/core';
-import { Button, Sheet, useCloseSheet } from '@snt/ui';
+import { Button, Sheet, startPageLoad, useCloseSheet } from '@snt/ui';
 import { CheckIcon, PauseIcon, TrashIcon } from '@snt/ui/icons';
 import styles from './OwnerTools.module.css';
 
@@ -213,6 +213,7 @@ function ManageBody({
     setStatus(listing.id, 'withdrawn');
     close();
     toast.success('Listing deleted.');
+    startPageLoad();
     router.push('/me/listings');
   }
 

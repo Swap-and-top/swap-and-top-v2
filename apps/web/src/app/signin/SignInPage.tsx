@@ -18,7 +18,14 @@ import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { useSessionStore } from '@snt/core';
-import { FacebookMark, Footer, GoogleMark, Img } from '@snt/ui';
+import {
+  FacebookMark,
+  Footer,
+  GoogleMark,
+  Img,
+  Spinner,
+  startPageLoad,
+} from '@snt/ui';
 import styles from './SignInPage.module.css';
 
 export function SignInPage({ next }: { next: string }) {
@@ -27,11 +34,14 @@ export function SignInPage({ next }: { next: string }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
 
   function submit(event: FormEvent) {
     event.preventDefault();
+    setSigningIn(true);
     signIn();
     toast.success('Sign in successful');
+    startPageLoad();
     router.push(next);
   }
 
@@ -107,8 +117,15 @@ export function SignInPage({ next }: { next: string }) {
               Forgot password?
             </button>
 
-            <button type="submit" className={styles.signIn}>
-              Sign in
+            {/* While signing in, the first app's spinner where the words
+                were, and no second press. */}
+            <button
+              type="submit"
+              className={styles.signIn}
+              disabled={signingIn}
+              aria-busy={signingIn || undefined}
+            >
+              {signingIn ? <Spinner size={20} label="Signing in" /> : 'Sign in'}
             </button>
             <button
               type="button"

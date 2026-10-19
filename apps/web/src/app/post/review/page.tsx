@@ -17,6 +17,7 @@
  * Wireframe artboard: `PostReview`.
  */
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   usePostDraftStore,
@@ -32,6 +33,7 @@ import {
   Screen,
   ScreenBody,
   specFieldsFor,
+  startPageLoad,
   StepBar,
   SwapTiles,
   TickTile,
@@ -53,6 +55,8 @@ const CHANNELS: { value: ContactChannel; label: string; Icon: typeof PhoneIcon }
 ];
 
 export default function PostReviewPage() {
+  /** Posting: the button shows the spinner until the feed opens. */
+  const [posting, setPosting] = useState(false);
   const router = useRouter();
   const draft = usePostDraftStore();
   const kind = draft.kind ?? 'swap';
@@ -187,8 +191,11 @@ export default function PostReviewPage() {
           <Button
             size="lg"
             block
+            loading={posting}
             onClick={() => {
+              setPosting(true);
               draft.reset();
+              startPageLoad();
               router.push('/');
             }}
           >

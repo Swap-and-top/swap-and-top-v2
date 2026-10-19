@@ -164,3 +164,8 @@
 :global([data-surface='brand']) .tabActive::after {
   background: var(--snt-bg-surface);
 }
+
+/* Pressed: the label dims a touch, at once. */
+.tab:active {
+  opacity: 0.7;
+}

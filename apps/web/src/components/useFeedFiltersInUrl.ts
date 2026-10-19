@@ -4,10 +4,15 @@
  * The feed filters, kept in the address so a refresh, a shared link or the
  * back button lands on the same view — without a flash of "All" first.
  *
- * The page's server half reads the address and passes what it names in as
- * `initial`. The server renders from it, the browser's first render does
- * too, and the store is seeded from it before the first paint — so nothing
- * jumps once the page wakes up.
+ * A page's server half may read the address and pass what it names in as
+ * `initial` (Wanted does): the server renders from it, the browser's first
+ * render does too, and the store is seeded from it before the first paint.
+ *
+ * The feed instead is built once, ahead of time, so it can be served
+ * instantly (see app/(browse)/page.tsx): it passes no `initial`, and the
+ * address is read here, in the browser. Until then a small script in the
+ * page hides the feed's filters and list when the address names a filter,
+ * so "All" never flashes before the right view; seeding lifts it.
  *
  * The filters themselves stay in `useFeedStore`, so a category picked on
  * Browse still carries over to Wanted: a filter the address leaves out keeps
@@ -18,7 +23,14 @@
 
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useFeedStore } from '@snt/core';
-import { TYPE_TO_PARAM, type FeedFilterParams } from './feedFilterParams';
+import {
+  parseFeedFilterParams,
+  TYPE_TO_PARAM,
+  type FeedFilterParams,
+} from './feedFilterParams';
+
+/** Set on <html> by the feed's page while its filters are not yet read. */
+export const FEED_FILTERS_PENDING = 'feedFilters';
 
 export function useFeedFiltersInUrl(
   initial: FeedFilterParams,
@@ -37,11 +49,19 @@ export function useFeedFiltersInUrl(
   // a shared store while rendering would disturb it. Never on the server
   // either, where the store is shared by every request.
   useLayoutEffect(() => {
+    // Given by the server, or read from the address here.
+    const named =
+      initial.category || initial.type
+        ? initial
+        : parseFeedFilterParams(
+            Object.fromEntries(new URLSearchParams(window.location.search)),
+          );
     const seed: FeedFilterParams = {};
-    if (initial.category) seed.category = initial.category;
-    if (withType && initial.type) seed.type = initial.type;
+    if (named.category) seed.category = named.category;
+    if (withType && named.type) seed.type = named.type;
     if (seed.category || seed.type) useFeedStore.setState(seed);
     setSeeded(true);
+    delete document.documentElement.dataset[FEED_FILTERS_PENDING];
     // Once per mount: later changes come from the chips and tabs.
   }, []);
 

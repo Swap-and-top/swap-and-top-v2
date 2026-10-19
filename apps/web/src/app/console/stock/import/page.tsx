@@ -22,7 +22,7 @@ import {
   useShopStock,
   useStockStore,
 } from '@snt/core';
-import { Badge, Button, ButtonLink, ConsoleShell } from '@snt/ui';
+import { Badge, Button, ButtonLink, ConsoleShell, startPageLoad } from '@snt/ui';
 import { DownloadIcon, UploadIcon } from '@snt/ui/icons';
 import { readStockList, TEMPLATE, type ImportRow } from './readStockList';
 import styles from './page.module.css';
@@ -92,11 +92,15 @@ export default function BulkImportPage() {
   const drafts = coming.length - live;
   const skipped = (rows?.length ?? 0) - coming.length;
 
+  const [importing, setImporting] = useState(false);
+
   function importRows() {
+    setImporting(true);
     addStock(coming.map((row) => newStockListing(currentShop, row.stock)));
     toast.success(
       `${coming.length} ${coming.length === 1 ? 'item' : 'items'} added to your stock.`,
     );
+    startPageLoad();
     router.push('/console/stock');
   }
 
@@ -257,6 +261,7 @@ export default function BulkImportPage() {
               size="lg"
               block
               disabled={coming.length === 0}
+              loading={importing}
               onClick={importRows}
             >
               {coming.length === 0

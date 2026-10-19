@@ -46,3 +46,14 @@
   flex-direction: column;
   gap: var(--snt-card-gap);
 }
+
+/*
+ * While the address names a filter the browser has not read yet (see
+ * page.tsx), the chips, the tabs and the list wait unseen, so "All" never
+ * shows before the right view. Only for that moment.
+ */
+:global(html[data-feed-filters='pending']) .stickyHeader [role='group'],
+:global(html[data-feed-filters='pending']) .stickyHeader [role='tablist'],
+:global(html[data-feed-filters='pending']) .feed {
+  visibility: hidden;
+}

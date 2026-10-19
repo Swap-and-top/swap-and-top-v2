@@ -40,9 +40,10 @@ import {
   ChipRow,
   ConsoleShell,
   Dropdown,
-  Img,
   Field,
+  Img,
   specFieldsFor,
+  startPageLoad,
   TickTile,
 } from '@snt/ui';
 import { CloseIcon, PlusIcon } from '@snt/ui/icons';
@@ -162,7 +163,11 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
     });
   }
 
+  /** Which button is saving, so it shows the spinner until Stock opens. */
+  const [saving, setSaving] = useState<'draft' | 'listed' | null>(null);
+
   function save(draft: boolean) {
+    setSaving(draft ? 'draft' : 'listed');
     const input = {
       title: title.trim(),
       category,
@@ -202,6 +207,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
           : `${listing.title} is saved as a draft.`,
       );
     }
+    startPageLoad();
     router.push('/console/stock');
   }
 
@@ -408,7 +414,12 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
             <ButtonLink href="/console/stock" variant="secondary" size="lg">
               Cancel
             </ButtonLink>
-            <Button type="submit" size="lg" disabled={!named || !priced}>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={!named || !priced}
+              loading={saving !== null}
+            >
               Save changes
             </Button>
           </div>
@@ -418,12 +429,18 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
               type="button"
               variant="secondary"
               size="lg"
-              disabled={!named}
+              disabled={!named || saving !== null}
+              loading={saving === 'draft'}
               onClick={() => save(true)}
             >
               Save as draft
             </Button>
-            <Button type="submit" size="lg" disabled={!named || !priced}>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={!named || !priced || saving !== null}
+              loading={saving === 'listed'}
+            >
               Add to stock
             </Button>
           </div>

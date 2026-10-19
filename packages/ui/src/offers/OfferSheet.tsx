@@ -447,8 +447,8 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
         </div>
       ) : null}
 
-      <Button type="submit" size="lg" block disabled={!ready}>
-        {sending ? 'Sending…' : 'Send offer'}
+      <Button type="submit" size="lg" block disabled={!ready} loading={sending}>
+        Send offer
       </Button>
       <p className={styles.small}>
         Not binding. The owner compares offers side by side, and you settle

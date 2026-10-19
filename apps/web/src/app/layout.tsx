@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Toaster } from 'sonner';
 import { SignInHost } from '@snt/ui';
+import { PageLoadBar } from '@/components/PageLoadBar';
+import { ScrollToTop } from '@/components/ScrollToTop';
 
 // Order matters: tokens first, then the reset that uses them, then app styles.
 import '@snt/ui/styles/tokens.css';
@@ -79,6 +81,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <body>
+        {/* Each new page opens at its top. */}
+        <ScrollToTop />
+        {/* A thin bar along the top while a page is on its way. */}
+        <PageLoadBar />
         {children}
         {/* The one sign-in sheet, shown whenever a guest tries something that
             needs an account. */}

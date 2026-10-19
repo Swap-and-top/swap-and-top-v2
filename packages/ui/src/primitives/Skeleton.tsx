@@ -38,6 +38,8 @@ export function Bone({
   return (
     <span
       aria-hidden
+      // Marks a page as still waiting, for the top loading bar.
+      data-skeleton=""
       className={[styles.bone, styles[shape], className ?? '']
         .filter(Boolean)
         .join(' ')}

@@ -376,3 +376,13 @@
     padding: var(--snt-space-10) var(--snt-space-12) var(--snt-space-12);
   }
 }
+
+/* Pressed: menu items react at once, in the sidebar and the phone's bar. */
+.sidebarItem:active,
+.sidebarBack:active {
+  background: color-mix(in srgb, white 20%, transparent);
+}
+
+.navItem:active .navPill {
+  transform: scale(0.92);
+}

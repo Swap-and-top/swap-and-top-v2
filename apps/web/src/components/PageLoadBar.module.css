@@ -1,0 +1,51 @@
+/**
+ * The top loading bar (see PageLoadBar.tsx): three pixels of the brand
+ * yellow along the very top, over everything, with a soft edge so it shows
+ * on the pale console pages as well as on the blue to green header.
+ */
+
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  height: 3px;
+  width: 0;
+  border-radius: 0 var(--snt-radius-pill) var(--snt-radius-pill) 0;
+  background: var(--snt-brand-yellow);
+  box-shadow:
+    0 0 0 0.5px rgb(0 0 0 / 0.12),
+    0 1px 6px rgb(255 214 0 / 0.6);
+  pointer-events: none;
+  /* Quickly a third of the way, then slower and slower, never quite done. */
+  animation: snt-page-load 10s cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes snt-page-load {
+  0% {
+    width: 0;
+  }
+  10% {
+    width: 35%;
+  }
+  100% {
+    width: 88%;
+  }
+}
+
+/* Arrived: it runs to the end, then fades. */
+.done {
+  width: 100%;
+  animation: none;
+  opacity: 0;
+  transition:
+    width 200ms ease-out,
+    opacity 250ms ease 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation-duration: 0s;
+    width: 70%;
+  }
+}

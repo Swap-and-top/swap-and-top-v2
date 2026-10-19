@@ -24,6 +24,7 @@ import { Button } from '../primitives/Button';
 import { CompactLogo } from '../layout/Logo';
 import { Sheet, useCloseSheet } from '../primitives/Sheet';
 import styles from './SignIn.module.css';
+import { startPageLoad } from '../pageLoad';
 
 /** Shortest first, so the list widens as it goes down. */
 const BENEFITS = [
@@ -66,6 +67,7 @@ function SignInBody({ reason }: { reason: string }) {
   function toSignInPage() {
     const here = window.location.pathname + window.location.search;
     closeSheet();
+    startPageLoad();
     router.push(`/signin?next=${encodeURIComponent(here)}`);
   }
 

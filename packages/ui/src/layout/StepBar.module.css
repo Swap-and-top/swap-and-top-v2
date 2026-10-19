@@ -1,5 +1,9 @@
 /** The steps of a flow: numbered circles joined by lines, at the top. */
 .bar {
+  /* The move from one step to the next: the line eases across, then the
+     step it reaches lights up. */
+  --step-move: 260ms;
+  --step-ease: cubic-bezier(0.65, 0, 0.35, 1);
   margin-bottom: var(--snt-space-10);
 }
 
@@ -35,15 +39,18 @@
   border-radius: var(--snt-radius-pill);
   font-size: var(--snt-text-md);
   font-weight: var(--snt-weight-bold);
+  box-shadow: 0 0 0 0 var(--snt-accent-tint);
   transition:
-    background var(--snt-transition),
-    color var(--snt-transition);
+    background var(--step-move) var(--step-ease),
+    color var(--step-move) var(--step-ease),
+    box-shadow var(--step-move) var(--step-ease);
 }
 
 .label {
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-semibold);
   white-space: nowrap;
+  transition: color var(--step-move) var(--step-ease);
 }
 
 /* Done: filled blue, ticked; a way back. */
@@ -71,6 +78,13 @@
   color: var(--snt-accent-bold);
 }
 
+/* The step being reached waits for the line to get there; going back, the
+   line draws back first, so the wait is the same. */
+.here .circle,
+.here .label {
+  transition-delay: calc(var(--step-move) * 0.6);
+}
+
 /* To come: a plain white circle, its number and name in a faded grey that
    still reads, so it is plain they are not reached yet. */
 .ahead {
@@ -86,18 +100,51 @@
   color: var(--step-faded);
 }
 
-/** The line between two steps, level with the circles' middles; blue once
-    reached, pale before. */
+/** The line between two steps, level with the circles' middles: a pale
+    track, and a blue fill over it that eases across once the flow reaches
+    the step after it, and draws back when the flow goes back. */
 .line {
+  position: relative;
   flex: 1 1 auto;
   height: 2px;
   margin: 13px calc(var(--snt-space-6) * -1) 0;
   border-radius: var(--snt-radius-pill);
+  overflow: hidden;
+}
+
+.line::before,
+.line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.line::before {
   background: var(--snt-control-idle);
   opacity: 0.45;
 }
 
-.line.lineDone {
+.line::after {
   background: var(--snt-control-active);
-  opacity: 1;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--step-move) var(--step-ease);
+}
+
+.line.lineDone::after {
+  transform: scaleX(1);
+}
+
+/* Going back, the step left behind fades first, then the line draws back. */
+.back .line::after {
+  transition-delay: calc(var(--step-move) * 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circle,
+  .label,
+  .line::after {
+    transition: none;
+  }
 }

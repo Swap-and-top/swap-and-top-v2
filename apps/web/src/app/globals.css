@@ -48,3 +48,11 @@ html [data-sonner-toaster] [data-sonner-toast][data-type='error'] [data-button] 
   font-weight: var(--snt-weight-semibold);
 }
 
+
+/*
+ * The feed's bottom bar, held unseen with its filters and list while the
+ * address names a filter not yet read (see app/(browse)/page.tsx).
+ */
+html[data-feed-filters='pending'] nav[aria-label='Listing type'] {
+  visibility: hidden;
+}

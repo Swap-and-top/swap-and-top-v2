@@ -41,7 +41,7 @@ import {
   type SearchCategory,
   type TypeFilter,
 } from '@snt/core';
-import { CompactListingRow } from '@snt/ui';
+import { CompactListingRow, startPageLoad } from '@snt/ui';
 import { CloseIcon, SearchIcon } from '@snt/ui/icons';
 import {
   QuotedQuery,
@@ -180,6 +180,7 @@ export function SearchEntry({
   function goToResults(q: string) {
     dismiss();
     input.current?.blur();
+    startPageLoad();
     router.push(searchHref({ q, ...filters }));
   }
 

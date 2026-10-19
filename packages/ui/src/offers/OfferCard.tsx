@@ -12,6 +12,7 @@
  * replace it.
  */
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import {
@@ -51,6 +52,8 @@ export function OfferCard({
   /** `received`: the reader owns the listing. `made`: the reader sent it. */
   view: 'received' | 'made';
 }) {
+  /** Which answer is on its way, so its button shows the spinner. */
+  const [working, setWorking] = useState<OfferState | null>(null);
   const listing = getListing(offer.listingId);
   if (!listing || listing.type === 'auction') {
     return null;
@@ -70,6 +73,7 @@ export function OfferCard({
     target.type === 'sale' ? target.item.name : target.wants.name;
 
   async function change(next: Exclude<OfferState, 'pending'>) {
+    setWorking(next);
     try {
       await setOfferStateOptimistically(offer.id, next);
       // A decline or an accept can be undone at once, from the message.
@@ -87,6 +91,8 @@ export function OfferCard({
       }
     } catch {
       toast.error('That did not go through. Try again.');
+    } finally {
+      setWorking(null);
     }
   }
 
@@ -169,12 +175,19 @@ export function OfferCard({
         <div className={styles.actions}>
           {readerIsOwner ? (
             <>
-              <Button size="sm" onClick={() => change('accepted')}>
+              <Button
+                size="sm"
+                loading={working === 'accepted'}
+                disabled={working !== null}
+                onClick={() => change('accepted')}
+              >
                 Accept
               </Button>
               <Button
                 size="sm"
                 variant="secondary"
+                loading={working === 'declined'}
+                disabled={working !== null}
                 onClick={() => change('declined')}
               >
                 Decline
@@ -186,6 +199,7 @@ export function OfferCard({
               <Button
                 size="sm"
                 variant="secondary"
+                loading={working === 'withdrawn'}
                 onClick={() => change('withdrawn')}
               >
                 Withdraw

@@ -67,3 +67,8 @@
 .saved {
   color: var(--snt-card-icon);
 }
+
+/* Pressed: the icon gives a little, at once. */
+.button:active {
+  transform: scale(0.88);
+}

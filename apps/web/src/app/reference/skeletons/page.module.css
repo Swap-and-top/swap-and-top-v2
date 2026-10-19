@@ -57,3 +57,10 @@
   line-height: var(--snt-leading-normal);
   color: var(--snt-ink-muted);
 }
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-5);
+}

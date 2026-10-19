@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   AppHeader,
+  Button,
   SaleCardSkeleton,
   Screen,
   ScreenBody,
@@ -80,6 +81,22 @@ export default function SkeletonReferencePage() {
             </li>
           ))}
         </ul>
+
+        <h2 className={styles.label}>Buttons while they work</h2>
+        <p className={styles.note}>
+          The first app&apos;s spinner, in the button that was pressed, which
+          keeps its size and cannot be pressed again. Moving to another page
+          shows a thin yellow bar along the very top instead.
+        </p>
+        <div className={styles.buttons}>
+          <Button loading>Send offer</Button>
+          <Button variant="secondary" loading>
+            Decline
+          </Button>
+          <Button variant="blue" size="sm" loading>
+            Bulk import
+          </Button>
+        </div>
 
         <h2 className={styles.label}>The feed&apos;s three cards</h2>
         <div className={styles.cards}>

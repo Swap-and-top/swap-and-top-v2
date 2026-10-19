@@ -11,6 +11,7 @@
 
 import Link from 'next/link';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
+import { Spinner } from './Spinner';
 import styles from './Button.module.css';
 
 export type ButtonVariant =
@@ -55,7 +56,13 @@ function classesFor({
 }
 
 export type ButtonProps = SharedProps &
-  Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>;
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
+    /**
+     * Working on it: the spinner turns where the words were, the button
+     * keeps its size so nothing moves, and it cannot be pressed again.
+     */
+    loading?: boolean;
+  };
 
 export function Button({
   variant,
@@ -64,16 +71,35 @@ export function Button({
   iconOnly,
   className,
   type = 'button',
+  loading = false,
+  disabled,
   children,
   ...rest
 }: ButtonProps) {
   return (
     <button
       type={type}
-      className={classesFor({ variant, size, block, iconOnly, className })}
+      className={[
+        classesFor({ variant, size, block, iconOnly, className }),
+        loading ? styles.loading : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...rest}
     >
-      {children}
+      {loading ? (
+        <>
+          {/* The words stay, unseen, to hold the button's width. */}
+          <span className={styles.held}>{children}</span>
+          <span className={styles.spinning}>
+            <Spinner size={size === 'sm' ? 16 : 20} label="" />
+          </span>
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }

@@ -1,0 +1,20 @@
+/** The first app's loading circle: a full turn every second. */
+
+.spinner {
+  flex-shrink: 0;
+  fill: currentColor;
+  animation: snt-spin 1s linear infinite;
+}
+
+@keyframes snt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Still turning for those who ask for less motion, but slower. */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+}

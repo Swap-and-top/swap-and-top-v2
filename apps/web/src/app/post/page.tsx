@@ -16,9 +16,10 @@ import {
   AppHeader,
   Body,
   Note,
+  POST_STEPS,
   Screen,
   ScreenBody,
-  POST_STEPS,
+  startPageLoad,
   StepBar,
 } from '@snt/ui';
 import {
@@ -71,6 +72,7 @@ export default function PostTypePage() {
 
   const choose = (kind: PostKind) => {
     setKind(kind);
+    startPageLoad();
     router.push('/post/details');
   };
 

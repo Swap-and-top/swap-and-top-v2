@@ -70,6 +70,7 @@ Only after a pass.
 - The four card types
 - Specification search with per-category filters
 - Contact reveal with recording and rate limiting
+- Data held in the browser and refreshed behind, so returning to the feed (even after a reload) is instant and a skeleton shows only on a first visit. See [system-overview.md](../architecture/system-overview.md#data-in-the-browser-show-what-is-known-then-refresh)
 
 ### 1.3 Accounts and posting
 

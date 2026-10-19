@@ -117,3 +117,8 @@
     display: none;
   }
 }
+
+/* Pressed: the icon's pill gives a little, at once. */
+.item:active .pill {
+  transform: scale(0.92);
+}

@@ -190,3 +190,8 @@
     gap: var(--snt-space-5);
   }
 }
+
+/* Pressed: gives a little under the finger, at once. */
+.chip:active {
+  transform: scale(0.96);
+}

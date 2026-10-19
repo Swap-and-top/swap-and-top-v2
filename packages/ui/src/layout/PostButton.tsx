@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent, ReactNode } from 'react';
 import { requireSignIn, useSessionStore } from '@snt/core';
+import { startPageLoad } from '../pageLoad';
 
 export function PostButton({
   href,
@@ -29,7 +30,10 @@ export function PostButton({
     // Signed in, or opening in a new tab or window: an ordinary link.
     if (signedIn || event.metaKey || event.ctrlKey || event.shiftKey) return;
     event.preventDefault();
-    requireSignIn('Sign in to post a listing.', () => router.push(href));
+    requireSignIn('Sign in to post a listing.', () => {
+      startPageLoad();
+      router.push(href);
+    });
   }
 
   return (

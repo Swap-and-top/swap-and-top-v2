@@ -142,6 +142,38 @@ Web app clears: the listing page, the feed,
 
 ---
 
+## Data in the browser: show what is known, then refresh
+
+**Status:** ⏳ to do when the web app moves from mock data to the API.
+
+Every page that waits for content has a loading skeleton (see each page's `loading.tsx`, and `/reference/skeletons`). A skeleton should mean *this has never been seen before*, not *this is being fetched again*. Today the feed is served instantly from the host's cache, which covers most returns to it; once its listings come from the API, the browser must keep them too.
+
+**The rule:** show what the browser already holds at once, and refresh it quietly behind; a skeleton only when there is nothing to show yet.
+
+```ascii
+Open a page
+   │
+   ├─ the browser holds its data (from this visit, or an earlier one)
+   │     → show it at once, no skeleton
+   │     → fetch fresh data behind it; swap it in where it changed
+   │
+   └─ nothing held (first visit, or cleared)
+         → skeleton, then the data
+```
+
+**What to build when the API arrives:**
+
+- [ ] A client data cache in front of every read from the API (e.g. TanStack Query), so each page reads through one place.
+- [ ] Keep the cache across reloads (persisted in the browser, e.g. IndexedDB), so going back to the feed after a reload shows the last listings at once. This is the case that still shows a skeleton today: reload a listing, press back, and the feed is fetched again.
+- [ ] Stale while revalidate: show held data immediately, refresh in the background, never blank the screen to refresh.
+- [ ] Seed a listing page from the card that was tapped (title, price, photo are already known), so it opens with its top filled in while the rest loads.
+- [ ] Clear or update held data on the same signals as the cache invalidation above: a sold or removed listing must not linger in the browser either.
+- [ ] Keep the loading skeletons for the first visit only, and keep their half second delay so a quick fetch never flashes one.
+
+**Why:** the feed is the page people return to most, usually from a listing. Showing it again from the browser makes that return instant on any connection, which matters most on the slow phone data the platform's users are on.
+
+---
+
 ## Monorepo
 
 One repository with shared packages.
