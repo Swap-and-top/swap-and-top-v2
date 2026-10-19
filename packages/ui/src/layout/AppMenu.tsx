@@ -6,8 +6,9 @@
  * and how to reach Swap & Top. Signed out, a way to sign in heads it instead.
  *
  * On a laptop it drops down under the circle; on a phone it slides in from
- * the right, the full height of the screen, over a dimmed page. A tap
- * outside, the cross, Escape, or opening a link closes it.
+ * the right, the full height of the screen, over a dimmed page, as the
+ * header's three lines turn into its cross. A tap outside, the cross,
+ * Escape, or opening a link closes it.
  */
 
 import Link from 'next/link';
@@ -34,6 +35,8 @@ import { Button, ButtonLink } from '../primitives/Button';
 import { Avatar } from '../primitives/Placeholder';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { SocialMark } from './SocialMarks';
+import { BurgerLines } from './BurgerLines';
+import { GuestMark } from './GuestMark';
 import styles from './AppMenu.module.css';
 
 /** How long the menu takes to go, so it can slide or fade away first. */
@@ -51,11 +54,16 @@ export function AppMenu({
   const panel = useRef<HTMLDivElement>(null);
   const [closing, setClosing] = useState(false);
   const [place, setPlace] = useState<{ top: number; right: number } | null>(null);
+  /** Where the header's button is: on a phone the cross is drawn there. */
+  const [button, setButton] = useState<DOMRect | null>(null);
+  /** The phone's lines, crossed once the menu is in, uncrossed as it goes. */
+  const [crossed, setCrossed] = useState(false);
   const opened = useRef(pathname);
 
   function close() {
     if (closing) return;
     setClosing(true);
+    setCrossed(false);
     window.setTimeout(onClose, CLOSE_MS);
   }
 
@@ -64,6 +72,12 @@ export function AppMenu({
     if (!anchor) return;
     const at = anchor.getBoundingClientRect();
     setPlace({ top: at.bottom + 10, right: Math.max(12, window.innerWidth - at.right) });
+    setButton(at);
+    // Drawn as three lines first, then crossed, so the change is seen.
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => setCrossed(true));
+    });
+    return () => cancelAnimationFrame(frame);
   }, [anchor]);
 
   // Closes on a move to another page, Escape, or a tap outside.
@@ -78,6 +92,7 @@ export function AppMenu({
     const onDown = (event: PointerEvent) => {
       const target = event.target as Node;
       if (panel.current?.contains(target) || anchor?.contains(target)) return;
+      if ((target as Element).closest?.('[data-menu-toggle]')) return;
       close();
     };
     document.addEventListener('keydown', onKey);
@@ -114,7 +129,11 @@ export function AppMenu({
           .join(' ')}
         style={
           place
-            ? ({ '--menu-top': `${place.top}px`, '--menu-right': `${place.right}px` } as React.CSSProperties)
+            ? ({
+                '--menu-top': `${place.top}px`,
+                '--menu-right': `${place.right}px`,
+                '--toggle-bottom': button ? `${button.bottom}px` : undefined,
+              } as React.CSSProperties)
             : undefined
         }
       >
@@ -128,6 +147,27 @@ export function AppMenu({
         </button>
         <MenuContent onNavigate={close} />
       </div>
+      {/* On a phone: the header button's three lines, drawn over the menu in
+          the same place, crossing to close it. */}
+      {button ? (
+        <button
+          type="button"
+          data-menu-toggle
+          className={[styles.toggle, crossed ? styles.toggleCrossed : '']
+            .filter(Boolean)
+            .join(' ')}
+          style={{
+            top: button.top,
+            left: button.left,
+            width: button.width,
+            height: button.height,
+          }}
+          aria-label="Close the menu"
+          onClick={close}
+        >
+          <BurgerLines cross={crossed} />
+        </button>
+      ) : null}
     </>,
     document.body,
   );
@@ -146,11 +186,17 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
   return (
     <div className={styles.content}>
       {/* White: who you are, or a way in. */}
-      <section className={styles.profileBand}>
+      <section
+        className={[styles.profileBand, signedIn && user ? '' : styles.guest]
+          .filter(Boolean)
+          .join(' ')}
+      >
         {signedIn && user ? (
           <>
             <div className={styles.who}>
-              <Avatar size={56} initials={initialsOf(user.displayName)} />
+              <span className={styles.whoAvatar}>
+                <Avatar size={56} initials={initialsOf(user.displayName)} />
+              </span>
               <div className={styles.whoText}>
                 <span className={styles.name}>{user.displayName}</span>
                 <ConfirmedDealsBadge count={confirmedDeals} size="md" long />
@@ -174,6 +220,10 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
           </>
         ) : (
           <>
+            {/* On a phone, with room above: the signed out mark, large. */}
+            <span className={styles.guestMark}>
+              <GuestMark size={80} strokeWidth={2} />
+            </span>
             <p className={styles.name}>Welcome to Swap &amp; Top</p>
             <p className={styles.welcomeNote}>
               Sign in to post, save listings, and send and receive offers.

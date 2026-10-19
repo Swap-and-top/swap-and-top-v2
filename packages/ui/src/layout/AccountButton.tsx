@@ -8,11 +8,16 @@
  * gradient's green. Signed out, an outlined person in an outlined circle,
  * in white on the gradient, the size of the account circle; the menu then
  * starts with a way to sign in.
+ *
+ * On a phone, signed in or not, it is three white lines instead, which the
+ * open menu turns into its cross (see BurgerLines).
  */
 
 import { useRef, useState } from 'react';
 import { getUser, useSessionStore, useViewerId } from '@snt/core';
 import { AppMenu } from './AppMenu';
+import { BurgerLines } from './BurgerLines';
+import { GuestMark } from './GuestMark';
 import styles from './Headers.module.css';
 
 export function AccountButton() {
@@ -30,31 +35,29 @@ export function AccountButton() {
         aria-label={signedIn ? 'Your account and the menu' : 'Menu'}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={signedIn ? styles.account : styles.signIn}
+        className={[
+          signedIn ? styles.account : styles.signIn,
+          styles.menuButton,
+          open ? styles.menuOpen : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         onClick={() => setOpen((now) => !now)}
       >
-        {signedIn ? (
-          name ? (
-            <span aria-hidden>{initialsOf(name)}</span>
-          ) : null
-        ) : (
-          <svg
-            className={`snt-icon ${styles.signInMark}`}
-            viewBox="0 0 24 24"
-            width="36"
-            height="36"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <circle cx="12" cy="12" r="10.5" />
-            <circle cx="12" cy="9.5" r="3.2" />
-            <path d="M6.2 18.6c1.1-2.3 3.3-3.6 5.8-3.6s4.7 1.3 5.8 3.6" />
-          </svg>
-        )}
+        {/* From tablet up: the circle, or the outlined person. */}
+        <span className={styles.face}>
+          {signedIn ? (
+            name ? (
+              <span aria-hidden>{initialsOf(name)}</span>
+            ) : null
+          ) : (
+            <GuestMark size={36} className={styles.signInMark} />
+          )}
+        </span>
+        {/* On a phone: three lines. */}
+        <span className={styles.burger}>
+          <BurgerLines />
+        </span>
       </button>
       {open ? (
         <AppMenu anchor={button.current} onClose={() => setOpen(false)} />

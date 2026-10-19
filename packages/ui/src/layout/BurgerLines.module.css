@@ -1,0 +1,51 @@
+/** The three lines, 22px wide, 2px thick, 7px apart (see BurgerLines.tsx). */
+
+.lines {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 16px;
+}
+
+.lines span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  transition:
+    transform 260ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 200ms ease;
+}
+
+.lines span:nth-child(1) {
+  top: 0;
+}
+
+.lines span:nth-child(2) {
+  top: 7px;
+}
+
+.lines span:nth-child(3) {
+  top: 14px;
+}
+
+/* Crossed: the outer lines meet in the middle at 45 degrees. */
+.cross span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.cross span:nth-child(2) {
+  opacity: 0;
+}
+
+.cross span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lines span {
+    transition: none;
+  }
+}

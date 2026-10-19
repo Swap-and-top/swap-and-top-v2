@@ -169,6 +169,45 @@
   display: block;
 }
 
+/*
+ * The menu button's two faces: the circle (or outlined person) from tablet
+ * up, three white lines on a phone. While the menu is open on a phone the
+ * menu draws the lines itself, in the same place, as its cross, so the
+ * header's own are hidden.
+ */
+.face {
+  display: contents;
+}
+
+.burger {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .menuButton,
+  .menuButton:hover {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    color: var(--snt-ink-on-dark);
+    opacity: 1;
+  }
+
+  .face {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menuOpen {
+    visibility: hidden;
+  }
+}
+
 /** The screen's own controls, on white under the gradient. */
 .appBelow {
   flex-shrink: 0;

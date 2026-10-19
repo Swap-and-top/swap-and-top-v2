@@ -141,6 +141,57 @@
   transform: scale(0.92);
 }
 
+/*
+ * On a phone, the cross is the header's three lines, drawn in their place
+ * over the menu: white on the gradient as they cross, the menu's deep blue
+ * once crossed over its white. The card's own cross is for tablet up.
+ */
+.toggle {
+  position: fixed;
+  z-index: 970;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  transition:
+    color 260ms ease,
+    background-color 260ms ease;
+}
+
+/* Crossed: on the pale round of the app's other icons, as the card's own
+   cross is, the lines drawn in a touch so the cross sits well inside it. */
+.toggleCrossed {
+  background: var(--snt-bg-inset);
+  color: #2572a2;
+}
+
+.toggle > span {
+  transition: transform 260ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.toggleCrossed > span {
+  transform: scale(0.82);
+}
+
+.toggleCrossed:active {
+  transform: scale(0.92);
+}
+
+@media (min-width: 768px) {
+  .toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .close {
+    display: none;
+  }
+}
+
 .content {
   display: flex;
   flex-direction: column;
@@ -181,6 +232,16 @@
   display: flex;
   align-items: center;
   gap: var(--snt-space-6);
+}
+
+.whoAvatar {
+  display: flex;
+  flex-shrink: 0;
+}
+
+/* The signed out mark: on a phone only (see below). */
+.guestMark {
+  display: none;
 }
 
 .whoText {
@@ -391,6 +452,64 @@
   color: var(--menu-yellow);
 }
 
+/*
+ * On a phone the bands are stacked from the bottom of the screen up: the
+ * company line at the foot, the socials just above it, and so on, each band
+ * as tall as its content. Any room left over goes to the white band at the
+ * top, above the profile, rather than under the socials. The profile never
+ * starts higher than where the cross (the header's button) ends.
+ */
+@media (max-width: 767px) {
+  .profileBand {
+    flex-grow: 1;
+    justify-content: flex-end;
+    padding-top: var(--toggle-bottom, calc(var(--snt-space-10) + 34px));
+  }
+
+  .socialBand {
+    flex-grow: 0;
+  }
+
+  /* With room to spare, the picture is larger and sits above the name,
+     the three centred. */
+  .who {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .who .whoText {
+    align-items: center;
+  }
+
+  /* Signed out, the same: a large mark in the menu's blue, the welcome
+     centred under it. */
+  .guestMark {
+    display: flex;
+    justify-content: center;
+    color: var(--menu-deep);
+  }
+
+  .guest .name,
+  .guest .welcomeNote {
+    padding-right: 0;
+    text-align: center;
+  }
+
+  .whoAvatar > span {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  .whoAvatar > span > span {
+    font-size: 29px !important;
+  }
+
+  .copyright {
+    margin-top: 0;
+  }
+}
+
 /* On a short phone, the bands sit a little closer, so it all fits. */
 @media (max-width: 767px) and (max-height: 720px) {
   .band {
@@ -401,5 +520,30 @@
   .socialBand {
     gap: var(--snt-space-6);
     padding-bottom: var(--snt-space-4);
+  }
+
+  /* No room to spare: no mark above the welcome. */
+  .guestMark {
+    display: none;
+  }
+
+  /* No room to spare: the picture stays small, beside the name. */
+  .who {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+  }
+
+  .who .whoText {
+    align-items: flex-start;
+  }
+
+  .whoAvatar > span {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .whoAvatar > span > span {
+    font-size: 20px !important;
   }
 }

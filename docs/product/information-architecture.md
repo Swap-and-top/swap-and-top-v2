@@ -32,7 +32,7 @@ On a phone, the feed has a bottom bar of its four listing types, under the thumb
 
 ```ascii
 ┌──────────────────────────────────────────────┐
-│ [logo]            ( Post New Item )  ( ● )   │  ← header, on every page
+│ [logo]            ( Post New Item )    ≡     │  ← header, on every page
 │                                              │
 │                 the feed                     │
 │                                              │
@@ -45,7 +45,7 @@ On a phone, the feed has a bottom bar of its four listing types, under the thumb
 | --- | --- |
 | **Bottom bar** | Switches the feed between All types, Swaps, For sale and Wanted. |
 | **Post New Item** | Opens the posting flow. |
-| **The account circle** | Opens the menu: your profile and Sign out, Safety and how to swap, Terms of use, Privacy policy, how to contact us, and our social links. Signed out, it is an outlined person icon, and the menu offers Sign in. |
+| **The account circle** | Opens the menu: your profile and Sign out, Safety and how to swap, Terms of use, Privacy policy, how to contact us, and our social links. Signed out, it is an outlined person icon, and the menu offers Sign in. On a phone it is three white lines instead, which turn into the menu's cross while it is open. |
 | **Me** (`/me`, from View profile) | Own listings and wanted posts, deals to confirm, offers, saved listings, verification, settings, and the switch into the dealer console. |
 
 **The bottom bar is on the feed only.** One of its four items is always lit there. On any other page (Saved, Search, Wanted, Me) none would be, so it is left out rather than shown with nothing selected.
