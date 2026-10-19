@@ -60,9 +60,10 @@
 }
 
 /** The quieter partner of the green button: blue words in a faded blue
-    outline, which goes solid on hover. */
+    outline, which goes solid on hover. No fill of its own: it shows
+    whatever it sits on, the page's pale blue or a card's white. */
 .secondary {
-  background: var(--snt-bg-surface);
+  background: transparent;
   color: var(--snt-control-active);
   border: 1px solid rgb(47 117 153 / 0.4);
 }
@@ -72,9 +73,10 @@
   color: var(--snt-control-active);
 }
 
-/** Outlined in ink — a secondary action with more weight, e.g. Bulk import. */
+/** Outlined in ink — a secondary action with more weight. No fill of its
+    own either. */
 .outline {
-  background: var(--snt-bg-surface);
+  background: transparent;
   color: var(--snt-ink);
   border: 1px solid var(--snt-ink);
 }

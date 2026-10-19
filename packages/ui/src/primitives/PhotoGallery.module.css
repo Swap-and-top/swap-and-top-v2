@@ -10,7 +10,9 @@
   position: relative;
   z-index: 1;
   overflow: hidden;
-  background: var(--snt-bg-placeholder);
+  /* The page's pale blue under the photos, the colour a loading photo's
+     skeleton pulses to. */
+  background: var(--snt-bg-inset);
 }
 
 .track {
@@ -54,6 +56,9 @@
   inset: -20px;
   width: calc(100% + 40px);
   height: calc(100% + 40px);
+  /* Past the usual cap on a picture's width, or it stops 20px short of the
+     right edge and its blurred border shows there. */
+  max-width: none;
   object-fit: cover;
   filter: blur(8px);
   user-select: none;

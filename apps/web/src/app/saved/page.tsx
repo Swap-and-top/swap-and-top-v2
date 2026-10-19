@@ -1,93 +1,12 @@
-'use client';
-
 /**
- * Saved: the listings someone has starred, to watch for a price drop or a
- * sale. Swaps and wanted posts too, not only things to buy.
- *
- * A reduced form of the same cards, with availability state and a price-drop
- * flag. A saved listing that has sold is dimmed and labelled rather than
- * removed, so the viewer understands what happened.
- *
- * Wireframe artboard: `Saved`.
+ * The page (see PageContent), behind a server half that can hold its content
+ * back in slow mode, so its loading skeleton can be seen (see slowDown).
  */
 
-import { useState } from 'react';
-import {
-  getListing,
-  useSavedStore,
-  type Listing,
-} from '@snt/core';
-import {
-  AppHeader,
-  BottomNav,
-  ButtonLink,
-  CompactListingRow,
-  EmptyState,
-  Screen,
-  ScreenBody,
-  ScreenTitle,
-  Stack,
-  Tabs,
-  type TabItem,
-  SignInGate,
-} from '@snt/ui';
+import { slowDown } from '@/components/slowDown';
+import PageContent from './PageContent';
 
-type SavedTab = 'all' | 'available' | 'gone';
-
-function isGone(listing: Listing): boolean {
-  return listing.status !== 'live' && listing.status !== 'draft';
-}
-
-export default function SavedPage() {
-  const { ids } = useSavedStore();
-  const [tab, setTab] = useState<SavedTab>('all');
-
-  const saved = ids
-    .map((id) => getListing(id))
-    .filter((listing): listing is Listing => listing !== undefined);
-
-  const available = saved.filter((listing) => !isGone(listing));
-  const gone = saved.filter(isGone);
-
-  const tabs: TabItem<SavedTab>[] = [
-    { value: 'all', label: `All ${saved.length}` },
-    { value: 'available', label: `Available ${available.length}` },
-    { value: 'gone', label: `Gone ${gone.length}` },
-  ];
-
-  const shown =
-    tab === 'available' ? available : tab === 'gone' ? gone : saved;
-
-  return (
-    <Screen>
-      <AppHeader>
-        <ScreenTitle>Saved</ScreenTitle>
-        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Saved" />
-      </AppHeader>
-
-      <ScreenBody>
-        <SignInGate
-          title="Your saved listings"
-          body="Sign in to keep the listings you star in one place, and to be told when a price drops."
-          reason="Sign in to see your saved listings."
-        >
-          {shown.length > 0 ? (
-            <Stack gap={5}>
-              {shown.map((listing) => (
-                <CompactListingRow key={listing.id} listing={listing} />
-              ))}
-            </Stack>
-          ) : (
-            <EmptyState
-              title="Nothing saved yet"
-              body="Tap the star on any listing to keep it here. You will be told when the price drops."
-              action={<ButtonLink href="/" variant="secondary">Browse listings</ButtonLink>}
-            />
-          )}
-        </SignInGate>
-      </ScreenBody>
-
-      <BottomNav />
-    </Screen>
-  );
+export default async function Page() {
+  await slowDown();
+  return <PageContent />;
 }

@@ -9,6 +9,7 @@
 
 import type { Listing } from '@snt/core';
 import { ImageIcon, ImageSmallIcon, PersonIcon } from '../icons';
+import { Img } from './Img';
 import styles from './Placeholder.module.css';
 
 /** The cover photo: the first in the list, if there is one. */
@@ -63,7 +64,7 @@ export function ImagePlaceholder({
   if (src) {
     return (
       // A plain img until photos come from our own storage (see top).
-      <img
+      <Img
         src={src}
         alt={alt}
         loading="lazy"

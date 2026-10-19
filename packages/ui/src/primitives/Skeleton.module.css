@@ -1,0 +1,139 @@
+/**
+ * Skeletons (see Skeleton.tsx). One pale blue, one slow pulse for every
+ * bone, so a waiting screen breathes as one.
+ */
+
+.bone {
+  display: block;
+  flex-shrink: 0;
+  background: var(--snt-skeleton);
+  /* Only when the wait is real: unseen for the first moment, so a page that
+     arrives quickly never flashes a skeleton, then in, softly, and pulsing. */
+  animation:
+    snt-bone-in 260ms ease-out 200ms both,
+    snt-bone-pulse 1.2s ease-in-out 200ms infinite alternate;
+}
+
+@keyframes snt-bone-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* One solid light blue, fading to a blue a little darker than the page's and back:
+   plainly something happening, never a sweeping shine. */
+@keyframes snt-bone-pulse {
+  from {
+    background-color: var(--snt-skeleton);
+  }
+
+  to {
+    background-color: var(--snt-skeleton-low);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: snt-bone-in 0s 200ms both;
+  }
+}
+
+/* Text: rounded like a line of letters. */
+.bar {
+  border-radius: var(--snt-radius-pill);
+}
+
+/* A photo or tile: the corners of what it stands for. */
+.block {
+  border-radius: var(--snt-radius-md);
+}
+
+.pill {
+  border-radius: var(--snt-radius-pill);
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+/* --- cards, as the feed's are ------------------------------------------- */
+
+.card {
+  overflow: hidden;
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.padded {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-6);
+}
+
+/* The photo: the sale card's own shape, square across the top. */
+.photo {
+  width: 100%;
+  aspect-ratio: var(--snt-photo-ratio);
+  border-radius: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-8);
+}
+
+.summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--snt-space-8);
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.end {
+  flex-grow: 0;
+  align-items: flex-end;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+}
+
+.tiles,
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-6);
+}
+
+.tiles {
+  padding: var(--snt-card-pad) var(--snt-card-pad) 0;
+}
+
+.swapFoot {
+  height: 44px;
+  padding: 0 var(--snt-card-pad);
+}
+
+.wanted {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+}

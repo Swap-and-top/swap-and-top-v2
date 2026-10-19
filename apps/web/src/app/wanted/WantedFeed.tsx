@@ -40,7 +40,7 @@ import type { FeedFilterParams } from '../../components/feedFilterParams';
 import { useFeedFiltersInUrl } from '../../components/useFeedFiltersInUrl';
 import styles from './page.module.css';
 
-const CATEGORIES: (Category | 'all')[] = [
+export const CATEGORIES: (Category | 'all')[] = [
   'all',
   'laptops',
   'phones',

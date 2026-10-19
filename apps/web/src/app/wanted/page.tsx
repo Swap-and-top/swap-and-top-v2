@@ -6,11 +6,13 @@
 
 import { parseFeedFilterParams } from '../../components/feedFilterParams';
 import { WantedFeed } from './WantedFeed';
+import { slowDown } from '@/components/slowDown';
 
 export default async function WantedPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  await slowDown();
   return <WantedFeed initial={parseFeedFilterParams(await searchParams)} />;
 }

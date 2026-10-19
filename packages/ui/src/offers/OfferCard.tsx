@@ -28,6 +28,7 @@ import {
 import { SellerIcon } from '../cards/SellerIcon';
 import { ContactWayList, waysOffered } from '../contact/ContactWays';
 import { Button } from '../primitives/Button';
+import { Bone } from '../primitives/Skeleton';
 import { Panel } from '../primitives/Surface';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { cashLine, OFFER_STATE_LABELS } from './offerWords';
@@ -237,6 +238,44 @@ export function OfferCard({
           ) : null}
         </div>
       ) : null}
+    </Panel>
+  );
+}
+
+/** An offer while it loads: the same card, its lines in bones. */
+export function OfferCardSkeleton({
+  messageLines = 1,
+}: {
+  /** How long its message usually runs. */
+  messageLines?: number;
+}) {
+  return (
+    <Panel className={styles.offer} aria-hidden>
+      <div className={styles.offerHead}>
+        <Bone width={130} height={18} />
+        <Bone width={40} height={10} />
+      </div>
+      <div className={styles.terms}>
+        <div className={styles.item}>
+          <Bone width={60} height={10} />
+          <Bone width={180} height={16} style={{ marginTop: 6 }} />
+        </div>
+        <Bone width={90} height={16} />
+      </div>
+      <div style={{ margin: '4px 0' }}>
+        {Array.from({ length: messageLines }).map((_, i) => (
+          <Bone
+            key={i}
+            width={i === messageLines - 1 ? '60%' : '90%'}
+            height={12}
+            style={{ marginTop: i ? 7 : 0 }}
+          />
+        ))}
+      </div>
+      <div className={styles.actions}>
+        <Bone shape="pill" width={84} height={36} />
+        <Bone shape="pill" width={90} height={36} />
+      </div>
     </Panel>
   );
 }

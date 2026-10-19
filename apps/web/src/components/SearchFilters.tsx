@@ -13,7 +13,7 @@
 
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 import type { SearchCategory, TypeFilter } from '@snt/core';
-import { Eyebrow, Field } from '@snt/ui';
+import { Bone, Eyebrow, Field } from '@snt/ui';
 import { FilterIcon } from '@snt/ui/icons';
 import { FilterSelect } from './FilterSelect';
 import { CATEGORY_OPTIONS, quoteQuery, TYPE_OPTIONS } from './searchParams';
@@ -51,8 +51,9 @@ export function SearchFilters({
 }: {
   /** What the list is, e.g. `Search results for “iph”`. Bold text. */
   heading: ReactNode;
-  /** Listings in the list. Left out, no count is shown. */
-  count?: number;
+  /** Listings in the list. Left out, no count is shown; while the list
+      loads, a bar stands in for it. */
+  count?: number | 'loading';
   open: boolean;
   onToggle: () => void;
   values: SearchFilterValues;
@@ -92,7 +93,15 @@ export function SearchFilters({
       <div className={styles.row}>
         <Eyebrow className={styles.heading}>
           {heading}
-          {count === undefined ? null : (
+          {count === undefined ? null : count === 'loading' ? (
+            <span className={styles.count}>
+              <Bone
+                width={64}
+                height={11}
+                style={{ display: 'inline-block', verticalAlign: 'middle' }}
+              />
+            </span>
+          ) : (
             <span className={styles.count}>
               {count} {count === 1 ? 'listing' : 'listings'}
             </span>

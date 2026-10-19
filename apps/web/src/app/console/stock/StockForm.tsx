@@ -40,6 +40,7 @@ import {
   ChipRow,
   ConsoleShell,
   Dropdown,
+  Img,
   Field,
   specFieldsFor,
   TickTile,
@@ -282,7 +283,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
           <div className={styles.photos}>
             {photos.map((url, index) => (
               <div key={url} className={styles.photoThumb}>
-                <img
+                <Img
                   src={url}
                   alt={`Photo ${index + 1}`}
                   className={styles.photo}

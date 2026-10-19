@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { useSessionStore } from '@snt/core';
-import { FacebookMark, Footer, GoogleMark } from '@snt/ui';
+import { FacebookMark, Footer, GoogleMark, Img } from '@snt/ui';
 import styles from './SignInPage.module.css';
 
 export function SignInPage({ next }: { next: string }) {
@@ -52,13 +52,13 @@ export function SignInPage({ next }: { next: string }) {
                 Swap &amp; Top
               </span>
             </div>
-            <img src="/signin/hero.png" alt="" className={styles.hero} />
+            <Img src="/signin/hero.png" alt="" pulse={false} className={styles.hero} />
           </div>
 
           <form className={styles.form} onSubmit={submit}>
             {/* On a phone: the 3D door over the heading. */}
             <div className={styles.door}>
-              <img src="/signin/door.png" alt="" />
+              <Img src="/signin/door.png" alt="" pulse={false} />
             </div>
             <h1 className={styles.heading}>Sign in to Swap &amp; Top</h1>
 

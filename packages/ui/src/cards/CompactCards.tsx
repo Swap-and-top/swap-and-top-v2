@@ -8,6 +8,7 @@ import Link from 'next/link';
 import type { Listing, SwapListing } from '@snt/core';
 import { getShop, getUser } from '@snt/core';
 import { ImagePlaceholder, listingPhoto } from '../primitives/Placeholder';
+import { Bone } from '../primitives/Skeleton';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, ItemName, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
@@ -150,6 +151,41 @@ export function GridCardList({ listings }: { listings: Listing[] }) {
     <div className={styles.gridWrap}>
       {listings.map((listing) => (
         <GridCard key={listing.id} listing={listing} />
+      ))}
+    </div>
+  );
+}
+
+/** A Saved row while it loads: the same card, the photo square and lines in
+    bones. */
+export function CompactListingRowSkeleton() {
+  return (
+    <Panel className={styles.rowPanel}>
+      <div className={styles.row} aria-hidden>
+        <Bone shape="block" width={74} height={74} className={styles.thumb} />
+        <div className={styles.rowBody}>
+          <Bone width="70%" height={15} />
+          <Bone width={60} height={16} style={{ marginTop: 8 }} />
+          <Bone width="45%" height={11} style={{ marginTop: 8 }} />
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+/** The grid while its listings load: small cards in bones, in the same grid. */
+export function GridCardListSkeleton({ count = 4 }: { count?: number }) {
+  return (
+    <div className={styles.gridWrap} aria-busy aria-label="Loading">
+      {Array.from({ length: count }).map((_, i) => (
+        <Panel key={i} clip>
+          <Bone shape="block" height={82} style={{ borderRadius: 0 }} />
+          <div className={styles.gridBody}>
+            <Bone width={48} height={16} />
+            <Bone width="90%" height={11} style={{ marginTop: 8 }} />
+            <Bone width="60%" height={11} style={{ marginTop: 5 }} />
+          </div>
+        </Panel>
       ))}
     </div>
   );

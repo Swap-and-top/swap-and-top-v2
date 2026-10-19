@@ -1,0 +1,49 @@
+/** Leads, loading: what the page's own styles do not already place. */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+}
+
+.actions {
+  display: flex;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+.actions > :first-child {
+  flex-grow: 1;
+}
+
+/* The tabs' row, its height and its thin rule, with bars for the labels. */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-9);
+  height: 44px;
+  box-shadow: inset 0 -1px var(--snt-control-idle);
+}
+
+/* The page's pale boxes keep their fill; the bones sit inside them. */
+.box {
+  display: flex;
+  flex-direction: column;
+}
+
+.match {
+  padding: var(--snt-space-6) var(--snt-space-7);
+}
+
+.requester {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  flex-grow: 1;
+}

@@ -9,6 +9,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getShopBySlug, getShopListings, mockShops } from '@snt/core';
 import { Shopfront } from '@/components/Shopfront';
+import { slowDown } from '@/components/slowDown';
 
 export function generateStaticParams() {
   return mockShops.map((shop) => ({ slug: shop.slug }));
@@ -34,6 +35,7 @@ export default async function ShopPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await slowDown();
   const { slug } = await params;
   const shop = getShopBySlug(slug);
 

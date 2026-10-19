@@ -10,6 +10,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getDealConfirmation, mockDealConfirmations } from '@snt/core';
 import { DealConfirm } from '@/components/DealConfirm';
+import { slowDown } from '@/components/slowDown';
 
 export const metadata: Metadata = { title: 'Deal check · Swap & Top' };
 
@@ -22,6 +23,7 @@ export default async function DealConfirmPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await slowDown();
   const { id } = await params;
   const confirmation = getDealConfirmation(id);
 

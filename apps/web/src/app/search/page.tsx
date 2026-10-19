@@ -9,12 +9,14 @@
 
 import { parseSearchQuery } from '../../components/searchParams';
 import { SearchResults } from './SearchResults';
+import { slowDown } from '@/components/slowDown';
 
 export default async function SearchPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  await slowDown();
   const search = parseSearchQuery(await searchParams);
   // A new search is a new page: the key resets the filters it starts from.
   return <SearchResults key={search.q} initial={search} />;

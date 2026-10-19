@@ -23,6 +23,7 @@ import {
 import { createPortal } from 'react-dom';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '../icons';
 import { ImagePlaceholder } from './Placeholder';
+import { Img } from './Img';
 import styles from './PhotoGallery.module.css';
 
 /**
@@ -278,7 +279,7 @@ export function PhotoGallery({
               {/* The v1 fit: the whole photo, never cropped, over a blurred
                   copy of itself that fills whatever space its shape leaves.
                   Plain imgs until photos come from our own storage. */}
-              <img
+              <Img
                 src={src}
                 alt=""
                 loading={i === 0 ? undefined : 'lazy'}
@@ -286,11 +287,13 @@ export function PhotoGallery({
                 className={styles.backdrop}
                 aria-hidden
               />
-              <img
+              <Img
                 src={src}
                 alt=""
                 loading={i === 0 ? undefined : 'lazy'}
                 draggable={false}
+                // The blurred copy behind it carries the skeleton.
+                pulse={false}
                 className={[styles.photo, styles.fitted].join(' ')}
                 data-photo={i}
               />
@@ -384,7 +387,7 @@ export function PhotoThumb({
         aria-label={`View ${alt} photos`}
         onClick={() => setViewing(true)}
       >
-        <img
+        <Img
           ref={photo}
           src={images[0]}
           alt=""
@@ -601,7 +604,10 @@ function PhotoViewer({
               if (event.target === event.currentTarget) close();
             }}
           >
-            <img
+            {/* Over the dark viewer: hidden until loaded, then fades in,
+                with no light skeleton flashing on the black. */}
+            <Img
+              pulse={false}
               src={src}
               alt={many ? `${alt}, photo ${i + 1} of ${images.length}` : alt}
               draggable={false}

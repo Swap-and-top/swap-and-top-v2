@@ -48,6 +48,11 @@
   --snt-bg-wanted-slot: #dae3ef;
   /** Image placeholder fill. */
   --snt-bg-placeholder: #cecece;
+  /** Anything still loading: a pale blue shape in its place (see Skeleton). */
+  --snt-skeleton: #c6d8ee;
+  /** Where the pulse eases to: a little darker than the page's pale blue,
+      so the shape stays in view and reads as one container. */
+  --snt-skeleton-low: #dce7f6;
   /** Row highlight, e.g. the selected lead in the console table. */
   --snt-bg-highlight: #eef3fa;
 

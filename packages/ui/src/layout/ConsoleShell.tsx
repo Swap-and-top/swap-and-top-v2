@@ -28,6 +28,7 @@ import {
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
 import { ShopMark } from '../primitives/Placeholder';
+import { Bone } from '../primitives/Skeleton';
 import { ScreenTitle } from '../primitives/Text';
 import styles from './ConsoleShell.module.css';
 
@@ -50,10 +51,10 @@ export function ConsoleShell({
   children,
 }: {
   shop: Shop;
-  /** Section title, e.g. "Stock". */
+  /** Section title, e.g. "Stock". Empty while the page loads. */
   title: string;
   /** Secondary line under the title, e.g. "42 live · 3 sold this week". */
-  meta?: string;
+  meta?: ReactNode;
   /** Toolbar actions. Shown beside the title where there is room. */
   actions?: ReactNode;
   newLeadCount?: number;
@@ -205,7 +206,12 @@ export function ConsoleShell({
       <div className={styles.main}>
         <div className={styles.titleBand}>
           <div className={styles.titleRow}>
-            <ScreenTitle>{title}</ScreenTitle>
+            {/* No title yet: the page is loading, and a bar stands in. */}
+            {title ? (
+              <ScreenTitle>{title}</ScreenTitle>
+            ) : (
+              <Bone width={120} height={22} />
+            )}
             {meta ? <span className={styles.titleMeta}>{meta}</span> : null}
           </div>
           {actions}

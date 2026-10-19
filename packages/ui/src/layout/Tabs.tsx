@@ -15,6 +15,7 @@
  */
 
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { Bone } from '../primitives/Skeleton';
 import styles from './Tabs.module.css';
 
 export interface TabItem<T extends string> {
@@ -134,6 +135,38 @@ export function Tabs<T extends string>({
           aria-hidden
         />
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * The tab row while its labels load (they carry counts): the same row and
+ * thin rule, a bar where each label will be.
+ */
+export function TabsSkeleton({
+  widths,
+  fill = false,
+}: {
+  /** One bar per tab, about as wide as its label. */
+  widths: number[];
+  fill?: boolean;
+}) {
+  return (
+    <div
+      className={[styles.tabs, fill ? styles.tabsFill : ''].filter(Boolean).join(' ')}
+      // The header sits tabs on its edge by this role; hidden from readers.
+      role="tablist"
+      aria-hidden
+    >
+      {widths.map((width, i) => (
+        <span
+          key={i}
+          className={[styles.tab, fill ? styles.tabFill : ''].filter(Boolean).join(' ')}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: fill ? 'center' : 'flex-start' }}
+        >
+          <Bone width={width} height={13} />
+        </span>
+      ))}
     </div>
   );
 }

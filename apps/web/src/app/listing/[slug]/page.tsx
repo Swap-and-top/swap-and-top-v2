@@ -16,6 +16,7 @@ import { getListingBySlug, mockListings } from '@snt/core';
 import { RequestDetail } from '@/components/listing/RequestDetail';
 import { SaleDetail } from '@/components/listing/SaleDetail';
 import { SwapDetail } from '@/components/listing/SwapDetail';
+import { slowDown } from '@/components/slowDown';
 
 export function generateStaticParams() {
   return mockListings.map((listing) => ({ slug: listing.slug }));
@@ -55,6 +56,7 @@ export default async function ListingPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await slowDown();
   const { slug } = await params;
   const listing = getListingBySlug(slug);
 

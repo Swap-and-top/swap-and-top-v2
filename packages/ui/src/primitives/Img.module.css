@@ -1,0 +1,62 @@
+/**
+ * The photo's own box is the skeleton while it loads (see Img.tsx).
+ */
+
+/*
+ * Loading: the picture is drawn far outside its box, where it is clipped
+ * away, so nothing paints in strips while it arrives. The box itself stays,
+ * at its full size, ready for the skeleton.
+ */
+.loading {
+  object-position: -99999px -99999px;
+}
+
+/* The skeleton: the box pulsing, slowly, from a solid light blue to a blue a
+   little darker than the page's and back, as every bone does (see
+   Skeleton.module.css). A loading photo behind a blur shows it sharp: the
+   blur is for the photo, not the skeleton. An animation, so it wins over any
+   fill the box has. */
+.pulse {
+  animation: snt-skeleton-pulse 1.2s ease-in-out infinite alternate;
+}
+
+/* Doubled, to win over the blur on a gallery's backdrop whatever the order. */
+.pulse.pulse {
+  filter: none;
+}
+
+@keyframes snt-skeleton-pulse {
+  from {
+    background-color: var(--snt-skeleton);
+  }
+
+  to {
+    background-color: var(--snt-skeleton-low);
+  }
+}
+
+/* Arrived: the whole picture fades in at once. */
+.arrived {
+  animation: snt-image-arrive 420ms ease-out both;
+}
+
+@keyframes snt-image-arrive {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+    background-color: var(--snt-skeleton);
+  }
+
+  .arrived {
+    animation: none;
+  }
+}

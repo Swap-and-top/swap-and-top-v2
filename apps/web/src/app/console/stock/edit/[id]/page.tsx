@@ -1,41 +1,12 @@
-'use client';
-
 /**
- * Console — Edit or Finish an item: the stock form, filled in with it. A
- * draft opens as "Finish draft"; anything else as "Edit item".
+ * The page (see PageContent), behind a server half that can hold its content
+ * back in slow mode, so its loading skeleton can be seen (see slowDown).
  */
 
-import { useParams } from 'next/navigation';
-import { currentShop, newLeadCount, useShopStock } from '@snt/core';
-import { ButtonLink, ConsoleShell } from '@snt/ui';
-import { StockForm } from '../../StockForm';
-import styles from '../../StockForm.module.css';
+import { slowDown } from '@/components/slowDown';
+import PageContent from './PageContent';
 
-export default function EditStockPage() {
-  const { id } = useParams<{ id: string }>();
-  const stock = useShopStock(currentShop.id);
-  const listing = stock.find((item) => item.id === id);
-
-  if (listing?.type === 'sale') {
-    // Keyed, so moving from one item to another starts the form afresh.
-    return <StockForm key={listing.id} editing={listing} />;
-  }
-
-  return (
-    <ConsoleShell
-      shop={currentShop}
-      title="Item not found"
-      newLeadCount={newLeadCount}
-      stockCount={stock.length}
-    >
-      <div className={styles.form}>
-        <p className={styles.gone}>
-          This item is not in your stock any more.
-        </p>
-        <ButtonLink href="/console/stock" variant="secondary" size="md">
-          Back to stock
-        </ButtonLink>
-      </div>
-    </ConsoleShell>
-  );
+export default async function Page() {
+  await slowDown();
+  return <PageContent />;
 }

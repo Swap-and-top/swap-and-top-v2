@@ -67,7 +67,7 @@ export {
 } from './primitives/SpecGrid';
 export type { SpecRow } from './primitives/SpecGrid';
 
-export { StatStrip } from './primitives/StatStrip';
+export { StatStrip, StatStripSkeleton } from './primitives/StatStrip';
 export type { Stat } from './primitives/StatStrip';
 
 export { Divider, Panel, Section, Stack } from './primitives/Surface';
@@ -93,7 +93,13 @@ export {
 export type { TrustSize } from './primitives/Trust';
 
 /* --- cards --------------------------------------------------------------- */
-export { CompactListingRow, GridCard, GridCardList } from './cards/CompactCards';
+export {
+  CompactListingRow,
+  CompactListingRowSkeleton,
+  GridCard,
+  GridCardList,
+  GridCardListSkeleton,
+} from './cards/CompactCards';
 export { PosterRow, ShopRow } from './cards/IdentityRow';
 export { LeadCard } from './cards/LeadCard';
 export { CardActions } from './cards/CardActions';
@@ -106,6 +112,13 @@ export {
   SignInHost,
 } from './auth/SignIn';
 export { Sheet, useCloseSheet } from './primitives/Sheet';
+export { Img, type ImgProps } from './primitives/Img';
+export {
+  Bone,
+  SaleCardSkeleton,
+  SwapCardSkeleton,
+  WantedCardSkeleton,
+} from './primitives/Skeleton';
 export { Dropdown, type DropdownOption } from './primitives/Dropdown';
 export { TickTile } from './primitives/TickTile';
 export { POST_STEPS, StepBar, type Step } from './layout/StepBar';
@@ -118,7 +131,7 @@ export {
 } from './contact/ContactWays';
 export { Footer } from './layout/Footer';
 export { OfferButton } from './offers/OfferButton';
-export { OfferCard } from './offers/OfferCard';
+export { OfferCard, OfferCardSkeleton } from './offers/OfferCard';
 export { OffersMade, OffersReceived } from './offers/OfferLists';
 export { SaleCard } from './cards/SaleCard';
 export type { SaleCardProps } from './cards/SaleCard';
@@ -144,7 +157,7 @@ export {
   ListingActions,
   ScreenFooter,
 } from './layout/Screen';
-export { Tabs } from './layout/Tabs';
+export { Tabs, TabsSkeleton } from './layout/Tabs';
 export type { TabItem } from './layout/Tabs';
 
 /* --- helpers ------------------------------------------------------------- */

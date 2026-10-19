@@ -26,6 +26,7 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
+  Bone,
   Button,
   ButtonLink,
   ImagePlaceholder,
@@ -164,6 +165,61 @@ export function DealConfirm({
               <CheckIcon size={17} weight={2.6} />
               <span className={styles.recordNumber}>{confirmedDeals}</span>
             </span>
+            <span className={styles.recordLabel}>
+              confirmed deals, shown on your listings
+            </span>
+          </div>
+          <p className={styles.recordNote}>
+            This is how buyers judge a private seller. There are no badges for
+            who you are or what you do, only what you have actually done.
+          </p>
+        </section>
+      </ScreenBody>
+    </Screen>
+  );
+}
+
+/**
+ * The deal check while it loads: the question and every fixed line are the
+ * page's own; the listing it is about, the answers and the count wait in
+ * bones in their places.
+ */
+export function DealConfirmSkeleton() {
+  return (
+    <Screen>
+      <AppHeader />
+      <ScreenBody>
+        <section className={styles.card} aria-busy aria-label="Loading">
+          <h1 className={styles.heading}>Did the deal go through?</h1>
+          <Bone width="60%" height={17} className={styles.intro} />
+          <div className={styles.summary}>
+            <Bone shape="block" width={44} height={44} />
+            <span className={styles.summaryBody}>
+              <Bone width="80%" height={15} />
+              <Bone width="50%" height={15} style={{ marginTop: 4 }} />
+              <Bone width="40%" height={11} style={{ marginTop: 8 }} />
+            </span>
+          </div>
+          <div className={styles.answers}>
+            <Bone shape="pill" height={48} />
+            <Bone shape="pill" height={48} />
+            <Bone shape="pill" height={48} />
+          </div>
+          <Note icon={<ShieldIcon size={17} />} className={styles.privacy}>
+            Both of you have to say yes before it counts.{' '}
+            <strong>Your answer is never shown to them</strong>, and saying no
+            has no consequence for anyone.
+          </Note>
+          <div className={styles.report}>
+            <span className={styles.reportAsk}>Something go wrong?</span>
+            <Bone shape="pill" width={150} height={36} />
+          </div>
+        </section>
+
+        <section className={[styles.card, styles.record].join(' ')}>
+          <h2 className={styles.label}>Your record</h2>
+          <div className={styles.recordRow}>
+            <Bone width={44} height={32} />
             <span className={styles.recordLabel}>
               confirmed deals, shown on your listings
             </span>

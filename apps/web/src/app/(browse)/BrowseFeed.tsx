@@ -39,12 +39,12 @@ import {
   type TabItem,
 } from '@snt/ui';
 import { BinocularsIcon, GridIcon, SwapIcon, TagIcon } from '@snt/ui/icons';
-import type { FeedFilterParams } from '../components/feedFilterParams';
-import { SearchEntry } from '../components/SearchEntry';
-import { useFeedFiltersInUrl } from '../components/useFeedFiltersInUrl';
+import type { FeedFilterParams } from '@/components/feedFilterParams';
+import { SearchEntry } from '@/components/SearchEntry';
+import { useFeedFiltersInUrl } from '@/components/useFeedFiltersInUrl';
 import styles from './page.module.css';
 
-const CATEGORIES: (Category | 'all')[] = [
+export const CATEGORIES: (Category | 'all')[] = [
   'all',
   'phones',
   'laptops',
@@ -55,7 +55,7 @@ const CATEGORIES: (Category | 'all')[] = [
   'other',
 ];
 
-const TYPES: TabItem<TypeFilter>[] = [
+export const TYPES: TabItem<TypeFilter>[] = [
   // The same icons as the bottom bar that carries these on a phone; the
   // active tab's is filled in. The swap arrows have no inside to fill, so
   // they go heavier instead.
