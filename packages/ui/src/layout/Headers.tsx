@@ -27,7 +27,6 @@ import styles from './Headers.module.css';
 export function AppHeader({
   children,
   postHref = '/post',
-  accountHref = '/me',
 }: {
   /**
    * Search, chips, tabs or a title. They sit on white under the gradient,
@@ -35,7 +34,6 @@ export function AppHeader({
    */
   children?: ReactNode;
   postHref?: string;
-  accountHref?: string;
 }) {
   return (
     <>
@@ -54,8 +52,8 @@ export function AppHeader({
             <PostButton href={postHref} className={styles.postButton}>
               Post New Item
             </PostButton>
-            {/* The account circle, or — signed out — a way to sign in. */}
-            <AccountButton href={accountHref} />
+            {/* The account circle, opening the app's menu. */}
+            <AccountButton />
           </div>
         </div>
       </AutoHideHeader>

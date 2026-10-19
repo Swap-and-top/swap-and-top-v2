@@ -7,7 +7,6 @@
 
 import {
   AppHeader,
-  BottomNav,
   Bone,
   OfferCardSkeleton,
   Screen,
@@ -35,11 +34,7 @@ export default function Loading() {
       </AppHeader>
 
       <ScreenBody>
-        <SignInGate
-          title="Your offers"
-          body="Sign in to see offers on your listings, and the offers you have made."
-          reason="Sign in to see your offers."
-        >
+        <SignInGate>
           <div className={styles.groups} aria-busy aria-label="Loading offers">
             {[1, 2].map((offers, g) => (
               <section key={g} className={styles.group}>
@@ -53,7 +48,6 @@ export default function Loading() {
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

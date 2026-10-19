@@ -16,14 +16,21 @@ import { CURRENT_USER_ID } from '../mock/users';
 
 interface SessionState {
   signedIn: boolean;
+  /**
+   * When they last signed out, if they did. A page for account holders tells
+   * a visitor who has just signed out (sent home) from one who arrived signed
+   * out (sent to sign in).
+   */
+  signedOutAt: number | null;
   signIn: () => void;
   signOut: () => void;
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
   signedIn: false,
+  signedOutAt: null,
   signIn: () => set({ signedIn: true }),
-  signOut: () => set({ signedIn: false }),
+  signOut: () => set({ signedIn: false, signedOutAt: Date.now() }),
 }));
 
 /** The signed-in user's id, or undefined for a guest. For use in a component. */

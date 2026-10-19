@@ -99,10 +99,12 @@
   height: 40px;
   padding: 6px;
   border-radius: 8px;
+  color: #fff;
   filter: drop-shadow(15px 10px 15px rgb(0 0 0 / 0.5));
 }
 
 .social:hover {
+  color: #fff;
   background: #1330587c;
 }
 

@@ -37,7 +37,14 @@ export function PostButton({
   }
 
   return (
-    <Link href={href} className={className} onClick={onClick}>
+    <Link
+      href={href}
+      className={className}
+      onClick={onClick}
+      // A guest's tap opens the sign in sheet and stays on the page, so the
+      // top loading bar is told not to start; it starts once they are in.
+      data-no-page-load={signedIn ? undefined : ''}
+    >
       {children}
     </Link>
   );

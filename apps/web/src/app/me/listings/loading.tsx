@@ -7,7 +7,6 @@
 
 import {
   AppHeader,
-  BottomNav,
   Screen,
   ScreenBody,
   SignInGate,
@@ -26,11 +25,7 @@ export default function Loading() {
       </AppHeader>
 
       <ScreenBody>
-        <SignInGate
-          title="Your listings"
-          body="Sign in to see what you have posted."
-          reason="Sign in to see your listings."
-        >
+        <SignInGate>
           <div className={styles.list}>
             <WantedCardSkeleton />
             <SwapCardSkeleton />
@@ -38,7 +33,6 @@ export default function Loading() {
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

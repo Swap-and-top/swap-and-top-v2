@@ -72,6 +72,35 @@ function zoomFrom(from: DOMRect, to: DOMRect): string {
 const calm = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/** How long a slide to the next or previous photo takes, in ms. */
+const SLIDE_MS = 260;
+
+/**
+ * Slides a photo strip to `left`, quicker than the browser's own smooth
+ * scroll (whose speed cannot be set). Snapping is off while it moves, so the
+ * strip does not snap mid slide, and back on once it lands.
+ */
+function glide(el: HTMLElement, left: number) {
+  if (calm()) {
+    el.scrollLeft = left;
+    return;
+  }
+  const start = el.scrollLeft;
+  const distance = left - start;
+  if (Math.abs(distance) < 1) return;
+  const began = performance.now();
+  el.style.scrollSnapType = 'none';
+  const step = (now: number) => {
+    const t = Math.min(1, (now - began) / SLIDE_MS);
+    // Eases out: quick off the mark, gentle as it lands.
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.scrollLeft = start + distance * eased;
+    if (t < 1) requestAnimationFrame(step);
+    else el.style.scrollSnapType = '';
+  };
+  requestAnimationFrame(step);
+}
+
 /**
  * The rubber band at the ends of a photo strip. Swipe towards a photo that is
  * not there — back from the first, on from the last, either way from an only
@@ -242,7 +271,8 @@ export function PhotoGallery({
     const el = track.current;
     if (!el) return;
     const clamped = Math.max(0, Math.min(images.length - 1, next));
-    el.scrollTo({ left: clamped * el.clientWidth, behavior });
+    if (behavior === 'smooth') glide(el, clamped * el.clientWidth);
+    else el.scrollTo({ left: clamped * el.clientWidth, behavior });
   }
 
   /**
@@ -485,17 +515,17 @@ function PhotoViewer({
     const to = pictureRect(photo);
     if (photo && from && to && !calm()) {
       photo.animate([{ transform: zoomFrom(from, to) }, { transform: 'none' }], {
-        duration: 420,
+        duration: 300,
         easing: 'cubic-bezier(0.2, 0, 0, 1)',
       });
       shade.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
-        duration: 420,
+        duration: 300,
         easing: 'ease',
       });
       for (const control of controls()) {
         control.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: 240,
-          delay: 160,
+          duration: 180,
+          delay: 110,
           fill: 'backwards',
         });
       }
@@ -519,7 +549,7 @@ function PhotoViewer({
     const el = track.current;
     if (!el) return;
     const clamped = Math.max(0, Math.min(images.length - 1, next));
-    el.scrollTo({ left: clamped * el.clientWidth, behavior: 'smooth' });
+    glide(el, clamped * el.clientWidth);
   }
 
   /**
@@ -543,21 +573,21 @@ function PhotoViewer({
     const easing = 'cubic-bezier(0.3, 0, 0, 1)';
     for (const control of controls()) {
       control.animate([{ opacity: 1 }, { opacity: 0 }], {
-        duration: 120,
+        duration: 90,
         fill: 'forwards',
       });
     }
     shade.current?.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: 380,
+      duration: 270,
       easing: 'ease',
       fill: 'forwards',
     });
     const zoom = photo.animate(
       [{ transform: 'none' }, { transform: zoomFrom(from, to) }],
-      { duration: 380, easing, fill: 'forwards' },
+      { duration: 270, easing, fill: 'forwards' },
     );
     // Gone once it lands — or just after, if the end is never reported.
-    const done = window.setTimeout(onClose, 500);
+    const done = window.setTimeout(onClose, 380);
     void zoom.finished.then(
       () => {
         window.clearTimeout(done);

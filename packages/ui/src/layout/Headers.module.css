@@ -131,17 +131,18 @@
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-bold);
   letter-spacing: 0.3px;
-  transition: box-shadow var(--snt-transition);
+  transition: opacity var(--snt-transition);
 }
 
+/* Hovered, the circle itself dims a little, as "Menu" does signed out. */
 .account:hover {
   color: var(--snt-brand-green);
-  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35);
+  opacity: 0.85;
 }
 
 /*
- * Signed out: an outlined person in an outlined circle, "Sign in" under it,
- * in white — about the height of the circle it stands in for.
+ * Signed out: an outlined person in an outlined circle, in white, the size of
+ * the account circle it stands in for.
  */
 .signIn {
   flex-shrink: 0;

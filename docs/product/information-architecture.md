@@ -28,33 +28,31 @@ SURFACE SPLIT:
 
 ## Marketplace navigation
 
-On a phone: five items, bottom bar, thumb-reachable.
+On a phone, the feed has a bottom bar of its four listing types, under the thumb. Everything else is reached from the header.
 
 ```ascii
 ┌──────────────────────────────────────────────┐
+│ [logo]            ( Post New Item )  ( ● )   │  ← header, on every page
 │                                              │
-│                 content                      │
+│                 the feed                     │
 │                                              │
-├────────┬────────┬────────┬────────┬──────────┤
-│ Browse │ Wanted │  POST  │ Saved  │    Me    │
-│        │        │  (+)   │        │          │
-└────────┴────────┴────────┴────────┴──────────┘
-                    ▲
-            centre action button,
-            brand green, always available
+├───────────┬──────────┬───────────┬───────────┤
+│ All types │  Swaps   │ For sale  │  Wanted   │  ← the feed only
+└───────────┴──────────┴───────────┴───────────┘
 ```
 
-| Item | Purpose |
+| Where | What it does |
 | --- | --- |
-| **Browse** | The mixed feed. The default landing surface. |
-| **Wanted** | Requests and swap demand. Where dealers hunt and buyers post what they want. |
-| **Post** | Centre action. Opens the three-way posting flow. |
-| **Saved** | Saved listings (sales, swaps and wanted posts), with availability state and price-drop flags. The route is `/saved`. |
-| **Me** | Own listings, requests, verification, safety guidance, settings, and the switch into the dealer console. |
+| **Bottom bar** | Switches the feed between All types, Swaps, For sale and Wanted. |
+| **Post New Item** | Opens the posting flow. |
+| **The account circle** | Opens the menu: your profile and Sign out, Safety and how to swap, Terms of use, Privacy policy, how to contact us, and our social links. Signed out, it is an outlined person icon, and the menu offers Sign in. |
+| **Me** (`/me`, from View profile) | Own listings and wanted posts, deals to confirm, offers, saved listings, verification, settings, and the switch into the dealer console. |
+
+**The bottom bar is on the feed only.** One of its four items is always lit there. On any other page (Saved, Search, Wanted, Me) none would be, so it is left out rather than shown with nothing selected.
 
 **Why Wanted gets a top-level slot:** it is the dealer product and the platform's structural difference from Facebook. Burying it inside search would hide the thing that makes the business work.
 
-**From tablet width up there is no bottom bar.** The brand header carries navigation, as in the v2 design: the logo goes to Browse, the yellow **Post New Item** button opens the posting flow, and the white account circle opens Me. Wanted is one tap away on Browse's type tabs, and Saved is listed in Me. See [visual-design.md](./visual-design.md).
+**From tablet width up there is no bottom bar.** The brand header carries navigation, as in the v2 design: the logo goes to Browse, the yellow **Post New Item** button opens the posting flow, and the white account circle opens the menu, which drops down under it. Wanted is one tap away on Browse's type tabs, and Saved is listed in Me. See [visual-design.md](./visual-design.md).
 
 ```ascii
 ┌──────────────────────────────────────────────────────────────┐

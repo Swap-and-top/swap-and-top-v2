@@ -286,6 +286,45 @@ export const TrashIcon = (props: IconProps) => (
   </Svg>
 );
 
+/** Three lines, for the menu. */
+export const MenuIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M4.5 7h15M4.5 12h15M4.5 17h15" />
+  </Svg>
+);
+
+/** A page with lines, for terms and documents. */
+export const DocumentIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M6.5 3.5h7l4 4v12a1 1 0 01-1 1h-10a1 1 0 01-1-1v-15a1 1 0 011-1z" />
+    <path d="M13.5 3.5v4h4M8.5 12h7M8.5 15.5h7" />
+  </Svg>
+);
+
+/** A padlock, for privacy. */
+export const LockIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <rect x="5" y="10.5" width="14" height="10" rx="2" />
+    <path d="M8.5 10.5V7.5a3.5 3.5 0 017 0v3" />
+  </Svg>
+);
+
+/** A map pin, for an address. */
+export const PinIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0c0 5.4-6.5 11-6.5 11z" />
+    <circle cx="12" cy="10" r="2.4" />
+  </Svg>
+);
+
+/** Signing out: a door with an arrow leaving it. */
+export const SignOutIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M14 4.5H6.5a1 1 0 00-1 1v13a1 1 0 001 1H14" />
+    <path d="M10.5 12h9M16.5 8.5L20 12l-3.5 3.5" />
+  </Svg>
+);
+
 /** Three dots one over another, for a menu of more actions. */
 export const MoreIcon = (props: IconProps) => (
   <Svg {...props}>

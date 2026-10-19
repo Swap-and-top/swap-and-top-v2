@@ -8,8 +8,9 @@
  * the listings; from tablet up this bar is hidden and the tab row does the
  * job (see Browse).
  *
- * On the feed it is handed the current type and switches it in place. On any
- * other screen its items go to the feed, showing the type that was tapped.
+ * Only on the feed, where one of its items is always lit, handed the current
+ * type and switching it in place. Other screens leave it out, so it never
+ * shows with nothing selected. (Without `onType` its items link to the feed.)
  * Posting, the account and saved listings are reached from the header.
  */
 

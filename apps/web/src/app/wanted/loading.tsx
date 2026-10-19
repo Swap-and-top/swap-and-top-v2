@@ -11,7 +11,6 @@ import { useSearchParams } from 'next/navigation';
 import { CATEGORY_LABELS } from '@snt/core';
 import {
   AppHeader,
-  BottomNav,
   Bone,
   Chip,
   ChipRow,
@@ -75,7 +74,6 @@ function WantedSkeleton({ params }: { params: Record<string, string> }) {
         <Bone shape="pill" height={52} />
       </div>
 
-      <BottomNav />
     </Screen>
   );
 }

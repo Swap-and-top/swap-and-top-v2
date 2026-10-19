@@ -24,7 +24,6 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
-  BottomNav,
   ButtonLink,
   Chip,
   ChipRow,
@@ -115,7 +114,6 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
         </ButtonLink>
       </div>
 
-      <BottomNav />
     </Screen>
   );
 }

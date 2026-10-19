@@ -83,6 +83,8 @@
 | P20 | **Visual style follows `Swap & Top v2 Design.pdf`, with v1's brand colours** | ✅ | The clay wireframe palette was a placeholder. The v1 blue-to-green gradient, yellow call to action and logo are recognisable to existing users; the PDF supplies layout, type and card shapes. See [visual-design.md](../product/visual-design.md). |
 | P21 | **Desktop marketplace uses a 672px column and header navigation; bottom bar is phone-only** | ✅ | The design is drawn at desktop width with no bottom bar. The header's logo, Post New Item and account circle carry navigation instead. |
 | P24 | **Say "swap", never "trade in"** | ✅ | The product is Swap & Top, so its own word is used everywhere a thing is exchanged: "Accept swaps", "Offer a swap", "Swap offers". Two words for one idea made the swap feel like a separate, dealer-only feature. See the [glossary](./glossary.md). |
+| P25 | **The bottom bar is on the feed only** | ✅ | Its four items are the feed's listing types, and one is always lit there. Anywhere else it would sit with nothing selected, so other pages leave it out and the header carries the way back. |
+| P26 | **No "sign in to see this" screens** | ✅ | A page that belongs to an account moves a signed out visitor on instead: home if they have just signed out, the sign in page (which brings them back) if they arrived signed out. A screen that only says "Sign in" helps nobody. |
 
 ---
 

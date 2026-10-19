@@ -12,3 +12,4 @@ export * from './types';
 export * from './mock';
 export * from './stores';
 export * as tokens from './tokens';
+export * from './company';

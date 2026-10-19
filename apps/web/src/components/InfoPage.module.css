@@ -1,0 +1,88 @@
+/** A page of reading (see InfoPage.tsx): one white card, sections ruled. */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--snt-space-9) var(--snt-card-pad) var(--snt-space-10);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: var(--snt-space-10) var(--snt-space-10) var(--snt-space-12);
+  }
+}
+
+.title {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.updated {
+  margin-top: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.intro {
+  margin-top: var(--snt-space-6);
+}
+
+.section {
+  margin-top: var(--snt-space-7);
+  padding-top: var(--snt-space-7);
+  border-top: 1px solid var(--snt-bg-app);
+}
+
+.heading {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.body,
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink);
+}
+
+.body {
+  margin-top: var(--snt-space-4);
+}
+
+.body h3 {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-ink);
+}
+
+.body ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  margin: 0;
+  padding-left: var(--snt-space-8);
+}
+
+.body li {
+  list-style: disc;
+}
+
+.body li::marker {
+  color: var(--snt-control-active);
+}
+
+.link,
+.link:hover {
+  color: var(--snt-accent-bold);
+  font-weight: var(--snt-weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

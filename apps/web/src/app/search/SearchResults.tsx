@@ -19,7 +19,6 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
-  BottomNav,
   ButtonLink,
   EmptyState,
   ListingCard,
@@ -122,7 +121,6 @@ export function SearchResults({ initial }: { initial: SearchQuery }) {
         )}
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

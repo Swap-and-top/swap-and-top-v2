@@ -21,7 +21,6 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
-  BottomNav,
   Eyebrow,
   OfferCard,
   OffersMade,
@@ -69,11 +68,7 @@ export default function OffersPage() {
       </AppHeader>
 
       <ScreenBody>
-        <SignInGate
-          title="Your offers"
-          body="Sign in to see offers on your listings, and the offers you have made."
-          reason="Sign in to see your offers."
-        >
+        <SignInGate>
           {view === 'made' ? (
             <OffersMade />
           ) : withOffers.length > 0 ? (
@@ -101,7 +96,6 @@ export default function OffersPage() {
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

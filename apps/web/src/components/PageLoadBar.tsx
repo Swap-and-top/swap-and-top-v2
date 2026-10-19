@@ -27,6 +27,8 @@ function isPageMove(event: MouseEvent): boolean {
   if (!(link instanceof HTMLAnchorElement)) return false;
   if (link.target && link.target !== '_self') return false;
   if (link.hasAttribute('download')) return false;
+  // A link that stays on the page when tapped (see PostButton for a guest).
+  if (link.hasAttribute('data-no-page-load')) return false;
   const to = new URL(link.href, window.location.href);
   if (to.origin !== window.location.origin) return false;
   // Only a place on this same page: no new page to wait for.

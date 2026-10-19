@@ -212,12 +212,14 @@
   height: 18px;
 }
 
-.platformLogo svg {
+.platformLogo svg,
+.platformLogo img {
   width: 100%;
   height: 100%;
 }
 
-/* Google: white, outlined, dark type — as Google asks for its button. */
+/* Google: white, outlined, its own near black type (#1F1F1F), the only text
+   colour Google's branding guidelines give for a white button. */
 .google {
   border: 1px solid var(--snt-line);
   background: #fff;

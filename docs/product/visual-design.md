@@ -121,7 +121,7 @@ ExtraBold (800) was added for the active tab and the tile labels.
 
 These refine the PDF's own values (25–27px padding, fixed 168/142px photos, a dark divider) into one consistent set.
 
-**The header carries navigation on desktop.** The logo goes home, "Post New Item" opens the posting flow and the white circle opens Me. The bottom navigation bar is phone-only; from 768px up it is hidden, as the design shows no bar.
+**The header carries navigation on desktop.** The logo goes home, "Post New Item" opens the posting flow and the white circle opens the menu. The bottom navigation bar is phone-only, and on the feed only; from 768px up it is hidden, as the design shows no bar.
 
 **On a phone the feed's type tabs stay pinned** at the top while scrolling, so switching between All Types, Swaps, For Sale and Wanted never needs a scroll back up.
 

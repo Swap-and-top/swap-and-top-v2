@@ -25,9 +25,9 @@ import {
 } from '@snt/core';
 import {
   Button,
+  ButtonLink,
   AppHeader,
   Avatar,
-  BottomNav,
   ConfirmedDealsBadge,
   ConsoleEntryRow,
   CountBadge,
@@ -86,11 +86,7 @@ export default function MePage() {
       <AppHeader />
 
       <ScreenBody>
-        <SignInGate
-          title="Your account"
-          body="Sign in to post, save listings, and send and receive offers."
-          reason="Sign in to open your account."
-        >
+        <SignInGate>
           <Stack gap={6}>
             <Panel padded>
               <div className={styles.head}>
@@ -170,7 +166,7 @@ export default function MePage() {
                 value="Phone verified"
               />
               <ListRow
-                href="/me"
+                href="/help"
                 icon={<InfoIcon size={19} />}
                 label="Safety and how to swap"
               />
@@ -184,15 +180,20 @@ export default function MePage() {
             {/* While developing: the reference pages and slow mode. */}
             <DevTools headingClassName={styles.section} />
 
-            {/* Back to browsing as a guest. */}
-            <Button variant="secondary" block onClick={signOut}>
-              Sign out
-            </Button>
+            {/* Back to the feed, the usual way out; signing out, the rare one,
+                under it. */}
+            <Stack gap={4}>
+              <ButtonLink href="/" block>
+                Back to market
+              </ButtonLink>
+              <Button variant="secondary" block onClick={signOut}>
+                Sign out
+              </Button>
+            </Stack>
           </Stack>
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

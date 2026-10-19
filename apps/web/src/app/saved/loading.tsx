@@ -8,7 +8,6 @@
 
 import {
   AppHeader,
-  BottomNav,
   CompactListingRowSkeleton,
   Screen,
   ScreenBody,
@@ -27,11 +26,7 @@ export default function Loading() {
       </AppHeader>
 
       <ScreenBody>
-        <SignInGate
-          title="Your saved listings"
-          body="Sign in to keep the listings you star in one place, and to be told when a price drops."
-          reason="Sign in to see your saved listings."
-        >
+        <SignInGate>
           <Stack gap={5}>
             {Array.from({ length: 4 }).map((_, i) => (
               <CompactListingRowSkeleton key={i} />
@@ -40,7 +35,6 @@ export default function Loading() {
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

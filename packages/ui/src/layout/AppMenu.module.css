@@ -1,0 +1,405 @@
+/**
+ * The app's menu (see AppMenu.tsx), after the first app's: on a phone, a
+ * panel the full height of the screen sliding in from the right over a pale
+ * blue veil; from tablet up, a card dropping down under the account circle.
+ * Inside, bands of the first app's colours, each rounded at its top left and
+ * tucked over the one above: white, green, light blue, deep blue.
+ */
+
+/* --- the dimmed page behind, on a phone --- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  background: rgb(193 225 255 / 0.7);
+  animation: snt-menu-fade-in 260ms ease-out;
+}
+
+.backdropClosing {
+  animation: snt-menu-fade-out 260ms ease-in forwards;
+}
+
+@keyframes snt-menu-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes snt-menu-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* --- the panel: from the right, the full height, on a phone --- */
+
+.panel {
+  /* The first app's colours. */
+  --menu-green: #1f978d;
+  --menu-light: #5b95b9;
+  --menu-deep: #2572a2;
+  --menu-yellow: #ffff8b;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 960;
+  display: flex;
+  flex-direction: column;
+  width: min(86vw, 320px);
+  border-radius: 22px 0 0 0;
+  /* The last band's blue runs on to the bottom of the screen. */
+  background: var(--menu-deep);
+  box-shadow: -5px 0 15px rgb(0 0 0 / 0.1);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: none;
+  animation: snt-menu-slide-in 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.panelClosing {
+  animation: snt-menu-slide-out 260ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes snt-menu-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes snt-menu-slide-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* --- from tablet up: a card dropping down under the account circle --- */
+
+@media (min-width: 768px) {
+  .backdrop {
+    background: transparent;
+  }
+
+  .panel {
+    top: var(--menu-top, 72px);
+    right: var(--menu-right, 24px);
+    bottom: auto;
+    width: 320px;
+    max-height: calc(100dvh - var(--menu-top, 72px) - 16px);
+    border-radius: 22px;
+    box-shadow: 15px 10px 30px rgb(34 126 155 / 0.3);
+    animation: snt-menu-drop-in 260ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .panelClosing {
+    animation: snt-menu-drop-out 200ms ease-in forwards;
+  }
+}
+
+@keyframes snt-menu-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes snt-menu-drop-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .panelClosing,
+  .backdrop,
+  .backdropClosing {
+    animation-duration: 1ms;
+  }
+}
+
+/* The cross, top right, as on the sheets. */
+.close {
+  position: absolute;
+  top: var(--snt-space-10);
+  right: var(--snt-space-8);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--menu-deep);
+}
+
+.close:active {
+  transform: scale(0.92);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  color: #fff;
+}
+
+/* --- the bands: each rounded at its top left, tucked over the last --- */
+
+.band {
+  position: relative;
+  margin-top: -22px;
+  /* The band below covers the last 22px, so the content sits in the middle
+     of what shows. */
+  padding: var(--snt-space-9) var(--snt-space-10) calc(22px + var(--snt-space-9));
+  border-radius: 22px 0 0 0;
+}
+
+/* From tablet up, the card is rounded all round, so each band is too. */
+@media (min-width: 768px) {
+  .band {
+    border-radius: 22px 22px 0 0;
+  }
+}
+
+/* White: who you are. The cross comes first, at the top; the profile begins
+   right where the cross ends, on the left. */
+.profileBand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding: calc(var(--snt-space-10) + 34px) var(--snt-space-10) calc(22px + var(--snt-space-8));
+  background: var(--snt-bg-card);
+  color: var(--menu-deep);
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+}
+
+.whoText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--menu-deep);
+}
+
+/* Sign in, on the header's blue to green gradient. */
+.profileBand .signInButton,
+.profileBand .signInButton:hover {
+  border-color: transparent;
+  background: var(--snt-brand-gradient);
+  color: var(--snt-ink-on-dark);
+}
+
+@media (hover: hover) {
+  .profileBand .signInButton:hover {
+    filter: brightness(0.96);
+  }
+}
+
+.welcomeNote {
+  margin-top: calc(var(--snt-space-4) * -1);
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4);
+}
+
+/* Green: help, in the first app's yellow. */
+.helpBand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  padding-inline: var(--snt-space-6);
+  background: var(--menu-green);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  min-height: 40px;
+  padding: var(--snt-space-2) var(--snt-space-6);
+  border-radius: var(--snt-radius-sm);
+  color: var(--menu-yellow);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+  transition: background var(--snt-transition);
+}
+
+.row:hover {
+  color: var(--menu-yellow);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background: rgb(255 255 139 / 0.23);
+  }
+}
+
+.row:active {
+  background: rgb(255 255 139 / 0.3);
+}
+
+/* Each icon on a soft round of its own colour, as elsewhere in the app. */
+.rowIcon,
+.contactIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.rowIcon {
+  background: rgb(255 255 139 / 0.18);
+}
+
+.contactIcon {
+  width: 36px;
+  height: 36px;
+  background: rgb(255 255 255 / 0.2);
+}
+
+/* Light blue: call us and find us, side by side. */
+.contactBand {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--snt-space-10);
+  background: var(--menu-light);
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-4);
+  text-align: center;
+}
+
+.contactLines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  font-size: var(--snt-text-base);
+}
+
+.contactLink,
+.contactLink:hover {
+  color: #fff;
+}
+
+/* Deep blue: feedback, socials, the company. */
+.socialBand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-10);
+  flex-grow: 1;
+  padding-bottom: var(--snt-space-10);
+  background: var(--menu-deep);
+  font-size: var(--snt-text-base);
+  text-align: center;
+}
+
+.feedback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+}
+
+/* The first app's link: yellow, a yellow underline growing from the middle. */
+.yellowLink,
+.yellowLink:hover {
+  width: fit-content;
+  margin-inline: auto;
+  color: var(--menu-yellow);
+  background: linear-gradient(rgb(255 255 139 / 0.6) 0 0) center bottom /
+    var(--underline, 0%) 0.12em no-repeat;
+  transition: background-size 0.2s;
+}
+
+.yellowLink:hover {
+  --underline: 100%;
+}
+
+.socialsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: var(--snt-space-3);
+}
+
+.social,
+.social:hover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 6px;
+  border-radius: 8px;
+  color: #fff;
+  transition: background var(--snt-transition);
+}
+
+/* The first app's marks. */
+.social svg {
+  width: 100%;
+  height: 100%;
+}
+
+@media (hover: hover) {
+  .social:hover {
+    background: rgb(19 48 88 / 0.49);
+  }
+}
+
+.social:active {
+  transform: scale(0.92);
+}
+
+.copyright {
+  margin-top: auto;
+  font-size: var(--snt-text-sm);
+  color: var(--menu-yellow);
+}
+
+/* On a short phone, the bands sit a little closer, so it all fits. */
+@media (max-width: 767px) and (max-height: 720px) {
+  .band {
+    padding-top: var(--snt-space-7);
+    padding-bottom: calc(22px + var(--snt-space-7));
+  }
+
+  .socialBand {
+    gap: var(--snt-space-6);
+    padding-bottom: var(--snt-space-4);
+  }
+}

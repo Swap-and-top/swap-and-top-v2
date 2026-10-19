@@ -8,7 +8,6 @@
 
 import {
   AppHeader,
-  BottomNav,
   Bone,
   ConsoleEntryRow,
   ListGroup,
@@ -40,11 +39,7 @@ export default function Loading() {
       <AppHeader />
 
       <ScreenBody>
-        <SignInGate
-          title="Your account"
-          body="Sign in to post, save listings, and send and receive offers."
-          reason="Sign in to open your account."
-        >
+        <SignInGate>
           <Stack gap={6}>
             <Panel padded>
               <div className={styles.head}>
@@ -86,12 +81,14 @@ export default function Loading() {
 
             <DevTools headingClassName={styles.section} />
 
-            <Bone shape="pill" height={44} />
+            <Stack gap={4}>
+              <Bone shape="pill" height={44} />
+              <Bone shape="pill" height={44} />
+            </Stack>
           </Stack>
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

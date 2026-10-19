@@ -12,14 +12,13 @@
  * "Continue with email", which goes to the sign-in page and back.
  *
  * `SignInGate` is for a whole screen that belongs to an account — the
- * saved listings, offers, Me.
+ * saved listings, offers, Me — and moves anyone signed out on from it.
  */
 
-import type { ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, type ReactNode } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useSessionStore, useSignInPromptStore } from '@snt/core';
-import { EmptyState } from '../layout/Screen';
 import { Button } from '../primitives/Button';
 import { CompactLogo } from '../layout/Logo';
 import { Sheet, useCloseSheet } from '../primitives/Sheet';
@@ -113,28 +112,12 @@ function SignInBody({ reason }: { reason: string }) {
   );
 }
 
-/** Google's "G", in its own four colours. */
+/**
+ * Google's "G": the gradient one Google's sign in branding asks for, taken
+ * as is from its own asset bundle (apps/web/public/brand/google-g.svg).
+ */
 export function GoogleMark() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden focusable="false">
-      <path
-        fill="#EA4335"
-        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
-      />
-      <path
-        fill="#4285F4"
-        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
-      />
-      <path
-        fill="#34A853"
-        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
-      />
-    </svg>
-  );
+  return <img src="/brand/google-g.svg" width={18} height={18} alt="" aria-hidden />;
 }
 
 /** Facebook's "f", in white, for its blue button. */
@@ -149,29 +132,25 @@ export function FacebookMark() {
   );
 }
 
-/** Shows `children` to someone signed in, and a way to sign in to a guest. */
-export function SignInGate({
-  title,
-  body,
-  reason,
-  children,
-}: {
-  title: string;
-  body: string;
-  /** Shown in the sign-in sheet. */
-  reason: string;
-  children: ReactNode;
-}) {
+/**
+ * Shows `children` to someone signed in. Anyone else is moved on rather than
+ * shown a screen of its own: someone who has just signed out goes home, and
+ * someone who arrived signed out goes to the sign in page, which brings them
+ * back here once they are in.
+ */
+export function SignInGate({ children }: { children: ReactNode }) {
   const signedIn = useSessionStore((state) => state.signedIn);
-  const ask = useSignInPromptStore((state) => state.ask);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  if (signedIn) return <>{children}</>;
+  useEffect(() => {
+    if (signedIn) return;
+    const { signedOutAt } = useSessionStore.getState();
+    const justLeft = signedOutAt !== null && Date.now() - signedOutAt < 5000;
+    router.replace(
+      justLeft ? '/' : `/signin?next=${encodeURIComponent(pathname ?? '/')}`,
+    );
+  }, [signedIn, router, pathname]);
 
-  return (
-    <EmptyState
-      title={title}
-      body={body}
-      action={<Button onClick={() => ask({ reason })}>Sign in</Button>}
-    />
-  );
+  return signedIn ? <>{children}</> : null;
 }

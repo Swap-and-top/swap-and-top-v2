@@ -19,7 +19,6 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
-  BottomNav,
   ButtonLink,
   CompactListingRow,
   EmptyState,
@@ -66,11 +65,7 @@ export default function SavedPage() {
       </AppHeader>
 
       <ScreenBody>
-        <SignInGate
-          title="Your saved listings"
-          body="Sign in to keep the listings you star in one place, and to be told when a price drops."
-          reason="Sign in to see your saved listings."
-        >
+        <SignInGate>
           {shown.length > 0 ? (
             <Stack gap={5}>
               {shown.map((listing) => (
@@ -87,7 +82,6 @@ export default function SavedPage() {
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

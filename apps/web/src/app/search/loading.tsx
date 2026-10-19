@@ -10,7 +10,6 @@ import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   AppHeader,
-  BottomNav,
   SaleCardSkeleton,
   Screen,
   ScreenBody,
@@ -100,7 +99,6 @@ function SearchSkeleton({ params }: { params: Record<string, string> }) {
         </div>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }

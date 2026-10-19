@@ -18,7 +18,6 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
-  BottomNav,
   ButtonLink,
   EmptyState,
   ListingCard,
@@ -71,11 +70,7 @@ export default function MyListingsPage() {
       </AppHeader>
 
       <ScreenBody>
-        <SignInGate
-          title="Your listings"
-          body="Sign in to see what you have posted."
-          reason="Sign in to see your listings."
-        >
+        <SignInGate>
           {shown.length > 0 ? (
             <div className={styles.list}>
               {shown.map((listing) =>
@@ -103,7 +98,6 @@ export default function MyListingsPage() {
         </SignInGate>
       </ScreenBody>
 
-      <BottomNav />
     </Screen>
   );
 }
