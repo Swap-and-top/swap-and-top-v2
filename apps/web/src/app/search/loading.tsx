@@ -6,7 +6,7 @@
  * and cards in bones for the results, of the kind searched for.
  */
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   AppHeader,
@@ -33,9 +33,25 @@ const CARDS = {
   request: [WantedCardSkeleton],
 } as const;
 
+/**
+ * The address is read in its own boundary: a page built ahead of time has
+ * none, so there the skeleton shows as for an empty search.
+ */
 export default function Loading() {
+  return (
+    <Suspense fallback={<SearchSkeleton params={{}} />}>
+      <FromAddress />
+    </Suspense>
+  );
+}
+
+function FromAddress() {
   const params = useSearchParams();
-  const initial = parseSearchQuery(Object.fromEntries(params.entries()));
+  return <SearchSkeleton params={Object.fromEntries(params.entries())} />;
+}
+
+function SearchSkeleton({ params }: { params: Record<string, string> }) {
+  const initial = parseSearchQuery(params);
   const [values, setValues] = useState<SearchFilterValues>({
     category: initial.category,
     type: initial.type,

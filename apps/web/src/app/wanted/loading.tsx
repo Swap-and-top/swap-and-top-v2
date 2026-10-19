@@ -6,6 +6,7 @@
  * post prompt and the bottom bar as on the page.
  */
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CATEGORY_LABELS } from '@snt/core';
 import {
@@ -24,11 +25,25 @@ import { parseFeedFilterParams } from '@/components/feedFilterParams';
 import { CATEGORIES } from './WantedFeed';
 import styles from './page.module.css';
 
+/**
+ * The address is read in its own boundary: a page built ahead of time has
+ * none, so there the skeleton shows with All chosen.
+ */
 export default function Loading() {
-  const params = useSearchParams();
-  const { category } = parseFeedFilterParams(
-    Object.fromEntries(params.entries()),
+  return (
+    <Suspense fallback={<WantedSkeleton params={{}} />}>
+      <FromAddress />
+    </Suspense>
   );
+}
+
+function FromAddress() {
+  const params = useSearchParams();
+  return <WantedSkeleton params={Object.fromEntries(params.entries())} />;
+}
+
+function WantedSkeleton({ params }: { params: Record<string, string> }) {
+  const { category } = parseFeedFilterParams(params);
 
   return (
     <Screen>
