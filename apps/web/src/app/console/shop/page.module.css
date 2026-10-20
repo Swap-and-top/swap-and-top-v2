@@ -1,6 +1,10 @@
 /** Console, Shop profile: the shopfront, at its own width, by the sidebar. */
 
 .toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-4);
   margin-top: var(--snt-space-6);
 }
 

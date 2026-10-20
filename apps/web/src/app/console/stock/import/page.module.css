@@ -210,9 +210,12 @@
     padding: var(--snt-space-5) var(--snt-space-7);
   }
 
+  /* Column headings: the bold blue on the faded blue of the Leads tabs'
+     strip, the same colour exactly: the strip's blue as it shows over the
+     page, laid on the white card. */
   .headerRow {
-    background: var(--snt-accent-strong);
-    color: var(--snt-ink-on-dark);
+    background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+    color: var(--snt-accent-bold);
     font-size: var(--snt-text-sm);
     font-weight: var(--snt-weight-bold);
   }

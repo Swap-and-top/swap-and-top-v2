@@ -24,6 +24,7 @@ import {
   ListingCard,
   Screen,
   ScreenBody,
+  useSignInToPost,
 } from '@snt/ui';
 import { SearchEntry } from '../../components/SearchEntry';
 import {
@@ -35,6 +36,8 @@ import { searchHref, type SearchQuery } from '../../components/searchParams';
 import styles from './page.module.css';
 
 export function SearchResults({ initial }: { initial: SearchQuery }) {
+  // Posting asks a guest to sign in first.
+  const postGate = useSignInToPost('/post');
   const [filters, setFilters] = useState<SearchFilterValues>({
     category: initial.category,
     type: initial.type,
@@ -113,7 +116,7 @@ export function SearchResults({ initial }: { initial: SearchQuery }) {
             body="Try another category, widen the price range, or post what you are looking for and let sellers come to you."
             action={
               // Green like the post button in the bottom menu, no border.
-              <ButtonLink href="/post" variant="primary">
+              <ButtonLink href="/post" variant="primary" {...postGate}>
                 Post what you are looking for
               </ButtonLink>
             }

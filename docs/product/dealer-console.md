@@ -94,7 +94,15 @@ A LEAD AS THE DEALER SEES IT:
 
 **The match line is what makes it feel like a tool rather than a notification.** It closes the gap between "someone wants something" and "here is what you should offer them."
 
-**Tabs:** matching requests, number reveals, offers sent.
+**Tabs:** matching requests, number reveals, offers sent. On a phone each row of the two tables is a compact card; between a tablet and a wide screen, two to a row; from a wide screen, the table.
+
+| Tab | What it shows |
+| --- | --- |
+| **Matching requests** | Requests and swaps that match the shop's stock (or its lead alert categories), newest first. Each says how the dealer was told of it, e.g. *"Alerted by WhatsApp · 10:42"*. |
+| **Number reveals** | A table set as Stock's: who revealed the shop's number, how they made contact (WhatsApp or call), the listing and its price, when, their confirmed deals, and a badge for where the deal check stands (*Asking in 3 days*, *Answer needed*, *Deal confirmed*). A row opens the listing. Shape: `NumberReveal` in `packages/core/src/types/lead.ts`. |
+| **Offers sent** | A table set as Stock's: the request (who wants what), what the shop offered, the cash, when it was sent, and a status badge (*Waiting*, *Accepted*, *Declined*, *Withdrawn*). A row opens the offer in full (its message, and the person's contact ways once accepted); the ⋮ menu has *See the offer* or *Contact them*, *See their request*, and *Withdraw* while it waits. They are ordinary offers from the shop's account, so the backend needs nothing extra for them. |
+
+**Lead alerts** sit above the tabs: a chip that shows whether they are on, paused or need setting up, and opens their settings. See [../features/notifications.md](../features/notifications.md).
 
 The requester's own record is shown on the lead — confirmed deals, account age, clean report history — so a dealer can judge who they are dealing with. No occupation or status markers; see [trust-and-safety.md](./trust-and-safety.md).
 

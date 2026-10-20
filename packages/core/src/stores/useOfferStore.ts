@@ -83,6 +83,49 @@ const SAMPLE_OFFERS: Offer[] = [
     sentLabel: '4h ago',
     counted: true,
   },
+  // More the shop has sent, in each state, for the console's "Offers sent".
+  {
+    id: 'o-kopje-redmi',
+    listingId: 'l-redmi-wanted',
+    fromUserId: 'u-kopje',
+    item: {
+      listingId: 'l-redmi-note-12',
+      name: 'Redmi Note 12 128GB',
+      condition: 'good',
+    },
+    cashAmount: 160,
+    cashFrom: 'owner',
+    message: 'In the shop now, with a charger. $160, or come and see it first.',
+    reachOn: ['whatsapp', 'call'],
+    state: 'accepted',
+    sentLabel: 'Yesterday',
+  },
+  {
+    id: 'o-kopje-elitedesk',
+    listingId: 'l-cad-desktop-swap',
+    fromUserId: 'u-kopje',
+    item: {
+      listingId: 'l-hp-elitedesk-800',
+      name: 'HP EliteDesk 800 G3',
+      condition: 'good',
+    },
+    cashAmount: 180,
+    cashFrom: 'owner',
+    message: 'Core i7, 16GB, can add a graphics card. Bring your i3 tower in.',
+    state: 'declined',
+    sentLabel: '2 days ago',
+  },
+  {
+    id: 'o-kopje-rtx',
+    listingId: 'l-rtx-wanted',
+    fromUserId: 'u-kopje',
+    item: { name: 'RTX 3060 12GB, sourced to order', condition: 'boxed-new' },
+    cashAmount: 255,
+    cashFrom: 'owner',
+    message: 'I can have one here by Friday.',
+    state: 'withdrawn',
+    sentLabel: '3 days ago',
+  },
 ];
 
 interface OfferStore {

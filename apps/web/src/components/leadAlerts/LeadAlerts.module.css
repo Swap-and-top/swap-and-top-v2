@@ -1,0 +1,178 @@
+/** Lead alerts: the status chip, and the settings sheet it opens. */
+
+/* --- the chip: green when on, grey when paused, amber to set up --- */
+
+.chip {
+  --chip-ink: var(--snt-success);
+  --chip-fill: var(--snt-success-tint);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  width: fit-content;
+  height: 30px;
+  padding: 0 var(--snt-space-5) 0 var(--snt-space-6);
+  border-radius: var(--snt-radius-pill);
+  background: var(--chip-fill);
+  color: var(--chip-ink);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  transition: filter var(--snt-transition);
+}
+
+.chip:hover {
+  color: var(--chip-ink);
+  filter: brightness(0.97);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.paused {
+  --chip-ink: var(--snt-ink-muted);
+  --chip-fill: color-mix(in srgb, var(--snt-ink-muted) 12%, transparent);
+}
+
+.setup {
+  --chip-ink: #a15c07;
+  --chip-fill: #fdf0d5;
+}
+
+/* --- the sheet: set as the stock filters are --- */
+
+/* Its title, after the bell on the app's pale tile. */
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+}
+
+/* The title, and what lead alerts are under it. */
+.headingText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+.headingTitle {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.headingNote {
+  font-size: var(--snt-text-sm);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
+}
+
+.headingIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+}
+
+/* One column on a phone; two from a laptop up, side by side. */
+.columns,
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+  min-width: 0;
+}
+
+@media (min-width: 860px) {
+  .columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--snt-space-12);
+  }
+}
+
+/* When the last alert went out. */
+.last {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-success);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.note {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.whatsapp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+}
+
+.confirmed {
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-success);
+}
+
+/* Under the number: how it stands, and the code button beside it. */
+.numberRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-5);
+}
+
+.numberStatus {
+  font-size: var(--snt-text-sm);
+  line-height: var(--snt-leading-snug);
+}
+
+.muted {
+  color: var(--snt-ink-muted);
+}
+
+/* Something missing: in the app's red. */
+.warn {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-alert);
+}
+
+/* The code button keeps one width, whatever it says. */
+.codeButton {
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+/* Cancel beside Save, under everything, the full width, half each. */
+.actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-2);
+}

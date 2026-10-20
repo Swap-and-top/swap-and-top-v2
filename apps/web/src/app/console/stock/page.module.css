@@ -314,13 +314,14 @@
     border-radius: 0;
   }
 
-  /* Column headings: white on a band of the dark blue across the top of
-     the card. Where the blue ends is the line under the headings. */
+  /* Column headings: the bold blue on the faded blue of the Leads tabs'
+     strip, the same colour exactly: the strip's blue as it shows over the
+     page, laid on the white card. */
   .headerRow {
-    background: var(--snt-accent-strong);
+    background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
     font-size: var(--snt-text-sm);
     font-weight: var(--snt-weight-bold);
-    color: var(--snt-ink-on-dark);
+    color: var(--snt-accent-bold);
   }
 
   /* The line between rows: the page's pale blue, set in from both edges by

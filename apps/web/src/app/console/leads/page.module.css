@@ -8,18 +8,17 @@
  * in green and what someone has in blue.
  */
 
-.alertPill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--snt-space-3);
-  height: 28px;
-  padding: 0 var(--snt-space-6);
+/* The lead alerts chip, under the title. */
+.alerts {
   margin-top: var(--snt-space-5);
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-success-tint);
+}
+
+/* A lead's line saying how the dealer was told of it. */
+.listAlert {
+  display: block;
+  margin-top: var(--snt-space-2);
+  font-size: var(--snt-text-xs);
   color: var(--snt-success);
-  font-size: var(--snt-text-sm);
-  font-weight: var(--snt-weight-semibold);
 }
 
 /* The marketplace's tabs, from the console's left edge rather than centred

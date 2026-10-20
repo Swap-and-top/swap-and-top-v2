@@ -4,3 +4,4 @@ export * from './shop';
 export * from './deal';
 export * from './lead';
 export * from './offer';
+export * from './leadAlerts';

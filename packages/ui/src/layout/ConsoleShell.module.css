@@ -231,7 +231,15 @@
     flex-direction: column;
     gap: var(--snt-space-5);
     padding: 0 var(--snt-space-7) var(--snt-space-8) var(--snt-space-9);
-    border-bottom: 1px solid color-mix(in srgb, white 20%, transparent);
+    /* The line under the shop: set in from both edges, as the lines between
+       rows are across the app, rather than running edge to edge. */
+    background-image: linear-gradient(
+      color-mix(in srgb, white 20%, transparent),
+      color-mix(in srgb, white 20%, transparent)
+    );
+    background-size: calc(100% - var(--snt-space-7) * 2) 1px;
+    background-position: center bottom;
+    background-repeat: no-repeat;
   }
 
   /* The shop's mark at the left, the fold button at the right. */
@@ -286,6 +294,7 @@
 
   .collapsed .sidebarHead {
     padding-inline: 0;
+    background-size: calc(100% - var(--snt-space-5) * 2) 1px;
   }
 
   /* Folded: the mark, and the button under it. */

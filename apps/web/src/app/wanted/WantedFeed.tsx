@@ -33,6 +33,7 @@ import {
   ScreenTitle,
   Stack,
   WantedCard,
+  useSignInToPost,
 } from '@snt/ui';
 import { PlusIcon } from '@snt/ui/icons';
 import type { FeedFilterParams } from '../../components/feedFilterParams';
@@ -52,6 +53,8 @@ export const CATEGORIES: (Category | 'all')[] = [
 
 /** Wanted. Its server half, page.tsx, reads the category from the address. */
 export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
+  // Posting asks a guest to sign in first.
+  const postGate = useSignInToPost('/post');
   // The category lives in the address too, so a refresh keeps it.
   const { category, setCategory } = useFeedFiltersInUrl(initial, {
     withType: false,
@@ -108,7 +111,8 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
       </ScreenBody>
 
       <div className={styles.postPrompt}>
-        <ButtonLink href="/post" variant="dashed" size="lg" block>
+        {/* Posting asks a guest to sign in first. */}
+        <ButtonLink href="/post" variant="dashed" size="lg" block {...postGate}>
           <PlusIcon size={17} />
           Post what you are looking for
         </ButtonLink>

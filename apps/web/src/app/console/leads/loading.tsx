@@ -4,7 +4,6 @@
  * of lead cards in bones and from a laptop the two cards side by side.
  */
 
-import { CheckIcon } from '@snt/ui/icons';
 import { currentShop, newLeadCount } from '@snt/core';
 import { Bone, ConsoleShell, Panel } from '@snt/ui';
 import styles from './page.module.css';
@@ -42,14 +41,16 @@ export default function Loading() {
       newLeadCount={newLeadCount}
       actions={
         <>
-          <span className={styles.alertPill}>
-            <CheckIcon size={13} weight={2.6} />
-            Lead alerts active
-          </span>
+          <div className={styles.alerts}>
+            <Bone shape="pill" width={200} height={30} />
+          </div>
+          {/* The tabs' switch: its pale strip, a bar for each tab. */}
           <div className={[styles.tabs, skeleton.tabs].join(' ')} aria-hidden>
-            <Bone width={150} height={14} />
-            <Bone width={130} height={14} />
-            <Bone width={100} height={14} />
+            {[0, 1, 2].map((i) => (
+              <span key={i} className={skeleton.tabBone}>
+                <Bone width="70%" height={14} />
+              </span>
+            ))}
           </div>
         </>
       }

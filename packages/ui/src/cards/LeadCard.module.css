@@ -17,6 +17,16 @@
   color: var(--snt-ink-muted);
 }
 
+/* How the dealer was told of the lead: small, in the green of a match. */
+.alerted {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  margin-top: var(--snt-space-2);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-success);
+}
+
 .title {
   font-size: var(--snt-text-lg);
   font-weight: var(--snt-weight-bold);

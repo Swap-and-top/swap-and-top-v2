@@ -17,6 +17,7 @@ export default function Loading() {
       newLeadCount={newLeadCount}
       actions={
         <div className={styles.toolbar}>
+          <Bone shape="pill" width={200} height={30} />
           <Bone shape="pill" width={150} height={36} />
         </div>
       }

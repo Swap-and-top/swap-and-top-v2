@@ -147,5 +147,11 @@
   .narrow {
     width: 400px;
   }
+
+  /* A form in two columns — lead alerts — wider, so a laptop's screen shows
+     it whole. */
+  .wide {
+    width: 880px;
+  }
 }
 

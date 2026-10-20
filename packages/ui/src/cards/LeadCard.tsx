@@ -9,7 +9,7 @@
  */
 
 import type { Lead } from '@snt/core';
-import { CheckIcon, InfoIcon, PhoneIcon } from '../icons';
+import { BellIcon, CheckIcon, InfoIcon, PhoneIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
 import { Button } from '../primitives/Button';
 import { Panel } from '../primitives/Surface';
@@ -39,6 +39,17 @@ export function LeadCard({
           {lead.receivedAt} · {lead.area}
         </span>
       </div>
+
+      {/* How the dealer was told of it, when an alert went out. */}
+      {lead.alert ? (
+        <div className={styles.alerted}>
+          <BellIcon size={12} />
+          {lead.alert.via.includes('whatsapp')
+            ? 'Alerted by WhatsApp'
+            : 'Alerted in the app'}{' '}
+          · {lead.alert.at}
+        </div>
+      ) : null}
 
       <div className={styles.title}>
         Wants <ItemName side="wanted">{demand.wants.name}</ItemName>

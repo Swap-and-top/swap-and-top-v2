@@ -45,6 +45,28 @@ Two questions govern every notification:
 
 The matching demand alert is the one that must be fast and reliable. If it is late, the paid product has failed.
 
+#### Lead alert settings
+
+Each shop keeps one settings record for its matching demand alerts. The dealer changes it from the **Lead alerts** chip at the top of Leads (and on Shop profile), which opens a settings sheet. The shape is `LeadAlertSettings` in `packages/core/src/types/leadAlerts.ts`; the front end works on a mock of it (`useLeadAlertStore`) until the backend serves it.
+
+| Setting | What it means |
+| --- | --- |
+| `enabled` | Off while the dealer pauses alerts. Nothing is sent; leads still collect in the app. |
+| `whatsapp.on`, `number`, `confirmed` | Whether alerts also go to WhatsApp, and to which number. A number is proved with a one time code first; **nothing is sent to an unconfirmed number**, and changing it asks for a new code. In the app is always on. |
+| `match` | `stock`: demand for items like the shop's live stock (the default). `categories`: any demand in the chosen `categories`, for dealers who source to order. |
+| `includeSwaps` | Swaps as well as plain requests. A swap comes with an item offered in exchange, so it is usually the bigger lead. |
+| `minBudget` | Only demand with at least this budget (or cash on top, for a swap). Empty for any. |
+| `quietHours` | No WhatsApp between `from` and `to` (shop time). The alert still lands in the app at once; the WhatsApp follows when quiet hours end. |
+| `lastSentLabel` | When the last alert went out, shown in the sheet. Set by the backend. |
+
+The chip shows one of three states, worked out by `leadAlertStatus()`:
+
+- **On** (green): *"Lead alerts on · WhatsApp"*, or *"· In the app"* without a confirmed number.
+- **Paused** (grey): the dealer switched them off.
+- **Set up** (amber): on, but WhatsApp is unconfirmed, or `categories` was chosen with none picked.
+
+**What the backend does with it.** For every new swap or request: for each shop whose settings are enabled, check the match (`stock` or `categories`), `includeSwaps` and `minBudget`. If it matches, add the lead to the shop's Leads at once, and send WhatsApp now (or when quiet hours end) if the number is confirmed. Then record on the lead how it was sent, as `Lead.alert` (`via`: the channels, `at`: when). The lead cards show this as *"Alerted by WhatsApp · 10:42"*, so a dealer can trust the alerts are arriving.
+
 ### Seller — retention
 
 | Notification | Trigger | Channels | Why |

@@ -39,6 +39,7 @@ export function Sheet({
   title,
   heading,
   narrow = false,
+  wide = false,
   onClose,
   children,
 }: {
@@ -48,6 +49,8 @@ export function Sheet({
   heading?: ReactNode;
   /** A narrower panel on a wide screen, for a short, simple sheet. */
   narrow?: boolean;
+  /** A wider panel on a wide screen, for a form laid out in two columns. */
+  wide?: boolean;
   onClose: () => void;
   children: ReactNode;
 }) {
@@ -94,6 +97,7 @@ export function Sheet({
       className={[
         styles.sheet,
         narrow ? styles.narrow : '',
+        wide ? styles.wide : '',
         closing ? styles.closing : '',
       ]
         .filter(Boolean)

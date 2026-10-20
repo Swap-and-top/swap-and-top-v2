@@ -12,6 +12,7 @@
 import { currentShop, newLeadCount, useShopStock } from '@snt/core';
 import { ButtonLink, ConsoleShell } from '@snt/ui';
 import { ShopfrontBody } from '@/components/Shopfront';
+import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
 import styles from './page.module.css';
 
 export default function ConsoleShopPage() {
@@ -27,6 +28,8 @@ export default function ConsoleShopPage() {
       stockCount={stock.length}
       actions={
         <div className={styles.toolbar}>
+          {/* Lead alerts are a shop setting, so they can be found here too. */}
+          <LeadAlertsChip />
           <ButtonLink
             href={`/shop/${currentShop.slug}`}
             variant="secondary"

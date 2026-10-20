@@ -18,6 +18,12 @@
   border-color: var(--snt-control-active);
 }
 
+/* Not to be changed while it does not apply: greyed, but in its place. */
+.tick.tickDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 /* The real box is hidden; the drawn one stands for it. */
 .tick input {
   position: absolute;

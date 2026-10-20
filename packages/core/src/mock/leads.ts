@@ -6,7 +6,7 @@
  * notification into a tool, so it is part of the shape rather than an extra.
  */
 
-import type { Lead } from '../types/lead';
+import type { Lead, NumberReveal } from '../types/lead';
 import type { DemandListing } from '../types/listing';
 import { mockListings } from './listings';
 import { getUser, mockUsers } from './users';
@@ -32,6 +32,7 @@ export const mockLeads: Lead[] = [
     isNew: true,
     receivedAt: '12 minutes ago',
     area: 'Mt Pleasant',
+    alert: { via: ['whatsapp', 'inApp'], at: '10:42' },
   },
   {
     id: 'lead-2',
@@ -40,6 +41,7 @@ export const mockLeads: Lead[] = [
     isNew: true,
     receivedAt: '1 hour ago',
     area: 'Harare',
+    alert: { via: ['whatsapp', 'inApp'], at: '09:51' },
   },
   {
     id: 'lead-3',
@@ -50,6 +52,8 @@ export const mockLeads: Lead[] = [
     isNew: false,
     receivedAt: 'Yesterday',
     area: 'Mt Pleasant',
+    // Posted in quiet hours: in the app at once, WhatsApp held till morning.
+    alert: { via: ['inApp'], at: 'Yesterday, 21:40' },
   },
   {
     id: 'lead-4',
@@ -74,3 +78,64 @@ export function getLead(id: string): Lead | undefined {
 }
 
 export const newLeadCount = mockLeads.filter((l) => l.isNew).length;
+
+/** Who revealed the shop's number lately, newest first. */
+export const mockShopReveals: NumberReveal[] = [
+  {
+    id: 'rv-1',
+    userId: 'u-tendai',
+    listingId: 'l-dell-latitude-7490',
+    way: 'whatsapp',
+    atLabel: '25 minutes ago',
+    area: 'Borrowdale',
+    deal: 'waiting',
+    daysToAsk: 3,
+  },
+  {
+    id: 'rv-2',
+    userId: 'u-nyasha',
+    listingId: 'l-thinkpad-t480',
+    way: 'call',
+    atLabel: '2 hours ago',
+    area: 'Avondale',
+    deal: 'waiting',
+    daysToAsk: 3,
+  },
+  {
+    id: 'rv-3',
+    userId: 'u-rudo',
+    listingId: 'l-redmi-note-12',
+    way: 'whatsapp',
+    atLabel: 'Yesterday',
+    area: 'Mt Pleasant',
+    deal: 'waiting',
+    daysToAsk: 2,
+  },
+  {
+    id: 'rv-4',
+    userId: 'u-farai',
+    listingId: 'l-hp-elitebook-840',
+    way: 'whatsapp',
+    atLabel: '3 days ago',
+    area: 'Harare CBD',
+    deal: 'asked',
+  },
+  {
+    id: 'rv-5',
+    userId: 'u-chipo',
+    listingId: 'l-rx-580',
+    way: 'call',
+    atLabel: 'Last week',
+    area: 'Belvedere',
+    deal: 'confirmed',
+  },
+  {
+    id: 'rv-6',
+    userId: 'u-blessing',
+    listingId: 'l-hp-elitedesk-800',
+    way: 'whatsapp',
+    atLabel: 'Last week',
+    area: 'Harare',
+    deal: 'confirmed',
+  },
+];

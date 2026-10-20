@@ -37,6 +37,7 @@ import {
   ScreenBody,
   Tabs,
   type TabItem,
+  useSignInToPost,
 } from '@snt/ui';
 import { BinocularsIcon, GridIcon, SwapIcon, TagIcon } from '@snt/ui/icons';
 import type { FeedFilterParams } from '@/components/feedFilterParams';
@@ -70,6 +71,8 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
   const { category, type, setCategory, setType, reset } =
     useFeedFiltersInUrl(initial);
   const stickyTop = useStickyTabsOffset();
+  // Posting asks a guest to sign in first; the filters clear as they go.
+  const postGate = useSignInToPost('/post', reset);
 
   const viewer = useViewerId();
   // Your own listings are not in your feed: they are under My listings.
@@ -132,7 +135,7 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
             title="Nothing here yet"
             body="No listings match those filters. Clear them, or post what you are looking for and let dealers come to you."
             action={
-              <ButtonLink href="/post" variant="primary" onClick={reset}>
+              <ButtonLink href="/post" variant="primary" {...postGate}>
                 Post what you are looking for
               </ButtonLink>
             }

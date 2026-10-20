@@ -161,3 +161,9 @@
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
 }
+
+/* A box that does not apply for now: greyed, but in its place. */
+.input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

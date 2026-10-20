@@ -14,17 +14,27 @@ export function TickTile({
   onChange,
   label,
   hint,
+  disabled = false,
 }: {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label: string;
   hint?: string;
+  /** Shown but greyed and not to be changed, while it does not apply. */
+  disabled?: boolean;
 }) {
   return (
-    <label className={[styles.tick, checked ? styles.tickOn : ''].join(' ')}>
+    <label
+      className={[
+        styles.tick,
+        checked ? styles.tickOn : '',
+        disabled ? styles.tickDisabled : '',
+      ].join(' ')}
+    >
       <input
         type="checkbox"
         checked={checked}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.checked)}
       />
       <span className={styles.tickBox} aria-hidden>

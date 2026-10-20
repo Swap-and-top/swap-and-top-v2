@@ -1,0 +1,281 @@
+/**
+ * Number reveals and Offers sent, set exactly as the Stock table is (see
+ * console/stock/page.module.css): a white card per row on a phone, two to a
+ * row between a tablet and a wide screen, and from a wide screen one white
+ * card with a dark blue band of headings and thin lines between rows.
+ */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+.headerRow {
+  display: none;
+}
+
+/* A row: a plain white card on a phone; the whole of it is a link (or a
+   button) stretched under the menu. */
+.row {
+  position: relative;
+  display: grid;
+  align-items: center;
+  gap: var(--snt-space-2) var(--snt-space-5);
+  padding: var(--snt-space-5);
+  background: var(--snt-bg-surface);
+  border-radius: var(--snt-radius-xl);
+}
+
+.rowLink {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border-radius: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.rowLink:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .row:has(.rowLink:hover) {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.row:has(.rowLink:active) {
+  background-color: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
+}
+
+/* --- the cells --- */
+
+/* How they made contact, on the app's pale tile. */
+.tile {
+  grid-area: tile;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+}
+
+.who,
+.offered {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+  line-height: var(--snt-leading-tight);
+  min-width: 0;
+}
+
+.who {
+  grid-area: who;
+}
+
+.offered {
+  grid-area: offered;
+}
+
+/* What they asked for, in the green of things wanted. */
+.request {
+  grid-area: request;
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+.requester {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.wanted {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-wanted-ink);
+  line-height: var(--snt-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.listing {
+  grid-area: listing;
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink);
+  min-width: 0;
+}
+
+.price {
+  grid-area: price;
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+  justify-self: end;
+}
+
+.badge {
+  grid-area: badge;
+  justify-self: end;
+}
+
+.action {
+  grid-area: action;
+  /* Over the row's link, so the menu takes its own taps. */
+  position: relative;
+  z-index: 1;
+  justify-self: end;
+}
+
+/* The phone's quiet line: how, when, where. */
+.phoneMeta {
+  grid-area: meta;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* Columns only the wide table has room for. */
+.way,
+.when,
+.deals,
+.cash {
+  display: none;
+}
+
+/* A phone's reveal: the tile, the name and its badge, the listing and its
+   price, then how and when. */
+.reveals .row {
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'tile who badge'
+    'tile listing price'
+    'tile meta meta';
+}
+
+/* A phone's offer: the request and the menu, what was offered and its
+   status, then the cash and when. */
+.offers .row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'request action'
+    'offered badge'
+    'meta meta';
+}
+
+/*
+ * Between a tablet and a wide screen, the cards two to a row, as in Stock.
+ */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+/* ------------------------------------------ the table, from a wide screen --- */
+
+@media (min-width: 1280px) {
+  .list {
+    gap: 0;
+    background: var(--snt-bg-surface);
+    border-radius: var(--snt-radius-xl);
+    overflow: hidden;
+  }
+
+  .headerRow,
+  .row {
+    display: grid;
+    grid-template-areas: none;
+    align-items: center;
+    justify-items: start;
+    gap: var(--snt-space-7);
+    padding: var(--snt-space-5) var(--snt-space-8);
+    border-radius: 0;
+  }
+
+  .reveals .headerRow,
+  .reveals .row {
+    grid-template-columns:
+      34px minmax(0, 1.3fr) 90px minmax(0, 2fr) 72px 120px 90px 150px;
+    grid-template-areas: none;
+  }
+
+  .offers .headerRow,
+  .offers .row {
+    grid-template-columns:
+      minmax(0, 2.2fr) minmax(0, 2fr) 130px 100px 110px 44px;
+    grid-template-areas: none;
+  }
+
+  /* Column headings: the bold blue on the faded blue of the Leads tabs'
+     strip, the same colour exactly: the strip's blue as it shows over the
+     page, laid on the white card. */
+  .headerRow {
+    background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+    font-size: var(--snt-text-sm);
+    font-weight: var(--snt-weight-bold);
+    color: var(--snt-accent-bold);
+  }
+
+  /* The line between rows, set in from both edges. */
+  .row {
+    background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+    background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+
+  .headerRow + .row {
+    background-image: none;
+  }
+
+  .tile,
+  .who,
+  .offered,
+  .request,
+  .listing,
+  .price,
+  .badge,
+  .action {
+    grid-area: auto;
+  }
+
+  .way,
+  .when,
+  .deals,
+  .cash {
+    display: block;
+    font-size: var(--snt-text-base);
+    color: var(--snt-ink-muted);
+  }
+
+  .cash {
+    color: var(--snt-accent-bold);
+    font-weight: var(--snt-weight-semibold);
+  }
+
+  .deals {
+    justify-self: end;
+    color: var(--snt-ink);
+  }
+
+  .badge {
+    justify-self: start;
+  }
+
+  .alignRight {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .phoneMeta {
+    display: none;
+  }
+}
