@@ -1,6 +1,6 @@
 /**
  * The first app's marks for its help links, copied as they were: Tips (now
- * Safety and how to swap), Terms of use and Privacy policy, in its yellow.
+ * Safety tips), Terms of use and Privacy policy, in its yellow.
  * Used in the menu's green band (see AppMenu), 18px high as in the first
  * app's menu. Only the ids and class names the first app's own stylesheet
  * used are left out.

@@ -15,13 +15,13 @@
 import Link from 'next/link';
 import { COMPANY, telHref } from '@snt/core';
 import { MailIcon, PhoneIcon, PinIcon } from '../icons';
-import { Logo } from './Logo';
+import { CompactLogo } from './Logo';
 import { SocialMark } from './SocialMarks';
 import styles from './Footer.module.css';
 
 const LINKS = [
   { href: '/', label: 'Homepage' },
-  { href: '/help', label: 'Safety and how to swap' },
+  { href: '/help', label: 'Safety tips' },
   { href: '/terms', label: 'Terms of use' },
   { href: '/privacy', label: 'Privacy policy' },
 ];
@@ -37,7 +37,9 @@ export function Footer() {
           {/* The logo, with our socials under it. */}
           <div className={styles.brand}>
             <Link href="/" className={styles.logo} aria-label="Swap & Top home">
-              <Logo height={34} />
+              {/* The compact, stacked logo, as on the sign in sheet, but in
+                  plain white on the gradient. */}
+              <CompactLogo height={48} />
             </Link>
             <div className={styles.socials}>
               {COMPANY.socials.map(({ name, href }) => (

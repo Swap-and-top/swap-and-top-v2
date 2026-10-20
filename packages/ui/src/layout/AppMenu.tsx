@@ -262,7 +262,7 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
 
       {/* Green: help and the rules, in yellow. */}
       <nav className={`${styles.band} ${styles.helpBand}`} aria-label="Help">
-        <MenuRow href="/help" icon={<TipsMark />} label="Safety and how to swap" onNavigate={onNavigate} />
+        <MenuRow href="/help" icon={<TipsMark />} label="Safety tips" onNavigate={onNavigate} />
         <MenuRow href="/terms" icon={<TermsMark />} label="Terms of use" onNavigate={onNavigate} />
         <MenuRow href="/privacy" icon={<PrivacyMark />} label="Privacy policy" onNavigate={onNavigate} />
       </nav>

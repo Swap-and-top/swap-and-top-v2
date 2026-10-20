@@ -76,7 +76,7 @@ export default function Loading() {
             <h2 className={styles.section}>Account</h2>
             <ListGroup>
               <ListRow href="/me" icon={<ShieldCheckIcon size={19} />} label="Verification" />
-              <ListRow href="/me" icon={<InfoIcon size={19} />} label="Safety and how to swap" />
+              <ListRow href="/me" icon={<InfoIcon size={19} />} label="Safety tips" />
               <ListRow href="/me" icon={<SettingsIcon size={19} />} label="Settings" />
             </ListGroup>
 

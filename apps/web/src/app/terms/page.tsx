@@ -29,7 +29,7 @@ export default function TermsPage() {
               store user data, please see our{' '}
               <InfoLink href="/privacy">Privacy policy</InfoLink>. For tips on
               how to use our platform safely, see{' '}
-              <InfoLink href="/help">Safety and how to swap</InfoLink>.
+              <InfoLink href="/help">Safety tips</InfoLink>.
             </p>
           ),
         },
@@ -191,7 +191,7 @@ export default function TermsPage() {
               </p>
               <p>
                 For tips on lowering the risks when dealing on our platform,
-                see <InfoLink href="/help">Safety and how to swap</InfoLink>.
+                see <InfoLink href="/help">Safety tips</InfoLink>.
               </p>
             </>
           ),

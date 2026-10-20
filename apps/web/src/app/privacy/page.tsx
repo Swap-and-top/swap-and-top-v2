@@ -28,7 +28,7 @@ export default function PrivacyPage() {
               more, please see our{' '}
               <InfoLink href="/terms">Terms of use</InfoLink>. For tips on how
               to use our platform safely, see{' '}
-              <InfoLink href="/help">Safety and how to swap</InfoLink>.
+              <InfoLink href="/help">Safety tips</InfoLink>.
             </p>
           ),
         },

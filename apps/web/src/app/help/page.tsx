@@ -1,5 +1,5 @@
 /**
- * Safety and how to swap. Written from the app's own guidance (see
+ * Safety tips. Written from the app's own guidance (see
  * docs/product/trust-and-safety.md); the first app's tips page was empty.
  */
 
@@ -8,14 +8,14 @@ import { COMPANY } from '@snt/core';
 import { InfoLink, InfoPage } from '@/components/InfoPage';
 
 export const metadata: Metadata = {
-  title: 'Safety and how to swap · Swap & Top',
+  title: 'Safety tips · Swap & Top',
   description: 'How buying, selling and swapping work on Swap & Top, and how to do it safely.',
 };
 
 export default function HelpPage() {
   return (
     <InfoPage
-      title="Safety and how to swap"
+      title="Safety tips"
       intro={
         <p>
           Swap &amp; Top puts buyers and sellers in touch. The deal itself

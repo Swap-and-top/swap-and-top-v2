@@ -169,7 +169,7 @@ export default function MePage() {
               <ListRow
                 href="/help"
                 icon={<InfoIcon size={19} />}
-                label="Safety and how to swap"
+                label="Safety tips"
               />
               <ListRow
                 href="/me"

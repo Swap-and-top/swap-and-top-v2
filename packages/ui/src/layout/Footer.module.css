@@ -161,6 +161,43 @@
   color: rgb(255 255 255 / 0.85);
 }
 
+/* The ownership line is fine print, in italics; on a phone it is faded too,
+   so it reads as a disclaimer rather than another line of the footer. */
+.disclosure {
+  font-style: italic;
+}
+
+@media (max-width: 767px) {
+  .disclosure {
+    color: rgb(255 255 255 / 0.6);
+  }
+
+  /* On a phone the socials come last, under Contact us: the logo's block
+     lets them go, and they are placed after the other sections. */
+  .brand {
+    display: contents;
+  }
+
+  /* Spread across the full width, and a little larger: a group of its own
+     after Contact us, the same space from it as between the sections. */
+  .socials {
+    order: 1;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* Less room between the socials and the line under them. */
+  .bottom {
+    margin-top: var(--snt-space-10);
+  }
+
+  .social,
+  .social:hover {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 /* From tablet up: three columns, the logo and socials first; the bottom bar
    in one row. */
 @media (min-width: 768px) {
