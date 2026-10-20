@@ -1,12 +1,13 @@
 /**
  * A page of reading: the terms, the privacy policy, how to swap safely. The
  * feed's header, then one white card with the title in the bold blue, a line
- * of when it was last updated, and its sections, each under a thin line.
+ * of when it was last updated, and its sections, each under a thin line; the
+ * site's footer under it.
  */
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { AppHeader, Screen, ScreenBody } from '@snt/ui';
+import { AppHeader, Footer, Screen, ScreenBody } from '@snt/ui';
 import styles from './InfoPage.module.css';
 
 export interface InfoSection {
@@ -42,6 +43,7 @@ export function InfoPage({
           ))}
         </article>
       </ScreenBody>
+      <Footer />
     </Screen>
   );
 }

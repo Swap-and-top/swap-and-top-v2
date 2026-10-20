@@ -27,6 +27,7 @@ import {
   Button,
   ButtonLink,
   AppHeader,
+  Footer,
   Avatar,
   ConfirmedDealsBadge,
   ConsoleEntryRow,
@@ -193,7 +194,7 @@ export default function MePage() {
           </Stack>
         </SignInGate>
       </ScreenBody>
-
+      <Footer />
     </Screen>
   );
 }

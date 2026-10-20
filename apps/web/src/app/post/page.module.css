@@ -67,7 +67,8 @@
   width: 42px;
   height: 42px;
   flex-shrink: 0;
-  border-radius: var(--snt-radius-pill);
+  /* A rounded square, as the dealer console's icon tiles are. */
+  border-radius: var(--snt-radius-lg);
   background: var(--snt-bg-inset);
   color: var(--option-ink);
 }

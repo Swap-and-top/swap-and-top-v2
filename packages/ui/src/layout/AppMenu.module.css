@@ -303,7 +303,7 @@
   border-radius: var(--snt-radius-sm);
   color: var(--menu-yellow);
   font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-semibold);
+  font-weight: var(--snt-weight-normal);
   transition: background var(--snt-transition);
 }
 
@@ -321,7 +321,8 @@
   background: rgb(255 255 139 / 0.3);
 }
 
-/* Each icon on a soft round of its own colour, as elsewhere in the app. */
+/* Each icon on a soft tile of its own colour, a rounded square as in the
+   dealer console. */
 .rowIcon,
 .contactIcon {
   display: flex;
@@ -330,7 +331,7 @@
   flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: var(--snt-radius-md);
 }
 
 .rowIcon {
@@ -444,6 +445,17 @@
 
 .social:active {
   transform: scale(0.92);
+}
+
+/* Who owns the product: fine print, right above the copyright line. Small,
+   italic and faded, so it is there to be read but does not compete. */
+.disclosure {
+  max-width: 260px;
+  margin-bottom: calc(var(--snt-space-6) * -1);
+  font-size: var(--snt-text-xs);
+  font-style: italic;
+  line-height: var(--snt-leading-snug);
+  color: rgb(255 255 255 / 0.6);
 }
 
 .copyright {

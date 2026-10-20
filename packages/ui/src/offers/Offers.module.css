@@ -24,7 +24,7 @@
   color: var(--snt-accent-bold);
 }
 
-/** "WANTED" after a filled binoculars — exactly as on a Wanted card. */
+/** "WANTED" after outlined binoculars on a pale tile, as on a Wanted card. */
 .askLabel {
   display: inline-flex;
   align-items: center;
@@ -34,6 +34,20 @@
   font-weight: var(--snt-weight-bold);
   text-transform: uppercase;
   color: var(--snt-wanted-ink);
+}
+
+/* An icon's tile: a small rounded square in a pale wash of the label's own
+   colour (green for Wanted, blue for For sale and for your offer), as on the
+   Wanted cards in the feed. */
+.labelIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 /** The item, and its budget or terms beside it, wrapping under if long. */

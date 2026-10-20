@@ -1,111 +1,145 @@
 /**
- * Footer, after the first app's: the brand gradient running blue–green–blue,
- * white type, rounded at the bottom left; the copyright under it in green.
- * The first app's sizes throughout.
+ * Footer: the brand gradient, white type, the first app's yellow on hover.
+ * On a phone, stacked sections lined up on the left; from tablet up, three
+ * columns. Under a thin line, the ownership line and the copyright.
  */
 
+/* On a phone, one plain sweep: blue at the top left to green at the bottom
+   right. From tablet up, the first app's band: green in the middle, blue at
+   either side. */
 .footer {
   margin-top: auto;
-}
-
-.main {
-  padding: 60px 20px;
-  border-radius: 0 0 0 40px;
+  border-radius: 30px 0 0 0;
   background-image: linear-gradient(
-    -90deg,
+    135deg,
     var(--snt-brand-blue),
-    var(--snt-brand-green),
-    var(--snt-brand-blue)
+    var(--snt-brand-green)
   );
   color: #fff;
-  font-size: 0.8rem;
-  text-align: center;
 }
 
-.logo {
+@media (min-width: 768px) {
+  .footer {
+    background-image: linear-gradient(
+      -90deg,
+      var(--snt-brand-blue),
+      var(--snt-brand-green),
+      var(--snt-brand-blue)
+    );
+  }
+}
+
+.inner {
+  max-width: 1040px;
+  margin-inline: auto;
+  padding: 40px 24px 20px;
+}
+
+/* --- the three sections ------------------------------------------------ */
+
+.columns {
   display: flex;
-  justify-content: center;
-  margin-bottom: 16px;
-  color: #fff;
+  flex-direction: column;
+  gap: 32px;
 }
 
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.logo,
 .logo:hover {
+  display: inline-flex;
+  width: fit-content;
   color: #fff;
 }
 
-.logoFull {
-  display: none;
-  height: 36px;
-  width: auto;
-}
-
-.logoCompact {
-  display: block;
-  height: 49px;
-  width: auto;
-  filter: drop-shadow(15px 10px 15px rgb(0 0 0 / 0.5));
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .title {
-  margin-bottom: 4px;
-  font-size: 1.17em;
+  font-size: var(--snt-text-md);
   font-weight: var(--snt-weight-bold);
 }
 
-.links {
+.list {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--snt-text-base);
 }
 
-/* A link: white, turning yellow under a growing yellow underline. */
-.link {
-  width: max-content;
-  margin: 4px auto;
-  padding: 0;
-  border: 0;
-  background: linear-gradient(#ffff8b9b 0 0) center bottom /
-    var(--underline, 0%) 0.1em no-repeat;
-  color: #fff;
-  font: inherit;
-  cursor: pointer;
-  transition: background-size 0.2s;
+.link,
+.link:visited {
+  color: rgb(255 255 255 / 0.9);
+  transition: color var(--snt-transition);
 }
 
 .link:hover {
-  --underline: 100%;
   color: var(--snt-brand-yellow);
 }
 
-.detail {
-  margin: 6px 0;
+/* A way to reach us: its icon, then the line. */
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(255 255 255 / 0.9);
 }
 
-.detailLabel {
-  font-weight: var(--snt-weight-bold);
+/* Its icon on a faded rounded square, as the menu's are. */
+.contactIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.2);
+  color: #fff;
+  transition: color var(--snt-transition);
 }
+
+/* A way to reach us that is a link: on hover its words and its icon both
+   turn the first app's yellow. */
+.contactLink,
+.contactLink:visited {
+  color: rgb(255 255 255 / 0.9);
+  transition: color var(--snt-transition);
+}
+
+.contactLink:hover,
+.contactLink:hover .contactIcon {
+  color: var(--snt-brand-yellow);
+}
+
+/* --- socials --------------------------------------------------------- */
 
 .socials {
   display: flex;
-  justify-content: space-between;
-  max-width: 400px;
-  margin: 14px auto 0;
-  padding: 0 20px;
+  gap: 12px;
 }
 
-.social {
+.social,
+.social:hover {
   display: block;
-  width: 40px;
-  height: 40px;
-  padding: 6px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
   color: #fff;
-  filter: drop-shadow(15px 10px 15px rgb(0 0 0 / 0.5));
+  transition: opacity var(--snt-transition);
 }
 
 .social:hover {
-  color: #fff;
-  background: #1330587c;
+  opacity: 0.8;
 }
 
 .social svg {
@@ -114,66 +148,39 @@
   height: 100%;
 }
 
-/** © year, the company, all rights reserved — small, green, centred. */
-.info {
+/* --- the bottom bar -------------------------------------------------- */
+
+.bottom {
   display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin: 6px 0;
-  color: #1f978d;
-  font-size: 0.64rem;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(255 255 255 / 0.25);
+  font-size: var(--snt-text-xs);
+  color: rgb(255 255 255 / 0.85);
 }
 
-/* From tablet up: logo left, links in the middle, contact right. */
+/* From tablet up: three columns, the logo and socials first; the bottom bar
+   in one row. */
 @media (min-width: 768px) {
-  .main {
-    padding: 0;
-    border-radius: 0 0 0 30px;
-    text-align: end;
+  .inner {
+    padding: 48px 32px 20px;
   }
 
-  .content {
-    display: flex;
-    align-items: center;
+  .columns {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1.2fr;
+    gap: 40px;
+  }
+
+  .bottom {
+    flex-direction: row;
     justify-content: space-between;
-    gap: 20px;
-    max-width: 980px;
-    margin: auto;
-    padding: 20px;
+    gap: 24px;
   }
 
-  .logo {
-    justify-content: initial;
-    margin-bottom: 0;
-  }
-
-  .logoFull {
-    display: block;
-  }
-
-  .logoCompact {
-    display: none;
-  }
-
-  .links {
-    justify-content: center;
-    margin-bottom: 0;
-    text-align: center;
-  }
-
-  .contact {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-
-  .detail {
-    margin: 0;
-  }
-
-  .socials {
-    width: 300px;
-    margin: 6px 0 0;
-    padding: 0;
+  .disclosure {
+    text-align: right;
   }
 }

@@ -79,7 +79,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={poppins.variable}>
+    // The feed's first script marks <html> while it reads the filters from
+    // the address, before React loads (see (browse)/page.tsx); React is told
+    // that the mark is expected.
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body>
         {/* Each new page opens at its top. */}
         <ScrollToTop />

@@ -70,14 +70,19 @@ export function WantedCard({
             .filter(Boolean)
             .join(' ')}
         >
-          {/* Each word carries its mark: binoculars for a thing looked for,
-              the swap arrows for a trade in offered with it. */}
-          <BinocularsIcon size={14} weight={2} filled />
+          {/* Each word carries its mark, outlined on a small pale tile:
+              binoculars for a thing looked for, the swap arrows for a swap
+              offered with it. */}
+          <span className={styles.labelIcon}>
+            <BinocularsIcon size={14} />
+          </span>
           Wanted
           {tradeIn ? (
             <>
               <span aria-hidden>+</span>
-              <SwapIcon size={14} weight={2.2} />
+              <span className={styles.labelIcon}>
+                <SwapIcon size={14} />
+              </span>
               Swap
             </>
           ) : null}

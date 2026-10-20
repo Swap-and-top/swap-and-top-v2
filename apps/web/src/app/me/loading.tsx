@@ -8,6 +8,7 @@
 
 import {
   AppHeader,
+  Footer,
   Bone,
   ConsoleEntryRow,
   ListGroup,
@@ -88,7 +89,7 @@ export default function Loading() {
           </Stack>
         </SignInGate>
       </ScreenBody>
-
+      <Footer />
     </Screen>
   );
 }

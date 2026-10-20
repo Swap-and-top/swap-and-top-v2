@@ -293,22 +293,6 @@ export const MenuIcon = (props: IconProps) => (
   </Svg>
 );
 
-/** A page with lines, for terms and documents. */
-export const DocumentIcon = (props: IconProps) => (
-  <Svg {...props}>
-    <path d="M6.5 3.5h7l4 4v12a1 1 0 01-1 1h-10a1 1 0 01-1-1v-15a1 1 0 011-1z" />
-    <path d="M13.5 3.5v4h4M8.5 12h7M8.5 15.5h7" />
-  </Svg>
-);
-
-/** A padlock, for privacy. */
-export const LockIcon = (props: IconProps) => (
-  <Svg {...props}>
-    <rect x="5" y="10.5" width="14" height="10" rx="2" />
-    <path d="M8.5 10.5V7.5a3.5 3.5 0 017 0v3" />
-  </Svg>
-);
-
 /** A map pin, for an address. */
 export const PinIcon = (props: IconProps) => (
   <Svg {...props}>
@@ -552,21 +536,34 @@ export const BinocularsIcon = ({
  * place of the coins; the note's middle and the line of the thumb are
  * knocked out in the card's white so both still read.
  */
-export const CashHandIcon = (props: IconProps) => (
-  <Svg {...props}>
-    {/* The note, held up clear of the hand. */}
-    <rect x="9.5" y="2" width="12" height="6.5" rx="1.25" fill="currentColor" />
-    <circle cx="15.5" cy="5.25" r="1.5" fill="var(--snt-bg-card)" stroke="none" />
-    {/* The hand, palm up, under it. */}
-    <path
-      fill="currentColor"
-      d="M3 17l5.6-5.4c.3-.4.8-.6 1.4-.6h3a2 2 0 1 1 0 4l1.45-.61 4.2-3.9a2 2 0 0 1 2.75 2.91l-4.6 4.4c-.7.8-1.7 1.2-2.8 1.2h-4c-.6 0-1.1.2-1.4.6L7 21z"
-    />
-    <path d="M10.5 15h2.5" stroke="var(--snt-bg-card)" />
-    {/* The cuff at the wrist. */}
-    <path d="M2 16l6 6" />
-  </Svg>
-);
+export const CashHandIcon = ({
+  filled = true,
+  ...props
+}: IconProps & { filled?: boolean }) =>
+  filled ? (
+    <Svg {...props}>
+      {/* The note, held up clear of the hand. */}
+      <rect x="9.5" y="2" width="12" height="6.5" rx="1.25" fill="currentColor" />
+      <circle cx="15.5" cy="5.25" r="1.5" fill="var(--snt-bg-card)" stroke="none" />
+      {/* The hand, palm up, under it. */}
+      <path
+        fill="currentColor"
+        d="M3 17l5.6-5.4c.3-.4.8-.6 1.4-.6h3a2 2 0 1 1 0 4l1.45-.61 4.2-3.9a2 2 0 0 1 2.75 2.91l-4.6 4.4c-.7.8-1.7 1.2-2.8 1.2h-4c-.6 0-1.1.2-1.4.6L7 21z"
+      />
+      <path d="M10.5 15h2.5" stroke="var(--snt-bg-card)" />
+      {/* The cuff at the wrist. */}
+      <path d="M2 16l6 6" />
+    </Svg>
+  ) : (
+    // Outlined: the same note and hand, drawn in line only.
+    <Svg {...props}>
+      <rect x="9.5" y="2" width="12" height="6.5" rx="1.25" />
+      <circle cx="15.5" cy="5.25" r="1.2" />
+      <path d="M3 17l5.6-5.4c.3-.4.8-.6 1.4-.6h3a2 2 0 1 1 0 4l1.45-.61 4.2-3.9a2 2 0 0 1 2.75 2.91l-4.6 4.4c-.7.8-1.7 1.2-2.8 1.2h-4c-.6 0-1.1.2-1.4.6L7 21z" />
+      <path d="M10.5 15h2.5" />
+      <path d="M2 16l6 6" />
+    </Svg>
+  );
 
 /**
  * For sale: a price tag, with the hole its string goes through. Filled for

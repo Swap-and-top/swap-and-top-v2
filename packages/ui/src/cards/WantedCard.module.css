@@ -37,6 +37,19 @@
   color: var(--snt-wanted-ink);
 }
 
+/* An icon's tile: a small rounded square in a pale wash of the green, as the
+   app's other icons sit on theirs. */
+.labelIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--snt-wanted-ink) 12%, transparent);
+}
+
 .spacer {
   flex-grow: 1;
 }

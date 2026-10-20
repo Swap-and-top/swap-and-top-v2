@@ -13,6 +13,8 @@ export const COMPANY = {
   legalName: 'Greta Works Incorporated (Pvt) Ltd',
   phones: ['+263 774 689 010', '+263 784 224 614', '+263 719 217 717'],
   address: ['4442 Ceres Ave', 'Waterfalls', 'Harare'],
+  /** The general address, as on the first app's footer. */
+  email: 'mail@swapandtop.co.zw',
   feedbackEmail: 'feedback@swapandtop.co.zw',
   socials: [
     { name: 'Facebook', href: 'https://www.facebook.com' },

@@ -25,9 +25,6 @@ import {
 } from '@snt/core';
 import {
   CloseIcon,
-  DocumentIcon,
-  InfoIcon,
-  LockIcon,
   PhoneIcon,
   PinIcon,
 } from '../icons';
@@ -37,6 +34,7 @@ import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { SocialMark } from './SocialMarks';
 import { BurgerLines } from './BurgerLines';
 import { GuestMark } from './GuestMark';
+import { PrivacyMark, TermsMark, TipsMark } from './HelpMarks';
 import styles from './AppMenu.module.css';
 
 /** How long the menu takes to go, so it can slide or fade away first. */
@@ -67,17 +65,29 @@ export function AppMenu({
     window.setTimeout(onClose, CLOSE_MS);
   }
 
-  // Under the circle, right edges level, on a laptop.
+  // Under the circle, right edges level, on a laptop; measured again as the
+  // window is resized, so the menu moves with the circle it came from.
   useEffect(() => {
     if (!anchor) return;
-    const at = anchor.getBoundingClientRect();
-    setPlace({ top: at.bottom + 10, right: Math.max(12, window.innerWidth - at.right) });
-    setButton(at);
+    const measure = () => {
+      const at = anchor.getBoundingClientRect();
+      setPlace({ top: at.bottom + 10, right: Math.max(12, window.innerWidth - at.right) });
+      setButton(at);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    // The page's own width too, which follows the window at once.
+    const watcher = new ResizeObserver(measure);
+    watcher.observe(document.documentElement);
     // Drawn as three lines first, then crossed, so the change is seen.
     let frame = requestAnimationFrame(() => {
       frame = requestAnimationFrame(() => setCrossed(true));
     });
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      window.removeEventListener('resize', measure);
+      watcher.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, [anchor]);
 
   // Closes on a move to another page, Escape, or a tap outside.
@@ -222,7 +232,7 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
           <>
             {/* On a phone, with room above: the signed out mark, large. */}
             <span className={styles.guestMark}>
-              <GuestMark size={80} strokeWidth={2} />
+              <GuestMark size={80} strokeWidth={4} />
             </span>
             <p className={styles.name}>Welcome to Swap &amp; Top</p>
             <p className={styles.welcomeNote}>
@@ -243,9 +253,9 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
 
       {/* Green: help and the rules, in yellow. */}
       <nav className={`${styles.band} ${styles.helpBand}`} aria-label="Help">
-        <MenuRow href="/help" icon={<InfoIcon size={18} />} label="Safety and how to swap" onNavigate={onNavigate} />
-        <MenuRow href="/terms" icon={<DocumentIcon size={18} />} label="Terms of use" onNavigate={onNavigate} />
-        <MenuRow href="/privacy" icon={<LockIcon size={18} />} label="Privacy policy" onNavigate={onNavigate} />
+        <MenuRow href="/help" icon={<TipsMark />} label="Safety and how to swap" onNavigate={onNavigate} />
+        <MenuRow href="/terms" icon={<TermsMark />} label="Terms of use" onNavigate={onNavigate} />
+        <MenuRow href="/privacy" icon={<PrivacyMark />} label="Privacy policy" onNavigate={onNavigate} />
       </nav>
 
       {/* Light blue: call us, find us, side by side. */}
@@ -299,6 +309,9 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
             ))}
           </div>
         </div>
+        <p className={styles.disclosure}>
+          Swap &amp; Top is a product owned and operated by {COMPANY.legalName}.
+        </p>
         <p className={styles.copyright}>
           © {year} | {COMPANY.name}
         </p>

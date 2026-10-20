@@ -1,16 +1,21 @@
 'use client';
 
 /**
- * Footer — the site's foot, as the first app had it: on the brand gradient,
- * the logo, quick links, how to reach the company, its social links; and
- * under it, on the page, the copyright line.
+ * Footer — the site's foot, on the brand gradient in white: the logo and our
+ * social links, quick links, and how to reach the company; then, under a thin
+ * line, who owns the product and the copyright.
  *
- * Only on pages that stand apart from the feed for now — the sign-in page.
+ * On a phone the sections stack, lined up on the left; from tablet up they
+ * sit in three columns over a bottom bar.
+ *
+ * On pages with an end to reach: sign in, your profile, and the help and
+ * legal pages. Never on the feed or other lists that keep loading.
  */
 
 import Link from 'next/link';
-import { COMPANY } from '@snt/core';
-import { CompactLogo, Logo } from './Logo';
+import { COMPANY, telHref } from '@snt/core';
+import { MailIcon, PhoneIcon, PinIcon } from '../icons';
+import { Logo } from './Logo';
 import { SocialMark } from './SocialMarks';
 import styles from './Footer.module.css';
 
@@ -23,38 +28,17 @@ const LINKS = [
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const phone = COMPANY.phones[0];
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.main}>
-        <div className={styles.content}>
-          <Link href="/" className={styles.logo} aria-label="Swap & Top home">
-            <CompactLogo height={49} className={styles.logoCompact} />
-            <Logo height={36} className={styles.logoFull} />
-          </Link>
-
-          <nav className={styles.links} aria-label="Quick links">
-            <h3 className={styles.title}>Quick Links</h3>
-            {LINKS.map(({ href, label }) => (
-              <Link key={href} href={href} className={styles.link}>
-                {label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className={styles.contact}>
-            <h3 className={styles.title}>Contact Us</h3>
-            <p className={styles.detail}>
-              <span className={styles.detailLabel}>Phone:</span> +263774689010
-            </p>
-            <p className={styles.detail}>
-              <span className={styles.detailLabel}>Email:</span>{' '}
-              mail@swapandtop.co.zw
-            </p>
-            <p className={styles.detail}>
-              <span className={styles.detailLabel}>Address:</span> 4442 Ceres
-              Ave, Waterfalls, Harare
-            </p>
+      <div className={styles.inner}>
+        <div className={styles.columns}>
+          {/* The logo, with our socials under it. */}
+          <div className={styles.brand}>
+            <Link href="/" className={styles.logo} aria-label="Swap & Top home">
+              <Logo height={34} />
+            </Link>
             <div className={styles.socials}>
               {COMPANY.socials.map(({ name, href }) => (
                 <a
@@ -70,13 +54,61 @@ export function Footer() {
               ))}
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className={styles.info}>
-        <span>© {year}</span>
-        <span className={styles.company}>Greta Works Inc.</span>
-        <span>| All rights reserved</span>
+          <nav className={styles.section} aria-label="Quick links">
+            <h3 className={styles.title}>Quick links</h3>
+            <ul className={styles.list}>
+              {LINKS.map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} className={styles.link}>
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className={styles.section}>
+            <h3 className={styles.title}>Contact us</h3>
+            <ul className={styles.list}>
+              {/* The phone and the email are links, icon and all: both turn
+                  yellow together on hover. */}
+              <li>
+                <a href={telHref(phone)} className={[styles.contact, styles.contactLink].join(' ')}>
+                  <span className={styles.contactIcon}>
+                    <PhoneIcon size={16} />
+                  </span>
+                  {phone}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${COMPANY.email}`}
+                  className={[styles.contact, styles.contactLink].join(' ')}
+                >
+                  <span className={styles.contactIcon}>
+                    <MailIcon size={16} />
+                  </span>
+                  {COMPANY.email}
+                </a>
+              </li>
+              <li className={styles.contact}>
+                <span className={styles.contactIcon}>
+                  <PinIcon size={16} />
+                </span>
+                <span>{COMPANY.address.join(', ')}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Under a thin line: who owns the product, and the copyright. */}
+        <div className={styles.bottom}>
+          <p>© {year} {COMPANY.name} All rights reserved.</p>
+          <p className={styles.disclosure}>
+            Swap &amp; Top is a product owned and operated by {COMPANY.legalName}.
+          </p>
+        </div>
       </div>
     </footer>
   );

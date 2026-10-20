@@ -102,11 +102,9 @@ export function OfferSheet({
           {/* Marked as on its card in the feed: Wanted in green; a sale,
               which a trade in is offered towards, in the blue of For sale. */}
           <span className={styles.askLabel}>
-            {forSale ? (
-              <TagIcon size={16} filled />
-            ) : (
-              <BinocularsIcon size={16} weight={2} filled />
-            )}
+            <span className={styles.labelIcon}>
+              {forSale ? <TagIcon size={16} /> : <BinocularsIcon size={16} />}
+            </span>
             {forSale ? 'For sale' : 'Wanted'}
           </span>
           {/* The item, with its budget or terms beside it. */}
@@ -121,7 +119,9 @@ export function OfferSheet({
       {mine ? (
         <div className={[styles.inSheet, styles.form].join(' ')}>
           <h3 className={styles.formTitle}>
-            <CashHandIcon size={17} />
+            <span className={styles.labelIcon}>
+              <CashHandIcon size={17} filled={false} />
+            </span>
             Your offer
           </h3>
           <OfferCard offer={mine} view="made" />
@@ -224,10 +224,12 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
 
   return (
     <form className={styles.form} onSubmit={submit}>
-      {/* Marked like the WANTED label above it: a filled hand held out,
-          offering something, in the blue of what is yours. */}
+      {/* Marked like the WANTED label above it: a hand held out, offering
+          something, outlined on its tile, in the blue of what is yours. */}
       <h3 className={styles.formTitle}>
-        <CashHandIcon size={17} />
+        <span className={styles.labelIcon}>
+          <CashHandIcon size={17} filled={false} />
+        </span>
         {listing.type === 'sale' ? 'Offer a swap' : 'Make an offer'}
       </h3>
 
