@@ -56,29 +56,12 @@ export const CATEGORIES: (Category | 'all')[] = [
 ];
 
 export const TYPES: TabItem<TypeFilter>[] = [
-  // The same icons as the bottom bar that carries these on a phone; the
-  // active tab's is filled in. The swap arrows have no inside to fill, so
-  // they go heavier instead.
-  {
-    value: 'all',
-    label: 'All Types',
-    icon: (active) => <GridIcon size={18} filled={active} />,
-  },
-  {
-    value: 'swap',
-    label: 'Swaps',
-    icon: (active) => <SwapIcon size={18} weight={active ? 2.6 : 1.9} />,
-  },
-  {
-    value: 'sale',
-    label: 'For Sale',
-    icon: (active) => <TagIcon size={18} filled={active} />,
-  },
-  {
-    value: 'request',
-    label: 'Wanted',
-    icon: (active) => <BinocularsIcon size={18} filled={active} />,
-  },
+  // The same icons as the bottom bar that carries these on a phone, outlined,
+  // each on its tile (see Tabs): the active tab's tile fills with the blue.
+  { value: 'all', label: 'All Types', icon: <GridIcon size={16} /> },
+  { value: 'swap', label: 'Swaps', icon: <SwapIcon size={16} /> },
+  { value: 'sale', label: 'For Sale', icon: <TagIcon size={16} /> },
+  { value: 'request', label: 'Wanted', icon: <BinocularsIcon size={16} /> },
 ];
 
 /** The feed. Its server half, page.tsx, reads the filters from the address. */

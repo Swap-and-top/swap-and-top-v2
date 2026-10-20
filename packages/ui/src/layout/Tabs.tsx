@@ -115,9 +115,12 @@ export function Tabs<T extends string>({
         >
           {tab.icon ? (
             <span className={styles.withIcon}>
-              {typeof tab.icon === 'function'
-                ? tab.icon(tab.value === active)
-                : tab.icon}
+              {/* The icon on its tile, as icons sit across the app. */}
+              <span className={styles.tabIcon}>
+                {typeof tab.icon === 'function'
+                  ? tab.icon(tab.value === active)
+                  : tab.icon}
+              </span>
               {tab.label}
             </span>
           ) : (

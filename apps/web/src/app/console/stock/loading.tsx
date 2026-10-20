@@ -13,7 +13,6 @@ export default function Loading() {
     <ConsoleShell
       shop={currentShop}
       title="Stock"
-      meta={<Bone width={200} height={11} />}
       newLeadCount={newLeadCount}
       actions={
         <div className={styles.toolbar}>
@@ -31,6 +30,9 @@ export default function Loading() {
         </div>
       }
     >
+      <p className={styles.summary}>
+        <Bone width={220} height={12} />
+      </p>
       <div className={styles.list} aria-busy aria-label="Loading your stock">
         <div className={styles.headerRow} aria-hidden>
           <span />

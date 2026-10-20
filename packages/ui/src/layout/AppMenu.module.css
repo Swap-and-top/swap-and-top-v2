@@ -239,9 +239,41 @@
   flex-shrink: 0;
 }
 
-/* The signed out mark: on a phone only (see below). */
+/* The signed out mark, in the menu's blue, and the welcome beside it: from
+   tablet up as a signed in picture and name sit; on a phone the mark larger,
+   centred above the welcome (see below). */
+.guestWho {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+}
+
+.guestText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+/* A step smaller beside the mark, so the welcome keeps to one line. */
+.guestText .name {
+  padding-right: 0;
+  font-size: var(--snt-text-lg);
+}
+
+.guestText .welcomeNote {
+  margin-top: 0;
+}
+
 .guestMark {
-  display: none;
+  display: flex;
+  flex-shrink: 0;
+  color: var(--menu-deep);
+}
+
+.guestMark svg {
+  width: 56px;
+  height: 56px;
 }
 
 .whoText {
@@ -258,11 +290,11 @@
   color: var(--menu-deep);
 }
 
-/* Sign in, on the header's blue to green gradient. */
+/* Sign in, on the header's gradient turned round: green to blue. */
 .profileBand .signInButton,
 .profileBand .signInButton:hover {
   border-color: transparent;
-  background: var(--snt-brand-gradient);
+  background: linear-gradient(90deg, var(--snt-brand-green), var(--snt-brand-blue));
   color: var(--snt-ink-on-dark);
 }
 
@@ -496,10 +528,25 @@
 
   /* Signed out, the same: a large mark in the menu's blue, the welcome
      centred under it. */
-  .guestMark {
-    display: flex;
-    justify-content: center;
-    color: var(--menu-deep);
+  .guestWho {
+    flex-direction: column;
+    gap: var(--snt-space-6);
+    padding-right: 0;
+  }
+
+  .guestText {
+    align-items: center;
+    gap: var(--snt-space-2);
+  }
+
+  /* Centred under the mark, with the room for its full size. */
+  .guestText .name {
+    font-size: var(--snt-text-xl);
+  }
+
+  .guestMark svg {
+    width: 80px;
+    height: 80px;
   }
 
   .guest .name,
@@ -557,5 +604,98 @@
 
   .whoAvatar > span > span {
     font-size: 20px !important;
+  }
+}
+
+/*
+ * The dropdown, from tablet up, scaled down a little all through so it fits
+ * a smaller laptop screen: smaller type, tighter bands, smaller tiles,
+ * buttons and socials. Phones keep the sizes above.
+ */
+@media (min-width: 768px) {
+  .close {
+    top: var(--snt-space-8);
+    width: 30px;
+    height: 30px;
+  }
+
+  .profileBand {
+    gap: var(--snt-space-5);
+    padding: calc(var(--snt-space-8) + 30px) var(--snt-space-9) calc(22px + var(--snt-space-6));
+  }
+
+  .name {
+    font-size: var(--snt-text-lg);
+  }
+
+  .guestText .name {
+    font-size: var(--snt-text-md);
+  }
+
+  .welcomeNote {
+    font-size: var(--snt-text-sm);
+  }
+
+  /* The signed out mark: smaller, its outline thin. */
+  .guestMark svg {
+    width: 44px;
+    height: 44px;
+  }
+
+  .guestMark svg * {
+    stroke-width: 2px;
+  }
+
+  .whoAvatar > span {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .whoAvatar > span > span {
+    font-size: 17px !important;
+  }
+
+  .pair > *,
+  .profileBand > a {
+    height: 38px;
+    font-size: var(--snt-text-base);
+  }
+
+  .band {
+    padding: var(--snt-space-7) var(--snt-space-9) calc(22px + var(--snt-space-7));
+  }
+
+  .row {
+    min-height: 34px;
+    gap: var(--snt-space-5);
+    font-size: var(--snt-text-base);
+  }
+
+  .rowIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+  }
+
+  .contactIcon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+
+  .contactLines,
+  .socialBand {
+    font-size: var(--snt-text-sm);
+  }
+
+  .socialBand {
+    gap: var(--snt-space-7);
+    padding-bottom: var(--snt-space-8);
+  }
+
+  .social,
+  .social:hover {
+    width: 36px;
+    height: 36px;
   }
 }

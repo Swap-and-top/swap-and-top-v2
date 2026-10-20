@@ -107,7 +107,7 @@ export function OfferSheet({
             </span>
             {forSale ? 'For sale' : 'Wanted'}
           </span>
-          {/* The item, with its budget or terms beside it. */}
+          {/* The item, with its budget or terms under it. */}
           <span className={styles.askLine}>
             <span className={styles.askItem}>{ask.item}</span>
             <span className={styles.askTerms}>{ask.terms}</span>

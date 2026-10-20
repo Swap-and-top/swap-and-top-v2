@@ -220,8 +220,11 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
                 variant="secondary"
                 size="md"
                 onClick={() => {
-                  signOut();
+                  // The menu goes first, still showing you; you are signed
+                  // out once it has gone, so it never flips to the signed
+                  // out view as it fades.
                   onNavigate();
+                  window.setTimeout(signOut, CLOSE_MS);
                 }}
               >
                 Sign out
@@ -230,14 +233,20 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
           </>
         ) : (
           <>
-            {/* On a phone, with room above: the signed out mark, large. */}
-            <span className={styles.guestMark}>
-              <GuestMark size={80} strokeWidth={4} />
-            </span>
-            <p className={styles.name}>Welcome to Swap &amp; Top</p>
-            <p className={styles.welcomeNote}>
-              Sign in to post, save listings, and send and receive offers.
-            </p>
+            {/* The signed out mark and the welcome: side by side from tablet
+                up, as a signed in picture and name are; on a phone, the mark
+                large and centred above the welcome. */}
+            <div className={styles.guestWho}>
+              <span className={styles.guestMark}>
+                <GuestMark size={80} strokeWidth={4} />
+              </span>
+              <div className={styles.guestText}>
+                <p className={styles.name}>Welcome to Swap &amp; Top</p>
+                <p className={styles.welcomeNote}>
+                  Sign in to post, save listings, and send and receive offers.
+                </p>
+              </div>
+            </div>
             <ButtonLink
               href={`/signin?next=${encodeURIComponent(next)}`}
               size="md"

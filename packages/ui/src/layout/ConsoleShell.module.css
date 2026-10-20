@@ -80,9 +80,32 @@
 
 .titleRow {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--snt-space-5);
-  flex-wrap: wrap;
+}
+
+/* The title, and the line saying what the page is for, under it. */
+.titleText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+/* The section's icon beside the title, on a rounded square: the app's icon
+   tiles, at the larger size the post page uses, for a large title. The title
+   sits on the page's pale blue, not on a card, so the tile is the icon's own
+   blue turned well down, a shade deeper than the page. */
+.titleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--snt-radius-lg);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, transparent);
+  color: var(--snt-control-active);
 }
 
 .titleMeta {
@@ -128,16 +151,18 @@
   color: var(--snt-ink);
 }
 
-/* The pill behind an icon: clear when idle, the control blue with a white
-   icon on the page on show. */
+/* The tile behind an icon: a rounded square, pale blue when idle, as icons
+   sit across the app; the control blue with a white icon on the page on
+   show. */
 .navPill {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 28px;
-  border-radius: var(--snt-radius-pill);
+  width: 44px;
+  height: 30px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--snt-control-active) 10%, transparent);
   transition:
     background 200ms ease,
     color 200ms ease;
@@ -322,15 +347,69 @@
       color var(--snt-transition);
   }
 
-  .sidebarItem:hover {
-    color: var(--snt-ink-on-dark);
-    background: color-mix(in srgb, white 6%, transparent);
+  /*
+   * The row's highlight, hovered or on show, is drawn behind it with the
+   * icon's tile cut out of it: the tile is a hole in the highlight, showing
+   * the sidebar's own blue, rather than a second layer laid on top.
+   */
+  .sidebarItem::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--row-highlight, transparent);
+    transition: background var(--snt-transition);
+    -webkit-mask:
+      linear-gradient(#000 0 0),
+      var(--tile-hole) var(--tile-at) / 30px 30px no-repeat;
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0),
+      var(--tile-hole) var(--tile-at) / 30px 30px no-repeat;
+    mask-composite: exclude;
   }
 
-  .sidebarItemActive {
-    background: color-mix(in srgb, white 16%, transparent);
+  .sidebarItem {
+    isolation: isolate;
+    /* The tile's shape, and where it sits: where the icon's tile does. */
+    --tile-hole: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Crect width='30' height='30' rx='9'/%3E%3C/svg%3E");
+    --tile-at: var(--snt-space-6) center;
+  }
+
+  .collapsed .sidebarItem {
+    --tile-at: center;
+  }
+
+  .sidebarItem:hover {
+    color: var(--snt-ink-on-dark);
+    --row-highlight: color-mix(in srgb, white 6%, transparent);
+  }
+
+  .sidebarItemActive,
+  .sidebarItemActive:hover {
+    --row-highlight: color-mix(in srgb, white 16%, transparent);
     color: var(--snt-ink-on-dark);
     font-weight: var(--snt-weight-semibold);
+  }
+
+  /* The icon on a faded white tile over the sidebar's blue; on a highlighted
+     row, the tile is the hole in the highlight instead. */
+  .sidebarIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: color-mix(in srgb, white 14%, transparent);
+    transition: background var(--snt-transition);
+  }
+
+  .sidebarItem:hover .sidebarIcon,
+  .sidebarItemActive .sidebarIcon {
+    background: transparent;
   }
 
   .sidebarLabel {

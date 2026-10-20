@@ -114,8 +114,25 @@
   --snt-bg-surface: var(--snt-bg-app);
 }
 
-.withIcon > svg {
+/* The icon's tile: a rounded square, pale blue, as on the bottom bar; on
+   the tab on show it fills with the blue and the icon turns white. */
+.tabIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--snt-control-active) 10%, transparent);
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+.tabActive .tabIcon {
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
 }
 
 /**

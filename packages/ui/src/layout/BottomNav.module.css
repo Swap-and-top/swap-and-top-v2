@@ -42,26 +42,28 @@
 }
 
 /*
- * The pill behind an icon: a sideways oval, clear when idle. On the active
- * item it fills with the control blue and its icon turns white — far easier
- * to pick out at a glance than a change of icon weight alone.
+ * The tile behind an icon: a rounded rectangle, pale blue when idle, as on
+ * the dealer console's bar and icons across the app. On the active item it
+ * fills with the control blue and its icon turns white — far easier to pick
+ * out at a glance than a change of icon weight alone.
  *
  * The blue is its own layer so it can move, the same way as on the category
- * chips: it slides into the tapped item's pill from the side of the item that
+ * chips: it slides into the tapped item's tile from the side of the item that
  * had it, while that one simply dissolves. The bar notes which way (see
  * BottomNav.tsx); with nothing noted, it opens from the centre.
  */
 .pill {
   position: relative;
-  /* Keeps the blue, which sits behind the icon, inside the oval. */
+  /* Keeps the blue, which sits behind the icon, inside the tile. */
   isolation: isolate;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 28px;
-  border-radius: var(--snt-radius-pill);
+  width: 44px;
+  height: 30px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--snt-control-active) 10%, transparent);
   transition: color 200ms ease;
 }
 
@@ -118,7 +120,7 @@
   }
 }
 
-/* Pressed: the icon's pill gives a little, at once. */
+/* Pressed: the icon's tile gives a little, at once. */
 .item:active .pill {
   transform: scale(0.92);
 }

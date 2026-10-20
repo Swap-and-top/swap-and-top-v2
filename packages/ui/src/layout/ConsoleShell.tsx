@@ -37,6 +37,8 @@ interface ConsoleNavItem {
   label: string;
   shortLabel: string;
   icon: (active: boolean) => ReactNode;
+  /** The same icon, larger, beside the page's title. */
+  titleIcon: ReactNode;
   /** Unread count, e.g. new leads. */
   count?: number;
 }
@@ -79,6 +81,7 @@ export function ConsoleShell({
       label: 'Stock',
       shortLabel: 'Stock',
       icon: (active) => <BoxIcon size={20} weight={active ? 1.9 : 1.7} />,
+      titleIcon: <BoxIcon size={24} />,
       count: stockCount,
     },
     {
@@ -86,6 +89,7 @@ export function ConsoleShell({
       label: 'Leads',
       shortLabel: 'Leads',
       icon: (active) => <ChartIcon size={20} weight={active ? 1.9 : 1.7} />,
+      titleIcon: <ChartIcon size={24} />,
       count: newLeadCount,
     },
     {
@@ -95,6 +99,7 @@ export function ConsoleShell({
       label: 'Swap offers',
       shortLabel: 'Swaps',
       icon: (active) => <SwapIcon size={20} weight={active ? 2.1 : 1.9} />,
+      titleIcon: <SwapIcon size={24} />,
       count: tradeInCount,
     },
     {
@@ -102,6 +107,7 @@ export function ConsoleShell({
       label: 'Promote',
       shortLabel: 'Promote',
       icon: (active) => <MegaphoneIcon size={20} weight={active ? 2.1 : 1.9} />,
+      titleIcon: <MegaphoneIcon size={24} />,
     },
     {
       // The shop as buyers see it, inside the console; the public page is a
@@ -110,11 +116,14 @@ export function ConsoleShell({
       label: 'Shop profile',
       shortLabel: 'Shop',
       icon: (active) => <ShopIcon size={20} weight={active ? 1.9 : 1.7} />,
+      titleIcon: <ShopIcon size={24} />,
     },
   ];
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
+  /** The section this page is in: its icon heads the page. */
+  const section = items.find((item) => isActive(item.href));
 
   return (
     <div className={styles.shell}>
@@ -166,7 +175,8 @@ export function ConsoleShell({
                   .filter(Boolean)
                   .join(' ')}
               >
-                {item.icon(active)}
+                {/* The icon on its tile, as icons sit across the app. */}
+                <span className={styles.sidebarIcon}>{item.icon(active)}</span>
                 <span className={styles.sidebarLabel}>{item.label}</span>
                 {(item.label === 'Leads' || item.label === 'Swap offers') &&
                 item.count ? (
@@ -206,13 +216,22 @@ export function ConsoleShell({
       <div className={styles.main}>
         <div className={styles.titleBand}>
           <div className={styles.titleRow}>
-            {/* No title yet: the page is loading, and a bar stands in. */}
-            {title ? (
-              <ScreenTitle>{title}</ScreenTitle>
-            ) : (
-              <Bone width={120} height={22} />
-            )}
-            {meta ? <span className={styles.titleMeta}>{meta}</span> : null}
+            {/* The section's icon, larger, on its pale tile. */}
+            {section ? (
+              <span className={styles.titleIcon} aria-hidden>
+                {section.titleIcon}
+              </span>
+            ) : null}
+            {/* The title, and what the page is for under it. */}
+            <div className={styles.titleText}>
+              {/* No title yet: the page is loading, and a bar stands in. */}
+              {title ? (
+                <ScreenTitle>{title}</ScreenTitle>
+              ) : (
+                <Bone width={120} height={22} />
+              )}
+              {meta ? <span className={styles.titleMeta}>{meta}</span> : null}
+            </div>
           </div>
           {actions}
         </div>

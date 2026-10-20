@@ -89,6 +89,13 @@
   display: none;
 }
 
+/* The count line over the table, in the blue. */
+.summary {
+  margin-bottom: var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+}
+
 .list {
   display: flex;
   flex-direction: column;

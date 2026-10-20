@@ -50,13 +50,11 @@
   background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
-/** The item, and its budget or terms beside it, wrapping under if long. */
+/** The item, and its budget or terms under it. */
 .askLine {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: var(--snt-space-5);
-  row-gap: var(--snt-space-1);
+  flex-direction: column;
+  gap: var(--snt-space-1);
 }
 
 .askItem {

@@ -149,7 +149,7 @@ export default function ConsoleStockPage() {
   const count = (status: string) =>
     all.filter((listing) => listing.status === status).length;
   // The count line: what is live, then anything else there is.
-  const meta = [
+  const summary = [
     `${count('live')} live`,
     count('paused') ? `${count('paused')} paused` : '',
     count('sold') ? `${count('sold')} sold this week` : '',
@@ -164,7 +164,6 @@ export default function ConsoleStockPage() {
     <ConsoleShell
       shop={currentShop}
       title="Stock"
-      meta={meta}
       newLeadCount={newLeadCount}
       stockCount={all.length}
       actions={
@@ -216,6 +215,8 @@ export default function ConsoleStockPage() {
         </div>
       }
     >
+      {/* What there is, just above the table. */}
+      <p className={styles.summary}>{summary}</p>
       <div className={styles.list}>
         {/* Desktop only — the table's column headings. */}
         <div className={styles.headerRow} aria-hidden>
