@@ -6,22 +6,214 @@
   color: var(--snt-accent-bold);
 }
 
+/* A clear gap between one listing's last offer and the next listing; inside
+   a group, the heading and the offers sit close under their listing. */
 .groups {
   display: flex;
   flex-direction: column;
-  gap: var(--snt-space-10);
+  gap: calc(var(--snt-space-10) * 2);
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: var(--snt-space-5);
+  gap: var(--snt-space-4);
 }
 
-/* Which listing these are for: in the bold blue, as headings are. */
-.for,
-.for:hover {
+/* --- the listing, in brief ------------------------------------------------ */
+
+/* White, as every listing is; the offers under it are on the pale blue. */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-7);
+  padding: var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.summaryMain {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-7);
+  min-width: 0;
+}
+
+.thumb {
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-md);
+}
+
+.thumbWanted {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-wanted-fill);
+  color: var(--snt-ink-on-dark);
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.kindRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-bottom: var(--snt-space-1);
+}
+
+/* "Wanted", "Swap", "For sale", after the feed's icon on a pale wash of
+   its own colour, as on the cards in the feed. */
+.kind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--snt-control-active);
+}
+
+.kindIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/* Wanted in its green, as the Wanted cards in the feed are. */
+.kindWanted {
+  color: var(--snt-wanted-ink);
+}
+
+.name {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  line-height: var(--snt-leading-snug);
   color: var(--snt-accent-bold);
+}
+
+.terms {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+}
+
+.meta {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* Full width under it on a phone; to the right of it from tablet up. */
+.see {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .summary {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .see {
+    width: auto;
+    flex-shrink: 0;
+  }
+}
+
+/* --- its offers ------------------------------------------------------------ */
+
+.offersHead {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  /* Flush with the listing above; the thread starts under it. */
+  padding-left: 0;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* How many, in a round, as the tabs count. */
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--snt-space-3);
+  border-radius: var(--snt-radius-pill);
+  background: color-mix(in srgb, var(--snt-control-active) 18%, transparent);
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-xs);
+  line-height: 1;
+}
+
+/* The offers, set in under the listing as replies in a thread. */
+.offers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--thread-gap);
+  padding-left: var(--thread-indent);
+  /* Where the line runs, how far in the offers sit, the space between them
+     and the space up to the heading the line starts under. */
+  --thread: color-mix(in srgb, var(--snt-control-active) 35%, var(--snt-bg-app));
+  --thread-x: 0px;
+  --thread-indent: 18px;
+  --thread-gap: var(--snt-space-5);
+  --thread-lead: var(--snt-space-4);
+}
+
+/* Each offer hangs off the line as a reply does in a comment thread: the
+   line comes down and curves into the middle of its left edge. */
+.offers > * {
+  position: relative;
+}
+
+.offers > *::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--thread-x) - var(--thread-indent));
+  top: calc(var(--thread-gap) * -1);
+  width: calc(var(--thread-indent) - var(--thread-x));
+  height: calc(50% + var(--thread-gap));
+  border-left: 2px solid var(--thread);
+  border-bottom: 2px solid var(--thread);
+  border-bottom-left-radius: 12px;
+  pointer-events: none;
+}
+
+/* The first starts right under the heading. */
+.offers > :first-child::before {
+  top: calc(var(--thread-lead) * -1);
+  height: calc(50% + var(--thread-lead));
+}
+
+/* Past each but the last, the line runs straight on, from the top of
+   the offer to its foot, so it meets the next one's without a break and
+   the curve branches off it. */
+.offers > :not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--thread-x) - var(--thread-indent));
+  top: 0;
+  bottom: 0;
+  border-left: 2px solid var(--thread);
+  pointer-events: none;
 }
 
 .none {

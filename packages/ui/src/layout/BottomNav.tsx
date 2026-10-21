@@ -77,6 +77,8 @@ export function BottomNav({
   return (
     <nav
       className={styles.nav}
+      // Toasts sit above it (see ToastOffset in the web app).
+      data-bottom-bar
       aria-label="Listing type"
       onClickCapture={noteDirection}
     >

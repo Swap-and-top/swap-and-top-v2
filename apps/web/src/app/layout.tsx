@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Toaster } from 'sonner';
+import { ToastOffset } from '@/components/ToastOffset';
 import { SignInHost } from '@snt/ui';
 import { PageLoadBar } from '@/components/PageLoadBar';
 import { ScrollToTop } from '@/components/ScrollToTop';
@@ -94,15 +95,17 @@ export default function RootLayout({
         <SignInHost />
         {/* Short confirmations — "Saved". Bottom left on a
             desktop; on a phone sonner runs them the full width of the screen,
-            at the bottom, clear of the bottom bar. Green when the thing
+            at the bottom: just above a bottom bar where there is one, and
+            otherwise at the foot (see ToastOffset). Green when the thing
             worked, red when it did not (see globals.css). */}
         <Toaster
           position="bottom-left"
           richColors
           offset={24}
-          mobileOffset={{ bottom: 80 }}
+          mobileOffset={{ bottom: 12 }}
           duration={2500}
         />
+        <ToastOffset />
       </body>
     </html>
   );

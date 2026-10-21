@@ -243,7 +243,7 @@ export function ConsoleShell({
       </div>
 
       {/* Bottom nav — phone only. */}
-      <nav className={styles.bottomNav} aria-label="Console">
+      <nav className={styles.bottomNav} aria-label="Console" data-bottom-bar>
         {items.map((item) => {
           const active = isActive(item.href);
           return (

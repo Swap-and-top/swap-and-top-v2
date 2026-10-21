@@ -28,15 +28,18 @@ export function OffersReceived({ listing }: { listing: OfferableListing }) {
   const received = offersOn(offers, listing.id);
 
   return (
-    <section id="offers" className={styles.list}>
-      {/* In the blue of what is yours, with how many in brackets. */}
+    <section id="offers" className={[styles.list, styles.listUnder].join(' ')}>
+      {/* In the blue of what is yours, with how many in a round. */}
       <h2 className={styles.receivedTitle}>
-        Offers on your listing ({received.length})
+        Offers on this listing
+        <span className={styles.count}>{received.length}</span>
       </h2>
       {received.length > 0 ? (
-        received.map((offer) => (
-          <OfferCard key={offer.id} offer={offer} view="received" />
-        ))
+        <div className={styles.rail}>
+          {received.map((offer) => (
+            <OfferCard key={offer.id} offer={offer} view="received" />
+          ))}
+        </div>
       ) : (
         <p className={styles.none}>
           No offers yet. They will appear here, side by side, as they come in.

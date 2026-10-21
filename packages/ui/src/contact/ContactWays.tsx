@@ -150,13 +150,58 @@ export function ContactWayRow({
   );
 }
 
-/** Several ways, as a list of rows. */
+/**
+ * One way, revealed, as a small tile: its icon, its name over its number or
+ * address, and the whole tile a link to it. For the introduction on an
+ * accepted offer, where several sit side by side in little room.
+ */
+function ContactWayTile({
+  way,
+  ways,
+  message,
+}: {
+  way: ContactWay;
+  ways: ContactWays;
+  message?: string;
+}) {
+  const { label, Icon } = WAY_META[way];
+  const elsewhere = opensElsewhere(way);
+  return (
+    <a
+      href={hrefFor(way, ways, elsewhere ? message : undefined)}
+      {...(elsewhere ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className={[styles.tile, styles[way]].join(' ')}
+    >
+      <span className={styles.tileIcon}>
+        <Icon size={16} />
+      </span>
+      <span className={styles.tileText}>
+        <span className={styles.tileLabel}>{label}</span>
+        <span className={styles.tileDetail}>
+          {/* An address may break after its @ when the tile is narrow. */}
+          {way === 'email' && ways.email?.includes('@') ? (
+            <>
+              {ways.email.split('@')[0]}@<wbr />
+              {ways.email.split('@').slice(1).join('@')}
+            </>
+          ) : (
+            detailOf(way, ways)
+          )}
+        </span>
+      </span>
+    </a>
+  );
+}
+
+/** Several ways, as a list of rows; or, `compact`, as small tiles side by
+    side (all revealed), stacking on a phone. */
 export function ContactWayList({
   ways,
   only,
   revealed,
   onUse,
   message,
+  compact = false,
 }: {
   ways: ContactWays;
   /** The ways to list, in order; all the ones given, by default. */
@@ -165,8 +210,31 @@ export function ContactWayList({
   revealed: true | ContactWay[];
   onUse?: (way: ContactWay) => void;
   message?: string;
+  compact?: boolean;
 }) {
   const listed = only ?? waysOffered(ways);
+  if (compact) {
+    // On a phone only WhatsApp and a call share a row, when both are there:
+    // their numbers are short. An email or a Messenger name may be long, so
+    // those, and a number on its own, take the whole width.
+    const paired = listed.includes('whatsapp') && listed.includes('call');
+    return (
+      <ul className={styles.tiles}>
+        {listed.map((way) => (
+          <li
+            key={way}
+            className={
+              paired && (way === 'whatsapp' || way === 'call')
+                ? undefined
+                : styles.tileWide
+            }
+          >
+            <ContactWayTile way={way} ways={ways} message={message} />
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
     <ul className={styles.list}>
       {listed.map((way) => (

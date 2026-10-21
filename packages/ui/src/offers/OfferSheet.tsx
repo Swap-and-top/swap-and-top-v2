@@ -16,7 +16,7 @@
  * the option to withdraw it.
  */
 
-import { useId, useState, type FormEvent } from 'react';
+import { useEffect, useId, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import {
   CONDITION_LABELS,
@@ -76,6 +76,16 @@ function ownItems(
     });
 }
 
+/** Closes the sheet it is in as soon as it is shown: the offer it was
+    opened on has been withdrawn. */
+function CloseWhenWithdrawn() {
+  const close = useCloseSheet();
+  useEffect(() => {
+    close();
+  }, [close]);
+  return null;
+}
+
 export function OfferSheet({
   listing,
   onClose,
@@ -85,6 +95,13 @@ export function OfferSheet({
 }) {
   const offers = useOfferStore((store) => store.offers);
   const mine = myOfferOn(offers, listing.id, useViewerId());
+  /** The offer the sheet opened on, if any. Once it is withdrawn the sheet
+      closes, showing it to the end, rather than turning into a new offer. */
+  const [openedOn] = useState(mine?.id);
+  const opened = openedOn
+    ? offers.find((offer) => offer.id === openedOn)
+    : undefined;
+  const shown = mine ?? opened;
   const ask = askParts(listing);
   const forSale = listing.type === 'sale';
 
@@ -116,7 +133,8 @@ export function OfferSheet({
       }
       onClose={onClose}
     >
-      {mine ? (
+      {opened && !mine ? <CloseWhenWithdrawn /> : null}
+      {shown ? (
         <div className={[styles.inSheet, styles.form].join(' ')}>
           <h3 className={styles.formTitle}>
             <span className={styles.labelIcon}>
@@ -124,7 +142,8 @@ export function OfferSheet({
             </span>
             Your offer
           </h3>
-          <OfferCard offer={mine} view="made" />
+          {/* Opened from the listing itself: no need to name it again. */}
+          <OfferCard offer={shown} view="made" underListing />
         </div>
       ) : (
         <OfferForm listing={listing} />

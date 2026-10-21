@@ -190,10 +190,10 @@
   text-align: center;
 }
 
-/* Edit and Manage, on your own listing: the last thing in the card. */
+/* Edit and Manage, on your own listing: the last thing in the card, with
+   no rule above. */
 .edit {
   padding: var(--snt-space-6) 0 var(--snt-space-7);
-  border-top: 1px solid var(--rule);
 }
 
 /* --- under the card -------------------------------------------------------- */

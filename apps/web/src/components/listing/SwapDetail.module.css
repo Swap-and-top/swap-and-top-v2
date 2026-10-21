@@ -281,10 +281,8 @@
   }
 }
 
-.offers:not(:empty) {
-  margin-top: var(--snt-space-8);
-}
-
+/* The offers keep their own spacing: close under the post (see
+   OffersReceived). */
 /** The actions, under who posted it. */
 .actions {
   margin-top: var(--snt-space-6);

@@ -49,7 +49,9 @@
   width: 34px;
   height: 34px;
   border-radius: var(--snt-radius-md);
-  background: var(--snt-bg-inset);
+  /* A see through wash of the way's own colour, so it stays faded on a
+     tinted card (an offer's pale blue) as on white. */
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 /* Each way in its own colour, its icon, its tile and its name together:
@@ -64,16 +66,8 @@
   color: var(--snt-success);
 }
 
-.row.whatsapp .rowIcon {
-  background: var(--snt-success-tint);
-}
-
 .row.messenger {
   color: #1877f2;
-}
-
-.row.messenger .rowIcon {
-  background: #e8f1fe;
 }
 
 .rowLabel {
@@ -113,3 +107,114 @@
   color: inherit;
 }
 
+
+/* --- compact: small tiles side by side ----------------------------------- */
+
+/* As many to a row as fit, each at least 190px; on a phone, two to a row,
+   so four ways make two rows. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--snt-space-4);
+}
+
+
+/** A way as a small tile: a soft white on the offer's pale blue, its icon,
+    its name in its own colour, the number or address small and grey. */
+.tile {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  min-width: 0;
+  padding: var(--snt-space-3) var(--snt-space-5) var(--snt-space-3) var(--snt-space-3);
+  border-radius: var(--snt-radius-md);
+  background: color-mix(in srgb, white 60%, transparent);
+  color: var(--snt-control-active);
+  transition: background var(--snt-transition);
+}
+
+.tile:hover {
+  color: var(--snt-control-active);
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    background: color-mix(in srgb, white 85%, transparent);
+  }
+}
+
+.tile:active {
+  transform: scale(0.98);
+}
+
+.tile.whatsapp,
+.tile.whatsapp:hover {
+  color: var(--snt-success);
+}
+
+.tile.messenger,
+.tile.messenger:hover {
+  color: #1877f2;
+}
+
+.tileIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.tileText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--snt-leading-snug);
+}
+
+.tileLabel {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+}
+
+.tileDetail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* On a phone, WhatsApp and a call two to a row, a little tighter; the
+   rest (see .tileWide) the whole width. */
+@media (max-width: 639px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--snt-space-3);
+  }
+
+  .tileWide {
+    grid-column: 1 / -1;
+  }
+
+  .tile {
+    gap: var(--snt-space-3);
+    padding: var(--snt-space-3) var(--snt-space-4) var(--snt-space-3) var(--snt-space-3);
+  }
+
+  .tileIcon {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+  }
+
+  /* A long address breaks onto a second line, after its @, rather than
+     being cut; anywhere only if a part is still too long. */
+  .tileDetail {
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+}

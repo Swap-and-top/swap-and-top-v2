@@ -47,10 +47,15 @@ const DONE: Record<Exclude<OfferState, 'pending'>, string> = {
 export function OfferCard({
   offer,
   view,
+  underListing = false,
 }: {
   offer: Offer;
   /** `received`: the reader owns the listing. `made`: the reader sent it. */
   view: 'received' | 'made';
+  /** Shown where the listing is already in view (under it on Offers, or in
+      the sheet opened from it): a made offer then says only who it went to,
+      not which listing. */
+  underListing?: boolean;
 }) {
   /** Which answer is on its way, so its button shows the spinner. */
   const [working, setWorking] = useState<OfferState | null>(null);
@@ -130,6 +135,12 @@ export function OfferCard({
             {otherName}
             {other ? <ConfirmedDealsBadge count={other.confirmedDeals} /> : null}
           </span>
+        ) : underListing ? (
+          // The listing is just above: say only who it went to.
+          <span className={styles.who}>
+            <SellerIcon kind={otherShop ? 'shop' : 'person'} />
+            Sent to {otherName}
+          </span>
         ) : (
           // Their own offer: say which listing it was for, and link to it.
           <Link href={`/listing/${listing.slug}`} className={styles.forListing}>
@@ -156,16 +167,23 @@ export function OfferCard({
             ) : null}
           </span>
         </div>
-        <span
-          className={[
-            styles.cash,
-            cash.side === 'has' ? styles.cashHas : '',
-            cash.side === 'wants' ? styles.cashWants : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        >
-          {cash.text}
+        {/* The cash: its label small and grey over it, as "They offer"
+            is over the item; the amount under it. */}
+        <span className={styles.cashBlock}>
+          {cash.label ? (
+            <span className={styles.itemLabel}>{cash.label}</span>
+          ) : null}
+          <span
+            className={[
+              styles.cash,
+              cash.side === 'has' ? styles.cashHas : '',
+              cash.side === 'wants' ? styles.cashWants : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {cash.amount}
+          </span>
         </span>
       </div>
 
@@ -217,8 +235,8 @@ export function OfferCard({
           <span className={[styles.statePill, styles.pillAccepted].join(' ')}>
             {OFFER_STATE_LABELS.accepted}
           </span>
-          {/* The introduction: their ways, shown at once, as rows like
-              the contact sheet's, WhatsApp with a first message ready. */}
+          {/* The introduction: their ways, shown at once, as small tiles
+              side by side, WhatsApp with a first message ready. */}
           <div className={styles.introduction}>
             <span className={styles.contactLabel}>Contact {otherName}</span>
             <ContactWayList
@@ -226,6 +244,7 @@ export function OfferCard({
               only={reachable}
               revealed
               message={opener}
+              compact
             />
           </div>
         </>

@@ -83,20 +83,30 @@ export function cashLine(
   offer: Offer,
   listing: OfferableListing,
   readerIsOwner: boolean,
-): { text: string; side: 'has' | 'wants' | null } {
+): {
+  text: string;
+  /** The words before the amount ("Their price", "You add"), and the
+      amount itself, for a card that sets them on two lines. No label for a
+      straight swap: the amount is then the words. */
+  label?: string;
+  amount: string;
+  side: 'has' | 'wants' | null;
+} {
+  const amount = `$${offer.cashAmount}`;
   if (isPriceOffer(listing)) {
-    return {
-      text: `${readerIsOwner ? 'Their price' : 'Your price'} $${offer.cashAmount}`,
-      side: 'wants',
-    };
+    const label = readerIsOwner ? 'Their price' : 'Your price';
+    return { text: `${label} ${amount}`, label, amount, side: 'wants' };
   }
   if (offer.cashFrom === 'none' || offer.cashAmount === 0) {
-    return { text: 'Straight swap', side: null };
+    return { text: 'Straight swap', amount: 'Straight swap', side: null };
   }
   const ownerPays = offer.cashFrom === 'owner';
   const youPay = ownerPays === readerIsOwner;
+  const label = youPay ? 'You add' : 'They add';
   return {
-    text: `${youPay ? 'You add' : 'They add'} $${offer.cashAmount}`,
+    text: `${label} ${amount}`,
+    label,
+    amount,
     side: ownerPays ? 'has' : 'wants',
   };
 }

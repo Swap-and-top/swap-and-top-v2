@@ -1,8 +1,8 @@
 'use client';
 
 /**
- * Loading: Offers. The heading and its two tabs are the page's own; then a
- * listing's heading as a bar and its offers as cards in bones.
+ * Loading: Offers. The heading and its two tabs are the page's own; then
+ * each listing in brief and its offers on their rail, in bones.
  */
 
 import {
@@ -38,10 +38,26 @@ export default function Loading() {
           <div className={styles.groups} aria-busy aria-label="Loading offers">
             {[1, 2].map((offers, g) => (
               <section key={g} className={styles.group}>
-                <Bone width={200} height={13} />
-                {Array.from({ length: offers }).map((_, i) => (
-                  <OfferCardSkeleton key={i} messageLines={2} />
-                ))}
+                <div className={styles.summary}>
+                  <div className={styles.summaryMain}>
+                    <Bone width={72} height={72} />
+                    <div className={styles.summaryText}>
+                      <Bone width={110} height={20} />
+                      <Bone width={200} height={15} />
+                      <Bone width={150} height={12} />
+                      <Bone width={130} height={10} />
+                    </div>
+                  </div>
+                  <Bone shape="pill" width={150} height={36} className={styles.see} />
+                </div>
+                <div className={styles.offersHead}>
+                  <Bone width={130} height={13} />
+                </div>
+                <div className={styles.offers}>
+                  {Array.from({ length: offers }).map((_, i) => (
+                    <OfferCardSkeleton key={i} messageLines={2} />
+                  ))}
+                </div>
               </section>
             ))}
           </div>

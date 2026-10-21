@@ -4,7 +4,7 @@
  * One list holds both: an offer is "received" when it is on one of the current
  * user's listings and "made" when it is from them. Seeded with a few sample
  * offers so both sides of the flow can be walked: two on Tarisai's MacBook
- * swap and one on her wanted post, and one she has sent.
+ * swap and one on her wanted post, and four she has sent.
  *
  * Every change is optimistic, like saving: the list changes at once and
  * is put back if the server refuses. There is no server yet — `persistOffer`
@@ -82,6 +82,40 @@ const SAMPLE_OFFERS: Offer[] = [
     state: 'pending',
     sentLabel: '4h ago',
     counted: true,
+  },
+  // More Tarisai has sent, one in each state, for her Offers, Made.
+  {
+    id: 'o-tarisai-rx580',
+    listingId: 'l-gtx-1650-swap',
+    fromUserId: CURRENT_USER_ID,
+    item: { name: 'Sapphire RX 580 8GB', condition: 'good' },
+    cashAmount: 0,
+    cashFrom: 'none',
+    message: 'Never mined on, fans cleaned last month. Straight swap?',
+    state: 'accepted',
+    sentLabel: 'Yesterday',
+  },
+  {
+    id: 'o-tarisai-thinkpad',
+    listingId: 'l-thinkpad-t480',
+    fromUserId: CURRENT_USER_ID,
+    item: { name: 'Dell Inspiron 15, Core i5', condition: 'good' },
+    cashAmount: 120,
+    cashFrom: 'offerer',
+    message: '8GB, new battery. I can add $120 and bring it in on Saturday.',
+    state: 'pending',
+    sentLabel: '6h ago',
+  },
+  {
+    id: 'o-tarisai-sodimm',
+    listingId: 'l-sodimm-wanted',
+    fromUserId: CURRENT_USER_ID,
+    item: { name: 'Kingston 16GB DDR4 SODIMM pair', condition: 'like-new' },
+    cashAmount: 55,
+    cashFrom: 'owner',
+    message: 'Out of my old laptop, tested and working.',
+    state: 'declined',
+    sentLabel: '3 days ago',
   },
   // More the shop has sent, in each state, for the console's "Offers sent".
   {

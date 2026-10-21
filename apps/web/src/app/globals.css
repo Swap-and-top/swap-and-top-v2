@@ -33,6 +33,15 @@ html [data-sonner-toaster][data-sonner-theme] {
 }
 
 /*
+ * On a phone, toasts sit 12px above whatever bar is fixed at the foot of
+ * the screen, or 12px from the foot when there is none (see ToastOffset).
+ * Important, to outrank the offset sonner sets on the list itself.
+ */
+html [data-sonner-toaster] {
+  --mobile-offset-bottom: calc(var(--snt-bottom-bar, 0px) + 12px) !important;
+}
+
+/*
  * A button on a coloured toast (Undo): white, with its words in the toast's
  * own colour, green on green and red on red, so it reads as part of it.
  */

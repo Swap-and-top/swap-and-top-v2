@@ -93,7 +93,7 @@ export function ScreenFooter({
   caption?: ReactNode;
 }) {
   return (
-    <div className={styles.footer}>
+    <div className={styles.footer} data-bottom-bar>
       <div className={styles.column}>
         <div className={styles.footerActions}>{children}</div>
         {caption ? <div className={styles.footerCaption}>{caption}</div> : null}

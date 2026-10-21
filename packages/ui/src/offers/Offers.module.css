@@ -343,16 +343,89 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--snt-space-5);
+  gap: var(--snt-space-4);
   /* Clear of the header when jumped to from "N offers". */
   scroll-margin-top: var(--snt-space-12);
 }
 
-/** "Offers on your listing (2)", over the offers on it. */
+/** "Offers on this listing" and how many, in a round, over the offers on
+    it: set as on the Offers page, flush left, the thread under it. */
 .receivedTitle {
-  font-size: var(--snt-text-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  /* Flush with the listing above; the thread starts under it. */
+  padding-left: 0;
+  font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--snt-space-3);
+  border-radius: var(--snt-radius-pill);
+  background: color-mix(in srgb, var(--snt-control-active) 18%, transparent);
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-xs);
+  line-height: 1;
+}
+
+/* The offers, set in under the listing as replies in a thread. */
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--thread-gap);
+  padding-left: var(--thread-indent);
+  /* Where the line runs, how far in the offers sit, the space between them
+     and the space up to the heading the line starts under. */
+  --thread: color-mix(in srgb, var(--snt-control-active) 35%, var(--snt-bg-app));
+  --thread-x: 0px;
+  --thread-indent: 18px;
+  --thread-gap: var(--snt-space-5);
+  --thread-lead: var(--snt-space-4);
+}
+
+/* Each offer hangs off the line as a reply does in a comment thread: the
+   line comes down and curves into the middle of its left edge. */
+.rail > * {
+  position: relative;
+}
+
+.rail > *::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--thread-x) - var(--thread-indent));
+  top: calc(var(--thread-gap) * -1);
+  width: calc(var(--thread-indent) - var(--thread-x));
+  height: calc(50% + var(--thread-gap));
+  border-left: 2px solid var(--thread);
+  border-bottom: 2px solid var(--thread);
+  border-bottom-left-radius: 12px;
+  pointer-events: none;
+}
+
+/* The first starts right under the heading. */
+.rail > :first-child::before {
+  top: calc(var(--thread-lead) * -1);
+  height: calc(50% + var(--thread-lead));
+}
+
+/* Past each but the last, the line runs straight on, from the top of
+   the offer to its foot, so it meets the next one's without a break and
+   the curve branches off it. */
+.rail > :not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--thread-x) - var(--thread-indent));
+  top: 0;
+  bottom: 0;
+  border-left: 2px solid var(--thread);
+  pointer-events: none;
 }
 
 .none {
@@ -364,16 +437,18 @@
   line-height: var(--snt-leading-normal);
 }
 
+/*
+ * An offer, set as a reply under its listing, as a comment is: everywhere,
+ * on the pale blue of the tab strips, so a listing (always white) and the
+ * offers on it never look alike. Compact, a step smaller than a card.
+ */
 .offer {
   display: flex;
   flex-direction: column;
-  gap: var(--snt-space-5);
-  padding: var(--snt-space-6) var(--snt-card-pad);
-}
-
-/* Inside the sheet the card sits on white already: tint it to set it off. */
-.inSheet .offer {
-  background: var(--snt-bg-inset);
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-6) var(--snt-space-7);
+  border-radius: var(--snt-radius-lg);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
 }
 
 .offerHead {
@@ -427,7 +502,7 @@
 }
 
 .itemName {
-  font-size: var(--snt-text-lg);
+  font-size: var(--snt-text-md);
   font-weight: var(--snt-weight-bold);
   line-height: var(--snt-leading-tight);
   color: var(--snt-accent-bold);
@@ -448,10 +523,19 @@
   white-space: nowrap;
 }
 
+/** The cash's label over its amount, both to the right. */
+.cashBlock {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
 .cash {
   flex-shrink: 0;
   font-family: var(--snt-font-display);
-  font-size: var(--snt-text-lg);
+  font-size: var(--snt-text-md);
   font-weight: var(--snt-weight-bold);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -468,7 +552,7 @@
 }
 
 .message {
-  font-size: var(--snt-text-base);
+  font-size: var(--snt-text-sm);
   line-height: var(--snt-leading-snug);
   color: var(--snt-ink-muted);
 }
@@ -490,7 +574,8 @@
 .introduction {
   display: flex;
   flex-direction: column;
-  gap: var(--snt-space-4);
+  /* The heading close over the ways it names. */
+  gap: var(--snt-space-3);
 }
 
 .contactLabel {
@@ -507,7 +592,9 @@
   align-self: flex-start;
   padding: var(--snt-space-1) var(--snt-space-5);
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-inset);
+  /* A see through wash of its own colour, faded on the offer's pale blue
+     as a listing's Live is on white. */
+  background: color-mix(in srgb, currentColor 12%, transparent);
   color: var(--snt-ink-muted);
   font-size: var(--snt-text-xs);
   font-weight: var(--snt-weight-semibold);
@@ -526,13 +613,11 @@
 }
 
 .pillAccepted {
-  background: var(--snt-success-tint);
   color: var(--snt-success);
 }
 
-/* The red goes a shade deeper than the alert red, to read on its tint. */
+/* The red goes a shade deeper than the alert red, to read on its wash. */
 .pillDeclined {
-  background: #fdeceb;
   color: #b42318;
 }
 
@@ -578,4 +663,17 @@
 /* The last way on cannot be turned off: one way must stay. */
 .wayToggle:disabled {
   cursor: default;
+}
+
+/* Under the listing on its page: close under it, as on the Offers page,
+   8px, taking back the rest of the page's top padding (16px on a phone,
+   23px from tablet). */
+.listUnder {
+  margin-top: calc(var(--snt-space-4) - var(--snt-space-8));
+}
+
+@media (min-width: 768px) {
+  .listUnder {
+    margin-top: calc(var(--snt-space-4) - 23px);
+  }
 }
