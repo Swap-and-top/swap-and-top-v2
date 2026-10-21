@@ -438,16 +438,24 @@
   --underline: 100%;
 }
 
+/* The socials from one side of the deep blue band to the other, inside its
+   padding. Each mark sits inside its hover square; the row reaches out by
+   that square's inner padding, so the marks themselves line up with the
+   band's padding. */
 .socialsWrap {
   display: flex;
   flex-direction: column;
   gap: var(--snt-space-4);
+  width: 100%;
 }
 
 .socials {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: var(--snt-space-3);
+  width: calc(100% + var(--social-pad) * 2);
+  margin-inline: calc(var(--social-pad) * -1);
+  --social-pad: 6px;
 }
 
 .social,
@@ -457,7 +465,7 @@
   justify-content: center;
   width: 42px;
   height: 42px;
-  padding: 6px;
+  padding: var(--social-pad);
   border-radius: 8px;
   color: #fff;
   transition: background var(--snt-transition);
@@ -666,24 +674,14 @@
     height: 36px;
   }
 
-  /* The socials from one side of the deep blue band to the other, inside
-     its padding, and a little larger. */
-  .socialsWrap,
   .socials {
-    width: 100%;
+    --social-pad: 6px;
   }
 
-  .socials {
-    justify-content: space-between;
-  }
-
-  /* No inner padding, so the first and last marks line up with the band's
-     padding exactly. */
   .social,
   .social:hover {
     width: 40px;
     height: 40px;
-    padding: 0;
   }
 }
 
@@ -809,6 +807,10 @@
   .socialBand {
     gap: var(--snt-space-7);
     padding-bottom: var(--snt-space-8);
+  }
+
+  .socials {
+    --social-pad: 5px;
   }
 
   .social,

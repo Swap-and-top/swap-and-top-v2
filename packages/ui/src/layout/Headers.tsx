@@ -18,6 +18,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ChevronLeftIcon, CloseIcon } from '../icons';
 import { AutoHideHeader } from './AutoHideHeader';
+import { HomeLink } from './HomeLink';
 import { CompactLogo, Logo } from './Logo';
 import { AccountButton } from './AccountButton';
 import { PostButton } from './PostButton';
@@ -42,12 +43,12 @@ export function AppHeader({
       <AutoHideHeader className={styles.app}>
         <div className={styles.inner}>
           <div className={styles.appTop}>
-            <Link href="/" className={styles.logo} aria-label="Swap & Top home">
+            <HomeLink className={styles.logo} aria-label="Swap & Top home">
               {/* The stacked, compact logo on a narrow phone; the full one
                   from 400px up. Only one is shown at a time. */}
               <CompactLogo height={36} className={styles.logoCompact} />
               <Logo height={36} className={styles.logoArt} />
-            </Link>
+            </HomeLink>
             {/* Asks a guest to sign in first; see PostButton. */}
             <PostButton href={postHref} className={styles.postButton}>
               Post New Item

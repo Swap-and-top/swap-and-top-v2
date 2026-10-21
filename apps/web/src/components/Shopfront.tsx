@@ -77,12 +77,11 @@ export function ShopfrontBody({
   );
 
   const tabs: TabItem<ShopTab>[] = [
-    { value: 'all', label: `All ${listings.length}` },
+    { value: 'all', label: 'All', count: listings.length },
     ...categories.map((category) => ({
       value: category as ShopTab,
-      label: `${CATEGORY_LABELS[category]} ${
-        listings.filter((l) => l.category === category).length
-      }`,
+      label: CATEGORY_LABELS[category],
+      count: listings.filter((l) => l.category === category).length,
     })),
   ];
 

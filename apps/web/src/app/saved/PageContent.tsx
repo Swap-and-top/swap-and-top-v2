@@ -49,9 +49,9 @@ export default function SavedPage() {
   const gone = saved.filter(isGone);
 
   const tabs: TabItem<SavedTab>[] = [
-    { value: 'all', label: `All ${saved.length}` },
-    { value: 'available', label: `Available ${available.length}` },
-    { value: 'gone', label: `Gone ${gone.length}` },
+    { value: 'all', label: 'All', count: saved.length },
+    { value: 'available', label: 'Available', count: available.length },
+    { value: 'gone', label: 'Gone', count: gone.length },
   ];
 
   const shown =

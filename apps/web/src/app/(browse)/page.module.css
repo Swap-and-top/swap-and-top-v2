@@ -38,6 +38,16 @@
   .stickyHeader [role='tablist'] {
     display: flex;
   }
+
+  /* From the tabs to the first listing, the same 12px as from the chips to
+     the tabs: under the tabs inside the band, none above the list. */
+  .stickyHeader div:has(> [role='tablist']) {
+    padding-bottom: var(--snt-space-6);
+  }
+
+  .stickyHeader + div {
+    padding-top: 0;
+  }
 }
 
 /** Gap between feed cards, per the design. */

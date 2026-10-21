@@ -215,10 +215,7 @@
   background: var(--snt-bg-app);
 }
 
-/**
- * Bottom padding closes the band, except when it ends in a tab row — the tab
- * row's own rule is the edge.
- */
+/** Bottom padding closes the band, tabs and all. */
 .appBody {
   display: flex;
   flex-direction: column;
@@ -227,13 +224,10 @@
   padding-bottom: var(--snt-space-10);
 }
 
-.appBody:has(> [role='tablist']:last-child) {
-  padding-bottom: 0;
-}
-
 /* The band's column already sets the width; the tab row adds no inset. */
 .appBody > [role='tablist'] {
   margin-inline: 0;
+  max-width: none;
 }
 
 /* --- screen header: back, title, actions ---------------------------------- */

@@ -51,9 +51,9 @@ export default function MyListingsPage() {
     view === 'offering' ? offering : view === 'wanted' ? wanted : mine;
 
   const views: TabItem<View>[] = [
-    { value: 'all', label: `All ${mine.length}` },
-    { value: 'offering', label: `Offering ${offering.length}` },
-    { value: 'wanted', label: `Wanted ${wanted.length}` },
+    { value: 'all', label: 'All', count: mine.length },
+    { value: 'offering', label: 'Offering', count: offering.length },
+    { value: 'wanted', label: 'Wanted', count: wanted.length },
   ];
 
   return (

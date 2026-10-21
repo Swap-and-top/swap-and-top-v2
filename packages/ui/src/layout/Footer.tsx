@@ -15,6 +15,7 @@
 import Link from 'next/link';
 import { COMPANY, telHref } from '@snt/core';
 import { MailIcon, PhoneIcon, PinIcon } from '../icons';
+import { HomeLink } from './HomeLink';
 import { CompactLogo } from './Logo';
 import { SocialMark } from './SocialMarks';
 import styles from './Footer.module.css';
@@ -62,9 +63,14 @@ export function Footer() {
             <ul className={styles.list}>
               {LINKS.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className={styles.link}>
-                    {label}
-                  </Link>
+                  {/* Homepage lands on All, as the header's logo does. */}
+                  {href === '/' ? (
+                    <HomeLink className={styles.link}>{label}</HomeLink>
+                  ) : (
+                    <Link href={href} className={styles.link}>
+                      {label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
