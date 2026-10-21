@@ -233,3 +233,10 @@
     padding: var(--snt-space-6) var(--snt-card-pad) var(--snt-space-8);
   }
 }
+
+/* Your own swap's offer count, under your name: tucked up into the
+   footer's bottom padding, then the same padding under it. */
+.ownerOffers {
+  margin-top: calc(var(--snt-space-6) * -1 + var(--snt-space-2));
+  padding: 0 var(--snt-card-pad) var(--snt-space-6);
+}

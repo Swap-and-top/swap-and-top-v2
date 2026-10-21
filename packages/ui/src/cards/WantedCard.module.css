@@ -213,3 +213,8 @@
     padding: var(--snt-space-10) var(--snt-card-pad) var(--snt-space-8);
   }
 }
+
+/* Your own post's offer count, under your name. */
+.ownerOffers {
+  margin-top: var(--snt-space-4);
+}

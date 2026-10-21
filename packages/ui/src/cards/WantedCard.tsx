@@ -15,10 +15,14 @@
  */
 
 import Link from 'next/link';
-import { offerCountFor, useOfferStore } from '@snt/core';
+import { offerCountFor, useOfferStore, useViewerId } from '@snt/core';
 import type { DemandListing, User } from '@snt/core';
 import { BinocularsIcon, SwapIcon } from '../icons';
 import { OfferButton } from '../offers/OfferButton';
+import {
+  OwnerOfferCount,
+  UnlessOwnerOfferCount,
+} from '../offers/OwnerOfferCount';
 import { PhotoThumb } from '../primitives/PhotoGallery';
 import { Panel } from '../primitives/Surface';
 import { CashAmount, Eyebrow, ItemName } from '../primitives/Text';
@@ -36,6 +40,8 @@ export function WantedCard({
   requester?: User;
 }) {
   const offers = useOfferStore((store) => store.offers);
+  /** Your own post: no button to offer, its offers counted under you. */
+  const own = listing.ownerId === useViewerId();
   // A swap shown as demand: what they have is the trade-in. A plain request
   // has none: it is cash only.
   const tradeIn = listing.type === 'swap' ? listing.has : undefined;
@@ -88,9 +94,10 @@ export function WantedCard({
           ) : null}
         </span>
         <span className={styles.spacer} />
-        {/* The small grey facts sit together, top right. */}
+        {/* The small grey facts sit together, top right. On your own post
+            only when: its offers are counted under your name. */}
         <span className={styles.age}>
-          {responses > 0
+          {responses > 0 && !own
             ? `${responses} ${responses === 1 ? 'response' : 'responses'} · `
             : ''}
           {listing.postedLabel}
@@ -120,8 +127,9 @@ export function WantedCard({
           </div>
         </div>
 
-        {/* Opens the offer sheet; on your own post, leads to its offers. */}
-        <OfferButton listing={listing} className={styles.cta} />
+        {/* Opens the offer sheet. Not on your own post: the card itself
+            leads to it and its offers. */}
+        {own ? null : <OfferButton listing={listing} className={styles.cta} />}
       </div>
 
       {tradeIn ? (
@@ -163,13 +171,26 @@ export function WantedCard({
           </>
         ) : null}
         <span className={styles.spacer} />
+        <UnlessOwnerOfferCount listing={listing}>
+          <CardActions
+            listingId={listing.id}
+            href={`/listing/${listing.slug}`}
+            title={listing.title}
+            tone="wanted"
+          />
+        </UnlessOwnerOfferCount>
+      </div>
+
+      {/* Your own: how many offers it has had, under your name, the icons
+          beside it in the bottom corner. */}
+      <OwnerOfferCount listing={listing} className={styles.ownerOffers}>
         <CardActions
           listingId={listing.id}
           href={`/listing/${listing.slug}`}
           title={listing.title}
           tone="wanted"
         />
-      </div>
+      </OwnerOfferCount>
     </Panel>
   );
 }

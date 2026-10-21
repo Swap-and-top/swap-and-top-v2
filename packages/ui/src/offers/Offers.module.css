@@ -375,6 +375,29 @@
   line-height: 1;
 }
 
+/** The count's line on your own card: the count on the left, the save and
+    share icons in the bottom right corner. */
+.ownerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-4);
+}
+
+/** "Offers" and how many, on your own listing's card: as the heading over
+    the offers on the listing itself. Above the card's link, so the card
+    still opens around it. */
+.ownerCount {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
 /* The offers, set in under the listing as replies in a thread. */
 .rail {
   display: flex;

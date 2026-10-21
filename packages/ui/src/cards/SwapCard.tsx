@@ -14,6 +14,10 @@ import { CategoryIcon } from '../icons';
 import { PhotoGallery } from '../primitives/PhotoGallery';
 import { specParts } from '../primitives/SpecGrid';
 import { Panel } from '../primitives/Surface';
+import {
+  OwnerOfferCount,
+  UnlessOwnerOfferCount,
+} from '../offers/OwnerOfferCount';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { CardActions } from './CardActions';
 import { SellerIcon } from './SellerIcon';
@@ -62,12 +66,20 @@ export function SwapCard({
             {listing.location} · {listing.postedLabel}
           </span>
           <span className={styles.spacer} />
-          <CardActions
-            listingId={listing.id}
-            href={href}
-            title={listing.title}
-          />
+          <UnlessOwnerOfferCount listing={listing}>
+            <CardActions
+              listingId={listing.id}
+              href={href}
+              title={listing.title}
+            />
+          </UnlessOwnerOfferCount>
         </div>
+
+        {/* Your own: how many offers it has had, under your name, the icons
+            beside it in the bottom corner. */}
+        <OwnerOfferCount listing={listing} className={styles.ownerOffers}>
+          <CardActions listingId={listing.id} href={href} title={listing.title} />
+        </OwnerOfferCount>
       </Panel>
     </div>
   );

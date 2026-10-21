@@ -17,6 +17,10 @@ import { ShopMark } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
 import { ItemName, Meta, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
+import {
+  OwnerOfferCount,
+  UnlessOwnerOfferCount,
+} from '../offers/OwnerOfferCount';
 import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
 import { CardActions } from './CardActions';
 import { SellerIcon } from './SellerIcon';
@@ -164,13 +168,23 @@ export function SaleCard({
                 {listing.location} · {listing.postedLabel}
               </span>
               <span className={styles.spacer} />
-              <CardActions
-                listingId={listing.id}
-                href={href}
-                title={listing.title}
-              />
+              <UnlessOwnerOfferCount listing={listing}>
+                <CardActions
+                  listingId={listing.id}
+                  href={href}
+                  title={listing.title}
+                />
+              </UnlessOwnerOfferCount>
             </div>
           )}
+
+          {/* Your own, taking swaps: how many offers it has had, the icons
+              beside it in the bottom corner. */}
+          <OwnerOfferCount listing={listing} className={styles.ownerOffers}>
+            {shop ? null : (
+              <CardActions listingId={listing.id} href={href} title={listing.title} />
+            )}
+          </OwnerOfferCount>
         </div>
       </Panel>
     </div>
