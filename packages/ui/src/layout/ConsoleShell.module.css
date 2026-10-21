@@ -19,12 +19,17 @@
 
 /* --- mobile header --- */
 
+/* Sized as the marketplace's header on a phone: a 36px row, 12px above and
+   below, the page's gutter at the sides and its swept corner at the bottom
+   right; in the console's own blue. */
 .header {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-4);
+  gap: var(--snt-space-5);
   flex-shrink: 0;
-  padding: var(--snt-space-6) var(--snt-space-7);
+  height: calc(36px + var(--snt-space-6) * 2);
+  padding: var(--snt-space-6) var(--snt-gutter);
+  border-bottom-right-radius: var(--snt-header-curve);
   background: var(--snt-accent-strong);
   color: var(--snt-ink-on-dark);
   /* The shop's mark, a lighter tile on the blue rather than black. */
@@ -36,27 +41,38 @@
   min-width: 0;
 }
 
+/* The shop's name and "Dealer console", cut short with dots if the row is
+   narrow, so the buttons always fit. */
+.shopName,
+.shopKicker {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .shopName {
   font-size: var(--snt-text-md);
   font-weight: var(--snt-weight-bold);
 }
 
 .shopKicker {
-  display: block;
   font-size: var(--snt-text-xs);
   color: color-mix(in srgb, white 82%, transparent);
 }
 
-/* View shop: a small button, outlined in white on the blue. */
+/* Back to marketplace: outlined in white on the blue, the size of the
+   marketplace's Post New Item. */
 .headerLink {
   display: inline-flex;
   align-items: center;
-  height: 32px;
-  padding: 0 var(--snt-space-6);
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 var(--snt-space-8);
   border: 1px solid color-mix(in srgb, white 60%, transparent);
   border-radius: var(--snt-radius-pill);
-  font-size: var(--snt-text-sm);
-  font-weight: var(--snt-weight-semibold);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-bold);
   color: var(--snt-ink-on-dark);
   white-space: nowrap;
 }

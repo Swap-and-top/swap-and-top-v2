@@ -569,6 +569,124 @@
   }
 }
 
+/*
+ * On any phone, a little more compact all through, so the whole menu shows
+ * without scrolling on most phones: View profile and Sign out as small
+ * outlined pills under the centred name, a smaller picture that may start
+ * near the top (it is centred, clear of the cross), and a little less room
+ * in the bands.
+ */
+@media (max-width: 767px) {
+  .profileBand {
+    gap: var(--snt-space-5);
+    padding-top: max(var(--snt-space-10), calc(var(--toggle-bottom, 48px) - 34px));
+    padding-bottom: calc(22px + var(--snt-space-7));
+  }
+
+  /* The signed out mark, the size of the picture, centred clear of the
+     cross as the picture is. */
+  .guestMark svg {
+    width: 64px;
+    height: 64px;
+  }
+
+  .whoAvatar > span {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  .whoAvatar > span > span {
+    font-size: 23px !important;
+  }
+
+  .pair {
+    display: flex;
+    justify-content: center;
+    gap: var(--snt-space-4);
+  }
+
+  .pair > * {
+    width: auto;
+    height: 32px;
+    padding: 0 var(--snt-space-7);
+    font-size: var(--snt-text-sm);
+  }
+
+  .band {
+    padding-top: var(--snt-space-7);
+    padding-bottom: calc(22px + var(--snt-space-7));
+  }
+
+  .row {
+    min-height: 36px;
+  }
+
+  .contactIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .socialBand {
+    gap: var(--snt-space-7);
+    padding-bottom: var(--snt-space-7);
+  }
+}
+
+/*
+ * On a phone the bands start from the top: the white band padded as the
+ * coloured ones are, the green, light blue and deep blue straight under it.
+ * The spare room goes inside the deep blue band, between the socials and the
+ * fine print, which keeps to the foot. View profile and Sign out take half
+ * the width each.
+ */
+@media (max-width: 767px) {
+  .profileBand {
+    flex-grow: 0;
+    justify-content: flex-start;
+    padding-top: var(--snt-space-10);
+  }
+
+  .socialBand {
+    flex-grow: 1;
+  }
+
+  .disclosure {
+    margin-top: auto;
+    padding-top: var(--snt-space-7);
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--snt-space-4);
+  }
+
+  .pair > * {
+    width: 100%;
+    height: 36px;
+  }
+
+  /* The socials from one side of the deep blue band to the other, inside
+     its padding, and a little larger. */
+  .socialsWrap,
+  .socials {
+    width: 100%;
+  }
+
+  .socials {
+    justify-content: space-between;
+  }
+
+  /* No inner padding, so the first and last marks line up with the band's
+     padding exactly. */
+  .social,
+  .social:hover {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+  }
+}
+
 /* On a short phone, the bands sit a little closer, so it all fits. */
 @media (max-width: 767px) and (max-height: 720px) {
   .band {

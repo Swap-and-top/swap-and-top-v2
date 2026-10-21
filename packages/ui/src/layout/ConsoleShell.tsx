@@ -203,13 +203,16 @@ export function ConsoleShell({
 
       {/* Dark header — phone only. */}
       <header className={styles.header}>
-        <ShopMark initials={shop.initials} size={31} />
+        <ShopMark initials={shop.initials} size={36} />
         <span className={styles.headerBody}>
           <span className={styles.shopName}>{shop.name}</span>
           <span className={styles.shopKicker}>Dealer console</span>
         </span>
-        <Link href={`/shop/${shop.slug}`} className={styles.headerLink}>
-          View shop
+        {/* The way out of the console, as the sidebar's foot is on a
+            laptop, the size of the marketplace's Post New Item. The shop as
+            buyers see it is under Shop. */}
+        <Link href="/" className={styles.headerLink}>
+          Back to marketplace
         </Link>
       </header>
 

@@ -150,7 +150,7 @@ Reveals over time, views-to-reveals ratio per item, which categories attract att
 A dealer is a normal user with an extra surface, not a separate account type. They can swap, save and request as themselves.
 
 - **Into the console:** a row on the `Me` screen, visible only to dealer accounts
-- **Out of it:** "View shop" in the header goes to the public shopfront; "Back to marketplace" returns to the feed
+- **Out of it:** "Back to marketplace" returns to the feed: at the foot of the sidebar on a laptop, and in the header on a phone. The shop as buyers see it is under Shop profile ("View as a buyer")
 
 ---
 
