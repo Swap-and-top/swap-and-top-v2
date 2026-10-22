@@ -83,6 +83,9 @@ export function Tabs<T extends string>({
       place();
     });
     watcher.observe(el);
+    // The tabs too: a count or a style can change a tab's width while the
+    // strip keeps its own.
+    for (const tab of el.querySelectorAll('[role="tab"]')) watcher.observe(tab);
     return () => watcher.disconnect();
   }, [active, tabs]);
 

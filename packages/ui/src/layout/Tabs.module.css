@@ -167,6 +167,15 @@
   text-overflow: ellipsis;
 }
 
+/* On a narrow phone, four even tabs with counts: a little closer inside,
+   so each name and its count fit whole. */
+@media (max-width: 399px) {
+  .tabFill {
+    gap: var(--snt-space-2);
+    padding-inline: var(--snt-space-2);
+  }
+}
+
 /* In a brand header: a light strip on the gradient, the block white with
    the name in the blue. */
 :global([data-surface='brand']) .tabs {

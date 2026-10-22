@@ -14,12 +14,6 @@
   display: contents;
 }
 
-/* The header leaves no room under a tab row; with the row gone, the chips
-   need a little. */
-.stickyHeader > :last-child {
-  padding-bottom: var(--snt-space-4);
-}
-
 .stickyHeader [role='tablist'] {
   display: none;
 }
@@ -31,23 +25,21 @@
     z-index: 3;
   }
 
-  .stickyHeader > :last-child {
-    padding-bottom: 0;
-  }
-
   .stickyHeader [role='tablist'] {
     display: flex;
   }
 
-  /* From the tabs to the first listing, the same 12px as from the chips to
-     the tabs: under the tabs inside the band, none above the list. */
-  .stickyHeader div:has(> [role='tablist']) {
+  /* The feed keeps its 12px under the tabs, as between the chips and
+     them: the band sticks, and stays as short as it can. */
+  .stickyHeader [data-app-below] > div {
     padding-bottom: var(--snt-space-6);
   }
+}
 
-  .stickyHeader + div {
-    padding-top: 0;
-  }
+/* From the last control (the tabs, or on a phone the chips) to the first
+   listing, the band's own 12px; none more above the list. */
+.stickyHeader + div {
+  padding-top: 0;
 }
 
 /** Gap between feed cards, per the design. */

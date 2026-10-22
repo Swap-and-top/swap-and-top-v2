@@ -30,10 +30,15 @@ import {
 import { StatusTag } from '../../../components/listing/OwnerTools';
 import styles from './page.module.css';
 
-type View = 'all' | 'offering' | 'wanted';
+/** The same split as the feed's types: swaps, things for sale, wanted. */
+type View = 'all' | 'swap' | 'sale' | 'wanted';
 
-/** Wanted: what you are looking for. Offering: what you sell or swap. */
-const isWanted = (listing: Listing) => listing.type === 'request';
+const viewOf = (listing: Listing): Exclude<View, 'all'> =>
+  listing.type === 'swap'
+    ? 'swap'
+    : listing.type === 'request'
+      ? 'wanted'
+      : 'sale';
 
 export default function MyListingsPage() {
   const [view, setView] = useState<View>('all');
@@ -45,15 +50,16 @@ export default function MyListingsPage() {
     const status = statusOf(listing, changes);
     return status !== 'withdrawn' && status !== 'removed';
   });
-  const offering = mine.filter((listing) => !isWanted(listing));
-  const wanted = mine.filter(isWanted);
   const shown =
-    view === 'offering' ? offering : view === 'wanted' ? wanted : mine;
+    view === 'all' ? mine : mine.filter((listing) => viewOf(listing) === view);
+  const countOf = (kind: Exclude<View, 'all'>) =>
+    mine.filter((listing) => viewOf(listing) === kind).length;
 
   const views: TabItem<View>[] = [
     { value: 'all', label: 'All', count: mine.length },
-    { value: 'offering', label: 'Offering', count: offering.length },
-    { value: 'wanted', label: 'Wanted', count: wanted.length },
+    { value: 'swap', label: 'Swaps', count: countOf('swap') },
+    { value: 'sale', label: 'For Sale', short: 'Sale', count: countOf('sale') },
+    { value: 'wanted', label: 'Wanted', count: countOf('wanted') },
   ];
 
   return (

@@ -141,3 +141,9 @@
     padding-top: 23px;
   }
 }
+
+/* Straight under the header's band of search, chips or tabs: the band's own
+   bottom padding is the gap, so the body adds none. */
+:global([data-app-below]) + .body {
+  padding-top: 0;
+}

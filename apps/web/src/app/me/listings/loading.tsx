@@ -21,7 +21,7 @@ export default function Loading() {
     <Screen>
       <AppHeader>
         <h1 className={styles.title}>My listings</h1>
-        <TabsSkeleton fill widths={[40, 76, 64]} />
+        <TabsSkeleton fill widths={[40, 64, 70, 64]} />
       </AppHeader>
 
       <ScreenBody>

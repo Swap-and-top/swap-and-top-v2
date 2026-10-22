@@ -166,11 +166,15 @@ export function RequestDetail({
           {/* Only the owner sees these: the offers made on this post. */}
           {preview ? null : <OffersReceived listing={listing} />}
 
-          <Note icon={<InfoIcon size={17} />} tone="subtle">
-            {listing.allowDealerOffers
-              ? 'This person accepts offers from dealers.'
-              : 'This person has turned off dealer offers.'}
-          </Note>
+          {/* For whoever might offer: not on your own post (shown again
+              when you preview it as a buyer sees it). */}
+          {mine ? null : (
+            <Note icon={<InfoIcon size={17} />} tone="subtle">
+              {listing.allowDealerOffers
+                ? 'This person accepts offers from dealers.'
+                : 'This person has turned off dealer offers.'}
+            </Note>
+          )}
         </Stack>
       </ScreenBody>
     </Screen>

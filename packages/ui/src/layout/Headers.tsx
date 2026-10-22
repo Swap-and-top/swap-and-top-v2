@@ -60,7 +60,7 @@ export function AppHeader({
       </AutoHideHeader>
 
       {children ? (
-        <div className={styles.appBelow}>
+        <div className={styles.appBelow} data-app-below>
           <div className={[styles.inner, styles.appBody].join(' ')}>
             {children}
           </div>

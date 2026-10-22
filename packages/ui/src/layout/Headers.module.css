@@ -215,13 +215,16 @@
   background: var(--snt-bg-app);
 }
 
-/** Bottom padding closes the band, tabs and all. */
+/** Bottom padding closes the band, tabs and all: the same 12px as between
+    its own rows, so the first listing sits as close under the last control
+    as the controls sit to each other. The page body under it adds none (see
+    Screen.module.css). */
 .appBody {
   display: flex;
   flex-direction: column;
   gap: var(--snt-space-6);
   padding-top: var(--snt-space-8);
-  padding-bottom: var(--snt-space-10);
+  padding-bottom: var(--snt-space-6);
 }
 
 /* The band's column already sets the width; the tab row adds no inset. */
@@ -319,5 +322,11 @@
 
   .postButton {
     padding: 0 var(--snt-space-12);
+  }
+
+  /* With the larger cards from tablet up, a little more room under the
+     band: 20px. (The feed keeps 12px under its sticky tabs.) */
+  .appBody {
+    padding-bottom: var(--snt-space-10);
   }
 }
