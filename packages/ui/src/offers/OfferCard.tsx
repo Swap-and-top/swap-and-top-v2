@@ -30,7 +30,6 @@ import { SellerIcon } from '../cards/SellerIcon';
 import { ContactWayList, waysOffered } from '../contact/ContactWays';
 import { Button } from '../primitives/Button';
 import { Bone } from '../primitives/Skeleton';
-import { Panel } from '../primitives/Surface';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { cashLine, OFFER_STATE_LABELS } from './offerWords';
 import styles from './Offers.module.css';
@@ -131,7 +130,7 @@ export function OfferCard({
     : `Hi, you accepted my offer of ${offered} on Swap & Top.`;
 
   return (
-    <Panel className={styles.offer}>
+    <div className={styles.offer}>
       <div className={styles.offerHead}>
         {readerIsOwner ? (
           <span className={styles.who}>
@@ -278,7 +277,7 @@ export function OfferCard({
           ) : null}
         </div>
       ) : null}
-    </Panel>
+    </div>
   );
 }
 
@@ -290,7 +289,7 @@ export function OfferCardSkeleton({
   messageLines?: number;
 }) {
   return (
-    <Panel className={styles.offer} aria-hidden>
+    <div className={styles.offer} aria-hidden>
       <div className={styles.offerHead}>
         <Bone width={130} height={18} />
         <Bone width={40} height={10} />
@@ -316,6 +315,6 @@ export function OfferCardSkeleton({
         <Bone shape="pill" width={84} height={36} />
         <Bone shape="pill" width={90} height={36} />
       </div>
-    </Panel>
+    </div>
   );
 }
