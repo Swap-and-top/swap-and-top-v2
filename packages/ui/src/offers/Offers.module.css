@@ -706,3 +706,9 @@
     margin-top: calc(var(--snt-space-4) - 23px);
   }
 }
+
+/* Three ways, on a sale that takes cash and swaps: one above the other at
+   every width, so none is cut short. */
+.modes.modesThree {
+  grid-template-columns: minmax(0, 1fr);
+}

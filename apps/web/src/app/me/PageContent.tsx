@@ -11,9 +11,8 @@
  */
 
 import {
+  confirmationsAwaiting,
   currentUser,
-  mockDealConfirmations,
-  pendingConfirmationCount,
   useDealStore,
   useSavedStore,
   getListing,
@@ -47,7 +46,6 @@ import {
   InfoIcon,
   ListIcon,
   SaveStarIcon,
-  SearchIcon,
   SettingsIcon,
   ShieldCheckIcon,
   SwapIcon,
@@ -57,7 +55,7 @@ import styles from './page.module.css';
 
 export default function MePage() {
   const { ids } = useSavedStore();
-  const { confirmedDeals } = useDealStore();
+  const { answers, confirmedDeals } = useDealStore();
   const signOut = useSessionStore((state) => state.signOut);
   const offers = useOfferStore((store) => store.offers);
   /** Offers made, plus those waiting on the user's own listings. */
@@ -68,19 +66,16 @@ export default function MePage() {
         getListing(offer.listingId)?.ownerId === currentUser.id),
   ).length;
 
-  /** What the user has posted, and how much of it is wanted posts. */
+  /** What the user has posted and still has up. */
   const changes = useListingStatusStore((state) => state.changes);
   const myListings = mockListings.filter((listing) => {
     if (listing.ownerId !== currentUser.id) return false;
     const status = statusOf(listing, changes);
     return status !== 'withdrawn' && status !== 'removed';
   });
-  const myWanted = myListings.filter((listing) => listing.type === 'request');
 
-  /** The first pending confirmation is what the badge links to. */
-  const pending = mockDealConfirmations.find(
-    (item) => item.state === 'pending' && item.buyerAnswer === 'unanswered',
-  );
+  /** Deals still waiting on the user's answer. */
+  const toConfirm = confirmationsAwaiting(answers);
 
   return (
     <Screen>
@@ -124,16 +119,10 @@ export default function MePage() {
                 value={String(myListings.length)}
               />
               <ListRow
-                href="/me/listings"
-                icon={<SearchIcon size={19} />}
-                label="My wanted posts"
-                value={String(myWanted.length)}
-              />
-              <ListRow
-                href={pending ? `/deals/${pending.id}/confirm` : '/me'}
+                href="/me/deals"
                 icon={<CheckIcon size={19} weight={1.9} />}
                 label="Deals to confirm"
-                badge={<CountBadge count={pendingConfirmationCount} />}
+                badge={<CountBadge count={toConfirm} />}
               />
               <ListRow
                 href="/me/offers"

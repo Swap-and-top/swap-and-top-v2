@@ -23,8 +23,8 @@ import {
   ChevronLeftIcon,
   SidebarIcon,
   ShopIcon,
-  MegaphoneIcon,
-  SwapIcon,
+  TrendIcon,
+  CashHandIcon,
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
 import { ShopMark } from '../primitives/Placeholder';
@@ -93,21 +93,24 @@ export function ConsoleShell({
       count: newLeadCount,
     },
     {
-      // Trade-ins offered towards stock that takes swaps: offers to accept
-      // or decline, as the people asking see them on the listing.
+      // Offers on the shop's stock, cash or a swap, to accept or decline;
+      // and the offers it sent from Leads.
       href: '/console/trade-ins',
-      label: 'Swap offers',
-      shortLabel: 'Swaps',
-      icon: (active) => <SwapIcon size={20} weight={active ? 2.1 : 1.9} />,
-      titleIcon: <SwapIcon size={24} />,
+      label: 'Offers',
+      shortLabel: 'Offers',
+      icon: (active) => (
+        <CashHandIcon size={20} weight={active ? 2.1 : 1.9} filled={false} />
+      ),
+      titleIcon: <CashHandIcon size={24} filled={false} />,
       count: tradeInCount,
     },
     {
-      href: '/console/promote',
-      label: 'Promote',
-      shortLabel: 'Promote',
-      icon: (active) => <MegaphoneIcon size={20} weight={active ? 2.1 : 1.9} />,
-      titleIcon: <MegaphoneIcon size={24} />,
+      // The shop's numbers over time, and ways to grow them at the foot.
+      href: '/console/stats',
+      label: 'Stats',
+      shortLabel: 'Stats',
+      icon: (active) => <TrendIcon size={20} weight={active ? 2.1 : 1.9} />,
+      titleIcon: <TrendIcon size={24} />,
     },
     {
       // The shop as buyers see it, inside the console; the public page is a
@@ -178,7 +181,7 @@ export function ConsoleShell({
                 {/* The icon on its tile, as icons sit across the app. */}
                 <span className={styles.sidebarIcon}>{item.icon(active)}</span>
                 <span className={styles.sidebarLabel}>{item.label}</span>
-                {(item.label === 'Leads' || item.label === 'Swap offers') &&
+                {(item.label === 'Leads' || item.label === 'Offers') &&
                 item.count ? (
                   <CountBadge count={item.count} />
                 ) : item.count ? (
@@ -260,7 +263,7 @@ export function ConsoleShell({
                   label under it. A waiting count sits on the pill. */}
               <span className={styles.navPill}>
                 {item.icon(false)}
-                {(item.label === 'Leads' || item.label === 'Swap offers') &&
+                {(item.label === 'Leads' || item.label === 'Offers') &&
                 item.count ? (
                   <span className={styles.navBadge}>
                     <CountBadge count={item.count} />

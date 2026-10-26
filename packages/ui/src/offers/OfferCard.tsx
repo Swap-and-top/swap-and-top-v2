@@ -63,7 +63,7 @@ export function OfferCard({
   if (!listing || listing.type === 'auction') {
     return null;
   }
-  // A swap or a request, or a sale a trade-in was offered towards.
+  // A swap or a request, or a sale an offer was made on.
   const target: OfferableListing = listing;
   const readerIsOwner = view === 'received';
 
@@ -122,9 +122,13 @@ export function OfferCard({
   const reachable = readerIsOwner && offer.reachOn
     ? given.filter((way) => offer.reachOn!.includes(way))
     : given;
+  // What was offered, in words: the item, or the price of a cash offer.
+  const offered = offer.item
+    ? `the ${offer.item.name}`
+    : `$${offer.cashAmount} for the ${wanted}`;
   const opener = readerIsOwner
-    ? `Hi, I accepted your offer of the ${offer.item.name} on Swap & Top.`
-    : `Hi, you accepted my offer of the ${offer.item.name} on Swap & Top.`;
+    ? `Hi, I accepted your offer of ${offered} on Swap & Top.`
+    : `Hi, you accepted my offer of ${offered} on Swap & Top.`;
 
   return (
     <Panel className={styles.offer}>
@@ -159,8 +163,11 @@ export function OfferCard({
           {/* The condition beside the name while there is room, under it
               when there is not. */}
           <span className={styles.itemLine}>
-            <span className={styles.itemName}>{offer.item.name}</span>
-            {offer.item.condition ? (
+            {/* A cash offer has no item: it says so. */}
+            <span className={styles.itemName}>
+              {offer.item ? offer.item.name : 'Cash, no swap'}
+            </span>
+            {offer.item?.condition ? (
               <span className={styles.itemNote}>
                 {CONDITION_LABELS[offer.item.condition]}
               </span>

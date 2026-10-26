@@ -8,9 +8,11 @@
  *  1. **Show the card exactly as it will appear.** Not decoration — it is how a
  *     seller checks their own work, and it teaches them what a good listing
  *     looks like.
- *  2. **Contact preferences**, including the dealer-offers consent. Default on,
- *     but visible and easy to change: it keeps the platform from feeling like a
- *     dealer channel and makes the lead product defensible.
+ *  2. **Contact preferences**: the ways to reach them, a toggle to share
+ *     them only with people whose offer they accept, and the dealer offers
+ *     consent. Dealer offers default on, but visible and easy to
+ *     change: it keeps the platform from feeling like a dealer channel and
+ *     makes the lead product defensible.
  *  3. **Say what happens next** — live immediately, taken down on report,
  *     expires in 30 days.
  *
@@ -63,6 +65,8 @@ export default function PostReviewPage() {
   const chosen = CHANNELS.filter((channel) =>
     draft.contactChannels.includes(channel.value),
   );
+  /** Contact details only for people whose offer they accept. */
+  const afterOffer = draft.contactShownTo === 'offers';
 
   return (
     <Screen surface>
@@ -174,13 +178,36 @@ export default function PostReviewPage() {
             hint="Shops that stock what you want can make you an offer."
           />
 
-          {/* The seller's own choice; off unless they ask for it. */}
+          {/* The toggle: show the details to anyone who asks, or only to
+              people whose offer they accept. Off by default. */}
           <TickTile
-            checked={draft.contactSignedInOnly}
-            onChange={draft.setContactSignedInOnly}
-            label="Only show my details to signed in users"
-            hint="Guests are asked to sign in first."
+            checked={afterOffer}
+            onChange={(on) =>
+              draft.setContactShownTo(on ? 'offers' : 'everyone')
+            }
+            label="Only share my contact details after I accept an offer"
+            hint="People make an offer first. Only those you accept see your number."
           />
+
+          {afterOffer ? (
+            // Offers first, but shops may still reach them from a lead.
+            draft.allowDealerOffers ? (
+              <TickTile
+                checked={draft.contactToDealers}
+                onChange={draft.setContactToDealers}
+                label="Let dealers see my contact details"
+                hint="Shops that get your listing as a lead can reach you before you accept an offer."
+              />
+            ) : null
+          ) : (
+            // The seller's own choice; off unless they ask for it.
+            <TickTile
+              checked={draft.contactSignedInOnly}
+              onChange={draft.setContactSignedInOnly}
+              label="Only show my details to signed in users"
+              hint="Guests are asked to sign in first."
+            />
+          )}
 
           <p className={styles.small}>
             Goes live straight away. Listings that break the rules are taken

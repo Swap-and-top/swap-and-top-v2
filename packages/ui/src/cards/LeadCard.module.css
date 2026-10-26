@@ -1,10 +1,12 @@
 /**
- * A lead, as a dealer sees it.
- *
- * This is the screen that sells the platform, so it carries everything needed
- * to act without opening anything else: what they want, what is coming back in
- * trade, the cash, and which of the dealer's own items matches.
+ * A lead, as a dealer sees it, set as the Wanted card in the feed is (see
+ * WantedCard.module.css): the same label, title, facts, strip and name, so
+ * a lead looks like what it is, someone's Wanted listing.
  */
+
+.card {
+  padding: var(--snt-space-8) var(--snt-card-pad);
+}
 
 .head {
   display: flex;
@@ -12,9 +14,65 @@
   gap: var(--snt-space-4);
 }
 
+/* "Wanted" (+ "Swap"): small, bold, in the Wanted green, each word after
+   its icon on a pale tile of the green. */
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  text-transform: uppercase;
+  color: var(--snt-wanted-ink);
+}
+
+.labelSwap {
+  color: var(--snt-control-active);
+}
+
+.labelIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  /* A pale wash of the label's own colour. */
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
 .age {
   font-size: var(--snt-text-xs);
   color: var(--snt-ink-muted);
+  white-space: nowrap;
+}
+
+/* What they want: green, as the Wanted card's title. */
+.title {
+  margin-top: var(--snt-space-6);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: var(--snt-leading-tight);
+  color: var(--snt-wanted-ink);
+}
+
+/* Where, and the budget or the cash: small and grey, parted by dots. */
+.sub {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: var(--snt-space-2);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.sub > span + span::before {
+  content: '·';
+  margin-inline: var(--snt-space-3);
 }
 
 /* How the dealer was told of the lead: small, in the green of a match. */
@@ -27,26 +85,15 @@
   color: var(--snt-success);
 }
 
-.title {
-  font-size: var(--snt-text-lg);
-  font-weight: var(--snt-weight-bold);
-  line-height: var(--snt-leading-tight);
-  margin-top: var(--snt-space-4);
-}
-
-.sub {
-  font-size: var(--snt-text-base);
-  color: var(--snt-ink-muted);
-  margin-top: var(--snt-space-2);
-}
-
-/** What is coming back in trade, and the cash on top. */
+/* What they have to swap, and the cash on top: the Wanted card's strip. */
 .tradeIn {
   display: flex;
   align-items: center;
-  gap: var(--snt-space-4);
-  margin-top: var(--snt-space-4);
-  padding: var(--snt-space-4) var(--snt-space-5);
+  gap: var(--snt-space-5);
+  margin-top: var(--snt-space-6);
+  padding: var(--snt-space-4) var(--snt-space-6) var(--snt-space-4)
+    var(--snt-space-4);
+  --snt-ink-muted: #6e6e6e;
   background: var(--snt-bg-inset);
   border-radius: var(--snt-radius-md);
 }
@@ -58,10 +105,32 @@
 
 .tradeInName {
   display: block;
-  font-size: var(--snt-text-md);
-  /* Every item name is bold. */
-  font-weight: var(--snt-weight-bold);
   margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+}
+
+.tradeInDetails {
+  display: block;
+  margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
+}
+
+.upTo {
+  flex-shrink: 0;
+  font-family: var(--snt-font-display);
+  font-weight: var(--snt-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--snt-accent-bold);
+  white-space: nowrap;
+}
+
+.upToWords {
+  font-family: var(--snt-font-body);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-normal);
 }
 
 /**
@@ -72,28 +141,47 @@
   display: flex;
   align-items: center;
   gap: var(--snt-space-3);
-  margin-top: var(--snt-space-4);
+  margin-top: var(--snt-space-5);
   font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-semibold);
   color: var(--snt-success);
 }
 
-/** No match in stock. Said plainly rather than hidden. */
+/** No match in stock, or contact kept back. Said plainly, small and grey. */
 .noMatch {
   display: flex;
   align-items: center;
   gap: var(--snt-space-3);
-  margin-top: var(--snt-space-4);
+  margin-top: var(--snt-space-5);
   font-size: var(--snt-text-sm);
   color: var(--snt-ink-muted);
 }
 
+/* Who is asking: as a poster is named on the feed's cards. */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+  font-size: var(--snt-text-xs);
+}
+
+.requesterName {
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-ink);
+}
+
+/* The offer button, and under it the way to their contact details, each
+   the card's full width. */
 .actions {
   display: flex;
+  flex-direction: column;
   gap: var(--snt-space-4);
   margin-top: var(--snt-space-6);
 }
 
-.actions > :first-child {
-  flex-grow: 1;
+@media (min-width: 768px) {
+  .card {
+    padding: var(--snt-space-10) var(--snt-card-pad) var(--snt-space-8);
+  }
 }

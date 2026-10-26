@@ -1,12 +1,9 @@
 /**
- * The page (see PageContent), behind a server half that can hold its content
- * back in slow mode, so its loading skeleton can be seen (see slowDown).
+ * Promote is now part of Stats, at its foot: an old link lands there.
  */
 
-import { slowDown } from '@/components/slowDown';
-import PageContent from './PageContent';
+import { redirect } from 'next/navigation';
 
-export default async function Page() {
-  await slowDown();
-  return <PageContent />;
+export default function Page() {
+  redirect('/console/stats');
 }

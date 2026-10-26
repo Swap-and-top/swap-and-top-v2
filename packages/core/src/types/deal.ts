@@ -1,11 +1,17 @@
 /**
- * Deal confirmation — mutual confirmation that a deal completed.
+ * Deal confirmation: mutual confirmation that a deal completed.
  *
- * Three days after a reveal both parties are asked one question. When both say
- * yes it counts. This is the platform's only window into settlement, and the
- * trust signal that replaced status badges.
+ * Two things start one, both about one listing and two known people:
  *
- * Two rules that shape everything here:
+ *  - **An accepted offer.** Both sides are known and agreed terms, so both
+ *    are asked, three days after the offer was accepted.
+ *  - **A number reveal by someone signed in.** Only the person who revealed
+ *    is asked first. The listing's owner is asked only once they say yes, so
+ *    an owner never hears about people who merely looked. Guest reveals ask
+ *    nobody; they still count as reveals.
+ *
+ * One confirmation per person per listing, however many reveals or offers.
+ * Two rules shape everything here:
  *  - a "no" is never shown to the other party and carries no consequence
  *  - it is not a complaint channel; complaints go through reporting
  */
@@ -14,24 +20,36 @@ export type DealAnswer = 'yes' | 'no' | 'not-yet' | 'unanswered';
 
 export type DealConfirmationState = 'pending' | 'confirmed' | 'closed' | 'lapsed';
 
+/** What started it: an accepted offer, or a number reveal. */
+export type DealSource = 'offer' | 'reveal';
+
 export interface DealConfirmation {
   id: string;
-  /** The reveal that started the clock. */
-  revealId: string;
+  source: DealSource;
+  /** The accepted offer, when it came from one. */
+  offerId?: string;
+  /** The reveal, when it came from one. */
+  revealId?: string;
   listingId: string;
-  buyerId: string;
-  sellerId: string;
-  buyerAnswer: DealAnswer;
-  sellerAnswer: DealAnswer;
+  /** Who reached out: made the offer, or revealed the number. */
+  askerId: string;
+  /** Whose listing it is. */
+  ownerId: string;
+  askerAnswer: DealAnswer;
+  /**
+   * On a reveal the owner is asked only after the asker says yes; until
+   * then this stays `unanswered` and the owner sees nothing.
+   */
+  ownerAnswer: DealAnswer;
   state: DealConfirmationState;
   promptedAt: string;
-  /** Fourteen days after the reveal. Lapses silently, never chased. */
+  /** Fourteen days after the reveal or acceptance. Lapses silently. */
   lapsesAt: string;
 }
 
 /** Counted only when both sides answer yes. */
 export function isConfirmed(c: DealConfirmation): boolean {
-  return c.buyerAnswer === 'yes' && c.sellerAnswer === 'yes';
+  return c.askerAnswer === 'yes' && c.ownerAnswer === 'yes';
 }
 
 /**

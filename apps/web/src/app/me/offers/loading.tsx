@@ -15,6 +15,7 @@ import {
   Tabs,
 } from '@snt/ui';
 import styles from './page.module.css';
+import groups from '@/components/offers/OfferGroups.module.css';
 
 export default function Loading() {
   return (
@@ -35,25 +36,25 @@ export default function Loading() {
 
       <ScreenBody>
         <SignInGate>
-          <div className={styles.groups} aria-busy aria-label="Loading offers">
+          <div className={groups.groups} aria-busy aria-label="Loading offers">
             {[1, 2].map((offers, g) => (
-              <section key={g} className={styles.group}>
-                <div className={styles.summary}>
-                  <div className={styles.summaryMain}>
+              <section key={g} className={groups.group}>
+                <div className={groups.summary}>
+                  <div className={groups.summaryMain}>
                     <Bone width={72} height={72} />
-                    <div className={styles.summaryText}>
+                    <div className={groups.summaryText}>
                       <Bone width={110} height={20} />
                       <Bone width={200} height={15} />
                       <Bone width={150} height={12} />
                       <Bone width={130} height={10} />
                     </div>
                   </div>
-                  <Bone shape="pill" width={150} height={36} className={styles.see} />
+                  <Bone shape="pill" width={150} height={36} className={groups.see} />
                 </div>
-                <div className={styles.offersHead}>
+                <div className={groups.offersHead}>
                   <Bone width={130} height={13} />
                 </div>
-                <div className={styles.offers}>
+                <div className={groups.offers}>
                   {Array.from({ length: offers }).map((_, i) => (
                     <OfferCardSkeleton key={i} messageLines={2} />
                   ))}

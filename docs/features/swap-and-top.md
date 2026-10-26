@@ -115,12 +115,12 @@ Wireframe frame: `DetailSwap`.
 ├──────────────────────────────────────┤
 │  7 viewed today · 2 offers made      │
 ├──────────────────────────────────────┤
-│ [ I have this — make an offer ]  📞  │
+│ [ Make an offer ]                📞  │
 │  Meet on campus · check for locks    │
 └──────────────────────────────────────┘
 ```
 
-Note the primary action: **"I have this — make an offer"**, not "contact seller." The swap is a proposal, so the natural response is a counter-proposal. Revealing the number is the secondary action.
+Note the primary action: **"Make an offer"**, not "contact seller." The swap is a proposal, so the natural response is a counter-proposal. Revealing the number is the secondary action.
 
 **Defects are shown prominently** rather than buried. The flaws of what someone swaps are exactly what a counterparty needs to know, and hiding them produces failed meetings and reports.
 
@@ -133,6 +133,18 @@ An offer against a swap listing (or a wanted post, or a sale marked Swaps accept
 - Which item the offerer is putting forward — for a dealer, an item from their stock
 - The cash amount they propose, which may differ from the asking amount
 - A short message
+
+### One kind of offer
+
+There is one button, **Make an offer**, on every listing that takes offers, and one form behind it. Only the choices inside change with what the listing asks for:
+
+| Listing | Takes offers when | Choices in the form |
+| --- | --- | --- |
+| **For sale** | The price is negotiable, it accepts swaps, or the seller shares their number only after accepting an offer | **Just cash** (a price) first, unless the price is fixed; plus *One of my listings* and *Describe it* if it accepts swaps. Without swaps the form asks only for a price |
+| **Swap** | Always | One of my listings, or Describe it, with the cash either way |
+| **Wanted** | Always | One of my listings, or Describe it, with your price. There is no "just cash": they are buying |
+
+A sale that is fixed price, takes no swaps and shows its number has no offer button: Show contact is the way in.
 
 **Offers are not binding and not escrowed.** They are a structured way of starting the conversation, after which the two parties settle it themselves. This is consistent with the contact-broker model throughout.
 

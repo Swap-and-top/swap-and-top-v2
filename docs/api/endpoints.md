@@ -109,7 +109,7 @@ The reveal endpoint is the only route through which contact details are ever ser
 
 | Endpoint | Access | Purpose |
 | --- | --- | --- |
-| List own pending confirmations | User | Prompts awaiting an answer |
+| List own confirmations | User | Prompts awaiting an answer, and those answered. Only those the user has been asked: an owner sees a reveal's check only after the revealer says yes |
 | Get confirmation | Party to it | The listing and the counterparty's display name only — never their answer |
 | Answer confirmation | Party to it | Yes, no, or not yet. Idempotent per party. |
 | Get confirmed deal count | Public | Aggregate only, for a user or a shop. Never per-deal detail. |

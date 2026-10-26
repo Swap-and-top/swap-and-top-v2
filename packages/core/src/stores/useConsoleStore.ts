@@ -8,7 +8,7 @@
  */
 
 import { create } from 'zustand';
-import type { LeadTab } from '../types/lead';
+import type { ConsoleOffersTab, LeadTab } from '../types/lead';
 import type { Category, ListingStatus } from '../types/listing';
 
 export type StockFilter = 'all' | ListingStatus;
@@ -41,6 +41,9 @@ export const NO_STOCK_FILTERS: StockFilters = {
 
 interface ConsoleState {
   leadTab: LeadTab;
+  /** The Offers page's tab: kept, so "See it" after sending an offer from
+      Leads can open it on Sent. */
+  offersTab: ConsoleOffersTab;
   /** Which lead is open in the desktop two-pane view. */
   activeLeadId: string | null;
   stockQuery: string;
@@ -52,6 +55,7 @@ interface ConsoleState {
   offerPrice: string;
   offerMessage: string;
   setLeadTab: (tab: LeadTab) => void;
+  setOffersTab: (tab: ConsoleOffersTab) => void;
   setActiveLead: (leadId: string | null) => void;
   setStockQuery: (query: string) => void;
   setStockFilter: (filter: StockFilter) => void;
@@ -63,6 +67,7 @@ interface ConsoleState {
 
 export const useConsoleStore = create<ConsoleState>((set) => ({
   leadTab: 'matching',
+  offersTab: 'received',
   activeLeadId: 'lead-1',
   stockQuery: '',
   stockFilter: 'all',
@@ -72,6 +77,7 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   offerMessage:
     'I have the Latitude 7490. Bring the Air in and we can do $255 on top.',
   setLeadTab: (leadTab) => set({ leadTab }),
+  setOffersTab: (offersTab) => set({ offersTab }),
   setActiveLead: (activeLeadId) => set({ activeLeadId }),
   setStockQuery: (stockQuery) => set({ stockQuery }),
   setStockFilter: (stockFilter) => set({ stockFilter }),
@@ -85,5 +91,4 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
 export const LEAD_TAB_LABELS: Record<LeadTab, string> = {
   matching: 'Matching requests',
   reveals: 'Number reveals',
-  offers: 'Offers sent',
 };

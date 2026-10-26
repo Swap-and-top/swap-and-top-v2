@@ -119,6 +119,7 @@ export const mockShopReveals: NumberReveal[] = [
     atLabel: '3 days ago',
     area: 'Harare CBD',
     deal: 'asked',
+    dealId: 'dc-8',
   },
   {
     id: 'rv-5',

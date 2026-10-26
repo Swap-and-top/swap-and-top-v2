@@ -495,6 +495,8 @@ const gtxSwap: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '8h ago',
   contactChannels: ['whatsapp'],
+  // Tarisai's offer here was accepted, so she sees the number.
+  contactShownTo: 'offers',
   allowDealerOffers: true,
   viewCount: 33,
   revealCount: 1,
@@ -536,6 +538,8 @@ const galaxySwap: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2 days ago',
   contactChannels: ['whatsapp', 'call'],
+  // Offers first; no dealer leads either.
+  contactShownTo: 'offers',
   allowDealerOffers: false,
   viewCount: 58,
   revealCount: 3,
@@ -578,6 +582,8 @@ const rtxWanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '1h ago',
   contactChannels: ['whatsapp', 'call'],
+  // Offers first; dealers see the lead but not the number.
+  contactShownTo: 'offers',
   allowDealerOffers: true,
   viewCount: 22,
   revealCount: 0,
@@ -601,6 +607,8 @@ const ps5Wanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '3h ago',
   contactChannels: ['whatsapp'],
+  // Tarisai's own: offers first.
+  contactShownTo: 'offers',
   allowDealerOffers: true,
   viewCount: 14,
   revealCount: 0,
@@ -631,6 +639,9 @@ const redmiWanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '6h ago',
   contactChannels: ['whatsapp', 'call'],
+  // Offers first, but dealers may see the number.
+  contactShownTo: 'offers',
+  contactToDealers: true,
   allowDealerOffers: true,
   viewCount: 19,
   revealCount: 0,
@@ -666,6 +677,8 @@ const cadDesktopSwap: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Yesterday',
   contactChannels: ['whatsapp', 'call'],
+  // Offers first; Kopje's offer was declined, so it never sees the number.
+  contactShownTo: 'offers',
   allowDealerOffers: true,
   viewCount: 27,
   revealCount: 0,
@@ -845,6 +858,8 @@ const ideaPad: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Yesterday',
   contactChannels: ['whatsapp', 'sms'],
+  // A plain sale, offers first: buyers offer before they see the number.
+  contactShownTo: 'offers',
   allowDealerOffers: true,
   viewCount: 44,
   revealCount: 2,

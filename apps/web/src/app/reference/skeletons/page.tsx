@@ -38,12 +38,13 @@ const SCREENS: [string, string, string][] = [
   ['Your account', 'me', '/me'],
   ['My listings', 'me-listings', '/me/listings'],
   ['Offers', 'me-offers', '/me/offers'],
+  ['Deals to confirm', 'me-deals', '/me/deals'],
   ['Deal check', 'deal', '/deals/dc-1/confirm'],
   ['Console: Stock', 'stock', '/console/stock'],
   ['Console: Edit item', 'stock-edit', '/console/stock/edit/l-thinkpad-t480'],
   ['Console: Leads', 'leads', '/console/leads'],
-  ['Console: Swap offers', 'swap-offers', '/console/trade-ins'],
-  ['Console: Promote', 'promote', '/console/promote'],
+  ['Console: Offers', 'swap-offers', '/console/trade-ins'],
+  ['Console: Stats', 'stats', '/console/stats'],
   ['Console: Shop profile', 'console-shop', '/console/shop'],
 ];
 

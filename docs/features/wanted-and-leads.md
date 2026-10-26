@@ -64,7 +64,7 @@ Contents:
 - Category filter chips
 - A prominent action: **post what you are looking for**
 
-Each card carries one primary button — **"I have this"** — which is the action a dealer pays to be alerted about. Full card specification in [../product/card-system.md](../product/card-system.md).
+Each card carries one primary button, **"Make an offer"** — which is the action a dealer pays to be alerted about. Full card specification in [../product/card-system.md](../product/card-system.md).
 
 **Response counts** — "4 dealers responded" — appear once there is activity. They signal liveness to buyers and competition to dealers.
 
@@ -134,6 +134,8 @@ A dealer's stock matches demand when:
 └────────────────────────────────────────────────┘
 ```
 
+**The contact button follows the poster's choice.** Where the poster shows their details to anyone, or keeps them back but lets dealers see them, the lead has a Show contact button. Where they keep them back from dealers too, there is none: the lead says *Their contact details are shared only if they accept your offer*, and the dealer's way in is an offer. If the poster accepts it, the button appears. See [../product/contact-and-reveals.md](../product/contact-and-reveals.md#who-can-see-the-contact-details).
+
 **The match line is what turns a notification into a tool.** It closes the gap between "somebody wants something" and "here is what you should offer them." When nothing matches, say so plainly and offer "I can source this" — dealers routinely source to order, and that is still a lead.
 
 ---
@@ -150,6 +152,8 @@ Every listing carries a **dealer-offers** toggle, set during posting and changea
 **Why it exists:** it stops the student side of the platform from feeling like a dealer channel, it turns dealer contact into a choice rather than a surprise, and it makes the paid product defensible — dealers are only ever approaching people who agreed to it.
 
 Consent is checked at the point leads are generated, not filtered later in the client.
+
+A second, narrower consent covers contact details. A poster who keeps their details back until they accept an offer chooses separately whether dealers may see them anyway (**Let dealers see my contact details**, off by default). So a listing can be a lead that dealers may answer only with an offer.
 
 ---
 
@@ -181,7 +185,7 @@ Mitigations:
 - [ ] Request listings postable in one screen
 - [ ] Swap listings appearing as demand with their swap strip
 - [ ] Wanted feed at top-level navigation with category filters
-- [ ] "I have this" as the single primary action on every demand card
+- [ ] "Make an offer" as the single primary action on every demand card
 - [ ] Matching against dealer stock with explicit match naming
 - [ ] Immediate alerts to matching dealers with an active subscription
 - [ ] Dealer-offers consent respected at generation time

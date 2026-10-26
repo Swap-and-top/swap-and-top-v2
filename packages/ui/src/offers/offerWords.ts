@@ -10,7 +10,7 @@ import type {
   OfferState,
 } from '@snt/core';
 
-/** A plain request, with nothing traded in: the offer's cash is a price. */
+/** A plain request: the offer's cash is a price. */
 export function isPriceOffer(listing: OfferableListing): boolean {
   return listing.type === 'request';
 }
@@ -24,9 +24,14 @@ export function askParts(listing: OfferableListing): {
   item: string;
   terms: string;
 } {
-  // A sale that takes swaps: what is for sale, at its price.
+  // A sale: what is for sale, at its price, and whether it takes swaps.
   if (listing.type === 'sale') {
-    return { item: listing.item.name, terms: `$${listing.price} · swaps accepted` };
+    return {
+      item: listing.item.name,
+      terms: listing.acceptsSwaps
+        ? `$${listing.price} · swaps accepted`
+        : `$${listing.price}`,
+    };
   }
   if (listing.type === 'swap') {
     const upTo = listing.cashUpTo ? ' up to' : '';
@@ -51,8 +56,8 @@ export function cashSetup(listing: OfferableListing): {
   from: OfferCashFrom;
   amount: string;
 } {
-  // A trade-in towards something for sale: you add cash to your item, if
-  // it is worth less. Nothing on top is fine too.
+  // A swap towards something for sale: you add cash to your item, if it is
+  // worth less. Nothing on top is fine too.
   if (listing.type === 'sale') {
     return { label: 'Cash you add', optional: true, from: 'offerer', amount: '' };
   }
@@ -93,7 +98,8 @@ export function cashLine(
   side: 'has' | 'wants' | null;
 } {
   const amount = `$${offer.cashAmount}`;
-  if (isPriceOffer(listing)) {
+  // A request's price, or a cash offer on a sale: nothing swapped.
+  if (isPriceOffer(listing) || !offer.item) {
     const label = readerIsOwner ? 'Their price' : 'Your price';
     return { text: `${label} ${amount}`, label, amount, side: 'wants' };
   }

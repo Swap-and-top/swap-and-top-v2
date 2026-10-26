@@ -18,7 +18,7 @@ It is two things at once:
 
 That dual identity is intentional and is the bridge between the two companies. See [../business/company-structure.md](../business/company-structure.md).
 
-Wireframe frames: `ConsoleStockM`, `ConsoleLeadsM`, `ConsolePromoteM`, `ConsoleStockD`, `ConsoleLeadsD`.
+Wireframe frames: `ConsoleStockM`, `ConsoleLeadsM`, `ConsolePromoteM` (now Stats), `ConsoleStockD`, `ConsoleLeadsD`.
 
 ---
 
@@ -44,7 +44,7 @@ Most small Harare shops are run from a phone behind a counter. A dealer will nev
 | --- | --- | --- |
 | Priority | **Primary build** | Second |
 | Earns its place by | Being usable one-handed, behind a counter, mid-conversation | Bulk work — pricing a dozen machines, imports, two-pane leads |
-| Sections | Stock, Leads, Swap offers, Promote, Shop | Adds Performance as its own section |
+| Sections | Stock, Leads, Offers, Stats, Shop | The same, with more room for the graph |
 
 ---
 
@@ -94,13 +94,12 @@ A LEAD AS THE DEALER SEES IT:
 
 **The match line is what makes it feel like a tool rather than a notification.** It closes the gap between "someone wants something" and "here is what you should offer them."
 
-**Tabs:** matching requests, number reveals, offers sent. On a phone each row of the two tables is a compact card; between a tablet and a wide screen, two to a row; from a wide screen, the table.
+**Tabs:** matching requests, number reveals. The shop's own offers are on the Offers page, under Sent. On a phone each row of the table is a compact card; between a tablet and a wide screen, two to a row; from a wide screen, the table.
 
 | Tab | What it shows |
 | --- | --- |
 | **Matching requests** | Requests and swaps that match the shop's stock (or its lead alert categories), newest first. Each says how the dealer was told of it, e.g. *"Alerted by WhatsApp · 10:42"*. |
-| **Number reveals** | A table set as Stock's: who revealed the shop's number, how they made contact (WhatsApp or call), the listing and its price, when, their confirmed deals, and a badge for where the deal check stands (*Asking in 3 days*, *Answer needed*, *Deal confirmed*). A row opens the listing. Shape: `NumberReveal` in `packages/core/src/types/lead.ts`. |
-| **Offers sent** | A table set as Stock's: the request (who wants what), what the shop offered, the cash, when it was sent, and a status badge (*Waiting*, *Accepted*, *Declined*, *Withdrawn*). A row opens the offer in full (its message, and the person's contact ways once accepted); the ⋮ menu has *See the offer* or *Contact them*, *See their request*, and *Withdraw* while it waits. They are ordinary offers from the shop's account, so the backend needs nothing extra for them. |
+| **Number reveals** | A table set as Stock's: who revealed the shop's number, how they made contact (WhatsApp or call), the listing and its price, when, their confirmed deals, and a badge for where the deal check stands (*Asking them in 3 days*, *Answer needed* once they say yes, *Deal confirmed*, *No deal*). Until the person says a deal went through, the row shows only *Someone in* their area, with no name or deal count; the shop never learns who merely looked. Only a row marked *Answer needed* opens anything: its deal check, where the shop answers and comes back to Leads. Other rows do nothing, since there is nothing to do on them. Shape: `NumberReveal` in `packages/core/src/types/lead.ts`. |
 
 **Lead alerts** sit above the tabs: a chip that shows whether they are on, paused or need setting up, and opens their settings. See [../features/notifications.md](../features/notifications.md).
 
@@ -112,36 +111,43 @@ The requester's own record is shown on the lead — confirmed deals, account age
 
 ---
 
-### 3. Swap offers
+### 3. Offers
 
-Swap offers made on stock marked **Swaps accepted**, grouped by the item they are for. Each is an offer, as on a swap: what the buyer has, the cash they add, their message. Accept or decline it; accepting shows the buyer's contact ways, and a decline can be undone. The section's count in the navigation is the swap offers still waiting for a reply. See [../features/sell.md](../features/sell.md).
+Everything the shop has going in offers, laid out exactly as the profile's Offers page is for a person (the shared `OfferGroups` component): each listing in brief, its offers hung under it on a thread line. Two tabs:
 
-### 4. Promote
+| Tab | Content |
+| --- | --- |
+| **Received** | Offers on the shop's stock, cash or a swap (see [../features/swap-and-top.md](../features/swap-and-top.md#one-kind-of-offer)). Accept or decline; accepting shows the buyer's contact ways, and a decline can be undone |
+| **Sent** | The offers the shop made on Wanted listings from Leads, with what became of each. *See it*, on the message after sending one, opens this tab |
 
-Where money is spent. Four blocks:
+The section's count in the navigation is the offers received still waiting for a reply. Route and code names stay `/console/trade-ins`.
+
+### One home per account
+
+A private seller manages everything in their profile; a dealer manages everything for their shop in the console, so nobody hunts between two places. **Still to do, with the API:** in a dealer's own profile, shop matters (My listings, Offers, Deals to confirm on shop stock) should point to the console instead of repeating it, leaving only personal things (Saved, Settings) in the profile. In the mock the profile belongs to Tarisai, a private seller, and the console to Kopje Computers, so there is nothing to show yet.
+
+### 4. Stats
+
+The shop's numbers over time, to decide what to do next, and at the foot the ways to grow them. It replaced Promote (`/console/promote` forwards to `/console/stats`), so the menu stays at five sections.
 
 | Block | Content |
 | --- | --- |
-| **Lead alerts** | Status, price, renewal date. The subscription that earns first. |
-| **Sponsored slots** | What it does, price per item per week, how many are running, action to sponsor an item |
-| **Friday Drop** | Next drop time, slots remaining, price, action to apply |
-| **Best performer** | The dealer's top item this week by reveals, and whether it was sponsored |
+| **Stretch of time** | One switch: Today, Week, Month, Year, All time. Today's graph goes by the hour, a week or month by the day, a year or all time by the month |
+| **Four numbers** | Listing views, Number reveals (the leads), Offers received, Confirmed deals, each with its change on the stretch before, in words ("Up 18% on last week") |
+| **The graph** | One bar chart, of whichever number is tapped (Number reveals to start). Tap or hover a bar for its figure |
+| **Your best items** | The shop's items, most reveals first, each with its views, reveals, offers and deals |
+| **Where leads come from** | WhatsApp against calls, and sponsored against normal listings |
+| **Grow these numbers** | What Promote was: lead alerts, sponsored slots, the Friday Drop |
 
-The header carries three numbers: **reveals this week**, **confirmed deals**, and **sponsored versus normal performance**.
+Confirmed deals is the renewal argument: *"at least twelve confirmed deals last month"* is a far stronger reason to keep paying than a count of people who saw a phone number. The page says it is a floor, since a deal counts only when both sides answer. Sponsored against normal is the argument for buying promotion, shown continuously rather than in a sales conversation. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
 
-The middle one is the renewal argument. *"At least twelve confirmed deals last month"* is a far stronger reason to keep paying than a count of people who saw a phone number. The third is the argument for buying promotion, shown continuously rather than in a sales conversation. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
+The figures are mock data for now (`packages/core/src/mock/stats.ts`), the same on every load. Real ones come from the reveal, offer and deal records.
 
 ---
 
 ### 5. Shop profile
 
 Shop name, logo, location, opening hours, description, verification status. Feeds the public shopfront at `/shop/<slug>`.
-
----
-
-### 6. Performance — desktop only
-
-Reveals over time, views-to-reveals ratio per item, which categories attract attention, which price bands move. Deliberately not on mobile, where the summary numbers in Promote are enough.
 
 ---
 
@@ -180,7 +186,7 @@ If validation shows dealers will pay for the stock system, the console becomes t
 - [ ] Confirmed deal count in the header and on the shopfront
 - [ ] Leads feed with swap detail and explicit stock matching
 - [ ] Offer sending against a lead
-- [ ] Promote screen with subscription state and sponsored slot purchase
+- [ ] Stats screen: the four numbers over time, the graph, best items, lead sources, and promotion (subscription state and sponsored slot purchase) at its foot
 - [ ] Shop profile feeding a server-rendered public shopfront
 - [ ] Fully usable one-handed at 390px
 - [ ] Desktop table and two-pane leads view

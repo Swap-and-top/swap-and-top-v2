@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
-import { Toaster } from 'sonner';
 import { ToastOffset } from '@/components/ToastOffset';
-import { SignInHost } from '@snt/ui';
+import { SessionRestore } from '@/components/SessionRestore';
+import { AppToaster, SignInHost } from '@snt/ui';
 import { PageLoadBar } from '@/components/PageLoadBar';
 import { ScrollToTop } from '@/components/ScrollToTop';
 
@@ -92,19 +92,11 @@ export default function RootLayout({
         {children}
         {/* The one sign-in sheet, shown whenever a guest tries something that
             needs an account. */}
+        {/* A remembered sign in, back before the first paint. */}
+        <SessionRestore />
         <SignInHost />
-        {/* Short confirmations — "Saved". Bottom left on a
-            desktop; on a phone sonner runs them the full width of the screen,
-            at the bottom: just above a bottom bar where there is one, and
-            otherwise at the foot (see ToastOffset). Green when the thing
-            worked, red when it did not (see globals.css). */}
-        <Toaster
-          position="bottom-left"
-          richColors
-          offset={24}
-          mobileOffset={{ bottom: 12 }}
-          duration={2500}
-        />
+        {/* Short confirmations, "Saved" and the like (see AppToaster). */}
+        <AppToaster />
         <ToastOffset />
       </body>
     </html>

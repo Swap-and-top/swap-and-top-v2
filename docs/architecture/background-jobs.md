@@ -50,7 +50,7 @@ Using the existing database rather than a separate queue service is deliberate: 
 | --- | --- | --- |
 | **Expiry sweep** | Hourly | Moves listings past 30 days to expired; clears them from feed, search and sitemap |
 | **Expiry nudge** | Daily | Asks owners of listings expiring in three days whether they are still available |
-| **Confirmation prompt** | Hourly | Sends the deal confirmation prompt to both parties three days after a reveal |
+| **Confirmation prompt** | Hourly | Three days after an accepted offer, prompts both parties; three days after a signed in reveal, prompts the revealer. The owner's prompt after a reveal is sent when the revealer answers yes, not by this job |
 | **Confirmation lapse sweep** | Daily | Closes unanswered confirmations after fourteen days, silently |
 | **Repeat-pair check** | Weekly | Flags account pairs repeatedly confirming each other's deals |
 | **Reveal digest** | Weekly | Sends sellers with activity their reveal summary |

@@ -1,6 +1,7 @@
 # Handoff: where the redesign stands
 
-Written on 2026-10-22 to carry the work to a new Claude account. The rules
+Written on 2026-10-22 to carry the work to a new Claude account, and
+brought up to date on 2026-10-26. The rules
 for working on this repo are in `/CLAUDE.md`; read that first. This file is
 the state of the code and the recent work.
 
@@ -9,12 +10,13 @@ the state of the code and the recent work.
 Swap & Top is a Zimbabwean marketplace for phones, laptops, consoles and
 parts, built around the swap: offer what you have, add cash on top. People
 post items for sale, swaps and Wanted listings; dealers (shops) get a
-console with stock, leads and swap offers. The product docs live in
+console with stock, leads, offers and stats. The product docs live in
 `docs/` (start at `docs/00-SUMMARY.md`).
 
 Everything runs on mock data in the browser for now. There is no backend:
-stores hold state in memory, so a full page reload resets offers and signs
-the user out.
+stores hold state in memory, so a full page reload resets offers, saves and
+deal answers. Signing in is the exception: it is kept in local storage
+(`snt-session`) until you sign out.
 
 ## Repo layout
 
@@ -96,7 +98,36 @@ Patterns the user has settled on:
 
 See `git log` for the full detail; each commit body explains its change.
 
-- **Uncommitted at the time of writing, committed with this file:**
+- **2026-10-26 session** (one commit):
+  - Profile: "My wanted posts" row removed; **Deals to confirm** is a list
+    (`/me/deals`, To confirm and Answered) of deal checks, each opening
+    `/deals/<id>/confirm`.
+  - **Deal checks** start from an accepted offer (both asked) or a signed in
+    number reveal (the revealer first, the owner only after a yes); guest
+    reveals ask nobody. Roles are asker and owner. Decision P27.
+  - **Contact toggle** on every post: "Only share my contact details after
+    I accept an offer"; with it on, "Let dealers see my contact details".
+    Such listings show only the offer button and say "Offers only" on their
+    feed cards. Decision P28.
+  - **One kind of offer**: "Make an offer" everywhere, one form. On a sale,
+    "Just cash" where the price moves, plus swap choices where it takes
+    swaps. Sales take offers when negotiable, accepting swaps, or contact
+    after offer. Decision P29.
+  - **Toasts** always in front: one toaster, moved into an open sheet;
+    sheets animate an inner panel, not the dialog.
+  - **Dealer console**: Promote is now **Stats** (`/console/stats`: time
+    switch, four numbers, bar graph, best items, lead sources, promotion at
+    the foot; mock data in `packages/core/src/mock/stats.ts`). Swap offers
+    is now **Offers** with Received and Sent, laid out as the profile's
+    Offers page (shared `components/offers/OfferGroups`); Leads keeps
+    Matching requests and Number reveals. Number reveals rows name the
+    person only once they say a deal happened, and only "Answer needed"
+    rows open (the shop's deal check). Matching requests restyled as the
+    Wanted card; swaps there and in the Wanted feed read "Swap", not
+    "Wanted + Swap".
+  - Sign in is remembered in local storage until you sign out.
+  - CLAUDE.md rule 10: keep it simple, fewest taps, only what was asked.
+- **2026-10-22, committed with the first version of this file:**
   - My listings tabs split into All, Swaps, For Sale (Sale on a phone),
     Wanted, as on the feed.
   - Even tabs tighten on narrow phones; the sliding block re-measures when
@@ -126,9 +157,10 @@ See `git log` for the full detail; each commit body explains its change.
 
 ## Known loose ends and ideas offered
 
-- The console's Swap offers page (`/console/trade-ins`) still heads each
-  group with just the listing's name; it could take the Offers page's
-  listing summary and thread.
+- **With the API: one home per account.** A dealer's own profile should
+  point shop matters (My listings, Offers, shop deal checks) to the console
+  rather than repeat them; only personal things (Saved, Settings) stay in
+  the profile. See docs/product/dealer-console.md, "One home per account".
 - The Leads tabs could move onto the shared `Tabs` component.
 - Made offers are listed in store order, not strictly newest first; real
   dates would allow sorting.
@@ -144,5 +176,5 @@ See `git log` for the full detail; each commit body explains its change.
 - Clicking before hydration does nothing; wait, or navigate with
   `window.next.router.push(path)`.
 - Editing a file in `packages/core` or some `packages/ui` files triggers a
-  full reload, which signs the mock user out; sign in again.
+  full reload, which resets offers and the like; you stay signed in.
 - Check phones at 375 by 812 and laptops at about 1024 wide.

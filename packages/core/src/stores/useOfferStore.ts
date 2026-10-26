@@ -93,7 +93,8 @@ const SAMPLE_OFFERS: Offer[] = [
     cashFrom: 'none',
     message: 'Never mined on, fans cleaned last month. Straight swap?',
     state: 'accepted',
-    sentLabel: 'Yesterday',
+    // Accepted long enough ago for its deal check to have been sent.
+    sentLabel: '8 days ago',
   },
   {
     id: 'o-tarisai-thinkpad',

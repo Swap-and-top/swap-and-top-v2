@@ -75,10 +75,10 @@ The chip shows one of three states, worked out by `leadAlertStatus()`:
 | **Offer received** | Someone offers on their swap or request | In-app, WhatsApp | Requires a decision |
 | **Listing expiring** | Three days before the 30-day expiry | In-app, WhatsApp | *"Is this still available?"* — doubles as re-engagement |
 | **Listing expired** | On expiry | In-app | With a one-tap relist |
-| **Deal confirmation prompt** | Three days after a reveal, to both parties | In-app, WhatsApp | *"Did the deal go through?"* Builds the seller's public record and gives the platform its only view of settlement. |
+| **Deal confirmation prompt** | Three days after an accepted offer, to both; three days after a signed in reveal, to the revealer, then to the owner if they say yes | In-app, WhatsApp | *"Did the deal go through?"* Builds both people's public record and gives the platform its only view of settlement. |
 | **Deal confirmed** | Both parties answered yes | In-app | Confirms the count went up. The reward that makes the next prompt worth answering. |
 
-The confirmation prompt is sent to **both** parties, and is re-asked once if someone answers "not yet". It lapses silently after fourteen days — never chased, because a prompt that nags is a prompt people learn to ignore. A "no" is never relayed to the other side. See [deal-confirmation.md](./deal-confirmation.md).
+After an accepted offer the prompt goes to **both** parties. After a reveal it goes to the person who revealed, and to the listing's owner only once they say yes, so owners are never asked about people who merely looked. It is re-asked once if someone answers "not yet". It lapses silently after fourteen days — never chased, because a prompt that nags is a prompt people learn to ignore. A "no" is never relayed to the other side. See [deal-confirmation.md](./deal-confirmation.md).
 
 ### Buyer — habit
 

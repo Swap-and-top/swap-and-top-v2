@@ -112,6 +112,21 @@
   min-width: 0;
 }
 
+/* Who revealed it, as a seller is named on a listing card: small, after the
+   little person mark; grey while it is only "Someone in" an area, bold in
+   the card's ink once named. */
+.revealer {
+  grid-area: who;
+  min-width: 0;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.revealerNamed {
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-ink);
+}
+
 .price {
   grid-area: price;
   font-family: var(--snt-font-display);
@@ -148,13 +163,13 @@
   display: none;
 }
 
-/* A phone's reveal: the tile, the name and its badge, the listing and its
-   price, then how and when. */
+/* A phone's reveal: the tile, the listing and its badge, who it was in the
+   middle with the price, then how and when. */
 .reveals .row {
   grid-template-columns: 34px minmax(0, 1fr) auto;
   grid-template-areas:
-    'tile who badge'
-    'tile listing price'
+    'tile listing badge'
+    'tile who price'
     'tile meta meta';
 }
 
@@ -203,7 +218,7 @@
   .reveals .headerRow,
   .reveals .row {
     grid-template-columns:
-      34px minmax(0, 1.3fr) 90px minmax(0, 2fr) 72px 120px 90px 150px;
+      34px minmax(0, 2fr) minmax(0, 1.3fr) 90px 72px 120px 90px 150px;
     grid-template-areas: none;
   }
 
@@ -238,6 +253,7 @@
 
   .tile,
   .who,
+  .revealer,
   .offered,
   .request,
   .listing,

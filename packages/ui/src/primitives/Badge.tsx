@@ -16,6 +16,8 @@ export type BadgeTone =
   | 'success'
   | 'accent'
   | 'accentSolid'
+  /** The brand's blue to green, as the header: for what is new. */
+  | 'brand'
   | 'danger'
   | 'dark';
 

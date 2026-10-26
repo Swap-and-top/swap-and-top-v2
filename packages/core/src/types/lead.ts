@@ -31,7 +31,10 @@ export interface Lead {
   alert?: { via: AlertChannel[]; at: string };
 }
 
-export type LeadTab = 'matching' | 'reveals' | 'offers';
+export type LeadTab = 'matching' | 'reveals';
+
+/** The console's Offers page: offers on the shop's stock, or ones it sent. */
+export type ConsoleOffersTab = 'received' | 'sent';
 
 /**
  * Someone revealed the shop's number on one of its listings: the "Number
@@ -41,7 +44,8 @@ export type LeadTab = 'matching' | 'reveals' | 'offers';
  */
 export interface NumberReveal {
   id: string;
-  /** Who revealed it. */
+  /** Who revealed it. Shown to the shop only once they say a deal went
+      through; until then the row says "Someone in" their area. */
   userId: string;
   /** The shop's listing it was revealed on. */
   listingId: string;
@@ -51,11 +55,15 @@ export interface NumberReveal {
   atLabel: string;
   area: string;
   /**
-   * Where the deal check stands. `waiting`: too soon to ask, `daysToAsk`
-   * says when. `asked`: both were asked and the shop has not answered.
+   * Where the deal check stands. The person who revealed is asked first;
+   * the shop only once they say yes. `waiting`: they have not been asked
+   * yet (`daysToAsk` says when) or have not said yes. `asked`: they said
+   * yes and the shop has not answered.
    * `confirmed`: both said yes, and it counts on the shop's record. A "no"
    * is never shown to the other side, so it has no state of its own here.
    */
   deal: 'waiting' | 'asked' | 'confirmed';
   daysToAsk?: number;
+  /** The deal check the shop answers, once it is asked. */
+  dealId?: string;
 }

@@ -65,25 +65,29 @@
     border-radius: var(--snt-radius-xl);
   }
 
+  /* A slight, even padding all round, so the chosen row shows as its own
+     rounded block inside the card, at the top and bottom as anywhere. */
   .list {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding-block: var(--snt-space-3);
+    padding: var(--snt-space-3);
   }
 
   /* Rows parted by a pale line, set in from the card's edges. */
   .listItem {
     display: block;
     width: 100%;
-    padding: var(--snt-space-6) var(--snt-space-8);
+    padding: var(--snt-space-6) var(--snt-space-7);
+    /* The card's corner, less the padding around it. */
+    border-radius: var(--snt-radius-md);
     text-align: left;
     transition: background var(--snt-transition);
   }
 
   .listItem + .listItem {
     background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
-    background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+    background-size: calc(100% - var(--snt-space-7) * 2) 1px;
     background-position: center top;
     background-repeat: no-repeat;
   }
@@ -107,34 +111,44 @@
     );
   }
 
+  /* Set as the phone's lead card and the feed's Wanted card: the label
+     and age, the item wanted in green, the facts small and grey. */
   .listHead {
     display: flex;
     align-items: center;
     gap: var(--snt-space-4);
   }
 
-  /* These are spans inside a button, so they need to be made block. */
-  .listTitle,
-  .listSub {
-    display: block;
+  .spacer {
+    flex-grow: 1;
   }
 
   .listAge {
     font-size: var(--snt-text-xs);
     color: var(--snt-ink-muted);
+    white-space: nowrap;
   }
 
   .listTitle {
+    display: block;
+    margin-top: var(--snt-space-4);
     font-size: var(--snt-text-lg);
     font-weight: var(--snt-weight-bold);
     line-height: var(--snt-leading-tight);
-    margin-top: var(--snt-space-3);
+    color: var(--snt-wanted-ink);
   }
 
   .listSub {
-    font-size: var(--snt-text-sm);
-    color: var(--snt-ink-muted);
+    display: flex;
+    flex-wrap: wrap;
     margin-top: var(--snt-space-2);
+    font-size: var(--snt-text-xs);
+    color: var(--snt-ink-muted);
+  }
+
+  .listSub > span + span::before {
+    content: '·';
+    margin-inline: var(--snt-space-3);
   }
 
   /* --- detail card --- */
@@ -143,77 +157,17 @@
     padding: var(--snt-space-10) var(--snt-space-12);
   }
 
-  /* What they want: the big line, in green. */
+  /* What they want: as the card's title, a size up for the room. */
   .detailTitle {
-    font-family: var(--snt-font-display);
-    font-size: var(--snt-text-4xl);
+    margin-top: var(--snt-space-5);
+    font-size: var(--snt-text-2xl);
     font-weight: var(--snt-weight-bold);
     line-height: var(--snt-leading-tight);
     color: var(--snt-wanted-ink);
-    margin-top: var(--snt-space-3);
   }
 
-  .detailMeta {
-    font-size: var(--snt-text-base);
-    color: var(--snt-ink-muted);
-    margin-top: var(--snt-space-2);
-  }
-
-  .detailCards {
-    display: flex;
-    gap: var(--snt-space-5);
-    margin-top: var(--snt-space-9);
-  }
-
-  /* What they have and the cash on top: pale boxes, as the text boxes are. */
-  .tradeInCard,
-  .cashCard {
-    padding: var(--snt-space-7);
-    border-radius: var(--snt-radius-lg);
-    background: var(--snt-bg-inset);
-  }
-
-  .tradeInCard {
-    flex-grow: 1;
-    flex-basis: 0;
-    min-width: 0;
-  }
-
-  .tradeInName {
-    display: block;
-    font-size: var(--snt-text-xl);
-    font-weight: var(--snt-weight-bold);
-    margin-top: var(--snt-space-3);
-  }
-
-  .tradeInSpecs {
-    font-size: var(--snt-text-base);
-    color: var(--snt-ink-muted);
-    line-height: var(--snt-leading-normal);
-    margin-top: var(--snt-space-3);
-  }
-
-  .cashCard {
-    width: 168px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .cashValue {
-    font-family: var(--snt-font-display);
-    font-size: 30px;
-    font-weight: var(--snt-weight-bold);
-    color: var(--snt-accent-bold);
-    margin-top: var(--snt-space-2);
-  }
-
-  .cashNote {
-    font-size: var(--snt-text-xs);
-    color: var(--snt-ink-muted);
-    margin-top: var(--snt-space-1);
+  .detailTradeIn:empty {
+    display: none;
   }
 
   /* --- match: the dealer's own item, in the blue of things owned --- */
@@ -289,4 +243,20 @@
     padding-top: var(--snt-space-7);
     border-top: 1px solid var(--snt-bg-app);
   }
+}
+
+/* The requester keeps their details back until an offer is accepted: a
+   quiet line under their name in place of the contact button. */
+.keptBack {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  margin-top: var(--snt-space-4);
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+.keptBack svg {
+  flex-shrink: 0;
 }

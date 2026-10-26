@@ -26,7 +26,6 @@ import {
   InfoIcon,
   ListIcon,
   SaveStarIcon,
-  SearchIcon,
   SettingsIcon,
   ShieldCheckIcon,
   SwapIcon,
@@ -59,8 +58,7 @@ export default function Loading() {
             <h2 className={styles.section}>Your activity</h2>
             <ListGroup>
               <ListRow href="/me/listings" icon={<ListIcon size={19} />} label="My listings" />
-              <ListRow href="/me/listings" icon={<SearchIcon size={19} />} label="My wanted posts" />
-              <ListRow href="/me" icon={<CheckIcon size={19} weight={1.9} />} label="Deals to confirm" />
+              <ListRow href="/me/deals" icon={<CheckIcon size={19} weight={1.9} />} label="Deals to confirm" />
               <ListRow href="/me/offers" icon={<SwapIcon size={19} />} label="Offers" />
               <ListRow href="/saved" icon={<SaveStarIcon size={19} />} label="Saved" />
             </ListGroup>

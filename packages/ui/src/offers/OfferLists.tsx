@@ -59,7 +59,7 @@ export function OffersMade() {
     return (
       <p className={styles.none}>
         You have not made any offers. Find something you have under Wanted or
-        Swaps, and tap “I have this”.
+        Swaps, and tap “Make an offer”.
       </p>
     );
   }

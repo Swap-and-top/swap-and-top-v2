@@ -32,9 +32,9 @@
   color: var(--snt-wanted-ink);
 }
 
-/** A request that carries a trade-in is swap demand — the higher-value lead. */
+/** A swap shown as demand: "Swap", in the blue swaps carry elsewhere. */
 .labelTradeIn {
-  color: var(--snt-wanted-ink);
+  color: var(--snt-control-active);
 }
 
 /* An icon's tile: a small rounded square in a pale wash of the green, as the
@@ -47,7 +47,8 @@
   width: 24px;
   height: 24px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--snt-wanted-ink) 12%, transparent);
+  /* A pale wash of the label's own colour. */
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .spacer {
@@ -75,7 +76,7 @@
 
 /*
  * The stretched link, as on the sale and swap cards: the title's ::after
- * covers the whole card, so a tap anywhere opens the request. "I have this",
+ * covers the whole card, so a tap anywhere opens the request. "Make an offer",
  * the trade-in photo and save and share sit above it and keep their own taps.
  */
 .title::after {

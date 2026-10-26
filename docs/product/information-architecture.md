@@ -75,7 +75,7 @@ Each row maps to a frame on the wireframe canvas. Names match exactly.
 | --- | --- | --- | --- |
 | Browse feed | `Main` | Mixed feed, category and type chips, infinite scroll | Guest |
 | Search and filters | `Search` | Full-screen specification filters per category | Guest |
-| Wanted feed | `Wanted` | Requests and swap demand, with "I have this" actions | Guest |
+| Wanted feed | `Wanted` | Requests and swap demand, with "Make an offer" actions | Guest |
 | Listing detail — dealer sale | `DetailDealer` | Photos, price, spec table, shop row, reveal, swap offer where swaps are accepted | Guest |
 | Listing detail — swap | `DetailSwap` | The have-⇄-wants panel, specs of what is swapped, offer and reveal | Guest |
 | Post step 1 — type | `PostType` | Sell / Swap & top / Looking for | Account |
@@ -84,7 +84,7 @@ Each row maps to a frame on the wireframe canvas. Names match exactly.
 | Dealer shopfront | `Shopfront` | Shop identity, trust stats, stock grid, reveal | Guest |
 | Saved | `Saved` | Watchlist with availability and price-drop badges | Account |
 | Me | `Me` | Account hub and console entry | Account |
-| Deal confirmation | `DealConfirm` | *Did the deal go through?* Sent to both parties three days after a reveal | Account |
+| Deal confirmation | `DealConfirm` | *Did the deal go through?* After an accepted offer, to both; after a reveal, to the revealer, then the owner if they say yes | Account |
 
 ### Reference board
 

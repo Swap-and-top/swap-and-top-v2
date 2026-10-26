@@ -137,7 +137,15 @@ Plus a separate toggle, below a divider:
 
 Default on. This gives the user explicit control over whether dealers may approach them, which protects the experience from feeling like a dealer channel. See [../features/wanted-and-leads.md](../features/wanted-and-leads.md).
 
-The screen states plainly: **your number is hidden until someone taps Show number, and you will see how many people did.** That sentence does two jobs — it reassures, and it introduces the metric the seller will come back for.
+The screen states plainly: **your details stay hidden until someone taps Show contacts, and you will see how many people did.** That sentence does two jobs: it reassures, and it introduces the metric the seller will come back for.
+
+Then one toggle, on every kind of post:
+
+> **Only share my contact details after I accept an offer** (off by default)
+
+On, people send an offer first, only those accepted can reach the poster, and a declined offer never sees anything. A sale with it on takes offers as a sale that accepts swaps does. While it is on, **Let dealers see my contact details** (off unless ticked) appears in place of **Only show my details to signed in users**, if dealer offers are on.
+
+See [contact-and-reveals.md](./contact-and-reveals.md#who-can-see-the-contact-details).
 
 ### 3. What happens next
 

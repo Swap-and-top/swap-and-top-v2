@@ -140,17 +140,20 @@ export function FacebookMark() {
  */
 export function SignInGate({ children }: { children: ReactNode }) {
   const signedIn = useSessionStore((state) => state.signedIn);
+  /** A remembered sign in comes back a moment after the page loads: wait
+      for it before moving anyone on. */
+  const restored = useSessionStore((state) => state.restored);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (signedIn) return;
+    if (signedIn || !restored) return;
     const { signedOutAt } = useSessionStore.getState();
     const justLeft = signedOutAt !== null && Date.now() - signedOutAt < 5000;
     router.replace(
       justLeft ? '/' : `/signin?next=${encodeURIComponent(pathname ?? '/')}`,
     );
-  }, [signedIn, router, pathname]);
+  }, [signedIn, restored, router, pathname]);
 
   return signedIn ? <>{children}</> : null;
 }

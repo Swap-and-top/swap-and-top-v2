@@ -64,6 +64,31 @@ This is [principles.md](./principles.md) rule 1, and it is the rule most likely 
 
 ---
 
+## Who can see the contact details
+
+Every post has one toggle, set when posting and changeable later:
+
+> **Only share my contact details after I accept an offer** (off by default)
+
+| Toggle | Who sees the details | Notes |
+| --- | --- | --- |
+| **Off** | Anyone who taps Show contact, within the rate limits | As before. Can be narrowed to signed in users only |
+| **On** | Nobody from the listing. Each person whose offer the poster accepts | People offer first. A declined offer never reveals anything |
+
+With the toggle on the listing has no Show contact button. In its place a line reads *Contact details are shared once your offer is accepted*, under the offer button. The poster's own view of the listing says *Contact shared after you accept an offer* instead of a reveal count.
+
+Accepting an offer already shows each side the other's contact details on the offer itself (see [../features/swap-and-top.md](../features/swap-and-top.md)), so nothing new is needed there: the person whose offer was accepted also gets a Show contact button back on the listing.
+
+**Works on every post.** Swaps and Wanted listings already take offers. A sale with the toggle on always takes offers (**Make an offer**), even at a fixed price, so nobody is ever left with no way to reach the poster. Offers on a sale can be just cash; see [../features/swap-and-top.md](../features/swap-and-top.md#one-kind-of-offer).
+
+**Dealers.** With the toggle on, a further box appears: **Let dealers see my contact details**, off unless ticked. Ticked, a dealer who gets the listing as a lead can reach the poster straight away. Unticked, the dealer sees the lead, can send an offer, and sees the details only if that offer is accepted. See [../features/wanted-and-leads.md](../features/wanted-and-leads.md).
+
+Like every contact rule, this is enforced where details are served, never by hiding a button in the client.
+
+**Effect on deal checks:** a listing that keeps its details back has no reveals to follow up, so its deal checks come only from accepted offers. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
+
+---
+
 ## Rate limiting
 
 Per device, not per account, since most revealers have no account.
@@ -128,9 +153,9 @@ That last field is what makes it possible to say "sponsored listings got three t
 
 **Privacy stance:** device hashes, not identities. No cross-site tracking. Reveal counts shown to sellers are aggregate only — a seller never learns who looked.
 
-### The reveal also starts the deal confirmation clock
+### The reveal can also start a deal check
 
-Three days after a reveal, both parties are asked whether the deal went through. When both say yes it becomes a **confirmed deal**, which is the public trust signal for private sellers and the platform's only view of settlement.
+Three days after a reveal by a signed in user, the person who revealed is asked whether the deal went through. The listing's owner is asked only if they say yes, so an owner never learns who merely looked. A guest reveal asks nobody. An accepted offer also starts a deal check, asking both people. When both say yes it becomes a **confirmed deal**, which is the public trust signal for private sellers and the platform's only view of settlement.
 
 This is why the reveal is worth recording as an event rather than incrementing a counter: it is the hook everything downstream hangs on. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
 
@@ -170,6 +195,8 @@ The placement matters. Safety advice buried in a help page is decoration; advice
 - [ ] Sellers can see their own reveal counts
 - [ ] Safety guidance appears immediately adjacent to the reveal action
 - [ ] The dealer-offers consent is respected everywhere leads are generated
+- [ ] A poster can keep their details back until they accept an offer, on listings that take offers
+- [ ] Such a listing serves its details only to people whose offer was accepted, and to dealers only if the poster allowed it
 
 ---
 
@@ -179,7 +206,7 @@ The placement matters. Safety advice buried in a help page is decoration; advice
 - [Post Flow](./post-flow.md) — where contact preferences are set
 - [Trust & Safety](./trust-and-safety.md) — the guidance shown at contact
 - [Wanted & Leads](../features/wanted-and-leads.md) — how consent shapes the lead product
-- [Deal Confirmation](../features/deal-confirmation.md) — what a reveal triggers three days later
+- [Deal Confirmation](../features/deal-confirmation.md) — the deal check a reveal or an accepted offer starts
 - [Metrics](../operations/metrics.md) — what reveal data is used for
 - [v1 Lessons](../reference/v1-lessons.md) — the contact leak this replaces
 

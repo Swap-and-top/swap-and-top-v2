@@ -1,29 +1,12 @@
-/** Trade-ins, grouped by the item they are for. */
-.groups {
-  display: flex;
-  flex-direction: column;
-  gap: var(--snt-space-10);
+/** Console offers: the tabs under the title, and the groups in a column
+    (the groups themselves are in components/offers/OfferGroups). */
+
+.tabs {
+  --snt-column-inset: 0px;
+  margin-top: var(--snt-space-5);
+  max-width: 420px;
+}
+
+.column {
   max-width: 672px;
-}
-
-.group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--snt-space-5);
-}
-
-/* Which listing these are for: in the bold blue, as headings are. */
-.for,
-.for:hover {
-  color: var(--snt-accent-bold);
-}
-
-.none {
-  max-width: 672px;
-  padding: var(--snt-space-8) var(--snt-card-pad);
-  border-radius: var(--snt-radius-xl);
-  background: var(--snt-bg-card);
-  color: var(--snt-card-ink-muted);
-  font-size: var(--snt-text-md);
-  line-height: var(--snt-leading-normal);
 }

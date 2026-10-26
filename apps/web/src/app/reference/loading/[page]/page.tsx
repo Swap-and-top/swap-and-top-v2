@@ -15,12 +15,13 @@ import SavedLoading from '../../../saved/loading';
 import MeLoading from '../../../me/loading';
 import MyListingsLoading from '../../../me/listings/loading';
 import OffersLoading from '../../../me/offers/loading';
+import DealsLoading from '../../../me/deals/loading';
 import DealLoading from '../../../deals/[id]/confirm/loading';
 import StockLoading from '../../../console/stock/loading';
 import EditStockLoading from '../../../console/stock/edit/[id]/loading';
 import LeadsLoading from '../../../console/leads/loading';
 import SwapOffersLoading from '../../../console/trade-ins/loading';
-import PromoteLoading from '../../../console/promote/loading';
+import StatsLoading from '../../../console/stats/loading';
 import ConsoleShopLoading from '../../../console/shop/loading';
 import {
   RequestListingSkeleton,
@@ -40,12 +41,13 @@ const SCREENS = {
   me: MeLoading,
   'me-listings': MyListingsLoading,
   'me-offers': OffersLoading,
+  'me-deals': DealsLoading,
   deal: DealLoading,
   stock: StockLoading,
   'stock-edit': EditStockLoading,
   leads: LeadsLoading,
   'swap-offers': SwapOffersLoading,
-  promote: PromoteLoading,
+  stats: StatsLoading,
   'console-shop': ConsoleShopLoading,
 } as const;
 

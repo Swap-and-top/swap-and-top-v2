@@ -1,0 +1,358 @@
+/**
+ * Console stats. Set as the rest of the console is: white cards with no
+ * outline on the page's pale blue, names in the bold blue, icons on a pale
+ * tile. One blue for the data; text keeps the ink and greys.
+ */
+
+/* The stretch of time, under the title, as Leads' tabs sit. */
+.range {
+  --snt-column-inset: 0px;
+  margin-top: var(--snt-space-5);
+  max-width: 520px;
+}
+
+/* --- the four numbers ------------------------------------------------------ */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-5);
+}
+
+/* A number: white, its label small over it, its change small under it.
+   The one in the graph is ringed in the blue. */
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-2);
+  padding: var(--snt-space-7) var(--snt-space-8);
+  border: 1.5px solid transparent;
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  text-align: left;
+  transition: border-color var(--snt-transition);
+}
+
+.tileOn {
+  border-color: var(--snt-control-active);
+}
+
+@media (hover: hover) {
+  .tile:not(.tileOn):hover {
+    border-color: color-mix(in srgb, var(--snt-control-active) 25%, transparent);
+  }
+}
+
+.tileLabel {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink-muted);
+}
+
+.tileValue {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: var(--snt-leading-tight);
+  color: var(--snt-accent-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The change: in words, so it never rests on colour alone; green up, red
+   down. */
+.change {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.up {
+  color: var(--snt-success);
+}
+
+.down {
+  color: var(--snt-alert);
+}
+
+.note {
+  margin-top: var(--snt-space-4);
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+/* --- cards ------------------------------------------------------------------ */
+
+.card {
+  margin-top: var(--snt-space-6);
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.cardTitle {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.cardMeta {
+  margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* --- the graph -------------------------------------------------------------- */
+
+.chart {
+  margin-top: var(--snt-space-3);
+}
+
+/* What the bar under the finger says, or the total. */
+.readout {
+  min-height: 20px;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.readout strong {
+  color: var(--snt-ink);
+}
+
+/* Room on the left for the scale's numbers; the bars stand on a hairline. */
+.plot {
+  position: relative;
+  height: 170px;
+  margin-top: var(--snt-space-8);
+  margin-left: 30px;
+  border-bottom: 1px solid var(--snt-bg-inset);
+}
+
+.grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--snt-bg-inset);
+  pointer-events: none;
+}
+
+.gridLabel {
+  position: absolute;
+  right: calc(100% + 6px);
+  top: -8px;
+  font-size: 11px;
+  color: var(--snt-ink-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The bars, side by side, 2px of white between them. */
+.bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+}
+
+/* The whole column is the target, taller and wider than the bar. */
+.barSlot {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* A bar: never wider than 24px, rounded at its top, square on the line. */
+.bar {
+  display: block;
+  width: 100%;
+  max-width: 24px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--snt-control-active);
+  transition: background var(--snt-transition);
+}
+
+.barPicked .bar {
+  background: var(--snt-accent-bold);
+}
+
+.barSlot:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+/* Labels under the bars, each under its own. */
+.axis {
+  display: flex;
+  gap: 2px;
+  margin-left: 30px;
+  margin-top: var(--snt-space-3);
+}
+
+.tick {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: visible;
+  font-size: 11px;
+  color: var(--snt-ink-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* --- best items --------------------------------------------------------------- */
+
+.items {
+  margin-top: var(--snt-space-5);
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  padding: var(--snt-space-5) 0;
+  border-top: 1px solid var(--snt-bg-inset);
+}
+
+.item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.itemName {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+}
+
+.itemFigures {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* --- where leads come from ---------------------------------------------------- */
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+  margin-top: var(--snt-space-5);
+}
+
+.source {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink);
+}
+
+.glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-md);
+}
+
+.glyphActive {
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+}
+
+.glyphAccent {
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+}
+
+/* --- grow these numbers (what Promote was) ------------------------------------ */
+
+.section {
+  margin-top: var(--snt-space-12);
+  margin-bottom: var(--snt-space-5);
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+.product {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  background: var(--snt-bg-card);
+  border-radius: var(--snt-radius-xl);
+}
+
+.body {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  flex-wrap: wrap;
+}
+
+.name {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.description {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  line-height: var(--snt-leading-normal);
+  margin-top: var(--snt-space-2);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  flex-wrap: wrap;
+  margin-top: var(--snt-space-5);
+}
+
+.meta {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+/* --- wider screens --------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--snt-space-7);
+  }
+
+  .plot {
+    height: 220px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--snt-space-7);
+  }
+}

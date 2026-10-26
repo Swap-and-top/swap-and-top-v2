@@ -8,6 +8,8 @@
 
 import { create } from 'zustand';
 import type { DealAnswer } from '../types/deal';
+import { getDealConfirmation, theirAnswerOn } from '../mock/deals';
+import { CURRENT_USER_ID } from '../mock/users';
 
 interface DealState {
   /** Confirmation id → this user's answer. */
@@ -25,14 +27,26 @@ export const useDealStore = create<DealState>((set, get) => ({
     set((state) => ({
       answers: { ...state.answers, [confirmationId]: answer },
       /**
-       * In the real system the count only rises when BOTH sides say yes. Here
-       * the counterparty has already confirmed, so a yes completes it.
+       * A deal counts only when both sides say yes. The other side's answer
+       * is already in the mock, so a yes counts only where they said yes.
        */
       confirmedDeals:
-        answer === 'yes' && state.answers[confirmationId] !== 'yes'
+        answer === 'yes' &&
+        state.answers[confirmationId] !== 'yes' &&
+        bothYes(confirmationId)
           ? state.confirmedDeals + 1
           : state.confirmedDeals,
     })),
   answerFor: (confirmationId) =>
     get().answers[confirmationId] ?? 'unanswered',
 }));
+
+/** Whether the other side of this deal has already said yes, on one of the
+    signed in user's own deals: a shop's answer counts on the shop, not here. */
+function bothYes(confirmationId: string): boolean {
+  const deal = getDealConfirmation(confirmationId);
+  if (!deal) return false;
+  const mine =
+    deal.askerId === CURRENT_USER_ID || deal.ownerId === CURRENT_USER_ID;
+  return mine && theirAnswerOn(deal) === 'yes';
+}

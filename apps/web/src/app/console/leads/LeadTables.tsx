@@ -1,58 +1,55 @@
 'use client';
 
 /**
- * The Number reveals and Offers sent tabs of Leads, as tables set exactly as
+ * The Number reveals tab of Leads, as a table set exactly as
  * Stock's is: from a wide screen, one white card with a dark blue band of
  * column headings and rows parted by thin lines; between a tablet and a wide
  * screen, cards two to a row; on a phone, a card per row with the key facts.
  * A long list stays easy to scan.
  */
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { toast } from 'sonner';
 import {
   getListing,
   getUser,
-  setOfferStateOptimistically,
+  useDealStore,
   type NumberReveal,
-  type Offer,
-  type OfferState,
 } from '@snt/core';
-import {
-  ActionMenu,
-  Badge,
-  cashLine,
-  OfferCard,
-  Sheet,
-  type BadgeTone,
-  type MenuAction,
-} from '@snt/ui';
-import {
-  EyeIcon,
-  PhoneIcon,
-  TrashIcon,
-  WhatsAppIcon,
-} from '@snt/ui/icons';
+import { Badge, SellerIcon, type BadgeTone } from '@snt/ui';
+import { PhoneIcon, WhatsAppIcon } from '@snt/ui/icons';
 import styles from './LeadTables.module.css';
 
 /* ------------------------------------------------------ number reveals --- */
 
-const DEAL_BADGE: Record<NumberReveal['deal'], { tone: BadgeTone; label: string }> = {
+/** Where the deal check stands, with the shop's own answer taken in. */
+type DealStage = NumberReveal['deal'] | 'closed';
+
+const DEAL_BADGE: Record<DealStage, { tone: BadgeTone; label: string }> = {
   waiting: { tone: 'neutral', label: '' },
   asked: { tone: 'accent', label: 'Answer needed' },
   confirmed: { tone: 'success', label: 'Deal confirmed' },
+  closed: { tone: 'neutral', label: 'No deal' },
 };
 
+/** The stage, once the shop has answered: yes confirms it (they said yes
+    first), no closes it; not yet leaves it asked. */
+function stageOf(reveal: NumberReveal, answers: Record<string, string>): DealStage {
+  const given = reveal.dealId ? answers[reveal.dealId] : undefined;
+  if (reveal.deal === 'asked' && given === 'yes') return 'confirmed';
+  if (reveal.deal === 'asked' && given === 'no') return 'closed';
+  return reveal.deal;
+}
+
 export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
+  const answers = useDealStore((store) => store.answers);
   return (
     <div className={[styles.list, styles.reveals].join(' ')}>
       {/* Wide screens only: the column headings. */}
       <div className={styles.headerRow} aria-hidden>
         <span />
+        <span>Listing</span>
         <span>Who</span>
         <span>Contact</span>
-        <span>Listing</span>
         <span className={styles.alignRight}>Price</span>
         <span>When</span>
         <span className={styles.alignRight}>Their deals</span>
@@ -62,7 +59,13 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
       {reveals.map((reveal) => {
         const user = getUser(reveal.userId);
         const listing = getListing(reveal.listingId);
-        const name = user?.displayName ?? 'Someone';
+        const stage = stageOf(reveal, answers);
+        /** Who it was, only once they say a deal went through: until then
+            the shop is told nothing about them beyond their area. */
+        const named = stage !== 'waiting';
+        const name = named
+          ? (user?.displayName ?? 'Someone')
+          : `Someone in ${reveal.area}`;
         const item =
           listing && listing.type === 'sale' ? listing.item.name : listing?.title;
         const price =
@@ -70,20 +73,21 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
             ? listing.price
             : undefined;
         const way = reveal.way === 'whatsapp' ? 'WhatsApp' : 'Call';
-        const deal = DEAL_BADGE[reveal.deal];
+        const deal = DEAL_BADGE[stage];
         const dealLabel =
-          reveal.deal === 'waiting'
-            ? `Asking in ${reveal.daysToAsk ?? 3} days`
+          stage === 'waiting'
+            ? `Asking them in ${reveal.daysToAsk ?? 3} days`
             : deal.label;
 
         return (
           <div key={reveal.id} className={styles.row}>
-            {/* The whole row opens the listing they came from. */}
-            {listing ? (
+            {/* Only a row waiting on the shop's answer opens anything: its
+                deal check. The rest have nothing to do, so stay still. */}
+            {stage === 'asked' && reveal.dealId ? (
               <Link
-                href={`/listing/${listing.slug}`}
+                href={`/deals/${reveal.dealId}/confirm`}
                 className={styles.rowLink}
-                aria-label={`${name}, on your ${item}`}
+                aria-label={`${name}, on your ${item}: answer the deal check`}
               />
             ) : null}
             <span className={styles.tile} aria-hidden>
@@ -93,131 +97,37 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
                 <PhoneIcon size={17} />
               )}
             </span>
-            <span className={styles.who}>{name}</span>
-            <span className={styles.way}>{way}</span>
+            {/* The item first, plainly: the person after it is the lead. */}
             <span className={styles.listing}>{item}</span>
+            {/* Who, as a seller is named on a listing card: the little
+                person mark, then the name; grey while it is only an area. */}
+            <span
+              className={[styles.revealer, named ? styles.revealerNamed : '']
+                .filter(Boolean)
+                .join(' ')}
+            >
+              <SellerIcon kind="person" />
+              {name}
+            </span>
+            <span className={styles.way}>{way}</span>
             <span className={styles.price}>
               {price !== undefined ? `$${price}` : null}
             </span>
             <span className={styles.when}>{reveal.atLabel}</span>
-            <span className={styles.deals}>{user?.confirmedDeals ?? 0}</span>
+            <span className={styles.deals}>
+              {named ? (user?.confirmedDeals ?? 0) : null}
+            </span>
             <span className={styles.badge}>
               <Badge tone={deal.tone}>{dealLabel}</Badge>
             </span>
             {/* A phone's card: how and when, in one quiet line. */}
             <span className={styles.phoneMeta}>
-              {way} · {reveal.atLabel} · {reveal.area}
+              {way} · {reveal.atLabel}
+              {named ? ` · ${reveal.area}` : null}
             </span>
           </div>
         );
       })}
     </div>
-  );
-}
-
-/* --------------------------------------------------------- offers sent --- */
-
-const OFFER_BADGE: Record<OfferState, { tone: BadgeTone; label: string }> = {
-  pending: { tone: 'accent', label: 'Waiting' },
-  accepted: { tone: 'success', label: 'Accepted' },
-  declined: { tone: 'danger', label: 'Declined' },
-  withdrawn: { tone: 'neutral', label: 'Withdrawn' },
-};
-
-export function SentOffersTable({ offers }: { offers: Offer[] }) {
-  /** The offer open in full: its message, and contact ways once accepted.
-      Looked up afresh, so a withdrawal made in it shows at once. */
-  const [openId, setOpenId] = useState<string | null>(null);
-  const open = offers.find((offer) => offer.id === openId) ?? null;
-
-  return (
-    <>
-      <div className={[styles.list, styles.offers].join(' ')}>
-        <div className={styles.headerRow} aria-hidden>
-          <span>Request</span>
-          <span>You offered</span>
-          <span>Cash</span>
-          <span>Sent</span>
-          <span>Status</span>
-          <span />
-        </div>
-
-        {offers.map((offer) => {
-          const listing = getListing(offer.listingId);
-          if (!listing || listing.type === 'auction') return null;
-          const owner = getUser(listing.ownerId);
-          const wanted =
-            listing.type === 'sale' ? listing.item.name : listing.wants.name;
-          const cash = cashLine(offer, listing, false).text;
-          const badge = OFFER_BADGE[offer.state];
-
-          const actions: MenuAction[] = [
-            {
-              label:
-                offer.state === 'accepted' ? 'Contact them' : 'See the offer',
-              icon:
-                offer.state === 'accepted' ? (
-                  <PhoneIcon size={17} />
-                ) : (
-                  <EyeIcon size={17} />
-                ),
-              onSelect: () => setOpenId(offer.id),
-            },
-            {
-              label: 'See their request',
-              icon: <EyeIcon size={17} />,
-              href: `/listing/${listing.slug}`,
-            },
-          ];
-          if (offer.state === 'pending') {
-            actions.push({
-              label: 'Withdraw',
-              icon: <TrashIcon size={17} />,
-              danger: true,
-              onSelect: () => {
-                void setOfferStateOptimistically(offer.id, 'withdrawn');
-                toast('Offer withdrawn.');
-              },
-            });
-          }
-
-          return (
-            <div key={offer.id} className={styles.row}>
-              {/* The whole row opens the offer in full. */}
-              <button
-                type="button"
-                className={styles.rowLink}
-                aria-label={`Your offer to ${owner?.displayName ?? 'them'}`}
-                onClick={() => setOpenId(offer.id)}
-              />
-              <span className={styles.request}>
-                <span className={styles.requester}>
-                  {owner?.displayName ?? 'Someone'} wants
-                </span>
-                <span className={styles.wanted}>{wanted}</span>
-              </span>
-              <span className={styles.offered}>{offer.item.name}</span>
-              <span className={styles.cash}>{cash}</span>
-              <span className={styles.when}>{offer.sentLabel}</span>
-              <span className={styles.badge}>
-                <Badge tone={badge.tone}>{badge.label}</Badge>
-              </span>
-              <span className={styles.action}>
-                <ActionMenu label={`More for your offer on ${wanted}`} actions={actions} />
-              </span>
-              <span className={styles.phoneMeta}>
-                {cash} · {offer.sentLabel}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      {open ? (
-        <Sheet title="Your offer" onClose={() => setOpenId(null)}>
-          <OfferCard offer={open} view="made" />
-        </Sheet>
-      ) : null}
-    </>
   );
 }

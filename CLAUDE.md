@@ -31,6 +31,14 @@ These came from repeated feedback. Follow them without being asked.
    width boxes side by side where they fit; hover states very subtle and only
    under `@media (hover: hover)`.
 9. **Listings are listings.** Call posts "listings" in UI copy.
+10. **Keep it simple, with as few taps as possible.** Every change to the
+    interface or the system should be simple and easy to find your way
+    through. Prefer one control over several, a toggle over a set of
+    choices, and fewer steps to finish an action. Do only what was asked:
+    no extra options, settings or rules beyond the request. When a choice is
+    needed, offer the fewest options that work and start on the common one.
+    If a request seems to need something complex, say so and suggest the
+    simple version before building it.
 
 ## How the user works
 

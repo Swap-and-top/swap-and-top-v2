@@ -32,7 +32,11 @@ export interface Offer {
   /** The swap or request this replies to. */
   listingId: string;
   fromUserId: string;
-  item: OfferItem;
+  /**
+   * What is put forward. Missing on a cash offer: just a price, on a sale
+   * whose poster shares their number only after accepting an offer.
+   */
+  item?: OfferItem;
   cashAmount: number;
   cashFrom: OfferCashFrom;
   message?: string;

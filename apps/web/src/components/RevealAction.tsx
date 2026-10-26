@@ -26,6 +26,10 @@
  *    once;
  *  - the seller's own choice to show their details to signed-in users only.
  *
+ * A poster can also keep their details back until they accept an offer
+ * (`contactShownTo: 'offers'`). Then there is no button at all for anyone
+ * whose offer has not been accepted; see `useContactKeptBack`.
+ *
  * Once a guest has what they came for, a short message offers the reason to
  * join — asked after, not before — and goes away.
  */
@@ -34,28 +38,57 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import {
   GUEST_DAILY_REVEALS,
+  contactAfterOffer,
   contactWaysFor,
   requireSignIn,
   revealsLeft,
   useRevealStore,
   useSessionStore,
   useSignInPromptStore,
+  useOfferStore,
+  useViewerId,
   type ContactWay,
+  type Listing,
 } from '@snt/core';
 import { Button, ContactWayList, Sheet, WAY_META, waysOffered } from '@snt/ui';
 import styles from './RevealAction.module.css';
+
+/**
+ * Whether the poster's details are kept back from this viewer: the listing
+ * shows them only to people whose offer was accepted, and theirs has not
+ * been (or they have made none, or are signed out).
+ */
+export function useContactKeptBack(listing: Listing): boolean {
+  const viewer = useViewerId();
+  const offers = useOfferStore((store) => store.offers);
+  if (!contactAfterOffer(listing)) return false;
+  const accepted = offers.some(
+    (offer) =>
+      offer.listingId === listing.id &&
+      offer.fromUserId === viewer &&
+      offer.state === 'accepted',
+  );
+  return !accepted;
+}
+
+/** What stands in for the contact line on such a listing. */
+export const KEPT_BACK_NOTE =
+  'Contact details are shared once your offer is accepted · meet in public';
 
 export function RevealAction({
   listingId,
   ownerId,
   signedInOnly = false,
   block = true,
+  size = 'lg',
 }: {
   listingId: string;
   ownerId: string;
   /** The seller shows their details to signed-in users only. */
   signedInOnly?: boolean;
   block?: boolean;
+  /** Smaller where it sits beside a name, as on a lead in the console. */
+  size?: 'sm' | 'md' | 'lg';
 }) {
   const { reveal, revealed, usedToday } = useRevealStore();
   const signedIn = useSessionStore((state) => state.signedIn);
@@ -120,16 +153,19 @@ export function RevealAction({
           listing's actions stack there (see ListingActions); measured, so
           a single icon can tighten to fit a half-width button. */}
       <div
-        className={styles.contactWrap}
+        className={[styles.contactWrap, size === 'sm' ? styles.fit : '']
+          .filter(Boolean)
+          .join(' ')}
         data-stack-on-phone={offered.length > 1 ? '' : undefined}
       >
-        <Button size="lg" block={block} onClick={() => setOpen(true)}>
+        <Button size={size} block={block} onClick={() => setOpen(true)}>
           {offered.length === 1 ? 'Show contact' : 'Show contacts'}
           <span className={styles.wayIcons} aria-hidden>
             {offered.map((way) => {
               const { Icon } = WAY_META[way];
               // A line of exactly 1px: the icons are drawn on a 24-unit grid.
-              return <Icon key={way} size={22} weight={24 / 22} />;
+              const px = size === 'lg' ? 22 : size === 'md' ? 18 : 16;
+              return <Icon key={way} size={px} weight={24 / px} />;
             })}
           </span>
         </Button>

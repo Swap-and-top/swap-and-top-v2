@@ -44,7 +44,7 @@ Every listing of every type carries these.
 | **Media** | Ordered image references |
 | **State** | Status, published time, expiry time, sold time |
 | **Moderation** | Moderation state, report references |
-| **Contact** | Accepted channels, dealer-offers consent |
+| **Contact** | Accepted channels, dealer-offers consent, who sees the details (anyone, or only people whose offer is accepted), and whether dealers may see them anyway |
 | **Metrics** | View count, reveal count |
 | **Promotion** | Promotion state, slot type, promotion expiry |
 | **Search** | Normalised keywords |
@@ -116,13 +116,13 @@ Made against a swap or a request. References the demand listing, the offering us
 
 ### Deal confirmation
 
-One record per reveal that is followed up. References the reveal event, the listing, both parties, each side's answer with its timestamp, and an overall state.
+One record per pair of people per listing, started by an accepted offer or by a signed in reveal. References what started it, the listing, both parties, each side's answer with its timestamp, and an overall state.
 
 | Field group | Contents |
 | --- | --- |
-| **Subject** | Reveal event reference, listing reference |
-| **Parties** | Buyer reference, seller reference |
-| **Answers** | Buyer answer and time, seller answer and time — each yes, no, not yet, or unanswered |
+| **Subject** | Source (offer or reveal), the offer or reveal event reference, listing reference |
+| **Parties** | Asker (made the offer or revealed the number), owner (the listing's) |
+| **Answers** | Asker answer and time, owner answer and time, each yes, no, not yet, or unanswered. On a reveal the owner is prompted only after the asker answers yes |
 | **State** | Pending, confirmed, closed, lapsed |
 | **Timing** | Prompted at, deferred at, resolved at, lapses at |
 
@@ -166,7 +166,7 @@ Append-only record of every callback received from the payment provider. Provide
        │            │           │          └──► AuctionDetail ──► Bid (many)
        │            │           │
        │            │           ├──► RevealEvent (many) ──► DealConfirmation
-       │            │           ├──► Offer (many)
+       │            │           ├──► Offer (many) ──► DealConfirmation (when accepted)
        │            │           └──► Report (many)
        │            │
        ├──► Shop ───┘  (a dealer's listings belong to their shop)

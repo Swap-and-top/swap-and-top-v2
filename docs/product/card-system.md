@@ -25,7 +25,7 @@ THE FOUR CARDS:
 │                    │ like this.                                     │
 ├────────────────────┼──────────────────────────────────────────────┤
 │ 4. WANTED          │ No photo — they do not own the thing.          │
-│                    │ Text first, budget, one button: "I have this". │
+│                    │ Text first, budget, one button: "Make an offer".│
 └────────────────────┴──────────────────────────────────────────────┘
 ```
 
@@ -91,9 +91,9 @@ The most important visual element in the product.
 
 The only card with no photograph, because the poster does not have the item.
 
-**Contains:** a `WANTED` label, what they want in plain words, budget, area, age, and one primary button — **"I have this"**.
+**Contains:** a `WANTED` label, what they want in plain words, budget, area, age, and one primary button, **"Make an offer"**.
 
-**When the request has something to swap attached** (a swap posted as demand), the label reads **WANTED + SWAP** (no icon) and the card gains a compact strip headed **Has**, with the device coming back — its name in bold, like every item name — and the cash on offer. That variant is the highest-value lead on the platform.
+**A swap shown as demand** (Wanted posts are cash only; someone with something to swap posts a swap), the label reads **SWAP**, after the swap arrows on their tile, in the blue swaps carry elsewhere and the card gains a compact strip headed **Has**, with the device coming back — its name in bold, like every item name — and the cash on offer. That variant is the highest-value lead on the platform.
 
 **That button is the business.** Tapping it is the action a dealer pays to be alerted about. Everything about the card is arranged to make it the obvious next step.
 
@@ -108,6 +108,7 @@ The only card with no photograph, because the poster does not have the item.
 - Age of the listing, always
 - Location, always
 - Poster's first name, and their **confirmed deal count** where they have one
+- **Offers only**, in the small grey facts, on a listing whose poster shares their contact details only after accepting an offer: a buyer knows before opening it. On sale and swap cards it follows the place and age and is never trimmed; on a Wanted card it follows the budget or terms
 - A single tap target covering the whole card
 
 **No status or occupation markers.** A card never says what someone does for a living or where they study. Trust is shown as behaviour — confirmed deals — which anyone can earn. The only badge on the platform is verified dealer, which asserts a checkable fact about a business. New accounts show no deal count rather than a zero, because a zero reads as a warning while an absence reads as new. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
@@ -116,7 +117,7 @@ The only card with no photograph, because the poster does not have the item.
 
 - A phone number. Contact is behind the reveal action on the detail screen. See [contact-and-reveals.md](./contact-and-reveals.md).
 - Truncated specification soup. One line at most, chosen for the category.
-- More than one call to action, except the Wanted card's "I have this".
+- More than one call to action, except the Wanted card's "Make an offer".
 
 ### Compact variants
 

@@ -14,6 +14,12 @@
   min-width: 0;
 }
 
+/* Small, beside a name: as wide as its words, not measured. */
+.fit {
+  container-type: normal;
+  flex-shrink: 0;
+}
+
 /* The button fills its place, as it did before it was wrapped. */
 .contactWrap > button {
   width: 100%;

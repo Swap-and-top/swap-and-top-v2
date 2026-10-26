@@ -65,7 +65,7 @@ As a contact broker the platform cannot see money change hands, so reveals were 
 | Metric | Definition | Good |
 | --- | --- | --- |
 | **Confirmed deals** | Deals both parties confirmed completed | Growing; treat the number as a floor |
-| Confirmation rate | Share of reveals producing a mutual confirmation | A minority is expected. Watch the trend, not the level. |
+| Confirmation rate | Share of accepted offers and signed in reveals producing a mutual confirmation | A minority is expected. Watch the trend, not the level. |
 | Prompt response rate | Share of prompts answered at all | If very low, the prompt's timing or wording is wrong |
 | Confirmed deals per dealer | Per paying dealer, per month | **The renewal number.** Far stronger than reveals alone. |
 

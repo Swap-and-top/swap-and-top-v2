@@ -8,6 +8,7 @@
  */
 
 import Link from 'next/link';
+import { contactAfterOffer } from '@snt/core';
 import type { SaleListing, Shop, User } from '@snt/core';
 import { CARD_CONDITION } from '../format';
 import { MegaphoneIcon } from '../icons';
@@ -167,6 +168,11 @@ export function SaleCard({
               <span className={styles.where}>
                 {listing.location} · {listing.postedLabel}
               </span>
+              {/* Contact only after an accepted offer: said up front. Its own
+                  piece, never trimmed: the place and age give way first. */}
+              {contactAfterOffer(listing) ? (
+                <span className={styles.offersOnly}>· Offers only</span>
+              ) : null}
               <span className={styles.spacer} />
               <UnlessOwnerOfferCount listing={listing}>
                 <CardActions

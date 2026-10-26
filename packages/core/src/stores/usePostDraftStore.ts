@@ -11,6 +11,7 @@ import type {
   CashDirection,
   Category,
   ContactChannel,
+  ContactShownTo,
   ItemSpecs,
 } from '../types/listing';
 
@@ -53,6 +54,11 @@ interface PostDraftState {
   allowDealerOffers: boolean;
   /** Whether only signed-in users may see the number. Defaults off. */
   contactSignedInOnly: boolean;
+  /** Who sees the details: everyone, or only those whose offer is
+      accepted. Starts on everyone, the first choice. */
+  contactShownTo: ContactShownTo;
+  /** With offers first: dealers may still see the details. Defaults off. */
+  contactToDealers: boolean;
 
   setKind: (kind: PostKind) => void;
   setCategory: (category: Category) => void;
@@ -77,6 +83,8 @@ interface PostDraftState {
   toggleChannel: (channel: ContactChannel) => void;
   setAllowDealerOffers: (allow: boolean) => void;
   setContactSignedInOnly: (only: boolean) => void;
+  setContactShownTo: (shownTo: ContactShownTo) => void;
+  setContactToDealers: (toDealers: boolean) => void;
   reset: () => void;
 }
 
@@ -104,6 +112,8 @@ const initial = {
   contactChannels: ['whatsapp'] as ContactChannel[],
   allowDealerOffers: true,
   contactSignedInOnly: false,
+  contactShownTo: 'everyone' as ContactShownTo,
+  contactToDealers: false,
 };
 
 export const usePostDraftStore = create<PostDraftState>((set) => ({
@@ -128,6 +138,8 @@ export const usePostDraftStore = create<PostDraftState>((set) => ({
     })),
   setAllowDealerOffers: (allowDealerOffers) => set({ allowDealerOffers }),
   setContactSignedInOnly: (contactSignedInOnly) => set({ contactSignedInOnly }),
+  setContactShownTo: (contactShownTo) => set({ contactShownTo }),
+  setContactToDealers: (contactToDealers) => set({ contactToDealers }),
   reset: () => set(initial),
 }));
 

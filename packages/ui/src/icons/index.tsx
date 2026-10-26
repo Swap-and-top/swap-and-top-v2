@@ -478,6 +478,14 @@ export const ChartIcon = (props: IconProps) => (
   </Svg>
 );
 
+/** Stats: a line rising to an arrow. */
+export const TrendIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="M3.5 17.5l5.5-5.5 4 4 7.5-7.5" />
+    <path d="M15 8.5h5.5V14" />
+  </Svg>
+);
+
 export const ShopIcon = (props: IconProps) => (
   <Svg {...props}>
     <path d="M4 9.5h16v10.5H4z" />

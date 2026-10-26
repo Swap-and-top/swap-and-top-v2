@@ -36,6 +36,14 @@ export type CashDirection = 'i-add' | 'they-add' | 'straight';
 
 export type ContactChannel = 'whatsapp' | 'call' | 'email' | 'messenger' | 'sms';
 
+/**
+ * Who sees the poster's contact details. `everyone`: anyone who taps Show
+ * contact. `offers`: nobody until the poster accepts their offer; people
+ * offer first. Set by a toggle on any post: a sale with it on takes offers
+ * as a sale that accepts swaps does.
+ */
+export type ContactShownTo = 'everyone' | 'offers';
+
 /** Whether a listing currently occupies a paid slot. Recorded on every reveal. */
 export type PromotionSlot = 'organic' | 'sponsored' | 'drop';
 
@@ -107,6 +115,13 @@ export interface ListingBase {
    * default: the number is open to anyone, within the daily limit.
    */
   contactSignedInOnly?: boolean;
+  /** Who sees the contact details. Missing means `everyone`. */
+  contactShownTo?: ContactShownTo;
+  /**
+   * With `offers`: dealers may still see the details on the lead in their
+   * console, before any offer is accepted. Off unless the poster ticks it.
+   */
+  contactToDealers?: boolean;
   /** Whether this may appear in dealer lead feeds. Defaults on. */
   allowDealerOffers: boolean;
   viewCount: number;
@@ -187,7 +202,37 @@ export type OfferableListing = DemandListing | SaleListing;
 
 export function takesOffers(listing: Listing): listing is OfferableListing {
   if (listing.type === 'swap' || listing.type === 'request') return true;
-  return listing.type === 'sale' && Boolean(listing.acceptsSwaps);
+  // A sale takes offers where the price moves, where it takes swaps, or
+  // where the seller shares their number only after accepting an offer.
+  return (
+    listing.type === 'sale' &&
+    (listing.negotiable ||
+      Boolean(listing.acceptsSwaps) ||
+      listing.contactShownTo === 'offers')
+  );
+}
+
+/** Whether a listing takes an offer of just cash: a sale whose price is
+    negotiable, or whose seller shares their number only after accepting an
+    offer. A fixed price sale that takes swaps asks for a swap; a swap or a
+    Wanted listing asks for an item. */
+export function takesCashOffers(listing: Listing): boolean {
+  return (
+    listing.type === 'sale' &&
+    (listing.negotiable || listing.contactShownTo === 'offers')
+  );
+}
+
+/** Whether a listing keeps its contact details back until an offer is
+    accepted. */
+export function contactAfterOffer(listing: Listing): boolean {
+  return listing.contactShownTo === 'offers';
+}
+
+/** Whether a dealer may see the poster's details on a lead, before any
+    offer of theirs is accepted. */
+export function contactOpenToDealers(listing: Listing): boolean {
+  return !contactAfterOffer(listing) || Boolean(listing.contactToDealers);
 }
 
 export const isSale = (l: Listing): l is SaleListing => l.type === 'sale';

@@ -8,7 +8,7 @@
  * when. A wanted item is never photographed, so the card has no picture:
  * it starts with the item, in the green of what is wanted. A wanted post is
  * cash only; someone with something to trade in posts a swap. The primary
- * action is "I have this", which is the lead.
+ * action is "Make an offer", which is the lead.
  */
 
 import {
@@ -34,7 +34,11 @@ import {
   Stack,
 } from '@snt/ui';
 import { InfoIcon } from '@snt/ui/icons';
-import { RevealAction } from '../RevealAction';
+import {
+  KEPT_BACK_NOTE,
+  RevealAction,
+  useContactKeptBack,
+} from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import card from './SaleDetail.module.css';
 import styles from './RequestDetail.module.css';
@@ -58,6 +62,8 @@ export function RequestDetail({
       buyer's actions. */
   const viewer = useViewerId();
   const mine = !preview && viewer === listing.ownerId;
+  /** The poster shares their details only once they accept an offer. */
+  const keptBack = useContactKeptBack(listing);
 
   const budgetLabel = mine ? 'Your budget, up to' : 'Budget up to';
 
@@ -144,7 +150,11 @@ export function RequestDetail({
           {mine ? null : (
             <ListingActions
               caption={
-                <Caption>Meet in public · check the item before you pay</Caption>
+                <Caption>
+                  {keptBack
+                    ? KEPT_BACK_NOTE
+                    : 'Meet in public · check the item before you pay'}
+                </Caption>
               }
             >
               {/* Opens the offer sheet. */}
@@ -154,12 +164,14 @@ export function RequestDetail({
                 block
                 preview={preview}
               />
-              <RevealAction
-                listingId={listing.id}
-                ownerId={listing.ownerId}
-                signedInOnly={listing.contactSignedInOnly}
-                block={false}
-              />
+              {keptBack ? null : (
+                <RevealAction
+                  listingId={listing.id}
+                  ownerId={listing.ownerId}
+                  signedInOnly={listing.contactSignedInOnly}
+                  block={false}
+                />
+              )}
             </ListingActions>
           )}
 

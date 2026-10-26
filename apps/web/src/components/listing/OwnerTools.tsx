@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
+  contactAfterOffer,
   useListingStatus,
   useListingStatusStore,
   type Listing,
@@ -100,8 +101,10 @@ export function StatusTag({
   );
 }
 
-/** How many times a contact on it was shown, for its line of facts. */
+/** How many times a contact on it was shown, for its line of facts; or,
+    where the details wait for an accepted offer, that they do. */
 export function contactsShown(listing: Listing): string {
+  if (contactAfterOffer(listing)) return 'Contact shared after you accept an offer';
   const count = listing.revealCount;
   return `${count} ${count === 1 ? 'contact' : 'contacts'} shown`;
 }

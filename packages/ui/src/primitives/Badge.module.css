@@ -75,6 +75,12 @@
   color: var(--snt-ink-on-dark);
 }
 
+/** New: the brand's blue to green, as across the header, white on it. */
+.brand {
+  background: var(--snt-brand-gradient);
+  color: var(--snt-ink-on-dark);
+}
+
 /** Sponsored, overlaid on a listing image. Must read on any photograph. */
 .dark {
   background: var(--snt-shop-mark);

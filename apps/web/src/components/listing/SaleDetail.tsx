@@ -15,7 +15,13 @@
  * Wireframe artboard: `DetailDealer`.
  */
 
-import { getShop, getUser, useViewerId, type SaleListing } from '@snt/core';
+import {
+  getShop,
+  getUser,
+  takesOffers,
+  useViewerId,
+  type SaleListing,
+} from '@snt/core';
 import {
   AppHeader,
   Caption,
@@ -31,7 +37,11 @@ import {
   specRowsFor,
 } from '@snt/ui';
 import { CheckIcon } from '@snt/ui/icons';
-import { RevealAction } from '../RevealAction';
+import {
+  KEPT_BACK_NOTE,
+  RevealAction,
+  useContactKeptBack,
+} from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SaleDetail.module.css';
 import { PreviewBanner } from './PreviewBanner';
@@ -52,6 +62,8 @@ export function SaleDetail({
   /** Your own listing: your panel in place of a buyer's actions. */
   const viewer = useViewerId();
   const mine = !preview && viewer === listing.ownerId;
+  /** The poster shares their details only once they accept an offer. */
+  const keptBack = useContactKeptBack(listing);
 
   const dropped =
     listing.previousPrice !== undefined &&
@@ -191,36 +203,38 @@ export function SaleDetail({
               <ListingActions
                 caption={
                   <Caption>
-                    No account needed · meet in public, check the device before
-                    paying
+                    {keptBack
+                      ? KEPT_BACK_NOTE
+                      : 'No account needed · meet in public, check the device before paying'}
                   </Caption>
                 }
               >
-                {/* Where the seller takes swaps, a trade-in can be offered
-                    straight to them, as an offer: what you have, and any
-                    cash on top. */}
-                {listing.acceptsSwaps ? (
+                {/* Where the seller takes offers (negotiable, swaps
+                    accepted, or their number shared only after an offer):
+                    cash, or a swap where they take swaps. */}
+                {takesOffers(listing) ? (
                   <OfferButton
                     preview={preview}
                     listing={listing}
-                    label="Offer a swap"
                     size="lg"
                     block
                   />
                 ) : null}
-                <RevealAction
-                  listingId={listing.id}
-                  ownerId={listing.ownerId}
-                  signedInOnly={listing.contactSignedInOnly}
-                  block={!listing.acceptsSwaps}
-                />
+                {keptBack ? null : (
+                  <RevealAction
+                    listingId={listing.id}
+                    ownerId={listing.ownerId}
+                    signedInOnly={listing.contactSignedInOnly}
+                    block={!takesOffers(listing)}
+                  />
+                )}
               </ListingActions>
             </div>
           </>
         )}
 
         {/* Only the owner sees these: the trade-ins offered towards it. */}
-        {listing.acceptsSwaps && !preview ? (
+        {takesOffers(listing) && !preview ? (
           <OffersReceived listing={listing} />
         ) : null}
       </ScreenBody>

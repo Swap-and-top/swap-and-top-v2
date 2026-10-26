@@ -1,0 +1,160 @@
+/* Deals to confirm. The cards follow the Offers page's listing in brief. */
+
+.title {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+}
+
+/* --- one deal ---------------------------------------------------------- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-7);
+  padding: var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-7);
+  min-width: 0;
+}
+
+.thumb {
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-md);
+}
+
+.thumbWanted {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-wanted-fill);
+  color: var(--snt-ink-on-dark);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.kindRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-bottom: var(--snt-space-1);
+}
+
+.kind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--snt-control-active);
+}
+
+.kindIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.kindWanted {
+  color: var(--snt-wanted-ink);
+}
+
+/* How the answer stands: a faded wash of its own colour, never solid. */
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--snt-space-1) var(--snt-space-4);
+  border-radius: var(--snt-radius-pill);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+}
+
+.waiting {
+  color: var(--snt-alert);
+}
+
+.later {
+  color: var(--snt-control-active);
+}
+
+.yes {
+  color: var(--snt-success);
+}
+
+.no {
+  color: var(--snt-ink-muted);
+}
+
+.name {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-accent-bold);
+}
+
+.terms {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+}
+
+.meta {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* Full width under it on a phone; to the right of it from tablet up. */
+.open {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .open {
+    width: auto;
+    flex-shrink: 0;
+  }
+}
+
+.none {
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}

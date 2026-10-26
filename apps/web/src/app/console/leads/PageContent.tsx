@@ -11,33 +11,37 @@
  * the cash, and here is your matching item.
  */
 
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
+  contactOpenToDealers,
   currentShop,
   mockLeads,
   mockShopReveals,
   mockUsers,
   newLeadCount,
-  offersMadeBy,
   useConsoleStore,
   useOfferStore,
   type Lead,
   type LeadTab,
+  type Offer,
 } from '@snt/core';
 import {
   Badge,
   Button,
   ConsoleShell,
-  Eyebrow,
   Field,
-  ItemName,
   LeadCard,
+  LeadLabel,
+  LeadTradeIn,
   PosterRow,
-  specSummary,
+  leadAlertLine,
+  leadFacts,
 } from '@snt/ui';
-import { CheckIcon, InfoIcon, PhoneIcon } from '@snt/ui/icons';
+import { CheckIcon, InfoIcon } from '@snt/ui/icons';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
-import { RevealsTable, SentOffersTable } from './LeadTables';
+import { RevealAction } from '@/components/RevealAction';
+import { RevealsTable } from './LeadTables';
 import { LeadTabs } from './LeadTabs';
 import styles from './page.module.css';
 
@@ -50,6 +54,7 @@ export default function ConsoleLeadsPage() {
   const {
     leadTab,
     setLeadTab,
+    setOffersTab,
     activeLeadId,
     setActiveLead,
     offerPrice,
@@ -61,15 +66,13 @@ export default function ConsoleLeadsPage() {
   const active =
     mockLeads.find((lead) => lead.id === activeLeadId) ?? mockLeads[0];
 
-  /** The offers the shop has sent, newest first, in every state. */
   const offers = useOfferStore((store) => store.offers);
   const addOffer = useOfferStore((store) => store.add);
-  const sent = offersMadeBy(offers, dealerId);
+  const router = useRouter();
 
   const counts: Record<LeadTab, number> = {
     matching: mockLeads.length,
     reveals: mockShopReveals.length,
-    offers: sent.length,
   };
 
   /** Sends the offer in the composer, as the shop, to the open request. */
@@ -94,7 +97,14 @@ export default function ConsoleLeadsPage() {
     toast.success(
       `Offer sent to ${active.requester.displayName.replace(/\.$/, '')}.`,
       {
-        action: { label: 'See it', onClick: () => setLeadTab('offers') },
+        // To the Offers page, on Sent, where the shop's offers are.
+        action: {
+          label: 'See it',
+          onClick: () => {
+            setOffersTab('sent');
+            router.push('/console/trade-ins');
+          },
+        },
       },
     );
   }
@@ -112,7 +122,7 @@ export default function ConsoleLeadsPage() {
             <LeadAlertsChip />
           </div>
 
-          {/* The three tabs, as a segmented switch with their icons. */}
+          {/* The two tabs, as a segmented switch. */}
           <div className={styles.tabs}>
             <LeadTabs active={leadTab} counts={counts} onChange={setLeadTab} />
           </div>
@@ -120,18 +130,28 @@ export default function ConsoleLeadsPage() {
       }
     >
       {/* Number reveals: who revealed the shop's number, and the deal
-          check on each. Offers sent: the shop's offers, as the people who
-          asked see them. Matching requests: the feed and review queue. */}
+          check on each. Matching requests: the feed and review queue. The
+          shop's own offers are on the Offers page, under Sent. */}
       {leadTab === 'reveals' ? (
         <RevealsTable reveals={mockShopReveals} />
-      ) : leadTab === 'offers' ? (
-        <SentOffersTable offers={sent} />
       ) : (
         <>
           {/* Phone: a feed. */}
           <div className={styles.feed}>
             {mockLeads.map((lead) => (
-              <LeadCard key={lead.id} lead={lead} />
+              <LeadCard
+                key={lead.id}
+                lead={lead}
+                contact={
+                  canReach(lead, offers) ? (
+                    <RevealAction
+                      listingId={lead.demand.id}
+                      ownerId={lead.requester.id}
+                      size="md"
+                    />
+                  ) : null
+                }
+              />
             ))}
           </div>
 
@@ -150,20 +170,25 @@ export default function ConsoleLeadsPage() {
                     .filter(Boolean)
                     .join(' ')}
                 >
+                  {/* As the phone's card: the label, the item wanted in
+                      green, the facts small and grey. */}
                   <span className={styles.listHead}>
-                    {lead.isNew ? <Badge tone="accentSolid">New</Badge> : null}
-                    <span className={styles.listAge}>
-                      {lead.receivedAt} · {lead.area}
-                    </span>
+                    <LeadLabel lead={lead} />
+                    <span className={styles.spacer} />
+                    {lead.isNew ? <Badge tone="brand">New</Badge> : null}
+                    <span className={styles.listAge}>{lead.receivedAt}</span>
                   </span>
                   <span className={styles.listTitle}>
-                    Wants{' '}
-                    <ItemName side="wanted">{lead.demand.wants.name}</ItemName>
+                    {lead.demand.wants.name}
                   </span>
-                  <span className={styles.listSub}>{subtitleFor(lead)}</span>
-                  {lead.alert ? (
+                  <span className={styles.listSub}>
+                    {leadFacts(lead).map((fact) => (
+                      <span key={fact}>{fact}</span>
+                    ))}
+                  </span>
+                  {leadAlertLine(lead) ? (
                     <span className={styles.listAlert}>
-                      {alertLine(lead.alert)}
+                      {leadAlertLine(lead)}
                     </span>
                   ) : null}
                 </button>
@@ -172,60 +197,29 @@ export default function ConsoleLeadsPage() {
 
             {active ? (
               <div className={styles.detail}>
-                <Eyebrow>They want</Eyebrow>
+                {/* Set as the phone's card, with more room: the label,
+                    the item wanted, the facts, then what they have. */}
+                <div className={styles.listHead}>
+                  <LeadLabel lead={active} />
+                  <span className={styles.spacer} />
+                  {active.isNew ? <Badge tone="brand">New</Badge> : null}
+                  <span className={styles.listAge}>{active.receivedAt}</span>
+                </div>
                 <h1 className={styles.detailTitle}>
                   {active.demand.wants.name}
                 </h1>
-                <div className={styles.detailMeta}>
-                  Posted {active.receivedAt} · {active.area}
+                <div className={styles.listSub}>
+                  {leadFacts(active).map((fact) => (
+                    <span key={fact}>{fact}</span>
+                  ))}
                 </div>
+                {leadAlertLine(active) ? (
+                  <div className={styles.listAlert}>{leadAlertLine(active)}</div>
+                ) : null}
 
-                {(() => {
-                  const tradeIn =
-                    active.demand.type === 'swap'
-                      ? active.demand.has
-                      : undefined;
-                  const cash =
-                    active.demand.type === 'swap'
-                      ? active.demand.cashAmount
-                      : undefined;
-
-                  if (!tradeIn) return null;
-
-                  return (
-                    <div className={styles.detailCards}>
-                      <div className={styles.tradeInCard}>
-                        <Eyebrow tight>Has</Eyebrow>
-                        <ItemName
-                          side="owned"
-                          bold
-                          className={styles.tradeInName}
-                        >
-                          {tradeIn.name}
-                        </ItemName>
-                        <div className={styles.tradeInSpecs}>
-                          {specSummary(tradeIn, 4)}
-                          {tradeIn.defects ? (
-                            <>
-                              <br />
-                              {tradeIn.defects}
-                            </>
-                          ) : null}
-                        </div>
-                      </div>
-
-                      {cash ? (
-                        <div className={styles.cashCard}>
-                          <Eyebrow tight accent>
-                            They add
-                          </Eyebrow>
-                          <div className={styles.cashValue}>${cash}</div>
-                          <div className={styles.cashNote}>cash on top</div>
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })()}
+                <div className={styles.detailTradeIn}>
+                  <LeadTradeIn lead={active} details />
+                </div>
 
                 <div className={styles.matchPanel}>
                   <div className={styles.matchHead}>
@@ -291,12 +285,25 @@ export default function ConsoleLeadsPage() {
                   <PosterRow
                     user={active.requester}
                     trailing={
-                      <Button variant="secondary" size="sm">
-                        <PhoneIcon size={16} />
-                        Show number
-                      </Button>
+                      canReach(active, offers) ? (
+                        <RevealAction
+                          listingId={active.demand.id}
+                          ownerId={active.requester.id}
+                          block={false}
+                          size="sm"
+                        />
+                      ) : null
                     }
                   />
+                  {/* They keep their details back until they accept an
+                      offer, and did not open them to dealers. */}
+                  {canReach(active, offers) ? null : (
+                    <p className={styles.keptBack}>
+                      <InfoIcon size={14} weight={1.9} />
+                      Their contact details are shared only if they accept
+                      your offer.
+                    </p>
+                  )}
                 </div>
               </div>
             ) : null}
@@ -307,19 +314,16 @@ export default function ConsoleLeadsPage() {
   );
 }
 
-/** "Alerted by WhatsApp · 10:42", as the lead's alert was sent. */
-function alertLine(alert: NonNullable<Lead['alert']>): string {
-  const how = alert.via.includes('whatsapp')
-    ? 'Alerted by WhatsApp'
-    : 'Alerted in the app';
-  return `${how} · ${alert.at}`;
-}
-
-function subtitleFor(lead: Lead): string {
-  if (lead.demand.type === 'swap') {
-    const cash = lead.demand.cashAmount;
-    const upTo = lead.demand.cashUpTo ? ' up to' : '';
-    return `Has ${lead.demand.has.name}${cash ? ` · adds${upTo} $${cash}` : ''}`;
-  }
-  return `Budget up to $${lead.demand.budget} · cash only`;
+/**
+ * Whether the shop may see the requester's details: they show them to
+ * everyone, or let dealers see them, or accepted the shop's offer.
+ */
+function canReach(lead: Lead, offers: Offer[]): boolean {
+  if (contactOpenToDealers(lead.demand)) return true;
+  return offers.some(
+    (offer) =>
+      offer.listingId === lead.demand.id &&
+      offer.fromUserId === dealerId &&
+      offer.state === 'accepted',
+  );
 }

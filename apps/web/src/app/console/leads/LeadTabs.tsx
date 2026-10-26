@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * The three Leads tabs as a segmented switch: a pale blue strip, each tab
+ * The two Leads tabs as a segmented switch: a pale blue strip, each tab
  * its name and its count in a small white round. The tab on show sits on a
  * block of the blue that slides across to the tab tapped, rather than
  * jumping, its name turning white as the blue arrives. On a phone the names
@@ -18,7 +18,6 @@ import styles from './LeadTabs.module.css';
 const TABS: { value: LeadTab; label: string; short: string }[] = [
   { value: 'matching', label: 'Matching requests', short: 'Matching' },
   { value: 'reveals', label: 'Number reveals', short: 'Reveals' },
-  { value: 'offers', label: 'Offers sent', short: 'Offers' },
 ];
 
 export function LeadTabs({

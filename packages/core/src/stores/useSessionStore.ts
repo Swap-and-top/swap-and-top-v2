@@ -8,10 +8,20 @@
  * arrives — a phone number and a one-time code — it sets this, and nothing
  * that reads it changes.
  *
- * Everyone starts as a guest, as every real visitor does.
+ * Everyone starts as a guest, as every real visitor does. Once signed in it
+ * is remembered in the browser (local storage) until they sign out, so a
+ * reload keeps them in. The page is drawn signed out on the server, which
+ * cannot see local storage; `restoreSession` brings the sign in back before
+ * the first paint, and `restored` tells anything that acts on a signed out
+ * visitor (SignInGate) to wait for it.
  */
 
 import { create } from 'zustand';
+import {
+  createJSONStorage,
+  persist,
+  type StateStorage,
+} from 'zustand/middleware';
 import { CURRENT_USER_ID } from '../mock/users';
 
 interface SessionState {
@@ -22,16 +32,48 @@ interface SessionState {
    * out (sent to sign in).
    */
   signedOutAt: number | null;
+  /** Whether the remembered sign in has been brought back yet. */
+  restored: boolean;
   signIn: () => void;
   signOut: () => void;
 }
 
-export const useSessionStore = create<SessionState>((set) => ({
-  signedIn: false,
-  signedOutAt: null,
-  signIn: () => set({ signedIn: true }),
-  signOut: () => set({ signedIn: false, signedOutAt: Date.now() }),
-}));
+export const useSessionStore = create<SessionState>()(
+  persist(
+    (set) => ({
+      signedIn: false,
+      signedOutAt: null,
+      restored: false,
+      signIn: () => set({ signedIn: true }),
+      signOut: () => set({ signedIn: false, signedOutAt: Date.now() }),
+    }),
+    {
+      name: 'snt-session',
+      // The browser's local storage. Only read in the browser: hydration is
+      // skipped on the server (see skipHydration).
+      storage: createJSONStorage(
+        () => (globalThis as { localStorage?: StateStorage }).localStorage!,
+      ),
+      // Only whether they are signed in is remembered.
+      partialize: (state) => ({ signedIn: state.signedIn }),
+      // Brought back by restoreSession once the page is in the browser, so
+      // the server's page and the browser's first draw agree.
+      skipHydration: true,
+      onRehydrateStorage: () => () => {
+        useSessionStore.setState({ restored: true });
+      },
+    },
+  ),
+);
+
+/**
+ * Brings back a remembered sign in. Called once, as the app first loads in
+ * the browser (see SessionRestore); safe to call again.
+ */
+export function restoreSession() {
+  if (useSessionStore.getState().restored) return;
+  void useSessionStore.persist.rehydrate();
+}
 
 /** The signed-in user's id, or undefined for a guest. For use in a component. */
 export function useViewerId(): string | undefined {

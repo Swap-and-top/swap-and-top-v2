@@ -3,7 +3,11 @@
 /**
  * Deal confirmation.
  *
- * Three answers, no free text, no stars. Two rules shape the whole screen:
+ * Three answers, no free text, no stars. Who is asked, and when, is in
+ * `packages/core/src/types/deal.ts`: an accepted offer asks both people; a
+ * number reveal asks the person who revealed, and the listing's owner only
+ * once they say yes.
+ * Two rules shape the whole screen:
  *
  *  1. **Your answer is never shown to the other party**, and saying no carries
  *     no consequence for anyone. Both facts are stated on screen, because
@@ -21,7 +25,13 @@ import {
   getListing,
   getShop,
   getUser,
+  CURRENT_USER_ID,
+  isOwnerOn,
+  myAnswerOn,
+  otherPartyOn,
+  theirAnswerOn,
   useDealStore,
+  viewerOn,
   type DealConfirmation,
 } from '@snt/core';
 import {
@@ -45,13 +55,21 @@ export function DealConfirm({
   confirmation: DealConfirmation;
 }) {
   const { answer, answers, confirmedDeals } = useDealStore();
-  const given = answers[confirmation.id] ?? 'unanswered';
+  const given = myAnswerOn(confirmation, answers);
 
   const listing = getListing(confirmation.listingId);
-  const seller = getUser(confirmation.sellerId);
-  const shop = getShop(seller?.shopId);
-
-  const sellerName = shop?.name ?? seller?.displayName ?? 'the seller';
+  const owner = isOwnerOn(confirmation);
+  /** A shop answering from its console, rather than the signed in user:
+      its own record, and back to Leads. */
+  const viewer = viewerOn(confirmation);
+  const asShop = viewer !== CURRENT_USER_ID;
+  const otherName = otherNameOn(confirmation);
+  /** A yes counts only once the other side has said yes too. */
+  const counted = given === 'yes' && theirAnswerOn(confirmation) === 'yes';
+  /** The record it adds to: the signed in user's, or the shop's own. */
+  const record = asShop
+    ? (getUser(viewer)?.confirmedDeals ?? 0) + (counted ? 1 : 0)
+    : confirmedDeals;
 
   return (
     <Screen>
@@ -64,7 +82,7 @@ export function DealConfirm({
         <section className={styles.card}>
         <h1 className={styles.heading}>Did the deal go through?</h1>
         <p className={styles.intro}>
-          You got {sellerName}&rsquo;s number three days ago.
+          {dealReason(confirmation, otherName, true)}
         </p>
 
         {listing ? (
@@ -83,7 +101,7 @@ export function DealConfirm({
                 </span>
                 <span className={styles.summaryMeta}>
                   {listing.type === 'sale' ? `$${listing.price} · ` : ''}
-                  {sellerName}
+                  {otherName}
                 </span>
               </span>
               <span className={styles.chevron}>
@@ -136,7 +154,7 @@ export function DealConfirm({
             <div className={styles.report}>
               <span className={styles.reportAsk}>Something go wrong?</span>
               <ButtonLink href="/me" variant="secondary" size="sm">
-                Report this listing
+                {owner ? 'Report this person' : 'Report this listing'}
               </ButtonLink>
             </div>
           </>
@@ -145,16 +163,33 @@ export function DealConfirm({
             <CheckIcon size={22} weight={2.6} />
             <div className={styles.answeredBody}>
               <div className={styles.answeredTitle}>
-                {given === 'yes' ? 'Counted' : 'Thanks, nothing recorded'}
+                {counted
+                  ? 'Counted'
+                  : given === 'yes'
+                    ? `Waiting for ${otherName}`
+                    : 'Thanks, nothing recorded'}
               </div>
               <div className={styles.answeredNote}>
-                {given === 'yes'
+                {counted
                   ? 'Both of you confirmed, so this is now on your record.'
-                  : 'No deal was counted. Nobody is told what you answered.'}
+                  : given === 'yes'
+                    ? confirmation.source === 'reveal'
+                      ? `We will ask ${otherName} to confirm it too. It counts once they say yes.`
+                      : `It counts once ${otherName} says yes too.`
+                    : 'No deal was counted. Nobody is told what you answered.'}
               </div>
             </div>
           </div>
         )}
+
+        {/* Back to where it was opened from, as a button. */}
+        <ButtonLink
+          href={asShop ? '/console/leads' : '/me/deals'}
+          variant="secondary"
+          block
+        >
+          {asShop ? 'Back to leads' : 'Back to deals to confirm'}
+        </ButtonLink>
         </section>
 
         {/* What it adds up to: a card of its own. */}
@@ -163,20 +198,53 @@ export function DealConfirm({
           <div className={styles.recordRow}>
             <span className={styles.recordCount}>
               <CheckIcon size={17} weight={2.6} />
-              <span className={styles.recordNumber}>{confirmedDeals}</span>
+              <span className={styles.recordNumber}>{record}</span>
             </span>
             <span className={styles.recordLabel}>
               confirmed deals, shown on your listings
             </span>
           </div>
           <p className={styles.recordNote}>
-            This is how buyers judge a private seller. There are no badges for
-            who you are or what you do, only what you have actually done.
+            {asShop
+              ? 'Buyers see it on your shopfront and your listings, beside your verified badge.'
+              : 'This is how buyers judge a private seller. There are no badges for who you are or what you do, only what you have actually done.'}
           </p>
         </section>
       </ScreenBody>
     </Screen>
   );
+}
+
+/** The other person on the deal, by their shop's name where they have one. */
+export function otherNameOn(deal: DealConfirmation): string {
+  const other = getUser(otherPartyOn(deal));
+  return getShop(other?.shopId)?.name ?? other?.displayName ?? 'Someone';
+}
+
+/**
+ * Why the user is being asked, in a line: an accepted offer, or a number
+ * reveal, from whichever side they are on. `long` adds when, for the deal
+ * check itself.
+ */
+export function dealReason(
+  deal: DealConfirmation,
+  otherName: string,
+  long = false,
+): string {
+  const when = long ? ' three days ago' : '';
+  if (deal.source === 'offer') {
+    return isOwnerOn(deal)
+      ? `You accepted ${possessive(otherName)} offer${when}.`
+      : `${otherName} accepted your offer${when}.`;
+  }
+  return isOwnerOn(deal)
+    ? `${otherName} got your number and says the deal went through.`
+    : `You got ${possessive(otherName)} number${when}.`;
+}
+
+/** "Chipo N." as "Chipo N.\u2019s", "Kopje Computers" as "Kopje Computers\u2019". */
+function possessive(name: string): string {
+  return name.endsWith('s') ? `${name}\u2019` : `${name}\u2019s`;
 }
 
 /**

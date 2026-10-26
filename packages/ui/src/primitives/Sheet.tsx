@@ -7,7 +7,10 @@
  *
  * A native modal <dialog>, portalled to <body> so no card's clipping or
  * transform reaches it; it holds focus while open and returns it on close.
- * Escape, the cross or a tap on the dimmed page behind closes it.
+ * Escape, the cross or a tap on the dimmed page behind closes it. The dialog
+ * itself is a still, clear layer over the screen; the panel inside it is
+ * what rises and sinks, so nothing moves the toasts, which sit in the dialog
+ * while it is open (see AppToaster).
  *
  * It goes the way it came: rising in when it opens, sinking away when it
  * closes. Anything inside it that should close it — a sent form, say —
@@ -18,6 +21,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useId,
   useRef,
   useState,
@@ -25,6 +29,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { CloseIcon } from '../icons';
+import { placeToasts } from './AppToaster';
 import styles from './Sheet.module.css';
 
 const CloseContext = createContext<() => void>(() => {});
@@ -64,6 +69,8 @@ export function Sheet({
   function finish() {
     if (done.current) return;
     done.current = true;
+    // The toasts out first, so they go on showing after it.
+    placeToasts(dialog.current);
     onClose();
   }
 
@@ -78,10 +85,19 @@ export function Sheet({
     window.setTimeout(finish, 500);
   }
 
+  // However it goes, the toasts leave it before it is taken away: a layout
+  // effect's cleanup runs while the dialog is still in the page.
+  useLayoutEffect(() => {
+    const el = dialog.current;
+    return () => placeToasts(el);
+  }, []);
+
   useEffect(() => {
     const el = dialog.current;
     if (!el) return;
     el.showModal();
+    // The toasts come into it, so they stay in front and can be tapped.
+    placeToasts();
     // The page behind stays put while the sheet is open.
     const root = document.documentElement;
     const previous = root.style.overflow;
@@ -94,12 +110,7 @@ export function Sheet({
   return createPortal(
     <dialog
       ref={dialog}
-      className={[
-        styles.sheet,
-        narrow ? styles.narrow : '',
-        wide ? styles.wide : '',
-        closing ? styles.closing : '',
-      ]
+      className={[styles.layer, closing ? styles.layerClosing : '']
         .filter(Boolean)
         .join(' ')}
       aria-labelledby={titleId}
@@ -108,14 +119,25 @@ export function Sheet({
         event.preventDefault();
         close();
       }}
-      // A tap on the dimmed page behind, not on the sheet, closes it.
+      // A tap on the dimmed page around the panel, not on it, closes it.
       onClick={(event) => {
         if (event.target === event.currentTarget) close();
       }}
-      onAnimationEnd={(event) => {
-        if (closing && event.target === event.currentTarget) finish();
-      }}
     >
+      {/* The panel: what rises in and sinks away. */}
+      <div
+        className={[
+          styles.sheet,
+          narrow ? styles.narrow : '',
+          wide ? styles.wide : '',
+          closing ? styles.closing : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        onAnimationEnd={(event) => {
+          if (closing && event.target === event.currentTarget) finish();
+        }}
+      >
       <CloseContext.Provider value={close}>
       <div className={styles.body}>
         <div className={styles.head}>
@@ -143,6 +165,7 @@ export function Sheet({
         {children}
       </div>
       </CloseContext.Provider>
+      </div>
     </dialog>,
     document.body,
   );

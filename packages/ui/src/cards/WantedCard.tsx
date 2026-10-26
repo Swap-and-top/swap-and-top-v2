@@ -10,12 +10,17 @@
  * Note the structure differs from the wireframe in one way: the card is not one
  * big link. A `<button>` cannot live inside an `<a>` — it is invalid HTML and
  * the anchor swallows the click. So the title is the link, stretched over the
- * whole card so a tap anywhere opens the request, and "I have this" is a real
+ * whole card so a tap anywhere opens the request, and "Make an offer" is a real
  * sibling button sitting above it, which opens the offer sheet.
  */
 
 import Link from 'next/link';
-import { offerCountFor, useOfferStore, useViewerId } from '@snt/core';
+import {
+  contactAfterOffer,
+  offerCountFor,
+  useOfferStore,
+  useViewerId,
+} from '@snt/core';
 import type { DemandListing, User } from '@snt/core';
 import { BinocularsIcon, SwapIcon } from '../icons';
 import { OfferButton } from '../offers/OfferButton';
@@ -76,22 +81,14 @@ export function WantedCard({
             .filter(Boolean)
             .join(' ')}
         >
-          {/* Each word carries its mark, outlined on a small pale tile:
-              binoculars for a thing looked for, the swap arrows for a swap
-              offered with it. */}
+          {/* Its kind, after its mark on a small pale tile: binoculars and
+              "Wanted" for a request; the swap arrows and "Swap" for a swap
+              shown here as demand (someone with something to swap posts a
+              swap, not a Wanted). */}
           <span className={styles.labelIcon}>
-            <BinocularsIcon size={14} />
+            {tradeIn ? <SwapIcon size={14} /> : <BinocularsIcon size={14} />}
           </span>
-          Wanted
-          {tradeIn ? (
-            <>
-              <span aria-hidden>+</span>
-              <span className={styles.labelIcon}>
-                <SwapIcon size={14} />
-              </span>
-              Swap
-            </>
-          ) : null}
+          {tradeIn ? 'Swap' : 'Wanted'}
         </span>
         <span className={styles.spacer} />
         {/* The small grey facts sit together, top right. On your own post
@@ -124,6 +121,9 @@ export function WantedCard({
                 <span>{terms?.cashNote}</span>
               </>
             )}
+            {/* Contact only after an accepted offer: said up front, so a
+                buyer knows before opening it. */}
+            {contactAfterOffer(listing) ? <span>Offers only</span> : null}
           </div>
         </div>
 

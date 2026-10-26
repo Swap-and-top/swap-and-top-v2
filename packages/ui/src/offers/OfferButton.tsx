@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * OfferButton — "I have this", wherever it appears: on a Wanted card, and at
+ * OfferButton — "Make an offer", the same on every listing: on a Wanted card, and at
  * the foot of a swap or a request.
  *
  * It opens the offer sheet. Once you have offered, it says so and opens the
@@ -23,7 +23,7 @@ import { OfferSheet } from './OfferSheet';
 
 export function OfferButton({
   listing,
-  label = 'I have this',
+  label = 'Make an offer',
   size,
   block,
   className,

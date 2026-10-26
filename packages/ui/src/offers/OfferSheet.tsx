@@ -12,6 +12,11 @@
  * because it has to be quicker than writing the same thing out on WhatsApp.
  * An offer is not binding; it starts the conversation.
  *
+ * One form for every offer. What it offers depends only on what the listing
+ * asks for: on a sale, just cash first where the price moves, then a swap
+ * where the seller takes swaps (a sale without swaps asks only for a price);
+ * on a swap or a Wanted listing, an item of yours and the cash.
+ *
  * If you have already made an offer here, the sheet shows that instead, with
  * the option to withdraw it.
  */
@@ -25,6 +30,7 @@ import {
   myOfferOn,
   requireSignIn,
   sendOfferOptimistically,
+  takesCashOffers,
   useOfferStore,
   useViewerId,
   type Category,
@@ -107,7 +113,9 @@ export function OfferSheet({
 
   return (
     <Sheet
-      title={forSale ? `Swap for: ${ask.item}` : `Wanted item: ${ask.item}`}
+      title={
+        forSale ? `Offer for: ${ask.item}` : `Wanted item: ${ask.item}`
+      }
       // What is being answered heads the sheet, first and largest: the item
       // wanted, then its terms. Everything under it is what you offer for it.
       heading={
@@ -116,8 +124,8 @@ export function OfferSheet({
             .filter(Boolean)
             .join(' ')}
         >
-          {/* Marked as on its card in the feed: Wanted in green; a sale,
-              which a trade in is offered towards, in the blue of For sale. */}
+          {/* Marked as on its card in the feed: Wanted in green; a sale in
+              the blue of For sale. */}
           <span className={styles.askLabel}>
             <span className={styles.labelIcon}>
               {forSale ? <TagIcon size={16} /> : <BinocularsIcon size={16} />}
@@ -174,6 +182,11 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
   const chosenWays = reachOn ?? myWays.slice(0, 1);
   const setup = cashSetup(listing);
   const priced = isPriceOffer(listing);
+  /** Just cash is open on a sale whose price moves; and on one without
+      swaps, it is all. */
+  const cashOk = takesCashOffers(listing);
+  const cashOnly =
+    cashOk && listing.type === 'sale' && !listing.acceptsSwaps;
 
   // Start on one of their own listings only if it is the kind of thing being
   // asked for — then there is nothing to type. Otherwise start on "describe
@@ -182,19 +195,24 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
   const wantedCategory =
     listing.type === 'sale' ? listing.item.category : listing.wants.category;
   const fits = own.find((candidate) => candidate.category === wantedCategory);
-  const [mode, setMode] = useState<'listing' | 'describe'>(
-    fits ? 'listing' : 'describe',
+  const [mode, setMode] = useState<'cash' | 'listing' | 'describe'>(
+    cashOk ? 'cash' : fits ? 'listing' : 'describe',
   );
   const [pickedId, setPickedId] = useState(fits?.listingId ?? own[0]?.listingId);
   const [name, setName] = useState('');
   const [condition, setCondition] = useState<Condition | ''>('');
   const [cash, setCash] = useState(setup.amount);
+  /** A cash offer's price: it starts at the asking price. */
+  const [price, setPrice] = useState(
+    listing.type === 'sale' ? String(listing.price) : '',
+  );
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const conditionLabel = useId();
   const listingLabel = useId();
 
   const describing = mode === 'describe';
+  const justCash = mode === 'cash';
   const picked = own.find((candidate) => candidate.listingId === pickedId);
   const item: OfferItem | undefined = describing
     ? name.trim()
@@ -206,28 +224,31 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
         condition: picked.condition,
       };
 
-  const amount = Number(cash || 0);
+  const amount = Number((justCash ? price : cash) || 0);
   // A price is required; cash on a swap can be nothing at all.
-  const ready = Boolean(item) && (!priced || amount > 0) && !sending;
+  const ready = justCash
+    ? amount > 0 && !sending
+    : Boolean(item) && (!priced || amount > 0) && !sending;
 
   // A guest can fill the whole form in first. Sending is what needs an
   // account: they are asked to sign in then, and the offer goes once they
   // have — nothing they typed is lost.
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (!item || !ready) return;
+    if (!ready) return;
     requireSignIn('Sign in to send your offer.', () => void send());
   }
 
   async function send() {
-    if (!item) return;
+    if (!justCash && !item) return;
     setSending(true);
     try {
       await sendOfferOptimistically({
         listingId: listing.id,
-        item,
+        // Just cash: no item, and the buyer pays their price.
+        item: justCash ? undefined : item,
         cashAmount: amount,
-        cashFrom: amount > 0 ? setup.from : 'none',
+        cashFrom: justCash ? 'offerer' : amount > 0 ? setup.from : 'none',
         message: message.trim() || undefined,
         // A guest signs in only as they send, so they have no ways yet on
         // screen: then it is left to their account's own.
@@ -249,15 +270,34 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
         <span className={styles.labelIcon}>
           <CashHandIcon size={17} filled={false} />
         </span>
-        {listing.type === 'sale' ? 'Offer a swap' : 'Make an offer'}
+        Make an offer
       </h3>
 
+      {cashOnly ? (
+        // A sale without swaps: the offer is a price, nothing more.
+        <PriceField value={price} onChange={setPrice} />
+      ) : (
       <fieldset className={styles.group}>
         <legend className={[styles.label, styles.flush].join(' ')}>What you are offering</legend>
         {/* Two ways to say what you are offering, side by side: pick one,
             and only what that one needs shows under them. Both need one
             label and one row, so switching moves nothing below. */}
-        <div className={styles.modes}>
+        <div
+          className={[styles.modes, cashOk ? styles.modesThree : '']
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {cashOk ? (
+            <label className={styles.mode}>
+              <input
+                type="radio"
+                name="offer-item"
+                checked={justCash}
+                onChange={() => setMode('cash')}
+              />
+              <span>Just cash</span>
+            </label>
+          ) : null}
           <label
             className={[styles.mode, own.length === 0 ? styles.modeOff : '']
               .filter(Boolean)
@@ -266,7 +306,7 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
             <input
               type="radio"
               name="offer-item"
-              checked={!describing}
+              checked={mode === 'listing'}
               disabled={own.length === 0}
               onChange={() => setMode('listing')}
             />
@@ -287,7 +327,9 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
             switching moves nothing below. Describing: the item the full
             width, then its condition and the cash half and half. From your
             listings: which one, then the cash. */}
-        {describing ? (
+        {justCash ? (
+          <PriceField value={price} onChange={setPrice} />
+        ) : describing ? (
           <>
             <label className={styles.field}>
               <span className={styles.label}>Item</span>
@@ -396,6 +438,7 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
           </>
         )}
       </fieldset>
+      )}
 
       <label className={styles.field}>
         <span className={styles.label}>
@@ -476,5 +519,31 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
         the rest between you · meet in public, check the device first.
       </p>
     </form>
+  );
+}
+
+/** A cash offer's price, in dollars: required, as a request's price is. */
+function PriceField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className={styles.field}>
+      <span className={styles.label}>Your price</span>
+      <span className={styles.money}>
+        <span aria-hidden>$</span>
+        <input
+          className={styles.input}
+          inputMode="numeric"
+          value={value}
+          onChange={(event) => onChange(event.target.value.replace(/[^0-9]/g, ''))}
+          placeholder="0"
+          maxLength={6}
+        />
+      </span>
+    </label>
   );
 }

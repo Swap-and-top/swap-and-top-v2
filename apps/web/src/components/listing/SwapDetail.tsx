@@ -3,7 +3,7 @@
 /**
  * Swap listing detail.
  *
- * Note the primary action: "I have this — make an offer", not "contact seller".
+ * Note the primary action: "Make an offer", not "contact seller".
  * A swap is a proposal, so the natural response is a counter-proposal.
  * Revealing the number is secondary.
  *
@@ -44,7 +44,11 @@ import {
   swapTerms,
 } from '@snt/ui';
 import { CategoryIcon } from '@snt/ui/icons';
-import { RevealAction } from '../RevealAction';
+import {
+  KEPT_BACK_NOTE,
+  RevealAction,
+  useContactKeptBack,
+} from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SwapDetail.module.css';
 import { PreviewBanner } from './PreviewBanner';
@@ -67,6 +71,8 @@ export function SwapDetail({
       buyer's actions. */
   const viewer = useViewerId();
   const mine = !preview && viewer === listing.ownerId;
+  /** The poster shares their details only once they accept an offer. */
+  const keptBack = useContactKeptBack(listing);
 
   /** Who pays, worded as on the cards, or from your side on your own. */
   const terms = swapTerms(
@@ -173,8 +179,9 @@ export function SwapDetail({
                 stack
                 caption={
                   <Caption>
-                    Meet in public · check the device is not locked before
-                    swapping
+                    {keptBack
+                      ? KEPT_BACK_NOTE
+                      : 'Meet in public · check the device is not locked before swapping'}
                   </Caption>
                 }
               >
@@ -183,16 +190,17 @@ export function SwapDetail({
                 <OfferButton
                   preview={preview}
                   listing={listing}
-                  label="Make an offer"
                   size="lg"
                   block
                 />
-                <RevealAction
-                  listingId={listing.id}
-                  ownerId={listing.ownerId}
-                  signedInOnly={listing.contactSignedInOnly}
-                  block={false}
-                />
+                {keptBack ? null : (
+                  <RevealAction
+                    listingId={listing.id}
+                    ownerId={listing.ownerId}
+                    signedInOnly={listing.contactSignedInOnly}
+                    block={false}
+                  />
+                )}
               </ListingActions>
             </div>
           </>
