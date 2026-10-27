@@ -16,6 +16,7 @@ import {
   useLiveListings,
   NO_SPEC_FILTERS,
   searchListings,
+  type Listing,
 } from '@snt/core';
 import {
   AppHeader,
@@ -35,7 +36,14 @@ import {
 import { searchHref, type SearchQuery } from '../../components/searchParams';
 import styles from './page.module.css';
 
-export function SearchResults({ initial }: { initial: SearchQuery }) {
+export function SearchResults({
+  initial,
+  listings,
+}: {
+  initial: SearchQuery;
+  /** The live listings, from the database. */
+  listings: Listing[];
+}) {
   // Posting asks a guest to sign in first.
   const postGate = useSignInToPost('/post');
   const [filters, setFilters] = useState<SearchFilterValues>({
@@ -57,7 +65,7 @@ export function SearchResults({ initial }: { initial: SearchQuery }) {
     }
   }, [initial.q, category, type, min, max]);
 
-  const live = useLiveListings();
+  const live = useLiveListings(listings);
   const results = searchListings(
     live.filter((listing) => type === 'all' || listing.type === type),
     {

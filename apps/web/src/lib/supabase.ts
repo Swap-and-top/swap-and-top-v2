@@ -46,7 +46,7 @@ export async function fetchViewer(token: string) {
  */
 export async function apiAsViewer<T>(
   path: string,
-  init: { method: 'GET' | 'POST' | 'PATCH'; body?: unknown },
+  init: { method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; body?: unknown },
 ): Promise<{ data?: T; error?: string }> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;

@@ -21,12 +21,12 @@ import { toast } from 'sonner';
 import {
   contactAfterOffer,
   useListingStatus,
-  useListingStatusStore,
   type Listing,
   type ListingStatus,
 } from '@snt/core';
 import { Button, Sheet, startPageLoad, useCloseSheet } from '@snt/ui';
 import { CheckIcon, PauseIcon, TrashIcon } from '@snt/ui/icons';
+import { saveStatus } from '@/lib/listingStatus';
 import styles from './OwnerTools.module.css';
 
 /**
@@ -115,15 +115,13 @@ export function contactsShown(listing: Listing): string {
  */
 export function OwnerControls({ listing }: { listing: Listing }) {
   const status = useListingStatus(listing);
-  const setStatus = useListingStatusStore((state) => state.setStatus);
   const [managing, setManaging] = useState(false);
   /** The sheet has moved on to the check before a delete. */
   const [deleting, setDeleting] = useState(false);
   const live = status === 'live';
 
-  function relist() {
-    setStatus(listing.id, 'live');
-    toast.success('Live again, back in the feed.');
+  async function relist() {
+    if (await saveStatus(listing, 'live')) toast.success('Live again, back in the feed.');
   }
 
   return (
@@ -198,23 +196,22 @@ function ManageBody({
 }) {
   const router = useRouter();
   const close = useCloseSheet();
-  const setStatus = useListingStatusStore((state) => state.setStatus);
   const done = DONE[listing.type];
 
   /** Changes it, says so, and offers to put it back as it was. */
-  function change(next: ListingStatus, told: string) {
+  async function change(next: ListingStatus, told: string) {
     const before = status;
-    setStatus(listing.id, next);
     close();
+    if (!(await saveStatus(listing, next))) return;
     toast.success(told, {
-      action: { label: 'Undo', onClick: () => setStatus(listing.id, before) },
+      action: { label: 'Undo', onClick: () => void saveStatus(listing, before) },
       duration: UNDO_TOAST_MS,
     });
   }
 
-  function remove() {
-    setStatus(listing.id, 'withdrawn');
+  async function remove() {
     close();
+    if (!(await saveStatus(listing, 'withdrawn'))) return;
     toast.success('Listing deleted.');
     startPageLoad();
     router.push('/me/listings');

@@ -4,16 +4,16 @@
  * My listings: everything the current user has posted, as feed cards.
  *
  * Their own posts are kept out of the feeds, so this is where they find
- * them. Opening one shows it as the owner sees it: "Your listing", how it is
+ * them. Read from the API (GET /api/me/listings) once they are signed in;
+ * what they have since paused, sold or deleted here shows at once. Opening one shows it as the owner sees it: "Your listing", how it is
  * doing, and its offers, in place of a buyer's actions.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  currentUser,
-  mockListings,
   statusOf,
   useListingStatusStore,
+  useSessionStore,
   type Listing,
 } from '@snt/core';
 import {
@@ -24,9 +24,12 @@ import {
   Screen,
   ScreenBody,
   SignInGate,
+  SwapCardSkeleton,
   Tabs,
+  WantedCardSkeleton,
   type TabItem,
 } from '@snt/ui';
+import { apiAsViewer } from '@/lib/supabase';
 import { StatusTag } from '../../../components/listing/OwnerTools';
 import styles from './page.module.css';
 
@@ -43,10 +46,25 @@ const viewOf = (listing: Listing): Exclude<View, 'all'> =>
 export default function MyListingsPage() {
   const [view, setView] = useState<View>('all');
   const changes = useListingStatusStore((state) => state.changes);
+  const viewerId = useSessionStore((state) => state.viewer?.id);
+  /** Theirs, from the API; null until it answers. */
+  const [posted, setPosted] = useState<Listing[] | null>(null);
+
+  useEffect(() => {
+    if (!viewerId) return;
+    let current = true;
+    void apiAsViewer<{ listings: Listing[] }>('/me/listings', { method: 'GET' }).then(
+      ({ data }) => {
+        if (current) setPosted(data?.listings ?? []);
+      },
+    );
+    return () => {
+      current = false;
+    };
+  }, [viewerId]);
 
   // Deleted ones are gone for good, and staff removals are not listed here.
-  const mine = mockListings.filter((listing) => {
-    if (listing.ownerId !== currentUser.id) return false;
+  const mine = (posted ?? []).filter((listing) => {
     const status = statusOf(listing, changes);
     return status !== 'withdrawn' && status !== 'removed';
   });
@@ -77,7 +95,13 @@ export default function MyListingsPage() {
 
       <ScreenBody>
         <SignInGate>
-          {shown.length > 0 ? (
+          {posted === null ? (
+            // As the page's own loading skeleton, while the API answers.
+            <div className={styles.list}>
+              <WantedCardSkeleton />
+              <SwapCardSkeleton />
+            </div>
+          ) : shown.length > 0 ? (
             <div className={styles.list}>
               {shown.map((listing) =>
                 statusOf(listing, changes) === 'live' ? (

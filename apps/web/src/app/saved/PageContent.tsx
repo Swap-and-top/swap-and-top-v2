@@ -11,10 +11,10 @@
  * Wireframe artboard: `Saved`.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  getListing,
   useSavedStore,
+  useSessionStore,
   type Listing,
 } from '@snt/core';
 import {
@@ -30,6 +30,7 @@ import {
   type TabItem,
   SignInGate,
 } from '@snt/ui';
+import { apiAsViewer } from '@/lib/supabase';
 
 type SavedTab = 'all' | 'available' | 'gone';
 
@@ -40,9 +41,24 @@ function isGone(listing: Listing): boolean {
 export default function SavedPage() {
   const { ids } = useSavedStore();
   const [tab, setTab] = useState<SavedTab>('all');
+  const viewerId = useSessionStore((state) => state.viewer?.id);
+  /** The saved listings themselves, from the API (GET /api/me/saved). */
+  const [listings, setListings] = useState<Listing[]>([]);
 
+  useEffect(() => {
+    if (!viewerId) return;
+    let current = true;
+    void apiAsViewer<{ listings: Listing[] }>('/me/saved', { method: 'GET' }).then(({ data }) => {
+      if (current && data) setListings(data.listings);
+    });
+    return () => {
+      current = false;
+    };
+  }, [viewerId]);
+
+  // In the order saved, newest first; one unsaved here leaves at once.
   const saved = ids
-    .map((id) => getListing(id))
+    .map((id) => listings.find((listing) => listing.id === id))
     .filter((listing): listing is Listing => listing !== undefined);
 
   const available = saved.filter((listing) => !isGone(listing));

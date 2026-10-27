@@ -25,12 +25,12 @@ import {
   getListing,
   getStore,
   getUser,
-  CURRENT_USER_ID,
   isOwnerOn,
   myAnswerOn,
   otherPartyOn,
   theirAnswerOn,
   useDealStore,
+  viewerId,
   viewerOn,
   type DealConfirmation,
 } from '@snt/core';
@@ -62,7 +62,7 @@ export function DealConfirm({
   /** A store answering from its console, rather than the signed in user:
       its own record, and back to Leads. */
   const viewer = viewerOn(confirmation);
-  const asStore = viewer !== CURRENT_USER_ID;
+  const asStore = viewer !== viewerId();
   const otherName = otherNameOn(confirmation);
   /** A yes counts only once the other side has said yes too. */
   const counted = given === 'yes' && theirAnswerOn(confirmation) === 'yes';

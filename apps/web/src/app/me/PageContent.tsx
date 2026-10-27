@@ -55,7 +55,7 @@ import styles from './page.module.css';
 
 export default function MePage() {
   const { ids } = useSavedStore();
-  const { answers, confirmedDeals } = useDealStore();
+  const { answers, confirmedDeals, deals } = useDealStore();
   const signOut = useSessionStore((state) => state.signOut);
   const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? false);
   const offers = useOfferStore((store) => store.offers);
@@ -76,7 +76,7 @@ export default function MePage() {
   });
 
   /** Deals still waiting on the user's answer. */
-  const toConfirm = confirmationsAwaiting(answers);
+  const toConfirm = confirmationsAwaiting(deals, answers);
 
   return (
     <Screen>

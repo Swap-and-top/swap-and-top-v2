@@ -27,6 +27,16 @@ export const useListingStatusStore = create<ListingStatusState>((set) => ({
     set((state) => ({ changes: { ...state.changes, [listingId]: status } })),
 }));
 
+/**
+ * The database's live listings, loaded once in the browser by the web app
+ * (LiveListingsLoader) for everything that shows listings without a page of
+ * its own to bring them: the search panel, the offer form's own items.
+ * Null until they arrive.
+ */
+export const useListingSource = create<{ listings: Listing[] | null }>(() => ({
+  listings: null,
+}));
+
 /** A listing's status now: its owner's change, or its own. */
 export function statusOf(
   listing: Listing,
@@ -45,13 +55,15 @@ export function useListingStatus(listing: Listing): ListingStatus {
  * Only live listings appear in the feed, in search, or in the sitemap: the
  * live ones, with what owners have since paused, sold or relisted taken
  * into account, and each one's sponsored slot as it stands now. `from` is
- * the listings to start with: the database's where a page has them (the
- * feed), the mock ones until each page moves over.
+ * the listings to start with where a page has them from the server (the
+ * feed, Wanted, search); otherwise the database's live listings as the app
+ * loaded them (useListingSource), or the mock ones until they arrive.
  */
-export function useLiveListings(from: Listing[] = mockListings): Listing[] {
+export function useLiveListings(from?: Listing[]): Listing[] {
   const changes = useListingStatusStore((state) => state.changes);
   const sponsorships = useSponsorStore((state) => state.sponsorships);
-  return from
+  const source = useListingSource((state) => state.listings);
+  return (from ?? source ?? mockListings)
     .filter((listing) => statusOf(listing, changes) === 'live')
     .map((listing) => withPromotion(listing, sponsorships));
 }

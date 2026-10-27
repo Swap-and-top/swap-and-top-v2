@@ -8,9 +8,14 @@ import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { cors } from 'hono/cors';
 import { accountRoutes } from './routes/account';
+import { dealRoutes } from './routes/deals';
 import { healthRoutes } from './routes/health';
 import { listingRoutes } from './routes/listings';
 import { meRoutes } from './routes/me';
+import { notificationRoutes } from './routes/notifications';
+import { offerRoutes } from './routes/offers';
+import { postRoutes } from './routes/post';
+import { savedRoutes } from './routes/saved';
 import { storeRoutes } from './routes/stores';
 
 export const app = new OpenAPIHono({
@@ -30,6 +35,11 @@ app.route('/', listingRoutes);
 app.route('/', storeRoutes);
 app.route('/', meRoutes);
 app.route('/', accountRoutes);
+app.route('/', postRoutes);
+app.route('/', offerRoutes);
+app.route('/', dealRoutes);
+app.route('/', savedRoutes);
+app.route('/', notificationRoutes);
 
 // Endpoints for an account take the Supabase sign in token.
 app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {

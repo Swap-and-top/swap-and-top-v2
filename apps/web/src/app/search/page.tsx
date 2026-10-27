@@ -10,6 +10,7 @@
 import { parseSearchQuery } from '../../components/searchParams';
 import { SearchResults } from './SearchResults';
 import { slowDown } from '@/components/slowDown';
+import { feedListings } from '@/lib/listings';
 
 export default async function SearchPage({
   searchParams,
@@ -18,6 +19,7 @@ export default async function SearchPage({
 }) {
   await slowDown();
   const search = parseSearchQuery(await searchParams);
+  const listings = await feedListings();
   // A new search is a new page: the key resets the filters it starts from.
-  return <SearchResults key={search.q} initial={search} />;
+  return <SearchResults key={search.q} initial={search} listings={listings} />;
 }

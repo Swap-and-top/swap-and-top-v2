@@ -5,8 +5,8 @@
  * Development only. It empties every table first, so run it again whenever
  * the data should go back to the start: `pnpm --filter @snt/api db:seed`.
  *
- * Offers, deal checks and notifications are left empty for now; each is
- * seeded when its page moves to the API (backend plan, Phase 3).
+ * Offers and deal checks are seeded too (seedActivity); notifications are
+ * left empty until their page moves to the API (backend plan, Phase 3).
  */
 
 import '../loadEnv';
@@ -14,6 +14,7 @@ import { mockListings, mockStores, mockUsers } from '@snt/core';
 import type { Item, Listing } from '@snt/core';
 import { db, sql } from './client';
 import * as t from './schema';
+import { seedActivity } from './seedActivity';
 
 /** Each test account signs in with its number and the fixed test code. */
 const TEST_ACCOUNTS: Record<
@@ -212,6 +213,7 @@ async function seed() {
 
 try {
   await seed();
+  await seedActivity();
 } finally {
   await sql.end();
 }

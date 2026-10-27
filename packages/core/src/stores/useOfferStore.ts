@@ -2,20 +2,22 @@
  * Offers — made and received.
  *
  * One list holds both: an offer is "received" when it is on one of the current
- * user's listings and "made" when it is from them. Seeded with a few sample
- * offers so both sides of the flow can be walked: two on Tarisai's MacBook
- * swap and one on her wanted post, and four she has sent.
+ * user's listings and "made" when it is from them. It is filled from the API
+ * once someone is signed in (the web app's SessionRestore), and empty for a
+ * guest. SAMPLE_OFFERS are the seed's sample offers, kept here for it.
  *
  * Every change is optimistic, like saving: the list changes at once and
- * is put back if the server refuses. There is no server yet — `persistOffer`
- * is where its call goes.
+ * is put back if the server refuses. The web app connects the server calls
+ * (connectOfferApi); until it does, they simply succeed.
  */
 
 import { create } from 'zustand';
 import { CURRENT_USER_ID } from '../mock/users';
 import type { Offer, OfferDraft, OfferState } from '../types/offer';
+import { viewerId } from './useSessionStore';
 
-const SAMPLE_OFFERS: Offer[] = [
+/** The sample offers, also loaded into the database by its seed. */
+export const SAMPLE_OFFERS: Offer[] = [
   // A trade-in offer to a store: towards Kopje Computers' ThinkPad, which
   // takes swaps. It shows on the Store console's Trade-ins.
   {
@@ -171,7 +173,7 @@ interface OfferStore {
 }
 
 export const useOfferStore = create<OfferStore>((set) => ({
-  offers: SAMPLE_OFFERS,
+  offers: [],
   add: (offer) => set((store) => ({ offers: [offer, ...store.offers] })),
   remove: (offerId) =>
     set((store) => ({
@@ -185,23 +187,26 @@ export const useOfferStore = create<OfferStore>((set) => ({
     })),
 }));
 
-/**
- * Tells the server about a new offer or a change to one. There is no server
- * yet: this simply succeeds. When the API exists its call goes here and
- * nothing else changes. It must reject when the change did not happen.
- */
-export async function persistOffer(
-  _offerId: string,
-  _change: 'sent' | OfferState,
-): Promise<void> {
-  await Promise.resolve();
+/** The server's side of offers, connected by the web app. */
+export interface OfferApi {
+  /** Sends a new offer; resolves with it as saved. Rejects if refused. */
+  send: (draft: OfferDraft) => Promise<Offer>;
+  /** Accepts, declines or withdraws one. Rejects if refused. */
+  change: (offerId: string, state: OfferState) => Promise<void>;
+}
+
+let api: OfferApi | null = null;
+
+export function connectOfferApi(connected: OfferApi) {
+  api = connected;
 }
 
 let sequence = 0;
 
 /**
  * Sends an offer optimistically: it is in the list at once, and taken out
- * again if the server refuses. Resolves with the offer once it is confirmed.
+ * again if the server refuses. Resolves with the offer once it is confirmed,
+ * by then under the id the server gave it.
  */
 export async function sendOfferOptimistically(draft: OfferDraft): Promise<Offer> {
   const { add, remove } = useOfferStore.getState();
@@ -209,14 +214,18 @@ export async function sendOfferOptimistically(draft: OfferDraft): Promise<Offer>
   const offer: Offer = {
     ...draft,
     id: `o-new-${sequence}`,
-    fromUserId: CURRENT_USER_ID,
+    fromUserId: viewerId() ?? CURRENT_USER_ID,
     state: 'pending',
     sentLabel: 'Just now',
   };
   add(offer);
   try {
-    await persistOffer(offer.id, 'sent');
-    return offer;
+    if (!api) return offer;
+    const saved = await api.send(draft);
+    useOfferStore.setState((store) => ({
+      offers: store.offers.map((one) => (one.id === offer.id ? saved : one)),
+    }));
+    return saved;
   } catch (error) {
     remove(offer.id);
     throw error;
@@ -236,7 +245,7 @@ export async function setOfferStateOptimistically(
   if (!previous || previous === next) return;
   setState(offerId, next);
   try {
-    await persistOffer(offerId, next);
+    await api?.change(offerId, next);
   } catch (error) {
     setState(offerId, previous);
     throw error;

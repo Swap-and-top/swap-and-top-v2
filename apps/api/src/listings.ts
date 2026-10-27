@@ -4,7 +4,7 @@
  * come from other records (reveals, offers, boosts).
  */
 
-import { and, count, desc, eq, gt, inArray, isNull, lte, notInArray, type SQL } from 'drizzle-orm';
+import { and, count, desc, eq, gt, inArray, isNull, lte, ne, notInArray, type SQL } from 'drizzle-orm';
 import type { z } from '@hono/zod-openapi';
 import { db } from './db/client';
 import * as t from './db/schema';
@@ -54,7 +54,8 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
     db
       .select({ listingId: t.offers.listingId, n: count() })
       .from(t.offers)
-      .where(inArray(t.offers.listingId, ids))
+      // Withdrawn offers are as if never made.
+      .where(and(inArray(t.offers.listingId, ids), ne(t.offers.state, 'withdrawn')))
       .groupBy(t.offers.listingId),
     db
       .select({ listingId: t.boosts.listingId })

@@ -10,7 +10,7 @@
 import Link from 'next/link';
 import {
   isUnread,
-  notificationsFor,
+  useNotifications,
   useNotificationStore,
   type NotificationAudience,
   type NotificationKind,
@@ -47,7 +47,7 @@ export function NotificationList({
 }) {
   const readIds = useNotificationStore((state) => state.readIds);
   const markRead = useNotificationStore((state) => state.markRead);
-  const list = notificationsFor(audience);
+  const list = useNotifications(audience);
 
   if (list.length === 0) {
     return (
@@ -101,6 +101,6 @@ export function NotificationList({
 export function useMarkAllRead(audience: NotificationAudience) {
   const readIds = useNotificationStore((state) => state.readIds);
   const markAllRead = useNotificationStore((state) => state.markAllRead);
-  const unread = notificationsFor(audience).some((n) => isUnread(n, readIds));
+  const unread = useNotifications(audience).some((n) => isUnread(n, readIds));
   return { unread, markAllRead: () => markAllRead(audience) };
 }

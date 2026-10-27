@@ -21,6 +21,7 @@ import {
   useLiveListings,
   useViewerId,
   type Category,
+  type Listing,
 } from '@snt/core';
 import {
   AppHeader,
@@ -52,7 +53,14 @@ export const CATEGORIES: (Category | 'all')[] = [
 ];
 
 /** Wanted. Its server half, page.tsx, reads the category from the address. */
-export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
+export function WantedFeed({
+  initial,
+  listings,
+}: {
+  initial: FeedFilterParams;
+  /** The live listings, from the database. */
+  listings: Listing[];
+}) {
   // Posting asks a guest to sign in first.
   const postGate = useSignInToPost('/post');
   // The category lives in the address too, so a refresh keeps it.
@@ -62,7 +70,7 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
 
   const viewer = useViewerId();
   // Your own posts are not in your feed: they are under My listings.
-  const live = useLiveListings();
+  const live = useLiveListings(listings);
   const demand = live
     .filter((listing) => listing.ownerId !== viewer)
     .filter(isDemand)

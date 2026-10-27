@@ -4,11 +4,12 @@
  * Keeps the session store in step with Supabase Auth. Supabase brings back a
  * remembered sign in as the app loads, and says whenever someone signs in or
  * out; each time, the store is told, and the API is asked who it is (see
- * useSessionStore in @snt/core).
+ * useSessionStore in @snt/core) and then for what is theirs (accountData).
  */
 
 import { useEffect, useLayoutEffect } from 'react';
 import { useSessionStore } from '@snt/core';
+import { clearAccountData, loadAccountData } from '@/lib/accountData';
 import { fetchViewer, supabase } from '@/lib/supabase';
 
 export function SessionRestore() {
@@ -37,6 +38,7 @@ export function SessionRestore() {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
         authUserId = undefined;
+        clearAccountData();
         useSessionStore.setState({
           signedIn: false,
           viewer: null,
@@ -59,7 +61,10 @@ export function SessionRestore() {
       const token = session.access_token;
       window.setTimeout(async () => {
         const viewer = await fetchViewer(token).catch(() => null);
-        if (useSessionStore.getState().signedIn) useSessionStore.setState({ viewer });
+        if (!useSessionStore.getState().signedIn) return;
+        useSessionStore.setState({ viewer });
+        // Then what is theirs: offers made and received.
+        if (viewer) void loadAccountData();
       }, 0);
     });
     return () => data.subscription.unsubscribe();

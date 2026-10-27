@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { ToastOffset } from '@/components/ToastOffset';
 import { AskName } from '@/components/AskName';
+import { LiveListingsLoader } from '@/components/LiveListingsLoader';
 import { SessionRestore } from '@/components/SessionRestore';
 import { VerifyPhoneHost } from '@/components/VerifyPhone';
 import { AppToaster, SignInHost } from '@snt/ui';
@@ -94,6 +95,9 @@ export default function RootLayout({
         {children}
         {/* A remembered sign in, back before the first paint. */}
         <SessionRestore />
+        {/* The live listings from the database, for the search panel and
+            anything else without a page to bring them. */}
+        <LiveListingsLoader />
         {/* The one sign in sheet, shown whenever a guest tries something that
             needs an account. */}
         <SignInHost />

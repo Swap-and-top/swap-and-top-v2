@@ -6,10 +6,12 @@
  * an accepted offer of hers, one already confirmed, and two she must not
  * see (a reveal on her listing the buyer has not answered, so she is not
  * asked yet). A "no" is stored and never shown to the other party.
+ *
+ * The seed loads these into the database; the app reads them from the API
+ * (see useDealStore).
  */
 
-import type { DealAnswer, DealConfirmation } from '../types/deal';
-import { CURRENT_USER_ID } from './users';
+import type { DealConfirmation } from '../types/deal';
 
 export const mockDealConfirmations: DealConfirmation[] = [
   {
@@ -129,79 +131,6 @@ export const mockDealConfirmations: DealConfirmation[] = [
     lapsesAt: '2026-10-29',
   },
 ];
-
-export function getDealConfirmation(id: string): DealConfirmation | undefined {
-  return mockDealConfirmations.find((d) => d.id === id);
-}
-
-/**
- * Whose side the deal check is shown from: the signed in user's where they
- * are on it; otherwise the listing's owner, which in this mock is the store
- * answering from its console.
- */
-export function viewerOn(d: DealConfirmation): string {
-  return d.askerId === CURRENT_USER_ID || d.ownerId === CURRENT_USER_ID
-    ? CURRENT_USER_ID
-    : d.ownerId;
-}
-
-/** Whether the one answering owns the listing the deal is about. */
-export function isOwnerOn(d: DealConfirmation): boolean {
-  return d.ownerId === viewerOn(d);
-}
-
-/** The other person on the deal. */
-export function otherPartyOn(d: DealConfirmation): string {
-  return isOwnerOn(d) ? d.askerId : d.ownerId;
-}
-
-/**
- * Whether the current user has been asked at all. Always on an offer; on a
- * reveal the asker is asked, and the owner only once the asker says yes.
- */
-export function isAskedOn(d: DealConfirmation): boolean {
-  if (d.askerId === CURRENT_USER_ID) return true;
-  if (d.ownerId !== CURRENT_USER_ID) return false;
-  return d.source === 'offer' || d.askerAnswer === 'yes';
-}
-
-/** The deals the current user has been asked about, newest first. */
-export const myDealConfirmations = mockDealConfirmations
-  .filter(isAskedOn)
-  .sort((a, b) => b.promptedAt.localeCompare(a.promptedAt));
-
-/**
- * The current user's answer: what they gave on this visit, else what the
- * mock already holds for their side.
- */
-export function myAnswerOn(
-  d: DealConfirmation,
-  answers: Record<string, DealAnswer>,
-): DealAnswer {
-  return answers[d.id] ?? (isOwnerOn(d) ? d.ownerAnswer : d.askerAnswer);
-}
-
-/** The other side's answer. Used only to tell whether a yes counts; never
-    shown, since a "no" is never shown to the other party. */
-export function theirAnswerOn(d: DealConfirmation): DealAnswer {
-  return isOwnerOn(d) ? d.askerAnswer : d.ownerAnswer;
-}
-
-/** Still waiting on the current user: not answered, or "not yet". */
-export function awaitsMyAnswer(
-  d: DealConfirmation,
-  answers: Record<string, DealAnswer>,
-): boolean {
-  const given = myAnswerOn(d, answers);
-  return given === 'unanswered' || given === 'not-yet';
-}
-
-/** How many deals wait on the current user's answer. */
-export function confirmationsAwaiting(
-  answers: Record<string, DealAnswer>,
-): number {
-  return myDealConfirmations.filter((d) => awaitsMyAnswer(d, answers)).length;
-}
 
 /* ------------------------------------------------------- promotion state - */
 

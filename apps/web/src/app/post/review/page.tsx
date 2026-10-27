@@ -16,12 +16,17 @@
  *  3. **Say what happens next** — live immediately, taken down on report,
  *     expires in 30 days.
  *
+ * "Post listing" saves it to the database (POST /api/listings, which needs a
+ * verified phone, asked for first if missing) and opens the new listing.
+ *
  * Wireframe artboard: `PostReview`.
  */
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import {
+  requireVerifiedPhone,
   usePostDraftStore,
   type ContactChannel,
 } from '@snt/core';
@@ -46,6 +51,8 @@ import {
   PhoneIcon,
   WhatsAppIcon,
 } from '@snt/ui/icons';
+import { apiAsViewer } from '@/lib/supabase';
+import { refreshListing } from '@/lib/refresh';
 import styles from './page.module.css';
 
 /** How people can reach you, as pills, as on the offer form. */
@@ -67,6 +74,51 @@ export default function PostReviewPage() {
   );
   /** Contact details only for people whose offer they accept. */
   const afterOffer = draft.contactShownTo === 'offers';
+
+  /** Saves it (POST /api/listings), then opens it: it is live at once. */
+  async function post() {
+    const amount = (typed: string) => Number(typed.replace(/[^0-9.]/g, '')) || undefined;
+    const category = draft.category ?? 'other';
+    setPosting(true);
+    const { data, error } = await apiAsViewer<{ slug: string }>('/listings', {
+      method: 'POST',
+      body: {
+        kind,
+        category,
+        haveTitle: kind === 'request' ? undefined : draft.haveTitle.trim(),
+        // Only the details its category asks for, and only those filled in.
+        specs: Object.fromEntries(
+          specFieldsFor(category)
+            .map((field) => [field.key, (draft.specs[field.key] ?? '').trim()])
+            .filter(([, value]) => value),
+        ),
+        condition: kind === 'request' ? undefined : draft.condition,
+        wantTitle: kind === 'sale' ? undefined : draft.wantTitle.trim(),
+        price: kind === 'sale' ? amount(draft.price) : undefined,
+        acceptsSwaps: kind === 'sale' ? draft.acceptsSwaps : undefined,
+        budget: kind === 'request' ? amount(draft.budget) : undefined,
+        cashDirection: kind === 'swap' ? (draft.cashDirection ?? 'straight') : undefined,
+        cashAmount:
+          kind === 'swap' && draft.cashDirection !== 'straight' ? amount(draft.cashAmount) : undefined,
+        cashUpTo: kind === 'swap' ? draft.cashUpTo : undefined,
+        contactChannels: draft.contactChannels,
+        allowStoreOffers: draft.allowStoreOffers,
+        contactSignedInOnly: draft.contactSignedInOnly,
+        contactShownTo: draft.contactShownTo,
+        contactToStores: draft.contactToStores,
+      },
+    });
+    if (error || !data) {
+      setPosting(false);
+      toast.error(error ?? 'We could not post it. Try again in a minute.');
+      return;
+    }
+    await refreshListing(data.slug);
+    draft.reset();
+    toast.success('Your listing is live');
+    startPageLoad();
+    router.push(`/listing/${data.slug}`);
+  }
 
   return (
     <Screen surface>
@@ -219,12 +271,15 @@ export default function PostReviewPage() {
             size="lg"
             block
             loading={posting}
-            onClick={() => {
-              setPosting(true);
-              draft.reset();
-              startPageLoad();
-              router.push('/');
-            }}
+            onClick={() =>
+              requireVerifiedPhone(
+                {
+                  signIn: 'Sign in to post a listing.',
+                  phone: 'Verify your phone number to post listings.',
+                },
+                () => void post(),
+              )
+            }
           >
             Post listing
           </Button>

@@ -43,7 +43,7 @@ function shownName(name: string | null): string {
 }
 
 /** The person for this sign in, linking or adding them as needed. */
-async function personFor(user: AuthUser) {
+export async function personFor(user: AuthUser) {
   const now = new Date();
   const [linked] = await db.select().from(t.people).where(eq(t.people.authUserId, user.id));
   if (linked) {

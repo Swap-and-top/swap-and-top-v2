@@ -17,7 +17,7 @@ import {
   awaitsMyAnswer,
   getListing,
   myAnswerOn,
-  myDealConfirmations,
+  myDeals,
   theirAnswerOn,
   useDealStore,
   type DealAnswer,
@@ -49,11 +49,12 @@ type View = 'waiting' | 'answered';
 export default function DealsPage() {
   const [view, setView] = useState<View>('waiting');
   const answers = useDealStore((store) => store.answers);
+  const mine = myDeals(useDealStore((store) => store.deals));
 
-  const waiting = myDealConfirmations.filter((deal) =>
+  const waiting = mine.filter((deal) =>
     awaitsMyAnswer(deal, answers),
   );
-  const answered = myDealConfirmations.filter(
+  const answered = mine.filter(
     (deal) => !awaitsMyAnswer(deal, answers),
   );
   const shown = view === 'waiting' ? waiting : answered;

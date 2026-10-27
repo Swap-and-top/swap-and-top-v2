@@ -10,10 +10,14 @@ interface SavedState {
   isSaved: (listingId: string) => boolean;
 }
 
+/** Tarisai's sample saved listings, loaded into the database by its seed.
+    Other people's listings only: your own are under My listings. */
+export const SAMPLE_SAVED = ['l-thinkpad-t480', 'l-iphone-11', 'l-rx-580'];
+
 export const useSavedStore = create<SavedState>((set, get) => ({
-  /** Seeded to match the Saved artboard. */
-  // Other people's listings only: your own are under My listings.
-  ids: ['l-thinkpad-t480', 'l-iphone-11', 'l-rx-580'],
+  /** Filled from the API once someone is signed in (the web app's
+      accountData); empty for a guest. */
+  ids: [],
   toggle: (listingId) =>
     set((state) => ({
       ids: state.ids.includes(listingId)
@@ -28,18 +32,19 @@ export const useSavedStore = create<SavedState>((set, get) => ({
   isSaved: (listingId) => get().ids.includes(listingId),
 }));
 
-/**
- * Tells the server a listing was saved or unsaved. There is no server yet:
- * this simply succeeds, so the screens around it can be built
- * the way they will work — change the saved list at once, then confirm or undo
- * when this settles. When the API exists, its call goes here and nothing
- * else changes. It must reject when the save did not happen.
- */
-export async function persistSaved(
-  _listingId: string,
-  _saved: boolean,
-): Promise<void> {
-  await Promise.resolve();
+/** The server's side of saving, connected by the web app. Rejects when the
+    save did not happen. */
+export type SavedApi = (listingId: string, saved: boolean) => Promise<void>;
+
+let api: SavedApi | null = null;
+
+export function connectSavedApi(connected: SavedApi) {
+  api = connected;
+}
+
+/** Tells the server; simply succeeds until the web app connects it. */
+export async function persistSaved(listingId: string, saved: boolean): Promise<void> {
+  await api?.(listingId, saved);
 }
 
 /**
