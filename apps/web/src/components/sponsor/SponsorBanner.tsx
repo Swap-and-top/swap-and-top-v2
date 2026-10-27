@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * The "Sponsor this item" banner, above an owner's own listing: on a
+ * The "Boost this listing" banner, above an owner's own listing: on a
  * dealer's item in Stock (its edit page), and on a person's own listing
  * page. In the app's call to action colours, the yellow and green of Post
  * New Item: what sponsoring does, a button that opens the Sponsor sheet,
@@ -56,7 +56,7 @@ export function SponsorBanner({
           <MegaphoneIcon size={16} weight={1.9} />
         </span>
         <span className={styles.runningText}>
-          Sponsored until {sponsorship.endsLabel} ·{' '}
+          Boosted until {sponsorship.endsLabel} ·{' '}
           {dollars(sponsorship.dailyBudget)} a day
         </span>
         <Button
@@ -86,7 +86,7 @@ export function SponsorBanner({
         <MegaphoneIcon size={20} weight={1.9} />
       </span>
       <div className={styles.body}>
-        <span className={styles.title}>Sponsor this item</span>
+        <span className={styles.title}>Boost this listing</span>
         <span className={styles.text}>
           Show it to more people, in a labelled Sponsored slot in the feed.
           From $1 a day, paid through Paynow.
@@ -97,7 +97,7 @@ export function SponsorBanner({
           className={styles.button}
           onClick={() => setOpen(true)}
         >
-          Sponsor this item
+          Boost this listing
         </Button>
       </div>
       {sheet}

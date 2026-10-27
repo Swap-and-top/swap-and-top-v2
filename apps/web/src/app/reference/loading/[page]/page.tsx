@@ -10,7 +10,7 @@ import { notFound } from 'next/navigation';
 import FeedLoading from '../../../(browse)/loading';
 import SearchLoading from '../../../search/loading';
 import WantedLoading from '../../../wanted/loading';
-import ShopLoading from '../../../shop/[slug]/loading';
+import ShopLoading from '../../../store/[slug]/loading';
 import SavedLoading from '../../../saved/loading';
 import MeLoading from '../../../me/loading';
 import MyListingsLoading from '../../../me/listings/loading';
@@ -22,7 +22,7 @@ import EditStockLoading from '../../../console/stock/edit/[id]/loading';
 import LeadsLoading from '../../../console/leads/loading';
 import SwapOffersLoading from '../../../console/trade-ins/loading';
 import StatsLoading from '../../../console/stats/loading';
-import ConsoleShopLoading from '../../../console/shop/loading';
+import ConsoleShopLoading from '../../../console/store/loading';
 import {
   RequestListingSkeleton,
   SaleListingSkeleton,

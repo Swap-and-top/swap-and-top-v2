@@ -234,12 +234,12 @@ export const mockPromotionProducts: PromotionProduct[] = [
   },
   {
     id: 'sponsored-slot',
-    name: 'Sponsored slots',
+    name: 'Boosts',
     description:
       'Your item appears in a labelled slot roughly every sixth card in the feed.',
     priceLabel: '$12 a week per item',
     active: false,
-    actionLabel: 'Sponsor an item',
+    actionLabel: 'Boost a listing',
     meta: '1 running',
   },
 ];

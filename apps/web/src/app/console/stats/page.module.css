@@ -333,6 +333,15 @@
   margin-top: var(--snt-space-5);
 }
 
+/* On a phone, the two side by side, half and half. */
+@media (max-width: 639px) {
+  .actions {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+}
+
 .meta {
   font-size: var(--snt-text-sm);
   color: var(--snt-ink-muted);

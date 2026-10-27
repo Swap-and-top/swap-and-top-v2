@@ -94,7 +94,7 @@ export function SwapDetail({
       {/* The swap — the reason this screen exists: what they have, then what
           they are looking for, each with its details beside its picture. */}
       <div className={styles.panel}>
-        {/* Your own swap: Sponsor this item, above its card. */}
+        {/* Your own swap: Boost this listing, above its card. */}
         {mine ? (
           <SponsorBanner listing={listing} className={sponsorStyles.above} />
         ) : null}

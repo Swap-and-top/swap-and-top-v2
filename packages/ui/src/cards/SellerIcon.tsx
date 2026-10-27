@@ -13,7 +13,7 @@ export function SellerIcon({ kind }: { kind: 'person' | 'shop' }) {
     <Icon
       size={15}
       weight={1.9}
-      title={kind === 'shop' ? 'Shop' : 'Person'}
+      title={kind === 'shop' ? 'Store' : 'Person'}
       className={styles.icon}
     />
   );

@@ -96,18 +96,8 @@
   color: var(--snt-ink-muted);
 }
 
-/* Several to choose from: a short list that scrolls if it is long. */
-.items {
-  display: flex;
-  flex-direction: column;
-  gap: var(--snt-space-3);
-  max-height: 260px;
-  overflow-y: auto;
-}
+/* --- a duration: pale blue, ringed in the blue once chosen ---------------- */
 
-/* --- a choice: pale blue, ringed in the blue once chosen ------------------- */
-
-.choice,
 .tile {
   display: flex;
   align-items: center;
@@ -120,13 +110,11 @@
   transition: border-color var(--snt-transition);
 }
 
-.choice:has(input:checked),
 .tile:has(input:checked) {
   border-color: var(--snt-control-active);
 }
 
 /* The radio, drawn: a white circle; chosen, a thin ring round a dot. */
-.choice input,
 .tile input {
   appearance: none;
   -webkit-appearance: none;
@@ -140,7 +128,6 @@
   cursor: pointer;
 }
 
-.choice input:checked,
 .tile input:checked {
   border: 1px solid var(--snt-control-active);
   background: radial-gradient(
@@ -150,7 +137,6 @@
   );
 }
 
-.choice input:focus-visible,
 .tile input:focus-visible {
   outline: 2px solid var(--snt-control-active);
   outline-offset: 2px;

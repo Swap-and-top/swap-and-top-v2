@@ -1,5 +1,5 @@
 /**
- * Loading: Shop profile. The heading and its button are the page's own; the
+ * Loading: Store profile. The heading and its button are the page's own; the
  * shop itself in bones (see ShopfrontBodySkeleton).
  */
 
@@ -12,8 +12,8 @@ export default function Loading() {
   return (
     <ConsoleShell
       shop={currentShop}
-      title="Shop profile"
-      meta="Your shop as buyers find it"
+      title="Store profile"
+      meta="Your store as buyers find it"
       newLeadCount={newLeadCount}
       actions={
         <div className={styles.toolbar}>

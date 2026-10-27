@@ -63,7 +63,8 @@ export function SaleCard({
             height={imageHeight}
             className={imageHeight ? undefined : styles.photo}
           />
-          {/* Paid placement is always labelled, never hidden. */}
+          {/* Paid placement is always labelled, never hidden: the photo's
+              top right corner. */}
           {listing.promotion === 'sponsored' ? (
             <Badge tone="brand" onImage>
               <MegaphoneIcon size={12} weight={2.2} />
@@ -122,7 +123,7 @@ export function SaleCard({
                   a second way to the same place, so only the name is a stop
                   for the keyboard and for screen readers. */}
               <Link
-                href={`/shop/${shop.slug}`}
+                href={`/store/${shop.slug}`}
                 className={[styles.shopLink, styles.shopMark].join(' ')}
                 tabIndex={-1}
                 aria-hidden
@@ -131,7 +132,7 @@ export function SaleCard({
               </Link>
               <span className={styles.shopIdentity}>
                 <Link
-                  href={`/shop/${shop.slug}`}
+                  href={`/store/${shop.slug}`}
                   className={[styles.shopLink, styles.shopName].join(' ')}
                 >
                   <SellerIcon kind="shop" />

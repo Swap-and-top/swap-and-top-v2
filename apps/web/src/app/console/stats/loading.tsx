@@ -14,7 +14,7 @@ export default function Loading() {
     <ConsoleShell
       shop={currentShop}
       title="Stats"
-      meta="How your shop is doing, and ways to grow it"
+      meta="How your store is doing, and ways to grow it"
       newLeadCount={newLeadCount}
       actions={
         <div className={styles.range}>

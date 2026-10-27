@@ -121,7 +121,8 @@ export function SwapTiles({
   cashUpTo?: boolean;
   tileHeight?: number;
   flush?: boolean;
-  /** Paid placement: "Sponsored" on the photo's top left, as on a sale. */
+  /** Paid placement: "Sponsored" in the card's top right corner, on the
+      Looking for tile, as on a sale's photo. */
   sponsored?: boolean;
 }) {
   // A ceiling reads "+ up to $600", the "+ up to" small. A set amount is
@@ -146,7 +147,6 @@ export function SwapTiles({
         cash={cashSide === 'has' ? cash : undefined}
         cashUpTo={cashUpTo}
         imageHeight={tileHeight}
-        sponsored={sponsored}
       />
       <SwapTile
         tone="wants"
@@ -154,6 +154,7 @@ export function SwapTiles({
         item={wants}
         cash={cashSide === 'wants' ? cash : undefined}
         imageHeight={tileHeight}
+        sponsored={sponsored}
       />
     </div>
   );
@@ -182,8 +183,8 @@ function SwapTile({
 
   return (
     <div className={[styles.tile, styles[tone]].join(' ')}>
-      {/* Paid placement is always labelled, never hidden: top left, on
-          the photo, as on a sale. */}
+      {/* Paid placement is always labelled, never hidden: in the card's
+          top right corner, as on a sale's photo. */}
       {sponsored ? (
         <Badge tone="brand" onImage>
           <MegaphoneIcon size={12} weight={2.2} />

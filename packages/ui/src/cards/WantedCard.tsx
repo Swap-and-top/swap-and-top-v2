@@ -77,14 +77,6 @@ export function WantedCard({
   return (
     <Panel xl className={styles.card}>
       <div className={styles.head}>
-        {/* Paid placement is always labelled, never hidden: first, top
-            left, as on a sale's photo. */}
-        {listing.promotion === 'sponsored' ? (
-          <Badge tone="brand" className={styles.sponsored}>
-            <MegaphoneIcon size={12} weight={2.2} />
-            Sponsored
-          </Badge>
-        ) : null}
         <span
           className={[styles.label, tradeIn ? styles.labelTradeIn : '']
             .filter(Boolean)
@@ -100,13 +92,23 @@ export function WantedCard({
           {tradeIn ? 'Swap' : 'Wanted'}
         </span>
         <span className={styles.spacer} />
-        {/* The small grey facts sit together, top right. On your own post
-            only when: its offers are counted under your name. */}
-        <span className={styles.age}>
-          {responses > 0 && !own
-            ? `${responses} ${responses === 1 ? 'response' : 'responses'} · `
-            : ''}
-          {listing.postedLabel}
+        <span className={styles.aside}>
+          {/* Paid placement is always labelled, never hidden: top right,
+              as on a sale's photo, the facts under it. */}
+          {listing.promotion === 'sponsored' ? (
+            <Badge tone="brand" className={styles.sponsored}>
+              <MegaphoneIcon size={12} weight={2.2} />
+              Sponsored
+            </Badge>
+          ) : null}
+          {/* The small grey facts sit together, top right. On your own
+              post only when: its offers are counted under your name. */}
+          <span className={styles.age}>
+            {responses > 0 && !own
+              ? `${responses} ${responses === 1 ? 'response' : 'responses'} · `
+              : ''}
+            {listing.postedLabel}
+          </span>
         </span>
       </div>
 

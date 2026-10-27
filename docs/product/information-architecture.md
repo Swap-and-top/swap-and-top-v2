@@ -119,7 +119,7 @@ Flat and human-readable. The v1 prefix (`/swapandtop/...`) is removed — it was
 | `/search` | Search and filters | Server-rendered |
 | `/wanted` | Wanted feed | Server-rendered |
 | `/listing/<slug>` | Listing detail, any type | Server-rendered — **SEO critical** |
-| `/shop/<slug>` | Dealer shopfront | Server-rendered — SEO critical |
+| `/store/<slug>` | Dealer shopfront | Server-rendered — SEO critical |
 | `/post` | Posting flow | Client-rendered |
 | `/saved` | Saved | Client-rendered |
 | `/me` | Account hub | Client-rendered |

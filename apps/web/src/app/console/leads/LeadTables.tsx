@@ -31,6 +31,20 @@ const DEAL_BADGE: Record<DealStage, { tone: BadgeTone; label: string }> = {
   closed: { tone: 'neutral', label: 'No deal' },
 };
 
+/** What each pill means, shown on hover. */
+function dealHint(stage: DealStage, days: number): string {
+  switch (stage) {
+    case 'waiting':
+      return `In ${days} ${days === 1 ? 'day' : 'days'} we ask them whether they bought it from you. If they say yes, we ask you to confirm, and the deal counts on both your records.`;
+    case 'asked':
+      return 'They say they bought it from you. Confirm it, or say it did not happen, so your record stays right.';
+    case 'confirmed':
+      return 'You both said the deal happened. It counts towards your confirmed deals.';
+    default:
+      return 'No deal: one of you said it did not happen.';
+  }
+}
+
 /** The stage, once the shop has answered: yes confirms it (they said yes
     first), no closes it; not yet leaves it asked. */
 function stageOf(reveal: NumberReveal, answers: Record<string, string>): DealStage {
@@ -74,9 +88,12 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
             : undefined;
         const way = reveal.way === 'whatsapp' ? 'WhatsApp' : 'Call';
         const deal = DEAL_BADGE[stage];
+        const hint = dealHint(stage, reveal.daysToAsk ?? 3);
         const dealLabel =
           stage === 'waiting'
-            ? `Asking them in ${reveal.daysToAsk ?? 3} days`
+            ? // When we will ask them whether they bought it, worded as the
+              // column and the shop's own check are: a deal check.
+              `Deal check in ${reveal.daysToAsk ?? 3} days`
             : deal.label;
 
         return (
@@ -117,9 +134,23 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
             <span className={styles.deals}>
               {named ? (user?.confirmedDeals ?? 0) : null}
             </span>
-            <span className={styles.badge}>
-              <Badge tone={deal.tone}>{dealLabel}</Badge>
-            </span>
+            {/* What the pill means, on hover. Answer needed opens the deal
+                check from the pill too, as the rest of the row does. */}
+            {stage === 'asked' && reveal.dealId ? (
+              <Link
+                href={`/deals/${reveal.dealId}/confirm`}
+                className={styles.badge}
+                title={hint}
+                tabIndex={-1}
+                aria-hidden
+              >
+                <Badge tone={deal.tone}>{dealLabel}</Badge>
+              </Link>
+            ) : (
+              <span className={styles.badge} title={hint}>
+                <Badge tone={deal.tone}>{dealLabel}</Badge>
+              </span>
+            )}
             {/* A phone's card: how and when, in one quiet line. */}
             <span className={styles.phoneMeta}>
               {way} · {reveal.atLabel}

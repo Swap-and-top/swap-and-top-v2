@@ -123,7 +123,7 @@ export function ShopfrontBody({
           <button
             type="button"
             className={styles.share}
-            aria-label="Share shop"
+            aria-label="Share store"
             onClick={() => void share()}
           >
             <ShareIcon size={18} />
@@ -158,7 +158,7 @@ export function ShopfrontBody({
       </section>
 
       <div className={styles.tabs}>
-        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Shop stock" />
+        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Store stock" />
       </div>
 
       <div className={styles.grid}>
@@ -176,7 +176,7 @@ export function ShopfrontBody({
  */
 export function ShopfrontBodySkeleton() {
   return (
-    <div aria-busy aria-label="Loading the shop">
+    <div aria-busy aria-label="Loading the store">
       <section className={styles.card}>
         <div className={styles.head}>
           <Bone shape="block" width={56} height={56} />

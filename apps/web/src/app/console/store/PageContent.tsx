@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Console — Shop profile.
+ * Console — Store profile.
  *
  * The shop as buyers find it, kept inside the console: the sidebar stays, so
  * the dealer can look and move straight on to Stock or Leads. Only what is
@@ -22,8 +22,8 @@ export default function ConsoleShopPage() {
   return (
     <ConsoleShell
       shop={currentShop}
-      title="Shop profile"
-      meta="Your shop as buyers find it"
+      title="Store profile"
+      meta="Your store as buyers find it"
       newLeadCount={newLeadCount}
       stockCount={stock.length}
       actions={
@@ -31,7 +31,7 @@ export default function ConsoleShopPage() {
           {/* Lead alerts are a shop setting, so they can be found here too. */}
           <LeadAlertsChip />
           <ButtonLink
-            href={`/shop/${currentShop.slug}`}
+            href={`/store/${currentShop.slug}`}
             variant="secondary"
             size="sm"
           >

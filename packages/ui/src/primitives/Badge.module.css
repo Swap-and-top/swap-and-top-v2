@@ -94,8 +94,10 @@
   position: absolute;
   /* Above a photo gallery, which lifts itself to 1. */
   z-index: 2;
+  /* Top right: the card's type and item lead from the top left; the label
+     for a paid slot sits opposite, always in sight. */
   top: var(--snt-space-4);
-  left: var(--snt-space-4);
+  right: var(--snt-space-4);
 }
 
 /** Count bubble, e.g. unread leads on a nav item. */

@@ -11,6 +11,27 @@
  * grid directly.
  */
 
+/* Stock and Boosted, over the toolbar: side by side at their own width;
+   on a phone, the full width of the column, half each. */
+.tabs {
+  margin-top: var(--snt-space-6);
+}
+
+.tabs > [role='tablist'] {
+  max-width: none;
+  margin-inline: 0;
+}
+
+@media (max-width: 767px) {
+  .tabs > [role='tablist'] {
+    width: auto;
+  }
+
+  .tabs [role='tab'] {
+    flex: 1 1 0;
+  }
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;

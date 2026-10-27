@@ -1,0 +1,150 @@
+/**
+ * Stock's Boosted tab. The call to action in the yellow of Post New Item
+ * with its green, as on the boost banner; rows as white cards, as Stock's
+ * are on a phone.
+ */
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-6);
+}
+
+.introText {
+  font-size: var(--snt-text-sm);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+/* Boost a listing: its own button, not a restyled one, in the call to
+   action colours. */
+.boostButton,
+.boostSmall {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-3);
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-brand-yellow);
+  color: var(--snt-post-ink);
+  font-weight: var(--snt-weight-bold);
+  white-space: nowrap;
+  transition: filter var(--snt-transition);
+}
+
+.boostButton {
+  height: 40px;
+  padding: 0 var(--snt-space-10);
+  font-size: var(--snt-text-base);
+}
+
+.boostSmall {
+  position: relative;
+  height: 32px;
+  padding: 0 var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+}
+
+@media (hover: hover) {
+  .boostButton:hover,
+  .boostSmall:hover {
+    filter: brightness(0.96);
+  }
+}
+
+.boostButton:active,
+.boostSmall:active {
+  transform: scale(0.97);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-5);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-card);
+}
+
+.rowLink {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+@media (hover: hover) {
+  .row:has(.rowLink:hover) {
+    background: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-card));
+  }
+}
+
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.line {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* Over the row's link, so the menu takes its own taps. */
+.menu {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.none {
+  padding: var(--snt-space-8);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-card);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+.worth {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+.worthTitle {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.worthNote {
+  margin-top: calc(var(--snt-space-2) * -1);
+  margin-bottom: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}

@@ -39,6 +39,9 @@ export const NO_STOCK_FILTERS: StockFilters = {
   swapsOnly: false,
 };
 
+/** Stock's two tabs: everything the shop holds, and what is boosted. */
+export type StockTab = 'stock' | 'boosted';
+
 interface ConsoleState {
   leadTab: LeadTab;
   /** The Offers page's tab: kept, so "See it" after sending an offer from
@@ -49,6 +52,8 @@ interface ConsoleState {
   stockQuery: string;
   stockFilter: StockFilter;
   stockFilters: StockFilters;
+  /** Stock's tab: kept, so Stats' "Boosted listings" can open it there. */
+  stockTab: StockTab;
   /** The desktop sidebar folded to its icons. Kept as the dealer moves on. */
   sidebarCollapsed: boolean;
   /** Offer composer, on the desktop lead detail pane. */
@@ -60,6 +65,7 @@ interface ConsoleState {
   setStockQuery: (query: string) => void;
   setStockFilter: (filter: StockFilter) => void;
   setStockFilters: (filters: StockFilters) => void;
+  setStockTab: (tab: StockTab) => void;
   toggleSidebar: () => void;
   setOfferPrice: (price: string) => void;
   setOfferMessage: (message: string) => void;
@@ -72,6 +78,7 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   stockQuery: '',
   stockFilter: 'all',
   stockFilters: NO_STOCK_FILTERS,
+  stockTab: 'stock',
   sidebarCollapsed: false,
   offerPrice: '$255',
   offerMessage:
@@ -82,6 +89,7 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   setStockQuery: (stockQuery) => set({ stockQuery }),
   setStockFilter: (stockFilter) => set({ stockFilter }),
   setStockFilters: (stockFilters) => set({ stockFilters }),
+  setStockTab: (stockTab) => set({ stockTab }),
   toggleSidebar: () =>
     set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   setOfferPrice: (offerPrice) => set({ offerPrice }),

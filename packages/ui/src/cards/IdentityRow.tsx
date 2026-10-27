@@ -60,7 +60,7 @@ export function ShopRow({ shop }: { shop: Shop }) {
 
   return (
     <Panel>
-      <Link href={`/shop/${shop.slug}`} className={styles.row}>
+      <Link href={`/store/${shop.slug}`} className={styles.row}>
         <ShopMark initials={shop.initials} size={36} />
         <div className={styles.body}>
           <div className={styles.nameLine}>

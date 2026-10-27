@@ -95,7 +95,7 @@ Selling promotion with evidence is a different conversation from selling it on a
 | **Plan** | One sheet: the daily budget on a slider from $1 (the amount large above it, the reach under it), how long (1 day, 1 week, 1 month; each tile shows its total), and when it ends. *Continue to pay $21* |
 | **Pay, through Paynow** | Every payment, whatever the way, goes through Paynow's own secure page: the sheet names the ways (EcoCash, OneMoney, Telecash, ZimSwitch, Visa, Mastercard) and has one button, *Pay $21 with Paynow*; the way is chosen on Paynow. One route means Paynow confirms every payment, no payment details pass through Swap & Top, and people pay on a page they trust |
 | **Paid** | *Payment received*, the Paynow reference, and the sponsorship starts |
-| **While it runs** | The item takes the feed's Sponsored slots and its card says Sponsored; Stock shows a Sponsored badge. Stats sums it up and leads to **Sponsored items** (`/console/stats/sponsored`): a table of each item, its daily budget, reach a day, spent, reveals since, and a menu to *Extend*, *View as a buyer* or *Stop sponsoring* (with Undo) |
+| **While it runs** | The item takes the feed's Sponsored slots and its card says Sponsored; Stock shows a Sponsored badge. Stats sums it up and its *Boosted listings* button opens Stock on its Boosted tab, where each boosted listing shows until when, a day's budget and reveals since, its menu has *Extend boost* and *Stop boost* (with Undo) |
 | **Before it ends** | A notification, a week out: *Extend it from Stats* |
 
 State: `packages/core/src/stores/useSponsorStore.ts`. The live Paynow integration is in [../operations/payments-and-invoicing.md](../operations/payments-and-invoicing.md).

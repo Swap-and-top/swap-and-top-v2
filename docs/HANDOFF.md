@@ -105,8 +105,31 @@ Patterns the user has settled on:
 - **Calls to action** are the yellow of Post New Item with its green ink
   (`--snt-brand-yellow`, `--snt-post-ink`), as on the Sponsor banner.
 - **"New" and "Sponsored"** badges use the brand gradient (`Badge
-  tone="brand"`). "Sponsored" always sits top left: on the photo of a sale
-  or a swap's "Has" tile, first in a Wanted card's top row.
+  tone="brand"`). "Sponsored" always sits top right: on the photo of a
+  sale, on a swap's "Looking for" tile (the card's top right corner), and
+  at the right of a Wanted card's top row with the responses and time
+  under it. The type (Wanted, Swap) keeps the top left. "New" on Leads stays
+  on the left: it is for dealers to act on.
+- **Boost, not sponsor, for the seller.** Everything the seller does says
+  "boost" ("Boost this listing", "Boost a listing", "Boosted listings",
+  "Boosted until …", "Extend boost", "Stop boost", the Stats card "Boosts").
+  Only the label buyers see on a card stays "Sponsored". Code names
+  (`useSponsorStore`, `SponsorSheet`) keep "sponsor".
+- **Store, not shop, in what people see.** A dealer's page is a store:
+  "Store profile" (storefront icon, "Store" on the phone bar), addresses
+  `/store/<slug>` and `/console/store`. The old `/shop/...` and
+  `/console/shop` redirect there (`apps/web/next.config.ts`). Code names
+  (`Shop`, `currentShop`, `shopId`) keep "shop".
+- **Boosting lives in Stock.** Stock has two tabs, Stock and Boosted
+  (`stockTab` in `useConsoleStore`). Boosted (`console/stock/BoostedTab.tsx`):
+  a yellow "Boost a listing", each boosted listing with "Until … · $3 a day
+  · 12 reveals since" and a menu (Extend boost, View as a buyer, Stop boost
+  with Undo), then "Worth boosting": the three live items with the most
+  reveals, each with a yellow Boost button. Stock rows keep Boost this
+  listing / Extend boost / Stop boost in their menu, and the edit page keeps
+  its banner. Stats keeps a Boosts card whose "Boosted listings" button
+  opens Stock on the Boosted tab. The separate Sponsored items page was
+  removed.
 - **Settings** use the gear (`SettingsIcon`). Information pills are not
   buttons; the action beside them is a real button.
 - **Never restyle a `Panel` with another background.** Two styles of equal
@@ -134,7 +157,7 @@ See `git log` for the full detail; each commit body explains its change.
     Stock (edit page) and a person's own listing page; once sponsored it is
     "Sponsored until … · $3 a day" with Extend. Stock's item menu has
     "Sponsor this item" too.
-  - **Sponsored items** page (`/console/stats/sponsored`, from Stats'
+  - **Sponsored items** page (since removed: boosting moved to Stock) (`/console/stats/sponsored`, from Stats'
     "Manage sponsored items", not in the menu): a table of the shop's own
     sponsorships with Extend, View as a buyer, Stop sponsoring (Undo).
   - **Lead alerts** left Stats; their price and renewal show at the top of

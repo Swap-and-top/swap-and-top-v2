@@ -60,13 +60,19 @@
   width: 30px;
   height: 30px;
   border-radius: var(--snt-radius-pill);
+  /* As the app's other crosses: a pale round of its own colour, the
+     banner's green; hovered, the green itself with the cross white. */
+  background-color: color-mix(in srgb, var(--snt-post-ink) 12%, transparent);
   color: var(--snt-post-ink);
-  transition: background-color var(--snt-transition);
+  transition:
+    background-color var(--snt-transition),
+    color var(--snt-transition);
 }
 
 @media (hover: hover) {
   .close:hover {
-    background-color: color-mix(in srgb, var(--snt-post-ink) 12%, transparent);
+    background-color: var(--snt-post-ink);
+    color: var(--snt-ink-on-dark);
   }
 }
 

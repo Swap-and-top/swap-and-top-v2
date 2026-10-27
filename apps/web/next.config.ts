@@ -13,6 +13,17 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  /**
+   * Shops are called stores: their pages moved from /shop to /store. Old
+   * links, shared or saved, still land on the right page.
+   */
+  async redirects() {
+    return [
+      { source: '/shop/:slug', destination: '/store/:slug', permanent: true },
+      { source: '/console/shop', destination: '/console/store', permanent: true },
+    ];
+  },
+
   devIndicators: {
     // Default is bottom-left, directly on top of the Browse tab.
     position: 'bottom-right',

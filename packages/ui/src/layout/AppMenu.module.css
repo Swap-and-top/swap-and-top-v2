@@ -135,6 +135,18 @@
   border-radius: var(--snt-radius-pill);
   background: var(--snt-bg-inset);
   color: var(--menu-deep);
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+/* Hovered, as the sheets' cross: the blue, the cross white. */
+@media (hover: hover) {
+  .close:hover,
+  .toggleCrossed:hover {
+    background: var(--snt-control-active);
+    color: var(--snt-ink-on-dark);
+  }
 }
 
 .close:active {

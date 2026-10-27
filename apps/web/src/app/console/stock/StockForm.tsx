@@ -229,7 +229,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
       newLeadCount={newLeadCount}
       stockCount={stock.length}
     >
-      {/* Sponsor this item, on top of the edit card: a live item not
+      {/* Boost this listing, on top of the edit card: a live item not
           sponsored yet (or, once it is, until when, with Extend). */}
       {editing && !isDraft ? (
         <SponsorBanner listing={editing} className={styles.sponsor} />

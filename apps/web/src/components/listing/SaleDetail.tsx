@@ -86,7 +86,7 @@ export function SaleDetail({
       {preview ? <PreviewBanner /> : null}
 
       <div className={styles.panel}>
-        {/* Your own listing: Sponsor this item, above its card. */}
+        {/* Your own listing: Boost this listing, above its card. */}
         {mine ? (
           <SponsorBanner listing={listing} className={sponsorStyles.above} />
         ) : null}

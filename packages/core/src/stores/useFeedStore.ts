@@ -44,17 +44,25 @@ export function filterFeed(
 }
 
 /**
- * Interleave sponsored listings at a fixed interval instead of sorting them
+ * Interleave sponsored listings among the rest instead of sorting them
  * first. Sorting promoted listings to the top means a handful of paying dealers
  * own the entire first screen — docs/product/principles.md rule 5.
+ *
+ * One sponsored listing after every `everyNth` others, never two together.
+ * When there are more sponsored listings than slots, the extra ones wait:
+ * live, the slots would take turns between them from one visit to the next,
+ * rather than piling up at the end of the feed.
  */
 export function interleaveSponsored(
   listings: Listing[],
-  everyNth = 6,
+  everyNth = 3,
 ): Listing[] {
   const organic = listings.filter((l) => l.promotion === 'organic');
   const sponsored = listings.filter((l) => l.promotion !== 'organic');
   if (sponsored.length === 0) return organic;
+  // Only sponsored listings in view (say, a filter matched nothing else):
+  // show them, as there is nothing to space them among.
+  if (organic.length === 0) return sponsored;
 
   const out: Listing[] = [];
   let sponsoredIndex = 0;
@@ -67,12 +75,6 @@ export function interleaveSponsored(
       sponsoredIndex += 1;
     }
   });
-
-  // Anything left over goes at the end rather than being dropped.
-  while (sponsoredIndex < sponsored.length) {
-    out.push(sponsored[sponsoredIndex]!);
-    sponsoredIndex += 1;
-  }
 
   return out;
 }

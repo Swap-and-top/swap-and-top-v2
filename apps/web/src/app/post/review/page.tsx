@@ -175,7 +175,7 @@ export default function PostReviewPage() {
             checked={draft.allowDealerOffers}
             onChange={draft.setAllowDealerOffers}
             label="Let dealers send me offers"
-            hint="Shops that stock what you want can make you an offer."
+            hint="Stores that stock what you want can make you an offer."
           />
 
           {/* The toggle: show the details to anyone who asks, or only to
@@ -196,7 +196,7 @@ export default function PostReviewPage() {
                 checked={draft.contactToDealers}
                 onChange={draft.setContactToDealers}
                 label="Let dealers see my contact details"
-                hint="Shops that get your listing as a lead can reach you before you accept an offer."
+                hint="Stores that get your listing as a lead can reach you before you accept an offer."
               />
             ) : null
           ) : (

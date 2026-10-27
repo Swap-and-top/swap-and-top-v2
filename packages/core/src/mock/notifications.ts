@@ -104,7 +104,7 @@ export const mockNotifications: AppNotification[] = [
     id: 'n-s7',
     audience: 'shop',
     kind: 'sponsor',
-    text: 'Your Dell Latitude 7490 sponsorship ends in 7 days. Extend it from Stats.',
+    text: 'The boost on your Dell Latitude 7490 ends in 7 days. Extend it from Stock.',
     atLabel: 'Today',
     href: '/console/stats',
     read: true,

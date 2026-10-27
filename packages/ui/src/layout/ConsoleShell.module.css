@@ -36,6 +36,17 @@
   --snt-shop-mark: color-mix(in srgb, white 18%, transparent);
 }
 
+.headerMark {
+  display: flex;
+  flex-shrink: 0;
+}
+
+@media (max-width: 419px) {
+  .headerMark {
+    display: none;
+  }
+}
+
 .headerBody {
   flex-grow: 1;
   min-width: 0;

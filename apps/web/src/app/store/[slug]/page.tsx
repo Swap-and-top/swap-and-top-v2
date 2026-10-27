@@ -22,7 +22,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const shop = getShopBySlug(slug);
-  if (!shop) return { title: 'Shop not found · Swap & Top' };
+  if (!shop) return { title: 'Store not found · Swap & Top' };
 
   return {
     title: `${shop.name} · Swap & Top`,

@@ -138,6 +138,13 @@
 .badge {
   grid-area: badge;
   justify-self: end;
+  /* Over the row's link, so hovering the pill shows what it means. */
+  position: relative;
+  cursor: help;
+}
+
+a.badge {
+  cursor: pointer;
 }
 
 .action {

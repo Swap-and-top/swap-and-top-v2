@@ -23,7 +23,7 @@ import {
   ChartIcon,
   ChevronLeftIcon,
   SidebarIcon,
-  ShopIcon,
+  StorefrontIcon,
   TrendIcon,
   CashHandIcon,
   BellIcon,
@@ -118,11 +118,14 @@ export function ConsoleShell({
     {
       // The shop as buyers see it, inside the console; the public page is a
       // button away from there.
-      href: '/console/shop',
-      label: 'Shop profile',
-      shortLabel: 'Shop',
-      icon: (active) => <ShopIcon size={20} weight={active ? 1.9 : 1.7} />,
-      titleIcon: <ShopIcon size={24} />,
+      href: '/console/store',
+      label: 'Store profile',
+      shortLabel: 'Store',
+      // The storefront, awning and door, as shops are marked on cards.
+      icon: (active) => (
+        <StorefrontIcon size={20} weight={active ? 1.9 : 1.7} />
+      ),
+      titleIcon: <StorefrontIcon size={24} />,
     },
   ];
 
@@ -236,14 +239,18 @@ export function ConsoleShell({
 
       {/* Dark header — phone only. */}
       <header className={styles.header}>
-        <ShopMark initials={shop.initials} size={36} />
+        {/* Left out on a narrow phone, so the shop's name fits beside the
+            bell and Back to marketplace. */}
+        <span className={styles.headerMark}>
+          <ShopMark initials={shop.initials} size={36} />
+        </span>
         <span className={styles.headerBody}>
           <span className={styles.shopName}>{shop.name}</span>
           <span className={styles.shopKicker}>Dealer console</span>
         </span>
         {/* The way out of the console, as the sidebar's foot is on a
-            laptop, the size of the marketplace's Post New Item. The shop as
-            buyers see it is under Shop. */}
+            laptop, the size of the marketplace's Post New Item. The store as
+            buyers see it is under Store. */}
         {/* The shop's notifications, a bell with its unread count. */}
         <NotificationBell audience="shop" href={notificationsHref} />
         <Link href="/" className={styles.headerLink}>

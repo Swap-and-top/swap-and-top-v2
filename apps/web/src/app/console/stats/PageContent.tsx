@@ -24,6 +24,7 @@ import {
   mockLeadSources,
   newLeadCount,
   shopStatsFor,
+  useConsoleStore,
   useShopSponsorships,
   type StatsBucket,
   type StatsMetric,
@@ -94,7 +95,7 @@ export default function ConsoleStatsPage() {
     <ConsoleShell
       shop={currentShop}
       title="Stats"
-      meta="How your shop is doing, and ways to grow it"
+      meta="How your store is doing, and ways to grow it"
       newLeadCount={newLeadCount}
       actions={
         <div className={styles.range}>
@@ -340,12 +341,13 @@ function BarChart({
 
 /**
  * Sponsored slots: what they are and cost, how many items run now and at
- * what a day, a way to the table of them (Manage sponsored items), and a
- * button to sponsor another. Lead alerts live on Leads, with their settings.
+ * what a day, a way to them in Stock (Boosted listings, Stock's Boosted
+ * tab, where each is extended or stopped), and a button to boost another. Lead alerts live on Leads, with their settings.
  */
 function SponsoredSlots() {
   // The shop's own: other people sponsor their listings too.
   const sponsorships = useShopSponsorships(currentShop.id);
+  const setStockTab = useConsoleStore((state) => state.setStockTab);
   /** The Sponsor sheet, to pick an item and sponsor it. */
   const [sheet, setSheet] = useState(false);
   const perDay = sponsorships.reduce((sum, s) => sum + s.dailyBudget, 0);
@@ -356,28 +358,30 @@ function SponsoredSlots() {
         <MegaphoneIcon size={18} weight={1.9} />
       </span>
       <div className={styles.body}>
-        <span className={styles.name}>Sponsored slots</span>
+        <span className={styles.name}>Boosts</span>
         <p className={styles.description}>
-          Your item in a labelled Sponsored slot in the feed, from $1 a day.
-          The more a day, the more people see it. Paid through Paynow.
+          Your listing shows in a labelled Sponsored slot in the feed, from $1
+          a day. The more a day, the more people see it. Paid through Paynow.
         </p>
         <p className={styles.runningSummary}>
           {sponsorships.length > 0
-            ? `${sponsorships.length} ${sponsorships.length === 1 ? 'item' : 'items'} sponsored now · ${dollars(perDay)} a day`
-            : 'Nothing sponsored right now'}
+            ? `${sponsorships.length} ${sponsorships.length === 1 ? 'listing' : 'listings'} boosted now · ${dollars(perDay)} a day`
+            : 'Nothing boosted right now'}
         </p>
 
         <div className={styles.actions}>
           <Button size="sm" onClick={() => setSheet(true)}>
-            Sponsor an item
+            Boost a listing
           </Button>
           {sponsorships.length > 0 ? (
             <ButtonLink
-              href="/console/stats/sponsored"
+              href="/console/stock"
               variant="secondary"
               size="sm"
+              // Stock, on its Boosted tab: extend or stop each there.
+              onClick={() => setStockTab('boosted')}
             >
-              Manage sponsored items
+              Boosted listings
             </ButtonLink>
           ) : null}
         </div>

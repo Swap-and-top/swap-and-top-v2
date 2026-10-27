@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Sponsor an item, or extend one already sponsored, set as boosting a post
+ * Boost a listing, or extend one already boosted, set as boosting a post
  * is on WhatsApp and Facebook, and paid through Paynow. One sheet, a step at
  * a time:
  *
@@ -22,7 +22,7 @@
  * "approved" after a moment.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import {
   SPONSOR_DURATIONS,
   SPONSOR_MAX_DAILY,
@@ -38,6 +38,7 @@ import {
 } from '@snt/core';
 import {
   Button,
+  Dropdown,
   ImagePlaceholder,
   Sheet,
   Spinner,
@@ -71,7 +72,7 @@ export function SponsorSheet({
   const extending = Boolean(
     listingId && running.some((s) => s.listingId === listingId),
   );
-  const title = extending ? 'Extend sponsorship' : 'Sponsor an item';
+  const title = extending ? 'Extend boost' : 'Boost a listing';
 
   return (
     <Sheet
@@ -126,6 +127,7 @@ function SponsorFlow({
   /** The day it was paid to run until, kept as it was at payment: once it
       starts, `current` is the new sponsorship and would count it twice. */
   const [paidUntil, setPaidUntil] = useState('');
+  const whichLabel = useId();
 
   // A shop's stock item, or any listing opened from its own page: every
   // listing can be sponsored, a person's swap or Wanted listing too.
@@ -154,8 +156,8 @@ function SponsorFlow({
   if (!item) {
     return (
       <p className={styles.note}>
-        Everything live in your stock is sponsored already, or there is
-        nothing live to sponsor.
+        Everything live in your stock is boosted already, or there is
+        nothing live to boost.
       </p>
     );
   }
@@ -170,7 +172,7 @@ function SponsorFlow({
           </span>
           <span className={styles.resultTitle}>Payment received</span>
           <span className={styles.resultText}>
-            {item.title} is sponsored until {paidUntil}, at {dollars(daily)}{' '}
+            {item.title} is boosted until {paidUntil}, at {dollars(daily)}{' '}
             a day.
           </span>
           <span className={styles.resultRef}>Paynow reference {ref}</span>
@@ -252,22 +254,24 @@ function SponsorFlow({
       {listingId ? (
         <ItemRow listing={item} />
       ) : (
-        <fieldset className={styles.group}>
-          <legend className={styles.label}>Which item</legend>
-          <div className={styles.items}>
-            {choices.map((l) => (
-              <label key={l.id} className={styles.choice}>
-                <input
-                  type="radio"
-                  name="sponsor-item"
-                  checked={picked === l.id}
-                  onChange={() => setPicked(l.id)}
-                />
-                <ItemRow listing={l} />
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        // Every listing that can be boosted, in a dropdown so a long stock
+        // stays one line; the one chosen shown under it.
+        <div className={styles.group}>
+          <span id={whichLabel} className={styles.label}>
+            Which listing
+          </span>
+          <Dropdown<string>
+            labelledBy={whichLabel}
+            value={picked}
+            onChange={setPicked}
+            options={choices.map((l) => ({
+              value: l.id,
+              label: l.title,
+              note: l.type === 'sale' ? `$${l.price}` : undefined,
+            }))}
+          />
+          <ItemRow listing={item} />
+        </div>
       )}
 
       {/* The daily budget: a slider from $1, the amount large above it. */}

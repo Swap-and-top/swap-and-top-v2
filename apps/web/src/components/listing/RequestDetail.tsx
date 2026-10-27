@@ -77,7 +77,7 @@ export function RequestDetail({
       {preview ? <PreviewBanner /> : null}
 
       <div className={card.panel}>
-        {/* Your own Wanted listing: Sponsor this item, above its card. */}
+        {/* Your own Wanted listing: Boost this listing, above its card. */}
         {mine ? (
           <SponsorBanner listing={listing} className={sponsorStyles.above} />
         ) : null}

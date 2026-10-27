@@ -22,7 +22,7 @@ export default function ConsoleNotificationsPage() {
     <ConsoleShell
       shop={currentShop}
       title="Notifications"
-      meta="Everything for your shop, newest first"
+      meta="Everything for your store, newest first"
       newLeadCount={newLeadCount}
       actions={
         <div className={styles.actions}>

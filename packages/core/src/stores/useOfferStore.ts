@@ -130,7 +130,7 @@ const SAMPLE_OFFERS: Offer[] = [
     },
     cashAmount: 160,
     cashFrom: 'owner',
-    message: 'In the shop now, with a charger. $160, or come and see it first.',
+    message: 'In the store now, with a charger. $160, or come and see it first.',
     reachOn: ['whatsapp', 'call'],
     state: 'accepted',
     sentLabel: 'Yesterday',
