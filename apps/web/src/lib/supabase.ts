@@ -5,10 +5,17 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '',
-);
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+if (!url || !key) {
+  console.warn(
+    'NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are missing, so sign in will not work. Add them to apps/web/.env.local, or to the Vercel project for every environment.',
+  );
+}
+
+// Without the settings the client is still made, on a stand in address, so
+// the pages build and load; only signing in fails, and says so.
+export const supabase = createClient(url || 'https://missing.supabase.co', key || 'missing');
 
 /**
  * A Zimbabwe number in the form Supabase takes: 0771 234 567, 771234567 and
