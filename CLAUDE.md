@@ -1,7 +1,9 @@
 # Swap & Top v2: working notes for Claude
 
 Read `docs/HANDOFF.md` first. It holds where the work stands, how the code is
-laid out, the design patterns in use and what was done most recently.
+laid out, the design patterns in use and what was done most recently; its
+"Where we stopped" says what comes next. The backend's phases, slices and
+endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
 
 ## Standing rules from the product owner (Hillary)
@@ -26,6 +28,8 @@ These came from repeated feedback. Follow them without being asked.
    listing"), never clever or figurative ones.
 7. **Buttons, not text links.** Cancel, Back to…, Not yet and similar are
    real buttons (`variant="secondary"`, blue outline), never underlined links.
+   The one exception the owner asked for: the small line at the foot of the
+   sign in and sign up cards ("Don't have an account? Sign up").
 8. **Forms.** Text boxes start empty with a faded "e.g." placeholder; every
    choice starts on its first option; one pale pill text box style; half
    width boxes side by side where they fit; hover states very subtle and only
@@ -39,6 +43,32 @@ These came from repeated feedback. Follow them without being asked.
     needed, offer the fewest options that work and start on the common one.
     If a request seems to need something complex, say so and suggest the
     simple version before building it.
+
+## Working with the backend
+
+- **The database is shared** by localhost and the live site. Name test data
+  "Test …", delete it when done (listings with their items and details,
+  stores with their members), and run `pnpm --filter @snt/api
+  db:seed-activity` after changing offers, deal checks, saved listings or
+  notifications. Never run `db:seed` (it empties every table) without
+  asking.
+- **Secrets stay put.** The root `.env` and `apps/web/.env.local` are git
+  ignored; the owner fills them. Never print or paste their values. Vercel
+  has the same settings for Production and Preview; `turbo.json` must list
+  any new one, or the build will not see it.
+- **Mock codes:** email and phone codes are 123456 until real email and SMS
+  are set up (`MOCK_CODE` in `apps/api/src/supabaseAdmin.ts`). Test phone
+  numbers 077 000 0001 to 0007 (see the handoff).
+- **Connections:** Supabase's session pooler allows 15. One-off scripts use
+  the transaction pooler (port 6543); the API keeps one pool across hot
+  reloads and one connection per build worker.
+- **A new endpoint** goes in `apps/api/src/routes/<area>.ts` with a
+  `createRoute` (so it shows in Swagger at `/api/docs`), is registered in
+  `apps/api/src/app.ts`, and is called from the web app with `apiAsViewer`
+  (`apps/web/src/lib/supabase.ts`). Pages built on the server read the API's
+  own functions (`apps/web/src/lib/listings.ts`, `stores.ts`), not HTTP.
+- **Test what you build** against the API (curl with a test number's token)
+  and in the browser, then put the data back.
 
 ## How the user works
 
@@ -58,8 +88,14 @@ something should be undone.
    (excluding `node_modules`, `.next`, `.git`, `.turbo`),
    `pnpm install --frozen-lockfile --prefer-offline`, `pnpm build`, then
    `git worktree remove --force <dir>`.
-4. `git add -A`, commit with a plain sentence subject and a short body,
-   ending with the attribution line the session asks for.
+   The build reads the database (feed, listing and store pages are built
+   ahead), so rsync the settings files in too; a build with none still
+   passes, on the mock data, with warnings.
+4. `git add -A` (check no `.env` file is listed), commit with a plain
+   sentence subject and a short body, ending with the attribution line the
+   session asks for.
 5. Push the branch; check `git merge-base --is-ancestor origin/main HEAD`;
    `git checkout main && git merge --ff-only redesign/pdf-style`;
    push `main`; check out `redesign/pdf-style` again.
+6. Wait for Vercel (about five minutes) and check the live site answers the
+   new pages or endpoints before saying it is live.

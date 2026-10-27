@@ -1,41 +1,45 @@
 # Handoff: where the redesign stands
 
 Written on 2026-10-22 to carry the work to a new Claude account, and
-brought up to date on 2026-10-26, 2026-10-27 (the second account change)
-and twice more later on 2026-10-27 (back on the first account). The rules
-for working on this repo are in `/CLAUDE.md`; read that first. This file is
-the state of the code and the recent work.
+brought up to date on 2026-10-26, 2026-10-27 (the second account change),
+twice more later on 2026-10-27, and at the end of the long 2026-10-27
+backend session (Phases 1 to 3 and Phase 4 slice 1). The rules for working
+on this repo are in `/CLAUDE.md`; read that first. This file is the state of
+the code and the recent work. **Start with "Where we stopped" below**, then
+`docs/architecture/backend-plan.md` ("Where it stands") for the backend in
+full.
 
 ## The project
 
 Swap & Top is a Zimbabwean marketplace for phones, laptops, consoles and
 parts, built around the swap: offer what you have, add cash on top. People
-post items for sale, swaps and Wanted listings; dealers (shops) get a
+post items for sale, swaps and Wanted listings; stores get a Store
 console with stock, leads, offers and stats. The product docs live in
 `docs/` (start at `docs/00-SUMMARY.md`).
 
-The pages a person uses read and save through the API and the database:
-the feed, listing pages, search, Wanted, posting, My listings, offers, deal
-checks, saved listings and notifications. The Store console and other
-people's names and badges on cards still come from the mock data. Sign in
-is real, by phone and a one time code through Supabase (test numbers 077
-000 0001 to 0007, code 123456), or by email and password from the three
-step sign up page. Email and phone codes are mock ones for now: 123456,
-nothing is sent. A phone is optional to join; posting and offers ask for a
-verified phone first. The database is shared with the live site:
+**State, end of 2026-10-27.** The app has a real backend: Postgres on
+Supabase, Drizzle, a Hono API in `apps/api` served by the web app at `/api`
+(Swagger at `/api/docs`), deployed with the site on Vercel. Every page a
+person uses reads and saves through it: the feed, listing pages, search,
+Wanted, posting, My listings (pause, sold, delete, relist), offers (send,
+accept, decline, withdraw, undo), deal checks, saved listings, notifications,
+store pages, and opening a store. Sign in is real (Supabase Auth): email and
+password from a three step sign up, or phone and a one time code. Email and
+phone codes are **mock ones (123456)**, nothing is sent, until real email and
+SMS are set up. A phone is optional to join; posting and sending offers ask
+for a verified phone first.
+
+Still on the mock data: the **Store console** (Phase 4 slice 3), and other
+people's names, store badges and deal counts on cards and offers (from the
+mock people and stores, whose ids match the database).
+
+The **database is shared** by localhost and the live site: anything posted,
+saved or answered on either shows on both. Clean up test data you make, and
 `pnpm --filter @snt/api db:seed-activity` puts the sample offers, deal
 checks, saved listings and notifications back.
-Supabase keeps the sign in in the browser until you sign out.
 
-The backend is planned in `docs/architecture/backend-plan.md`: Postgres on
-Supabase, Drizzle, Hono in `apps/api`, phone sign in. Phases 1 to 3 are
-built: the tables and seed data, sign in and accounts, and every page a
-person uses moved to the API. The web app serves the
-API at /api (Swagger at /api/docs), so Vercel deploys both together; Vercel
-needs DATABASE_URL, NEXT_PUBLIC_SUPABASE_URL and
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY set. Roles (user, moderator, admin, super
-admin) and reports go into the first schema; person, free store and paid
-store are not roles but store membership and passes.
+Roles (user, moderator, admin, super admin) are on the person; person, free
+store and paid store are not roles but store membership and passes.
 
 ## Repo layout
 
@@ -43,17 +47,48 @@ pnpm workspace with Turborepo.
 
 | Path | What it is |
 |---|---|
-| `apps/web` | Next 15.5 (App Router), React 19. Pages under `src/app`, shared page parts under `src/components`. |
+| `apps/web` | Next 15.5 (App Router), React 19. Pages under `src/app`, shared page parts under `src/components`, browser helpers under `src/lib` (Supabase client, `apiAsViewer`, account data loading, listings and stores read on the server). Serves the API at `/api` through `src/app/api/[[...route]]/route.ts`. |
+| `apps/api` | `@snt/api`: the Hono API. `src/db/schema.ts` (21 tables), `src/db/seed.ts` and `seedActivity.ts`, `src/routes/*` (one file per area), `src/auth.ts` (token check), `src/supabaseAdmin.ts` (admin calls, `MOCK_CODE`). Also runs on its own on port 4000. |
 | `packages/ui` | `@snt/ui`: the component library, CSS Modules. Cards, layout (headers, tabs, menus, footer, console shell), offers, primitives. |
 | `packages/core` | `@snt/core`: types, mock data (`src/mock`), Zustand stores (`src/stores`), helpers. |
 
 Commands: `pnpm dev` (the user usually has it running on port 3000),
-`pnpm -s typecheck`, `pnpm build`.
+`pnpm -s typecheck`, `pnpm build`. API: `pnpm --filter @snt/api dev` (on
+its own, port 4000), `db:seed` (everything back to the start, empties all
+tables), `db:seed-activity` (just offers, deal checks, saved and
+notifications), `db:generate` and `db:migrate` (after changing the schema).
+
+Settings: the root `.env` (git ignored) holds `DATABASE_URL` and the four
+`SUPABASE_` values; `apps/web/.env.local` holds `NEXT_PUBLIC_SUPABASE_URL`
+and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Vercel has all of them for
+Production and Preview, and `turbo.json` lists them so the build sees them.
+Never print the secret values.
 
 Branch: all work is on `redesign/pdf-style`, fast forwarded into `main` when
 the user asks. `main` deploys live.
 
-## Mock data you will meet
+## Test accounts and data you will meet
+
+Sign in with a phone (Continue with phone) and the code **123456**:
+
+| Number | Who | Notes |
+|---|---|---|
+| 077 000 0001 | Tarisai M. (`u-tarisai`) | A person. Also email `tarisai.test@example.com`, password `testpass123`. Owns the MacBook swap and the PS5 controller Wanted listing. |
+| 077 000 0002 | Avondale Games owner (`u-avgames`) | A free store, `s-avondale-games`. |
+| 077 000 0003 | Tinashe K. (`u-kopje`) | Owner of Kopje Computers (`s-kopje`), a paid store with a month pass. |
+| 077 000 0004 | Kuda S. (`u-kuda`) | Staff at Kopje Computers. |
+| 077 000 0005 | Rumbi M. (`u-rumbi`) | Moderator. |
+| 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Admin. |
+| 077 000 0007 | Hillary M. (`u-hillary`) | Super admin. |
+
+Only these seven numbers can sign in by phone (Supabase test numbers); any
+other number needs real SMS. Any Zimbabwe number can be *verified* in
+Settings or the verify phone sheet with 123456. Sign up with any email
+works (code 123456). A leftover test account, Nyasha C.
+(`signup.test@example.com`), is still in the database; ask before deleting.
+
+The mock data in `packages/core/src/mock` is what the database was seeded
+from, and what the Store console and other people's details still read:
 
 | Who | Id | Notes |
 |---|---|---|
@@ -68,14 +103,11 @@ or Better and Galaxy S21 or newer (Wanted), so the Sponsored badge can be
 seen on every kind of card. Notifications: `mock/notifications.ts`. Deal
 checks: `mock/deals.ts`. Stats figures: `mock/stats.ts`.
 
-Sample offers are in `packages/core/src/stores/useOfferStore.ts`. Tarisai
-receives three (two on the MacBook, one on the PS5 controller) and has sent
-four, one in each state: pending (Redmi Note 12; Dell Inspiron towards
-Kopje's ThinkPad), accepted (RX 580 for Blessing's GTX 1650), declined
-(memory for Rudo's Wanted).
-
-Signing in on the mock: go to `/signin?next=<path>` and press Sign in with
-the boxes empty.
+Sample offers (`SAMPLE_OFFERS` in `useOfferStore.ts`), deal checks
+(`mock/deals.ts`), saved listings (`SAMPLE_SAVED`) and notifications
+(`mock/notifications.ts`) are seeded into the database by `seedActivity`.
+Tarisai receives three offers (two on the MacBook, one on the PS5
+controller) and has sent four, one in each state.
 
 ## Design system in practice
 
@@ -166,6 +198,27 @@ Patterns the user has settled on:
 
 See `git log` for the full detail; each commit body explains its change.
 
+- **2026-10-27, backend session** (`5a25f1c` to `12faafa`): the backend
+  plan, Phases 1 to 3 and Phase 4 slice 1. In order:
+  - **Phase 1, schema and seed** (`5a25f1c`): 21 tables with row level
+    security (the public key reads nothing), seed from the mock data, the
+    first read endpoints, Swagger; the API served by Next at `/api`.
+  - **Phase 2, sign in and accounts** (`4876ad8`, `30e43e1`, `582045e`):
+    Supabase Auth; the auth pages to the first app's arrangement and 3D
+    pictures on one frame (`signin/AuthLayout.tsx`): sign in (email first,
+    Continue with phone, Google and Facebook not connected), a three step
+    sign up with steps along the top (details; neighbourhood, town and
+    password; email code), forgot password, reset; verify your phone in
+    Settings and as a sheet before posting or offers; a name sheet for
+    phone sign ups. Build and Turbo fixes for Vercel settings.
+  - **Phase 3, pages on the API** (`f1962ff`, `3192a93`): feed and listing
+    pages built on the server from the database (kept a minute, refreshed
+    at once after a post or change), posting, My listings and owner
+    actions, offers, deal checks, saved, notifications (a new offer and its
+    answer notify the other person), search and Wanted.
+  - **Phase 4 slice 1** (`12faafa`): listing limits (5 person, 15 free
+    store, none with a pass; Wanted never counts) with the limit sheet,
+    Open a store (`/store/new`), store pages from the database, Post as.
 - **2026-10-27, third session** (`70e2dea`, `6ea172c`):
   - **Accounts and stores decided** (docs only, nothing built):
     `docs/product/accounts-and-stores.md`, decisions B16 to B19 and P31 to
@@ -315,23 +368,43 @@ See `git log` for the full detail; each commit body explains its change.
 
 ## Known loose ends and ideas offered
 
-- **Decided, not built (2026-10-27):** accounts and stores, in
-  `docs/product/accounts-and-stores.md` (decisions B16 to B19, P31 to P37).
-  People free (5 live listings), free stores (15), paid stores by prepaid
-  pass ($1 a day, $5 a week, $15 a month: console, unlimited listings, lead
-  alerts); Wanted never counts; a lapsed pass pauses listings above 15. An
-  account is a person who opens stores (up to 3), run by an owner and staff;
-  "Post as" on Post New Item. Verify stores, not people. Settings rules for
-  what can change. None of this is in the app yet, except the naming:
-  "store" everywhere and the Store console are done, in text and code.
-
-- **Where we stopped (end of 2026-10-27):** boosting works end to end in
-  the mock, from Stock's Boosted tab, and the app and its code say store
-  everywhere. The accounts and stores plan is decided but not built. Likely
-  next: building that plan (the 5 and 15 listing limits with the Open a
-  store prompt, opening a store from a person account, Post as, store
-  passes, store verification requests, settings), or wiring the real Paynow
-  account (needs a backend).
+- **Where we stopped (end of the 2026-10-27 backend session):** Phases 1
+  to 3 are built and live; Phase 4 slice 1 is built and live. Everything is
+  committed and pushed (`main` deploys live). **Next: Phase 4 slice 2,
+  store passes**, then slices 3 and 4, then Phase 5:
+  - **Slice 2, store passes:** buy a day ($1), week ($5) or month ($15)
+    pass for a store (owner only); extending tops up from the current end;
+    the day before it ends a reminder (a notification); when it ends the
+    store keeps its 15 most recently updated listings live and pauses the
+    rest, all live again with a new pass. Payment is a **test payment**
+    until Paynow is set up (the owner needs a Paynow merchant account;
+    integration id and key would go in `.env` and Vercel). The tables
+    `store_passes`, `payments` and `payment_events` exist; the limit check
+    already reads passes (`overLimit` in `apps/api/src/routes/post.ts`).
+    The lapse needs a check on read or a scheduled job (Vercel cron).
+  - **Slice 3, the Store console on real data:** stock, leads, trade ins
+    (offers on store listings), stats, the store's notifications, boosts;
+    open only while a pass covers today.
+  - **Slice 4, owner and staff:** the owner adds staff by phone and removes
+    them; staff can do stock, offers and leads, not payments, verification,
+    staff or settings.
+  - **Also in Phase 4, not built:** moving existing listings into a new
+    store, a store's own contact ways and settings (name change rules),
+    Verified store requests (checked by staff), closing a store.
+  - **Phase 5, the report queue for staff:** report a listing or person;
+    a phone friendly queue (claim, approve, change the reason, clear);
+    appeals for admins. Tables `reports`, `moderation_actions` and
+    `appeals` exist. See `docs/architecture/backend-plan.md`, section 2.
+- **Gaps in what is built:** photos are not uploaded (new listings show the
+  grey placeholder); editing a listing is not built; Show contact does not
+  ask for a verified phone yet; deal checks, expiring listings and leads
+  send no notifications yet; Google and Facebook sign in are not connected;
+  email and phone codes are mock (123456) and would work on the live site
+  for anyone until real email (Supabase SMTP) and SMS (a provider in place
+  of the Twilio placeholders) are set up; Supabase Redirect URLs need
+  `http://localhost:3000/**` and the Vercel address for real reset links;
+  other people's names and badges on cards come from the mock data; the
+  Me page's own stats (listings, reveals) still use the mock.
 - The feed shows one sponsored listing per three others, so on short type
   tabs (Swaps, Wanted) only one of two sponsored shows; spacing every two
   was offered, not built.
@@ -344,8 +417,9 @@ See `git log` for the full detail; each commit body explains its change.
   phone; a lower top or minus and plus buttons were offered, not built.
 - On sale and swap cards' bottom line, the place and age get trimmed first
   when space is short ("Gre… · Offers only").
-- Paynow is mocked: a payment "succeeds" after three seconds. Nothing is
-  really charged; reloading loses new sponsorships (memory only).
+- Paynow is mocked: a boost payment "succeeds" after three seconds.
+  Nothing is really charged; boosts live in memory (`useSponsorStore`), not
+  the database yet.
 - **With the API: one home per account.** A dealer's own profile should
   point shop matters (My listings, Offers, shop deal checks) to the console
   rather than repeat them; only personal things (Saved, Settings) stay in
@@ -357,6 +431,24 @@ See `git log` for the full detail; each commit body explains its change.
   pair on a phone has not been seen on screen.
 
 ## Testing tips
+
+- **Test against the API with curl:** sign in a test number through
+  Supabase (`/auth/v1/otp` then `/auth/v1/verify` with token 123456, using
+  the publishable key from `.env`), then call `http://localhost:3000/api/...`
+  with `Authorization: Bearer <access_token>`. Swagger at `/api/docs` lists
+  every endpoint.
+- **Clean up test data** in the shared database: delete test listings
+  (and their items and details) and test stores you made, and run
+  `db:seed-activity` after changing offers, deal checks, saved or
+  notifications. Name test data "Test …" so it is easy to find.
+- One-off database scripts: run from `apps/api` with Node, load the root
+  `.env`, and use the transaction pooler (`DATABASE_URL` with port 6543) so
+  they do not compete with the dev server for the session pooler's 15
+  connections.
+- The browser pane often does not paint until a screenshot is taken, and a
+  page can look unhydrated for a long while. Read state with
+  `javascript_tool` (and wait a few seconds) rather than trusting the first
+  screenshot.
 
 - The Claude browser pane can be hidden, which throttles
   `requestAnimationFrame` and transitions: screenshots may be stale or caught
