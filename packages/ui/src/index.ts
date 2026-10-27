@@ -119,6 +119,7 @@ export {
   SignInHost,
 } from './auth/SignIn';
 export { Sheet, useCloseSheet } from './primitives/Sheet';
+export { NotificationBell } from './layout/NotificationBell';
 export { AppToaster } from './primitives/AppToaster';
 export { Img, type ImgProps } from './primitives/Img';
 export { Spinner } from './primitives/Spinner';

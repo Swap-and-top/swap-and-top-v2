@@ -64,6 +64,16 @@ Only once manual collection is proven and the volume makes it tedious.
 
 A local payment gateway covering mobile money, bank switch and card. That coverage is what matters — a dealer must be able to pay the way they already pay for everything else.
 
+**Paynow** (October 2026: the bank account is open, the Paynow account is being set up). The console's sponsored slots checkout is built for it, mocked until the account is live:
+
+**Every payment goes through Paynow's own hosted page**, whatever the way to pay: EcoCash, OneMoney, Telecash, ZimSwitch, Visa or Mastercard, all chosen there. The app shows what is being paid for, names those ways, and has one button, *Pay $21 with Paynow*. One route because:
+
+- **Paynow confirms every payment.** Nothing starts until Paynow says it is paid.
+- **No payment details pass through Swap & Top**, not a number or a card.
+- **People trust a page they know** more than a form in an app they are new to.
+
+To go live: create the Paynow integration (ID and key, kept on the server), start each payment from the server and send the dealer to Paynow's page, take Paynow's result on the result URL (and poll its status URL as a fallback), and only then start the sponsorship. Keep each payment's Paynow reference with it, as the mock does (`paymentRef`). The three warnings below apply in full.
+
 ### Three things that will bite
 
 #### 1. Subscriptions are hard on local rails

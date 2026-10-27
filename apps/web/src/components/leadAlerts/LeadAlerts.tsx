@@ -15,6 +15,7 @@ import {
   CATEGORY_LABELS,
   activeAlertChannels,
   leadAlertStatus,
+  mockPromotionProducts,
   useLeadAlertStore,
   type AlertMatch,
   type Category,
@@ -31,8 +32,16 @@ import {
   TickTile,
   useCloseSheet,
 } from '@snt/ui';
-import { BellIcon, ChevronRightIcon, InfoIcon, PauseIcon } from '@snt/ui/icons';
+import {
+  BellIcon,
+  InfoIcon,
+  PauseIcon,
+  SettingsIcon,
+} from '@snt/ui/icons';
 import styles from './LeadAlerts.module.css';
+
+/** The lead alerts subscription: its price and renewal. */
+const alertsPlan = mockPromotionProducts.find((p) => p.id === 'lead-alerts');
 
 const CATEGORIES: Category[] = [
   'phones',
@@ -49,7 +58,8 @@ const MATCHES: { value: AlertMatch; label: string }[] = [
   { value: 'categories', label: 'Whole categories' },
 ];
 
-/** The status chip; opens the settings sheet. */
+/** The status chip, and beside it a plain button to the settings: the
+    chip only says how alerts stand; the button opens the settings sheet. */
 export function LeadAlertsChip() {
   const settings = useLeadAlertStore((state) => state.settings);
   const [open, setOpen] = useState(false);
@@ -57,13 +67,8 @@ export function LeadAlertsChip() {
   const whatsapp = activeAlertChannels(settings).includes('whatsapp');
 
   return (
-    <>
-      <button
-        type="button"
-        className={[styles.chip, styles[status]].join(' ')}
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-      >
+    <span className={styles.chipRow}>
+      <span className={[styles.chip, styles[status]].join(' ')}>
         {status === 'on' ? (
           <BellIcon size={14} />
         ) : status === 'paused' ? (
@@ -78,10 +83,18 @@ export function LeadAlertsChip() {
               ? 'Lead alerts paused'
               : 'Set up lead alerts'}
         </span>
-        <ChevronRightIcon size={14} />
-      </button>
+      </span>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+      >
+        <SettingsIcon size={16} />
+        Lead alert settings
+      </Button>
       {open ? <LeadAlertsSheet onClose={() => setOpen(false)} /> : null}
-    </>
+    </span>
   );
 }
 
@@ -101,6 +114,14 @@ export function LeadAlertsSheet({ onClose }: { onClose: () => void }) {
             <span className={styles.headingNote}>
               Get an alert the moment someone wants something you are selling.
             </span>
+            {/* The subscription, here with its settings rather than on
+                Stats: what it costs and when it renews. */}
+            {alertsPlan ? (
+              <span className={styles.headingPlan}>
+                {alertsPlan.priceLabel}
+                {alertsPlan.detail ? ` · ${alertsPlan.detail}` : ''}
+              </span>
+            ) : null}
           </span>
         </span>
       }

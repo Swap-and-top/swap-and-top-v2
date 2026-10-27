@@ -13,6 +13,7 @@
 import { create } from 'zustand';
 import { mockListings } from '../mock/listings';
 import type { Listing, ListingStatus } from '../types/listing';
+import { useSponsorStore, withPromotion } from './useSponsorStore';
 
 interface ListingStatusState {
   /** Listing id → the status its owner has since given it. */
@@ -43,9 +44,12 @@ export function useListingStatus(listing: Listing): ListingStatus {
 /**
  * Only live listings appear in the feed, in search, or in the sitemap: the
  * live ones, with what owners have since paused, sold or relisted taken
- * into account.
+ * into account, and each one's sponsored slot as it stands now.
  */
 export function useLiveListings(): Listing[] {
   const changes = useListingStatusStore((state) => state.changes);
-  return mockListings.filter((listing) => statusOf(listing, changes) === 'live');
+  const sponsorships = useSponsorStore((state) => state.sponsorships);
+  return mockListings
+    .filter((listing) => statusOf(listing, changes) === 'live')
+    .map((listing) => withPromotion(listing, sponsorships));
 }

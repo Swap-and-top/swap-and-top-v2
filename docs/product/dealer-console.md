@@ -137,7 +137,7 @@ The shop's numbers over time, to decide what to do next, and at the foot the way
 | **The graph** | One bar chart, of whichever number is tapped (Number reveals to start). Tap or hover a bar for its figure |
 | **Your best items** | The shop's items, most reveals first, each with its views, reveals, offers and deals |
 | **Where leads come from** | WhatsApp against calls, and sponsored against normal listings |
-| **Grow these numbers** | What Promote was: lead alerts, sponsored slots, the Friday Drop |
+| **Grow these numbers** | Sponsored slots, from $1 a day, paid through Paynow: how many run now and at what a day, *Sponsor an item*, and *Manage sponsored items*, which opens **Sponsored items** (`/console/stats/sponsored`, not in the menu), a table of each item with its own Extend and Stop (see [../business/monetization.md](../business/monetization.md)). Lead alerts live on Leads, their price and renewal at the top of their settings. The Friday Drop is paused for now (decision P30) |
 
 Confirmed deals is the renewal argument: *"at least twelve confirmed deals last month"* is a far stronger reason to keep paying than a count of people who saw a phone number. The page says it is a floor, since a deal counts only when both sides answer. Sponsored against normal is the argument for buying promotion, shown continuously rather than in a sales conversation. See [../features/deal-confirmation.md](../features/deal-confirmation.md).
 

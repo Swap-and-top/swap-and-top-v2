@@ -9,7 +9,8 @@
  * (the leads), offers received and confirmed deals, each with its change on
  * the stretch before. Tap one and the graph shows it; tap or hover a bar
  * for its figure. Then the items doing best, where leads come from, and at
- * the foot the ways to grow these numbers (what Promote used to be).
+ * the foot sponsored slots, the way to grow these numbers (what Promote used
+ * to be; lead alerts live on Leads, and the Friday Drop is paused for now).
  *
  * Confirmed deals are a floor, never a total: they count only when both
  * sides answer the deal check (see docs/features/deal-confirmation.md).
@@ -19,22 +20,24 @@ import { useState } from 'react';
 import {
   bestItemsFor,
   currentShop,
+  dollars,
   mockLeadSources,
-  mockPromotionProducts,
   newLeadCount,
   shopStatsFor,
-  type PromotionProduct,
+  useShopSponsorships,
   type StatsBucket,
   type StatsMetric,
   type StatsRange,
 } from '@snt/core';
-import { Badge, Button, ConsoleShell, Tabs, type TabItem } from '@snt/ui';
 import {
-  BellIcon,
-  ClockIcon,
-  MegaphoneIcon,
-  WhatsAppIcon,
-} from '@snt/ui/icons';
+  Button,
+  ButtonLink,
+  ConsoleShell,
+  Tabs,
+  type TabItem,
+} from '@snt/ui';
+import { MegaphoneIcon, WhatsAppIcon } from '@snt/ui/icons';
+import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
 import styles from './page.module.css';
 
 const RANGES: TabItem<StatsRange>[] = [
@@ -193,13 +196,9 @@ export default function ConsoleStatsPage() {
         </div>
       </section>
 
-      {/* What Promote was: ways to grow the numbers above. */}
+      {/* What Promote was: the way to grow the numbers above. */}
       <h2 className={styles.section}>Grow these numbers</h2>
-      <div className={styles.cards}>
-        {mockPromotionProducts.map((product) => (
-          <Product key={product.id} product={product} />
-        ))}
-      </div>
+      <SponsoredSlots />
     </ConsoleShell>
   );
 }
@@ -339,43 +338,52 @@ function BarChart({
   );
 }
 
-/** One way to grow the numbers, as the Promote page had it. */
-function Product({ product }: { product: PromotionProduct }) {
-  const glyph =
-    product.id === 'lead-alerts'
-      ? { icon: <BellIcon size={18} weight={1.9} />, className: styles.glyphActive }
-      : product.id === 'sponsored-slot'
-        ? { icon: <MegaphoneIcon size={18} weight={1.9} />, className: styles.glyphAccent }
-        : { icon: <ClockIcon size={18} weight={1.8} />, className: styles.glyphAccent };
+/**
+ * Sponsored slots: what they are and cost, how many items run now and at
+ * what a day, a way to the table of them (Manage sponsored items), and a
+ * button to sponsor another. Lead alerts live on Leads, with their settings.
+ */
+function SponsoredSlots() {
+  // The shop's own: other people sponsor their listings too.
+  const sponsorships = useShopSponsorships(currentShop.id);
+  /** The Sponsor sheet, to pick an item and sponsor it. */
+  const [sheet, setSheet] = useState(false);
+  const perDay = sponsorships.reduce((sum, s) => sum + s.dailyBudget, 0);
 
   return (
     <div className={styles.product}>
-      <span className={[styles.glyph, glyph.className].join(' ')}>
-        {glyph.icon}
+      <span className={[styles.glyph, styles.glyphAccent].join(' ')}>
+        <MegaphoneIcon size={18} weight={1.9} />
       </span>
       <div className={styles.body}>
-        <div className={styles.head}>
-          <span className={styles.name}>{product.name}</span>
-          {product.active ? <Badge tone="success">Active</Badge> : null}
-        </div>
+        <span className={styles.name}>Sponsored slots</span>
         <p className={styles.description}>
-          {product.description} {product.priceLabel}.
-          {product.detail ? ` ${product.detail}.` : ''}
+          Your item in a labelled Sponsored slot in the feed, from $1 a day.
+          The more a day, the more people see it. Paid through Paynow.
         </p>
-        {product.actionLabel ? (
-          <div className={styles.actions}>
-            <Button
-              variant={product.id === 'drop-slot' ? 'secondary' : 'primary'}
+        <p className={styles.runningSummary}>
+          {sponsorships.length > 0
+            ? `${sponsorships.length} ${sponsorships.length === 1 ? 'item' : 'items'} sponsored now · ${dollars(perDay)} a day`
+            : 'Nothing sponsored right now'}
+        </p>
+
+        <div className={styles.actions}>
+          <Button size="sm" onClick={() => setSheet(true)}>
+            Sponsor an item
+          </Button>
+          {sponsorships.length > 0 ? (
+            <ButtonLink
+              href="/console/stats/sponsored"
+              variant="secondary"
               size="sm"
             >
-              {product.actionLabel}
-            </Button>
-            {product.meta ? (
-              <span className={styles.meta}>{product.meta}</span>
-            ) : null}
-          </div>
-        ) : null}
+              Manage sponsored items
+            </ButtonLink>
+          ) : null}
+        </div>
       </div>
+
+      {sheet ? <SponsorSheet onClose={() => setSheet(false)} /> : null}
     </div>
   );
 }

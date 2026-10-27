@@ -43,6 +43,8 @@ import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import card from './SaleDetail.module.css';
 import styles from './RequestDetail.module.css';
 import { PreviewBanner } from './PreviewBanner';
+import { SponsorBanner } from '../sponsor/SponsorBanner';
+import sponsorStyles from '../sponsor/SponsorBanner.module.css';
 
 export function RequestDetail({
   listing,
@@ -75,6 +77,10 @@ export function RequestDetail({
       {preview ? <PreviewBanner /> : null}
 
       <div className={card.panel}>
+        {/* Your own Wanted listing: Sponsor this item, above its card. */}
+        {mine ? (
+          <SponsorBanner listing={listing} className={sponsorStyles.above} />
+        ) : null}
         <section className={card.card}>
           <div className={card.body}>
             {/* On your own post, its status comes first. */}

@@ -124,6 +124,8 @@ Flat and human-readable. The v1 prefix (`/swapandtop/...`) is removed — it was
 | `/saved` | Saved | Client-rendered |
 | `/me` | Account hub | Client-rendered |
 | `/deals/<id>/confirm` | Deal confirmation | Client-rendered |
+| `/notifications` | A person's notifications | Client-rendered |
+| `/console/notifications` | A shop's notifications | Client-rendered |
 | `/console/...` | Dealer console | Client-rendered |
 | `/admin/...` | Staff tools | Client-rendered |
 

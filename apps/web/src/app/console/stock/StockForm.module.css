@@ -3,6 +3,12 @@
  * card, labels bold blue and set in over pale rounded boxes.
  */
 
+/* Sponsor this item, on top of the card: the card's width, a gap under. */
+.sponsor {
+  max-width: var(--snt-column-max);
+  margin-bottom: var(--snt-space-6);
+}
+
 .form {
   display: flex;
   flex-direction: column;

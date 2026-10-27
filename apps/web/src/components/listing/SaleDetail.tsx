@@ -45,6 +45,8 @@ import {
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SaleDetail.module.css';
 import { PreviewBanner } from './PreviewBanner';
+import { SponsorBanner } from '../sponsor/SponsorBanner';
+import sponsorStyles from '../sponsor/SponsorBanner.module.css';
 
 export function SaleDetail({
   listing,
@@ -84,6 +86,10 @@ export function SaleDetail({
       {preview ? <PreviewBanner /> : null}
 
       <div className={styles.panel}>
+        {/* Your own listing: Sponsor this item, above its card. */}
+        {mine ? (
+          <SponsorBanner listing={listing} className={sponsorStyles.above} />
+        ) : null}
         {/* The post is one white card: the photo on top, then the item's
             name and price, its details in a ruled grid, and a last row of
             where and when, with save, share and report. */}

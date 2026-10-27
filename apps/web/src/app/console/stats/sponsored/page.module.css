@@ -1,0 +1,158 @@
+/**
+ * Sponsored items: set as Stock's table is. On a phone a card a row, the
+ * item and when it ends, its figures in one quiet line, the menu at the
+ * side; from a wide screen one white card with column headings.
+ */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-5);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+.headerRow {
+  display: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'thumb item action'
+    'thumb meta meta';
+  align-items: center;
+  column-gap: var(--snt-space-6);
+  row-gap: var(--snt-space-3);
+  padding: var(--snt-space-7) var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.thumb {
+  grid-area: thumb;
+  align-self: start;
+  border-radius: var(--snt-radius-md);
+}
+
+.item {
+  grid-area: item;
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+.name {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.until {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.action {
+  grid-area: action;
+}
+
+.phoneMeta {
+  grid-area: meta;
+  font-size: var(--snt-text-xs);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+/* Columns only the wide table has room for. */
+.budget,
+.reach,
+.spent,
+.reveals {
+  display: none;
+}
+
+.small {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
+.none {
+  max-width: 672px;
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}
+
+/* --- the table, from a wide screen ----------------------------------------- */
+
+@media (min-width: 1024px) {
+  .list {
+    gap: 0;
+    overflow: hidden;
+    border-radius: var(--snt-radius-xl);
+    background: var(--snt-bg-card);
+  }
+
+  .headerRow,
+  .row {
+    display: grid;
+    grid-template-columns:
+      44px minmax(0, 2fr) 110px 120px 80px minmax(0, 1.4fr) 40px;
+    grid-template-areas: none;
+    align-items: center;
+    column-gap: var(--snt-space-7);
+    padding: var(--snt-space-5) var(--snt-space-8);
+  }
+
+  .headerRow {
+    background: var(--snt-accent-strong);
+    color: var(--snt-ink-on-dark);
+    font-size: var(--snt-text-xs);
+    font-weight: var(--snt-weight-bold);
+  }
+
+  .row {
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .row + .row {
+    border-top: 1px solid var(--snt-bg-app);
+  }
+
+  .thumb,
+  .item,
+  .action {
+    grid-area: auto;
+    align-self: center;
+  }
+
+  .budget,
+  .reach,
+  .spent,
+  .reveals {
+    display: block;
+    font-size: var(--snt-text-sm);
+    color: var(--snt-ink);
+  }
+
+  .budget {
+    font-weight: var(--snt-weight-bold);
+  }
+
+  .phoneMeta {
+    display: none;
+  }
+}

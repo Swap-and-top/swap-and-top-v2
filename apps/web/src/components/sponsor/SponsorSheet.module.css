@@ -1,0 +1,342 @@
+/**
+ * The Sponsor sheet: set as the lead alerts sheet is (its heading), with the
+ * choices as the app's pale tiles, ringed in the blue once chosen.
+ */
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+}
+
+.headingIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+}
+
+.headingText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+.headingTitle {
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.headingNote {
+  font-size: var(--snt-text-sm);
+  line-height: var(--snt-leading-snug);
+  color: var(--snt-ink-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-8);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.label {
+  padding: 0;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* --- the item ------------------------------------------------------------- */
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  min-width: 0;
+}
+
+.thumb {
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-md);
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+.itemName {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.itemPrice {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+/* Several to choose from: a short list that scrolls if it is long. */
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* --- a choice: pale blue, ringed in the blue once chosen ------------------- */
+
+.choice,
+.tile {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-4) var(--snt-space-5);
+  border: 1px solid transparent;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  cursor: pointer;
+  transition: border-color var(--snt-transition);
+}
+
+.choice:has(input:checked),
+.tile:has(input:checked) {
+  border-color: var(--snt-control-active);
+}
+
+/* The radio, drawn: a white circle; chosen, a thin ring round a dot. */
+.choice input,
+.tile input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+  cursor: pointer;
+}
+
+.choice input:checked,
+.tile input:checked {
+  border: 1px solid var(--snt-control-active);
+  background: radial-gradient(
+    circle,
+    var(--snt-control-active) 0 4px,
+    var(--snt-bg-card) 4.5px
+  );
+}
+
+.choice input:focus-visible,
+.tile input:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}
+
+/* How long: three tiles side by side. */
+.weeks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--snt-space-4);
+}
+
+.tile {
+  min-height: var(--snt-touch);
+}
+
+.tileText {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+  line-height: var(--snt-leading-tight);
+  color: var(--snt-control-active);
+}
+
+.tilePrice {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
+.note {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+/* --- the daily budget ------------------------------------------------------- */
+
+/* The amount, large, with "a day" small after it. */
+.budget {
+  font-family: var(--snt-font-display);
+  font-size: 30px;
+  font-weight: var(--snt-weight-bold);
+  line-height: var(--snt-leading-tight);
+  color: var(--snt-accent-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.budgetUnit {
+  font-family: var(--snt-font-body);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
+/* The slider: a pale blue track, filled in the blue up to the thumb (the
+   page sets --fill), and a white thumb ringed in the blue. */
+.slider {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  margin: var(--snt-space-4) 0;
+  border-radius: var(--snt-radius-pill);
+  background: linear-gradient(
+    to right,
+    var(--snt-control-active) var(--fill, 0%),
+    var(--snt-bg-inset) var(--fill, 0%)
+  );
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--snt-control-active);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
+}
+
+.slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--snt-control-active);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
+}
+
+.slider:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 4px;
+}
+
+/* --- paying -------------------------------------------------------------------- */
+
+/* What is being paid for: the item and the total, how it adds up under it. */
+.bill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  padding: var(--snt-space-6) var(--snt-space-7);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+}
+
+.billLine {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.billNote {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* The ways to pay on Paynow, named as small pale pills: what to expect,
+   not a choice made here. */
+.ways {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-3);
+}
+
+.way {
+  padding: var(--snt-space-2) var(--snt-space-5);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-control-active);
+}
+
+.secure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-3);
+  margin-top: calc(var(--snt-space-4) * -1);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* Waiting for the payment, and paid: centred, a mark over the words. */
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-3);
+  padding: var(--snt-space-8) 0 var(--snt-space-4);
+  text-align: center;
+  color: var(--snt-control-active);
+}
+
+.resultIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-success-tint);
+  color: var(--snt-success);
+}
+
+.resultTitle {
+  margin-top: var(--snt-space-3);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.resultText {
+  max-width: 340px;
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+.resultRef {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}

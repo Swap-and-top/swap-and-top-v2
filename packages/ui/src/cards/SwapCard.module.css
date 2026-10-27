@@ -67,6 +67,8 @@
 
 /** A solid tile, rounded one step tighter than the card it sits in. */
 .tile {
+  /* For "Sponsored" on the photo's corner. */
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -246,4 +248,12 @@
 .ownerOffers {
   margin-top: calc(var(--snt-space-6) * -1 + var(--snt-space-2));
   padding: 0 var(--snt-card-pad) var(--snt-space-6);
+}
+
+/* "Sponsored", when the listing has paid for its slot: always shown. */
+.sponsored {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  flex-shrink: 0;
 }

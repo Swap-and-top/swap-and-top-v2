@@ -47,6 +47,7 @@ import {
   TickTile,
 } from '@snt/ui';
 import { CloseIcon, PlusIcon } from '@snt/ui/icons';
+import { SponsorBanner } from '@/components/sponsor/SponsorBanner';
 import styles from './StockForm.module.css';
 
 const CATEGORIES: Category[] = [
@@ -228,6 +229,12 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
       newLeadCount={newLeadCount}
       stockCount={stock.length}
     >
+      {/* Sponsor this item, on top of the edit card: a live item not
+          sponsored yet (or, once it is, until when, with Extend). */}
+      {editing && !isDraft ? (
+        <SponsorBanner listing={editing} className={styles.sponsor} />
+      ) : null}
+
       <form
         className={styles.form}
         onSubmit={(event) => {

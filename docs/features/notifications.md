@@ -140,7 +140,14 @@ Verification submitted, approved or rejected. In-app and email.
 
 ## In-app notification surface
 
-A simple list on the account hub and in the console: each entry has a type, a short line, a time, and a tap target that goes to the relevant thing. Unread count on the bell icon.
+One list for each kind of account, newest first, with no tabs: each entry has its kind's icon, a short line, a time, and a tap target that goes to the relevant thing. Unread entries are a shade bluer with a blue dot; a tap reads one, and **Mark all as read** reads the lot.
+
+| Account | Where the list is | How to reach it |
+| --- | --- | --- |
+| **A person** | `/notifications` | A bell in the marketplace header, between Post New Item and the account button, signed in only, with the unread count in a red round |
+| **A shop** | `/console/notifications` | A bell in the console's header on a phone (the bar at the foot already has five sections); **Notifications** at the top of the sidebar on a laptop, with the same count |
+
+A shop's list holds shop matters only (leads, offers on stock, replies to its offers, deal checks to answer, the weekly summary, its subscription), as everything for a shop lives in the console. The mock lists are in `packages/core/src/mock/notifications.ts`; reading is kept for the visit (`useNotificationStore`).
 
 No separate messaging system. Users contact each other on WhatsApp or by phone — the platform brokers the introduction and stops there. Building an inbox would mean becoming responsible for conversations, which contradicts the contact-broker model.
 

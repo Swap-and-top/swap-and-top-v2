@@ -65,7 +65,7 @@ export function SaleCard({
           />
           {/* Paid placement is always labelled, never hidden. */}
           {listing.promotion === 'sponsored' ? (
-            <Badge tone="dark" onImage>
+            <Badge tone="brand" onImage>
               <MegaphoneIcon size={12} weight={2.2} />
               Sponsored
             </Badge>

@@ -1,0 +1,107 @@
+/**
+ * The sponsor banner: the app's call to action colours, the yellow of Post
+ * New Item with its green, an icon on a tile, the words, a button, and an X
+ * in the corner. Sponsored already, a quiet pale blue line instead.
+ */
+
+.banner {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-7) var(--snt-space-12) var(--snt-space-7)
+    var(--snt-space-7);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-brand-yellow);
+  color: var(--snt-post-ink);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--snt-radius-md);
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+}
+
+.text {
+  font-size: var(--snt-text-sm);
+  line-height: var(--snt-leading-normal);
+  color: color-mix(in srgb, var(--snt-post-ink) 85%, black);
+}
+
+.button {
+  margin-top: var(--snt-space-4);
+}
+
+.close {
+  position: absolute;
+  top: var(--snt-space-5);
+  right: var(--snt-space-5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--snt-radius-pill);
+  color: var(--snt-post-ink);
+  transition: background-color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .close:hover {
+    background-color: color-mix(in srgb, var(--snt-post-ink) 12%, transparent);
+  }
+}
+
+/* Sponsored already: one line, until when and at what a day, and Extend. */
+.running {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-5) var(--snt-space-6);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.runningIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+}
+
+.runningText {
+  flex-grow: 1;
+  min-width: 0;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-accent-bold);
+}
+
+/* Above a listing's card: a little space under it. */
+.above {
+  margin-bottom: var(--snt-space-6);
+}

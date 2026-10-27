@@ -1,7 +1,8 @@
 # Handoff: where the redesign stands
 
 Written on 2026-10-22 to carry the work to a new Claude account, and
-brought up to date on 2026-10-26. The rules
+brought up to date on 2026-10-26 and 2026-10-27 (the second account
+change). The rules
 for working on this repo are in `/CLAUDE.md`; read that first. This file is
 the state of the code and the recent work.
 
@@ -40,7 +41,14 @@ the user asks. `main` deploys live.
 |---|---|---|
 | Tarisai M. | `u-tarisai` | The signed in test user (`CURRENT_USER_ID`). Owns the MacBook swap (`l-macbook-swap`) and the PS5 controller Wanted listing (`l-ps5-controller-wanted`). |
 | Kopje Computers | `u-kopje`, shop `s-kopje` | The dealer (`currentShop`) shown in the console. |
-| Chipo N., Rudo K., Blessing T., Avondale Games | `u-chipo`, `u-rudo`, `u-blessing`, `u-avgames` | Other people offering or posting. |
+| Chipo N., Rudo K., Blessing T., Tendai C., Farai D., Nyasha P., Avondale Games | `u-chipo`, `u-rudo`, `u-blessing`, `u-tendai`, `u-farai`, `u-nyasha`, `u-avgames` | Other people offering or posting. |
+
+Sponsored in the mock (`useSponsorStore`): the Dell Latitude 7490 (Kopje's,
+the only one the console shows), and other people's iPhone 11 128GB (sale),
+PS4 Slim for an Xbox One S and Galaxy A34 for a Pixel 7a (swaps), RTX 3060
+or Better and Galaxy S21 or newer (Wanted), so the Sponsored badge can be
+seen on every kind of card. Notifications: `mock/notifications.ts`. Deal
+checks: `mock/deals.ts`. Stats figures: `mock/stats.ts`.
 
 Sample offers are in `packages/core/src/stores/useOfferStore.ts`. Tarisai
 receives three (two on the MacBook, one on the PS5 controller) and has sent
@@ -86,18 +94,64 @@ Patterns the user has settled on:
   listing" with the count in a round, flush left with the listing, then a
   solid line down the left that curves into the middle of each offer
   (`.rail` in `Offers.module.css`, `.offers` in
-  `apps/web/src/app/me/offers/page.module.css`; the line colour is solid, not
+  `apps/web/src/components/offers/OfferGroups.module.css`, shared by the
+  profile's and the console's Offers pages; the line colour is solid, not
   transparent, so overlaps do not darken).
 - **Status pills** (Live, Accepted, Declined) are a faded wash of their own
   colour, never a solid fill.
 - **Gaps.** Under the header band (search, chips, tabs) to the first
   listing: 12px on a phone, 20px from tablet up, except the feed which keeps
   12px under its sticky tabs. Between the chips and the tabs: 12px.
+- **Calls to action** are the yellow of Post New Item with its green ink
+  (`--snt-brand-yellow`, `--snt-post-ink`), as on the Sponsor banner.
+- **"New" and "Sponsored"** badges use the brand gradient (`Badge
+  tone="brand"`). "Sponsored" always sits top left: on the photo of a sale
+  or a swap's "Has" tile, first in a Wanted card's top row.
+- **Settings** use the gear (`SettingsIcon`). Information pills are not
+  buttons; the action beside them is a real button.
+- **Never restyle a `Panel` with another background.** Two styles of equal
+  weight: the production build loads them in a different order than the dev
+  server, so it looked right locally and wrong on Vercel (the offer cards
+  came out white). Give the thing its own box instead.
 
 ## What was built recently (newest first)
 
 See `git log` for the full detail; each commit body explains its change.
 
+- **2026-10-27 session** (committed with this update):
+  - **Sponsored slots, built out** (Promote's place, at the foot of Stats).
+    A daily budget like boosting a post on WhatsApp: a slider from $1 a day
+    (to $100), with about how many people a day it reaches, for 1 day, 1
+    week or 1 month; the total shown. **Every payment goes through Paynow's
+    own page** (EcoCash, OneMoney, Telecash, ZimSwitch, Visa, Mastercard are
+    named, chosen on Paynow), mocked until the Paynow account is live; see
+    docs/operations/payments-and-invoicing.md for going live. One sheet:
+    `apps/web/src/components/sponsor/SponsorSheet.tsx` (plan, pay, on
+    Paynow, done). State: `packages/core/src/stores/useSponsorStore.ts`
+    (`promotionOf`/`withPromotion` feed the feed, cards and Stock).
+  - **Anyone can sponsor any live listing.** A yellow "Sponsor this item"
+    banner with an X (`SponsorBanner`) sits on top of a dealer's item in
+    Stock (edit page) and a person's own listing page; once sponsored it is
+    "Sponsored until … · $3 a day" with Extend. Stock's item menu has
+    "Sponsor this item" too.
+  - **Sponsored items** page (`/console/stats/sponsored`, from Stats'
+    "Manage sponsored items", not in the menu): a table of the shop's own
+    sponsorships with Extend, View as a buyer, Stop sponsoring (Undo).
+  - **Lead alerts** left Stats; their price and renewal show at the top of
+    their settings sheet on Leads. The lead alerts pill is information only;
+    a "Lead alert settings" button with a gear opens the sheet.
+  - **Friday Drop paused** (decision P30): out of the console and mock;
+    the plan is kept in docs/business/monetization.md.
+  - **Notifications**: a bell with an unread count in the marketplace
+    header (`/notifications`) and in the console (phone header bell; top of
+    the laptop sidebar; `/console/notifications`). One list, unread lines in
+    blue and bold with a blue dot, Mark all as read
+    (`components/notifications/NotificationList`, `useNotificationStore`).
+  - Offer cards fixed for production (their own box, not a restyled Panel).
+  - Deal check: no ticks on "Yes, we completed it" or the record number.
+  - Header logo: the stacked mobile one below 580px wide.
+  - Seven more mock listings from private sellers (three swaps, three
+    Wanted, one sale), reusing photos of the same models.
 - **2026-10-26 session** (one commit):
   - Profile: "My wanted posts" row removed; **Deals to confirm** is a list
     (`/me/deals`, To confirm and Answered) of deal checks, each opening
@@ -157,6 +211,18 @@ See `git log` for the full detail; each commit body explains its change.
 
 ## Known loose ends and ideas offered
 
+- **Where we stopped (2026-10-27):** sponsored slots are working end to end
+  in the mock. Likely next: wiring the real Paynow account (needs a backend),
+  and anything the user asks after looking at the sponsored badges and
+  banners on their phone.
+- The budget slider runs $1 to $100, so each dollar is a tiny movement on a
+  phone; a lower top or minus and plus buttons were offered, not built.
+- On a phone, the console header's bell squeezes the shop name to
+  "Kopje Co…".
+- On sale and swap cards' bottom line, the place and age get trimmed first
+  when space is short ("Gre… · Offers only").
+- Paynow is mocked: a payment "succeeds" after three seconds. Nothing is
+  really charged; reloading loses new sponsorships (memory only).
 - **With the API: one home per account.** A dealer's own profile should
   point shop matters (My listings, Offers, shop deal checks) to the console
   rather than repeat them; only personal things (Saved, Settings) stay in
@@ -178,3 +244,9 @@ See `git log` for the full detail; each commit body explains its change.
 - Editing a file in `packages/core` or some `packages/ui` files triggers a
   full reload, which resets offers and the like; you stay signed in.
 - Check phones at 375 by 812 and laptops at about 1024 wide.
+- One dev server only. On 2026-10-26 the desktop app started a second
+  preview server on 3001 by itself when the session reopened, and pages lost
+  their styles (CSS 404s); run `preview_list` and stop the stray one.
+- Clicks in the browser pane sometimes fail while the tool safety checker is
+  unavailable; a click done through `javascript_tool` usually still works,
+  and file edits can go through the Edit and Write tools.

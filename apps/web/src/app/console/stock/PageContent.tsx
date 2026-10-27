@@ -40,12 +40,14 @@ import {
   CheckIcon,
   EyeIcon,
   FilterIcon,
+  MegaphoneIcon,
   PauseIcon,
   PencilIcon,
   PlayIcon,
   PlusIcon,
   TrashIcon,
 } from '@snt/ui/icons';
+import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
 import { filterStock, filtersInUse } from './filterStock';
 import { StockFiltersSheet } from './StockFiltersSheet';
 import styles from './page.module.css';
@@ -54,6 +56,8 @@ export default function ConsoleStockPage() {
   const { stockQuery, setStockQuery, stockFilters, setStockFilters } =
     useConsoleStore();
   const [filtering, setFiltering] = useState(false);
+  /** The item whose Sponsor sheet is open, if any. */
+  const [sponsoring, setSponsoring] = useState<string | null>(null);
 
   // What the shop holds, with what it has added since first.
   const all = useShopStock(currentShop.id);
@@ -125,6 +129,19 @@ export default function ConsoleStockPage() {
       default:
         return [
           { label: 'Edit item', icon: <PencilIcon size={17} />, href: edit },
+          // A live item for sale: sponsor it, or extend while it runs.
+          ...(listing.type === 'sale'
+            ? [
+                {
+                  label:
+                    listing.promotion === 'sponsored'
+                      ? 'Extend sponsorship'
+                      : 'Sponsor this item',
+                  icon: <MegaphoneIcon size={17} weight={1.9} />,
+                  onSelect: () => setSponsoring(listing.id),
+                },
+              ]
+            : []),
           {
             label: 'Pause listing',
             icon: <PauseIcon size={15} />,
@@ -343,6 +360,13 @@ export default function ConsoleStockPage() {
           filters={stockFilters}
           onApply={setStockFilters}
           onClose={() => setFiltering(false)}
+        />
+      ) : null}
+
+      {sponsoring ? (
+        <SponsorSheet
+          listingId={sponsoring}
+          onClose={() => setSponsoring(null)}
         />
       ) : null}
     </ConsoleShell>

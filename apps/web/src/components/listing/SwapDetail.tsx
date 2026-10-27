@@ -52,6 +52,8 @@ import {
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
 import styles from './SwapDetail.module.css';
 import { PreviewBanner } from './PreviewBanner';
+import { SponsorBanner } from '../sponsor/SponsorBanner';
+import sponsorStyles from '../sponsor/SponsorBanner.module.css';
 
 export function SwapDetail({
   listing,
@@ -92,6 +94,10 @@ export function SwapDetail({
       {/* The swap — the reason this screen exists: what they have, then what
           they are looking for, each with its details beside its picture. */}
       <div className={styles.panel}>
+        {/* Your own swap: Sponsor this item, above its card. */}
+        {mine ? (
+          <SponsorBanner listing={listing} className={sponsorStyles.above} />
+        ) : null}
         {/* One white card round both sides and the save and share icons, so
             the swap reads as a single post. */}
         <Panel xl className={styles.card}>

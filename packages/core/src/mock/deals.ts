@@ -205,8 +205,12 @@ export function confirmationsAwaiting(
 
 /* ------------------------------------------------------- promotion state - */
 
+/**
+ * What a dealer can pay for to grow their numbers. The Friday Drop is paused
+ * for now and left out (see docs/business/monetization.md); it may return.
+ */
 export interface PromotionProduct {
-  id: 'lead-alerts' | 'sponsored-slot' | 'drop-slot';
+  id: 'lead-alerts' | 'sponsored-slot';
   name: string;
   description: string;
   /** Display string, because prices are hypotheses rather than settled. */
@@ -226,7 +230,7 @@ export const mockPromotionProducts: PromotionProduct[] = [
       'Alerted the moment someone posts a request matching your stock.',
     priceLabel: '$10 a month',
     active: true,
-    detail: 'Renews 12 Oct',
+    detail: 'Renews 30 Oct',
   },
   {
     id: 'sponsored-slot',
@@ -237,16 +241,6 @@ export const mockPromotionProducts: PromotionProduct[] = [
     active: false,
     actionLabel: 'Sponsor an item',
     meta: '1 running',
-  },
-  {
-    id: 'drop-slot',
-    name: 'Friday Drop',
-    description:
-      'Ten checked deals published together at 7pm and pushed to the campus channel.',
-    priceLabel: '$15 per slot',
-    active: false,
-    actionLabel: 'Apply for a slot',
-    meta: 'Next drop Friday, 2 slots left',
   },
 ];
 

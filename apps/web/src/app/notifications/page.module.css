@@ -1,0 +1,14 @@
+/** Notifications: the title, and Mark all as read opposite it. */
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+}
+
+.title {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}

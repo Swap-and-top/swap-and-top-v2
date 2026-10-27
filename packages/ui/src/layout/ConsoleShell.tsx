@@ -15,6 +15,7 @@ import {
   getShopListings,
   useConsoleStore,
   useOfferStore,
+  useUnreadCount,
   type Shop,
 } from '@snt/core';
 import {
@@ -25,8 +26,10 @@ import {
   ShopIcon,
   TrendIcon,
   CashHandIcon,
+  BellIcon,
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
+import { NotificationBell } from './NotificationBell';
 import { ShopMark } from '../primitives/Placeholder';
 import { Bone } from '../primitives/Skeleton';
 import { ScreenTitle } from '../primitives/Text';
@@ -125,8 +128,16 @@ export function ConsoleShell({
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
+  /** The shop's notifications: not a section of the bar at the foot of a
+      phone (it has five), but a bell in the header, and on a laptop a link
+      at the top of the sidebar. */
+  const notificationsHref = '/console/notifications';
+  const unread = useUnreadCount('shop');
+  const onNotifications = isActive(notificationsHref);
   /** The section this page is in: its icon heads the page. */
-  const section = items.find((item) => isActive(item.href));
+  const section = onNotifications
+    ? { titleIcon: <BellIcon size={24} /> }
+    : items.find((item) => isActive(item.href));
 
   return (
     <div className={styles.shell}>
@@ -162,6 +173,25 @@ export function ConsoleShell({
         </div>
 
         <nav className={styles.sidebarNav} aria-label="Console">
+          {/* The shop's notifications, first, apart from the sections. */}
+          <Link
+            href={notificationsHref}
+            aria-current={onNotifications ? 'page' : undefined}
+            title={collapsed ? 'Notifications' : undefined}
+            className={[
+              styles.sidebarItem,
+              styles.sidebarNotifications,
+              onNotifications ? styles.sidebarItemActive : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            <span className={styles.sidebarIcon}>
+              <BellIcon size={20} />
+            </span>
+            <span className={styles.sidebarLabel}>Notifications</span>
+            <CountBadge count={unread} />
+          </Link>
           {items.map((item) => {
             const active = isActive(item.href);
             return (
@@ -214,6 +244,8 @@ export function ConsoleShell({
         {/* The way out of the console, as the sidebar's foot is on a
             laptop, the size of the marketplace's Post New Item. The shop as
             buyers see it is under Shop. */}
+        {/* The shop's notifications, a bell with its unread count. */}
+        <NotificationBell audience="shop" href={notificationsHref} />
         <Link href="/" className={styles.headerLink}>
           Back to marketplace
         </Link>

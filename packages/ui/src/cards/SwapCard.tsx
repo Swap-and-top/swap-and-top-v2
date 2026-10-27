@@ -11,7 +11,8 @@ import Link from 'next/link';
 import { contactAfterOffer } from '@snt/core';
 import type { CashDirection, Item, SwapListing, User } from '@snt/core';
 import { CARD_CONDITION, swapTerms } from '../format';
-import { CategoryIcon } from '../icons';
+import { CategoryIcon, MegaphoneIcon } from '../icons';
+import { Badge } from '../primitives/Badge';
 import { PhotoGallery } from '../primitives/PhotoGallery';
 import { specParts } from '../primitives/SpecGrid';
 import { Panel } from '../primitives/Surface';
@@ -51,6 +52,7 @@ export function SwapCard({
           cashDirection={listing.cashDirection}
           cashUpTo={listing.cashUpTo}
           tileHeight={tileHeight}
+          sponsored={listing.promotion === 'sponsored'}
         />
 
         <div className={styles.footer}>
@@ -107,6 +109,7 @@ export function SwapTiles({
   cashUpTo = false,
   tileHeight,
   flush = false,
+  sponsored = false,
 }: {
   has: SwapSide;
   wants: SwapSide;
@@ -118,6 +121,8 @@ export function SwapTiles({
   cashUpTo?: boolean;
   tileHeight?: number;
   flush?: boolean;
+  /** Paid placement: "Sponsored" on the photo's top left, as on a sale. */
+  sponsored?: boolean;
 }) {
   // A ceiling reads "+ up to $600", the "+ up to" small. A set amount is
   // "+$600".
@@ -141,6 +146,7 @@ export function SwapTiles({
         cash={cashSide === 'has' ? cash : undefined}
         cashUpTo={cashUpTo}
         imageHeight={tileHeight}
+        sponsored={sponsored}
       />
       <SwapTile
         tone="wants"
@@ -160,6 +166,7 @@ function SwapTile({
   cash,
   cashUpTo = false,
   imageHeight,
+  sponsored = false,
 }: {
   tone: 'has' | 'wants';
   label: string;
@@ -168,12 +175,21 @@ function SwapTile({
   /** The cash is a ceiling: shown as "up to $600". */
   cashUpTo?: boolean;
   imageHeight?: number;
+  sponsored?: boolean;
 }) {
   const specs = specParts(item);
   const condition = item.condition ? CARD_CONDITION[item.condition] : undefined;
 
   return (
     <div className={[styles.tile, styles[tone]].join(' ')}>
+      {/* Paid placement is always labelled, never hidden: top left, on
+          the photo, as on a sale. */}
+      {sponsored ? (
+        <Badge tone="brand" onImage>
+          <MegaphoneIcon size={12} weight={2.2} />
+          Sponsored
+        </Badge>
+      ) : null}
       {/* What they have is photographed. What they want is described, never
           pictured, so its slot is grey with the category's icon in green. */}
       {tone === 'has' ? (

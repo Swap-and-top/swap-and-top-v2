@@ -219,3 +219,11 @@
 .ownerOffers {
   margin-top: var(--snt-space-4);
 }
+
+/* "Sponsored", when the listing has paid for its slot: always shown. */
+.sponsored {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  flex-shrink: 0;
+}

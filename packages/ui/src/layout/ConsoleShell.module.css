@@ -490,3 +490,9 @@
 .navItem:active .navPill {
   transform: scale(0.92);
 }
+
+/* Notifications, at the top of the sidebar: set a little apart from the
+   sections under it. */
+.sidebarNotifications {
+  margin-bottom: var(--snt-space-6);
+}

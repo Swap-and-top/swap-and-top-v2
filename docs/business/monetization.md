@@ -85,11 +85,26 @@ Selling promotion with evidence is a different conversation from selling it on a
 
 **Critical implementation rule: interleave, do not sort to the top.** If promoted listings are simply sorted first, five paying dealers own the entire first screen and the feed stops feeling like a community. Labelled slots at fixed intervals, rotated among payers. Detail in [../features/feed-and-filters.md](../features/feed-and-filters.md).
 
-**Hypothesis price:** $12 per item per week.
+**Price: a daily budget, as boosting a post is on WhatsApp and Facebook.** From $1 a day, in whole dollars, up to $100 a day, for a day, a week or a month. The more a day, the more people see it: the sheet says about how many (roughly 120 to 200 people a day for each dollar, a range as Meta gives one). No bidding, no targeting, one item at a time, as many items as a dealer likes.
+
+**How a dealer buys it** (built in the console, October 2026; Paynow mocked):
+
+| Step | Where |
+| --- | --- |
+| **Start** | **Anyone can sponsor any live listing**, a dealer's or a person's, for sale, swap or Wanted. A yellow *Sponsor this item* banner, in the colours of Post New Item, sits above the owner's own listing: on a dealer's item in Stock (its edit page) and on a person's listing page (from My listings). It closes with its X for that listing; once sponsored it becomes a line, *Sponsored until 3 Nov · $3 a day*, with *Extend*. Dealers also have *Sponsor this item* in a Stock item's menu, and *Sponsor an item* on Stats and Sponsored items (pick from live items, the first picked). Every sponsored card in the feed says Sponsored: on the photo of a sale, beside the name of a swap, at the top of a Wanted card |
+| **Plan** | One sheet: the daily budget on a slider from $1 (the amount large above it, the reach under it), how long (1 day, 1 week, 1 month; each tile shows its total), and when it ends. *Continue to pay $21* |
+| **Pay, through Paynow** | Every payment, whatever the way, goes through Paynow's own secure page: the sheet names the ways (EcoCash, OneMoney, Telecash, ZimSwitch, Visa, Mastercard) and has one button, *Pay $21 with Paynow*; the way is chosen on Paynow. One route means Paynow confirms every payment, no payment details pass through Swap & Top, and people pay on a page they trust |
+| **Paid** | *Payment received*, the Paynow reference, and the sponsorship starts |
+| **While it runs** | The item takes the feed's Sponsored slots and its card says Sponsored; Stock shows a Sponsored badge. Stats sums it up and leads to **Sponsored items** (`/console/stats/sponsored`): a table of each item, its daily budget, reach a day, spent, reveals since, and a menu to *Extend*, *View as a buyer* or *Stop sponsoring* (with Undo) |
+| **Before it ends** | A notification, a week out: *Extend it from Stats* |
+
+State: `packages/core/src/stores/useSponsorStore.ts`. The live Paynow integration is in [../operations/payments-and-invoicing.md](../operations/payments-and-invoicing.md).
 
 ---
 
 ### 4. Friday Drop slots — dealers
+
+> **Paused for now (October 2026).** Taken out of the console's Stats page and the mock data, so the first paid products are lead alerts and sponsored slots. Kept here, unchanged, to pick up again later; see decision P30.
 
 **What it is:** a place in a weekly batch of checked deals, published together at a set time and announced to the campus channel.
 

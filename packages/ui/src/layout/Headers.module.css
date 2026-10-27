@@ -53,7 +53,7 @@
   color: var(--snt-ink-on-dark);
 }
 
-/* The full, one-line logo: wherever there is 400px of width for it. */
+/* The full, one-line logo: from 580px wide. */
 .logoArt {
   display: none;
   height: 28px;
@@ -67,7 +67,7 @@
   width: auto;
 }
 
-@media (min-width: 400px) {
+@media (min-width: 580px) {
   .logoArt {
     display: block;
   }
@@ -329,4 +329,39 @@
   .appBody {
     padding-bottom: var(--snt-space-10);
   }
+}
+
+/* --- the notifications bell ------------------------------------------------ */
+
+/* A bell in white, the size of the account circle, its unread count in a
+   red round on its top right corner. */
+.bell {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-pill);
+  color: var(--snt-ink-on-dark);
+  transition: background-color var(--snt-transition);
+}
+
+.bell:hover {
+  color: var(--snt-ink-on-dark);
+}
+
+@media (hover: hover) {
+  .bell:hover {
+    background-color: color-mix(in srgb, white 14%, transparent);
+  }
+}
+
+.bellCount {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  display: flex;
+  pointer-events: none;
 }

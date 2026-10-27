@@ -1,0 +1,102 @@
+/**
+ * Notifications: one white card, rows parted by pale lines, as the app's
+ * other lists are. An unread row's line is blue and bold, with a blue dot.
+ */
+
+.list {
+  margin: 0;
+  padding: var(--snt-space-3);
+  list-style: none;
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.list > li + li .row {
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-7) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-6) var(--snt-space-7);
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-card-ink);
+  transition: background-color var(--snt-transition);
+}
+
+.row:hover {
+  color: var(--snt-card-ink);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--snt-control-active) 4%,
+      var(--snt-bg-card)
+    );
+  }
+}
+
+/* Its kind's icon, on a pale wash of its own colour. */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/* A lead is someone's Wanted: in the Wanted green. */
+.iconWanted {
+  color: var(--snt-wanted-ink);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.text {
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-snug);
+}
+
+/* Unread: the line in the blue, and bold. Read, it is plain. */
+.unread .text {
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-control-active);
+}
+
+.when {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+}
+
+.none {
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}

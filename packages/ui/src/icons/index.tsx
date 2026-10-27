@@ -669,10 +669,11 @@ export const ShieldCheckIcon = (props: IconProps) => (
   </Svg>
 );
 
+/** Settings: a gear, eight teeth round a hole. */
 export const SettingsIcon = (props: IconProps) => (
   <Svg {...props}>
+    <path d="M10.38 4.98 L10.66 2.49 L13.34 2.49 L13.62 4.98 L15.82 5.89 L17.78 4.33 L19.67 6.22 L18.11 8.18 L19.02 10.38 L21.51 10.66 L21.51 13.34 L19.02 13.62 L18.11 15.82 L19.67 17.78 L17.78 19.67 L15.82 18.11 L13.62 19.02 L13.34 21.51 L10.66 21.51 L10.38 19.02 L8.18 18.11 L6.22 19.67 L4.33 17.78 L5.89 15.82 L4.98 13.62 L2.49 13.34 L2.49 10.66 L4.98 10.38 L5.89 8.18 L4.33 6.22 L6.22 4.33 L8.18 5.89 Z" />
     <circle cx="12" cy="12" r="3" />
-    <path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3" />
   </Svg>
 );
 

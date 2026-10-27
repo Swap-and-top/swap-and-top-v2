@@ -1,0 +1,10 @@
+/** Console notifications: Mark all as read under the title, and the list
+    in a column. */
+
+.actions {
+  margin-top: var(--snt-space-5);
+}
+
+.column {
+  max-width: 672px;
+}

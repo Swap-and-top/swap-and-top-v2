@@ -2,6 +2,15 @@
 
 /* --- the chip: green when on, grey when paused, amber to set up --- */
 
+/* The status chip and the settings button, side by side, wrapping on a
+   narrow phone. */
+.chipRow {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-4);
+}
+
 .chip {
   --chip-ink: var(--snt-success);
   --chip-fill: var(--snt-success-tint);
@@ -11,23 +20,15 @@
   gap: var(--snt-space-3);
   width: fit-content;
   height: 30px;
-  padding: 0 var(--snt-space-5) 0 var(--snt-space-6);
+  /* Information only, not a button: even on both sides, with no arrow. */
+  padding: 0 var(--snt-space-6);
   border-radius: var(--snt-radius-pill);
   background: var(--chip-fill);
   color: var(--chip-ink);
   font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-semibold);
-  transition: filter var(--snt-transition);
 }
 
-.chip:hover {
-  color: var(--chip-ink);
-  filter: brightness(0.97);
-}
-
-.chip:active {
-  transform: scale(0.97);
-}
 
 .paused {
   --chip-ink: var(--snt-ink-muted);
@@ -67,6 +68,13 @@
   font-size: var(--snt-text-sm);
   line-height: var(--snt-leading-snug);
   color: var(--snt-ink-muted);
+}
+
+/* The subscription: what it costs and when it renews, small and green. */
+.headingPlan {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-success);
 }
 
 .headingIcon {

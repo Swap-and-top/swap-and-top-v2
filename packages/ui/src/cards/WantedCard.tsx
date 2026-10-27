@@ -22,7 +22,8 @@ import {
   useViewerId,
 } from '@snt/core';
 import type { DemandListing, User } from '@snt/core';
-import { BinocularsIcon, SwapIcon } from '../icons';
+import { BinocularsIcon, MegaphoneIcon, SwapIcon } from '../icons';
+import { Badge } from '../primitives/Badge';
 import { OfferButton } from '../offers/OfferButton';
 import {
   OwnerOfferCount,
@@ -76,6 +77,14 @@ export function WantedCard({
   return (
     <Panel xl className={styles.card}>
       <div className={styles.head}>
+        {/* Paid placement is always labelled, never hidden: first, top
+            left, as on a sale's photo. */}
+        {listing.promotion === 'sponsored' ? (
+          <Badge tone="brand" className={styles.sponsored}>
+            <MegaphoneIcon size={12} weight={2.2} />
+            Sponsored
+          </Badge>
+        ) : null}
         <span
           className={[styles.label, tradeIn ? styles.labelTradeIn : '']
             .filter(Boolean)

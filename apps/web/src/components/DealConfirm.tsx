@@ -119,7 +119,6 @@ export function DealConfirm({
                 block
                 onClick={() => answer(confirmation.id, 'yes')}
               >
-                <CheckIcon size={19} weight={2.6} />
                 Yes, we completed it
               </Button>
               <Button
@@ -197,7 +196,6 @@ export function DealConfirm({
           <h2 className={styles.label}>Your record</h2>
           <div className={styles.recordRow}>
             <span className={styles.recordCount}>
-              <CheckIcon size={17} weight={2.6} />
               <span className={styles.recordNumber}>{record}</span>
             </span>
             <span className={styles.recordLabel}>

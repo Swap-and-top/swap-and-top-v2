@@ -19,6 +19,7 @@ import type {
   SaleListing,
 } from '../types/listing';
 import { statusOf, useListingStatusStore } from './useListingStatusStore';
+import { useSponsorStore, withPromotion } from './useSponsorStore';
 
 /** What the dealer gives for one item, from the form or a row of a sheet. */
 export interface NewStock {
@@ -157,6 +158,7 @@ export function useShopStock(shopId: string): Listing[] {
   const added = useStockStore((state) => state.added);
   const edited = useStockStore((state) => state.edited);
   const changes = useListingStatusStore((state) => state.changes);
+  const sponsorships = useSponsorStore((state) => state.sponsorships);
 
   return [
     ...added.filter((listing) => listing.shopId === shopId),
@@ -164,7 +166,9 @@ export function useShopStock(shopId: string): Listing[] {
   ]
     .map((listing) => {
       const status = statusOf(listing, changes);
-      return status === listing.status ? listing : { ...listing, status };
+      const now = status === listing.status ? listing : { ...listing, status };
+      // Sponsored while a sponsorship runs (see useSponsorStore).
+      return withPromotion(now, sponsorships);
     })
     // Deleted (withdrawn) or taken down: no longer part of the stock.
     .filter(

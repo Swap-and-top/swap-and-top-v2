@@ -21,6 +21,7 @@ import { AutoHideHeader } from './AutoHideHeader';
 import { HomeLink } from './HomeLink';
 import { CompactLogo, Logo } from './Logo';
 import { AccountButton } from './AccountButton';
+import { NotificationBell } from './NotificationBell';
 import { PostButton } from './PostButton';
 import styles from './Headers.module.css';
 
@@ -44,8 +45,8 @@ export function AppHeader({
         <div className={styles.inner}>
           <div className={styles.appTop}>
             <HomeLink className={styles.logo} aria-label="Swap & Top home">
-              {/* The stacked, compact logo on a narrow phone; the full one
-                  from 400px up. Only one is shown at a time. */}
+              {/* The stacked, compact logo below 580px wide; the full one
+                  from 580px up. Only one is shown at a time. */}
               <CompactLogo height={36} className={styles.logoCompact} />
               <Logo height={36} className={styles.logoArt} />
             </HomeLink>
@@ -53,6 +54,8 @@ export function AppHeader({
             <PostButton href={postHref} className={styles.postButton}>
               Post New Item
             </PostButton>
+            {/* Their notifications, signed in: a bell with its count. */}
+            <NotificationBell audience="user" href="/notifications" />
             {/* The account circle, opening the app's menu. */}
             <AccountButton />
           </div>

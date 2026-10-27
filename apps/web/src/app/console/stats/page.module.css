@@ -338,6 +338,63 @@
   color: var(--snt-ink-muted);
 }
 
+.name {
+  display: block;
+}
+
+/* How many run now, and at what a day. */
+.runningSummary {
+  margin-top: var(--snt-space-4);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-ink);
+}
+
+/* The items sponsored now: each on the pale blue, its name, until when and
+   how it has done, with Extend and Stop. */
+.running {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  margin: var(--snt-space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.runningItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-5) var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+}
+
+.runningText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+.runningName {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.runningMeta {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.runningActions {
+  display: flex;
+  gap: var(--snt-space-4);
+}
+
 /* --- wider screens --------------------------------------------------------------- */
 
 @media (min-width: 1024px) {
