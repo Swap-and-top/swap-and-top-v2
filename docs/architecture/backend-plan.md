@@ -229,6 +229,14 @@ Seeded in development only, each signing in with its phone number and the fixed 
 - Test account 1 (077 000 0001) also has the test email `tarisai.test@example.com` with the password `testpass123`.
 - Not yet: the Me page, offers and deals still show the mock account (Tarisai M.) whoever signs in. Each moves to the API with its page in Phase 3.
 
+**Phase 3 has started** (2026-10-27): the feed and the listing page.
+
+- The feed (`/`) and a listing page (`/listing/[slug]`) read live listings from the database on the server, through `apps/web/src/lib/listings.ts` (the API's own `liveListings` and `listingBySlug`, not over HTTP). Both are built ahead and kept for a minute (`revalidate = 60`), so they stay instant; a new listing shows within a minute.
+- The feed is now newest first, by when each listing was published, where the mock file had its own order.
+- If the database cannot be reached the mock listings stand in, with a warning, so a build never fails for it.
+- Everything else (search, Wanted, My listings, offers, saved, notifications) still reads the mock data until its turn. The ids match, so the two agree.
+- A production build makes pages in several workers at once, so each opens one database connection; Supabase's session pooler allows 15 in all.
+
 ### Running it
 
 The settings live in the root `.env` (git ignores it): `DATABASE_URL` and the four `SUPABASE_` values. Then:

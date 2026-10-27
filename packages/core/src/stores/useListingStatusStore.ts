@@ -44,12 +44,14 @@ export function useListingStatus(listing: Listing): ListingStatus {
 /**
  * Only live listings appear in the feed, in search, or in the sitemap: the
  * live ones, with what owners have since paused, sold or relisted taken
- * into account, and each one's sponsored slot as it stands now.
+ * into account, and each one's sponsored slot as it stands now. `from` is
+ * the listings to start with: the database's where a page has them (the
+ * feed), the mock ones until each page moves over.
  */
-export function useLiveListings(): Listing[] {
+export function useLiveListings(from: Listing[] = mockListings): Listing[] {
   const changes = useListingStatusStore((state) => state.changes);
   const sponsorships = useSponsorStore((state) => state.sponsorships);
-  return mockListings
+  return from
     .filter((listing) => statusOf(listing, changes) === 'live')
     .map((listing) => withPromotion(listing, sponsorships));
 }

@@ -23,6 +23,7 @@ import {
   useLiveListings,
   useViewerId,
   type Category,
+  type Listing,
   type TypeFilter,
 } from '@snt/core';
 import {
@@ -66,7 +67,14 @@ export const TYPES: TabItem<TypeFilter>[] = [
 ];
 
 /** The feed. Its server half, page.tsx, reads the filters from the address. */
-export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
+export function BrowseFeed({
+  initial,
+  listings,
+}: {
+  initial: FeedFilterParams;
+  /** The live listings, from the database. */
+  listings: Listing[];
+}) {
   // The type and category live in the address too, so a refresh keeps them.
   const { category, type, setCategory, setType, reset } =
     useFeedFiltersInUrl(initial);
@@ -76,7 +84,7 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
 
   const viewer = useViewerId();
   // Your own listings are not in your feed: they are under My listings.
-  const live = useLiveListings();
+  const live = useLiveListings(listings);
   const others = live.filter((listing) => listing.ownerId !== viewer);
   const filtered = filterFeed(others, { category, type });
   /** Sponsored listings are interleaved and labelled, never sorted to the top. */

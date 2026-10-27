@@ -173,3 +173,17 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
     return [];
   });
 }
+
+/** Every live listing, newest first: the feed, built on the server. */
+export function liveListings(): Promise<ListingOut[]> {
+  return loadListings(eq(t.listings.status, 'live'), 500);
+}
+
+/** One listing by its slug, unless it is a draft or was removed. */
+export async function listingBySlug(slug: string): Promise<ListingOut | undefined> {
+  const [listing] = await loadListings(
+    and(eq(t.listings.slug, slug), notInArray(t.listings.status, ['draft', 'removed'])),
+    1,
+  );
+  return listing;
+}

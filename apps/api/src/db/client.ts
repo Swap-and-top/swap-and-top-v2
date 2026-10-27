@@ -5,6 +5,8 @@
  * Vercel needs: each function call borrows a connection only for a moment.
  */
 
+// The settings first, whichever file of the API is loaded first.
+import '../loadEnv';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
@@ -24,7 +26,9 @@ const shared = globalThis as { sntSql?: ReturnType<typeof postgres> };
 export const sql = (shared.sntSql ??= postgres(process.env.DATABASE_URL ?? '', {
   ssl: 'require',
   prepare: false,
-  max: process.env.VERCEL ? 1 : 5,
+  // One each on Vercel, and while a production build makes pages in several
+  // workers at once.
+  max: process.env.VERCEL || process.env.NEXT_PHASE === 'phase-production-build' ? 1 : 5,
   idle_timeout: 20,
 }));
 export const db = drizzle(sql, { schema, casing: 'snake_case' });

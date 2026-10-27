@@ -32,6 +32,7 @@
     "zod": "4.6.7"
   },
   "exports": {
-    "./vercel": "./src/vercel.ts"
+    "./vercel": "./src/vercel.ts",
+    "./listings": "./src/listings.ts"
   }
 }

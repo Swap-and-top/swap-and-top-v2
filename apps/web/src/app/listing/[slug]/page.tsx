@@ -5,21 +5,26 @@
  * engine matches against a query and what a person recognises in a WhatsApp
  * message.
  *
- * This is a server component so it can await `params` and generate metadata.
+ * This is a server component so it can await `params` and generate metadata,
+ * and read the listing from the database.
  * The three detail views below it are client components, because they hold the
  * save and reveal state.
  */
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getListingBySlug, mockListings } from '@snt/core';
 import { RequestDetail } from '@/components/listing/RequestDetail';
 import { SaleDetail } from '@/components/listing/SaleDetail';
 import { SwapDetail } from '@/components/listing/SwapDetail';
 import { slowDown } from '@/components/slowDown';
+import { feedListings, listingFor } from '@/lib/listings';
 
-export function generateStaticParams() {
-  return mockListings.map((listing) => ({ slug: listing.slug }));
+/** Built ahead for every live listing, kept for a minute; a listing newer
+    than the last build is made on its first visit. */
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return (await feedListings()).map((listing) => ({ slug: listing.slug }));
 }
 
 /**
@@ -33,7 +38,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const listing = getListingBySlug(slug);
+  const listing = await listingFor(slug);
   if (!listing) return { title: 'Listing not found · Swap & Top' };
 
   let price = '';
@@ -58,7 +63,7 @@ export default async function ListingPage({
 }) {
   await slowDown();
   const { slug } = await params;
-  const listing = getListingBySlug(slug);
+  const listing = await listingFor(slug);
 
   if (!listing) notFound();
 
