@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { ToastOffset } from '@/components/ToastOffset';
+import { AskName } from '@/components/AskName';
 import { SessionRestore } from '@/components/SessionRestore';
+import { VerifyPhoneHost } from '@/components/VerifyPhone';
 import { AppToaster, SignInHost } from '@snt/ui';
 import { PageLoadBar } from '@/components/PageLoadBar';
 import { ScrollToTop } from '@/components/ScrollToTop';
@@ -90,11 +92,15 @@ export default function RootLayout({
         {/* A thin bar along the top while a page is on its way. */}
         <PageLoadBar />
         {children}
-        {/* The one sign-in sheet, shown whenever a guest tries something that
-            needs an account. */}
         {/* A remembered sign in, back before the first paint. */}
         <SessionRestore />
+        {/* The one sign in sheet, shown whenever a guest tries something that
+            needs an account. */}
         <SignInHost />
+        {/* The verify phone sheet, when someone without one tries to post or
+            make an offer; and a name for anyone who joined by phone. */}
+        <VerifyPhoneHost />
+        <AskName />
         {/* Short confirmations, "Saved" and the like (see AppToaster). */}
         <AppToaster />
         <ToastOffset />

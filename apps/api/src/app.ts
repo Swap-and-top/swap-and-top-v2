@@ -7,8 +7,10 @@
 import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { cors } from 'hono/cors';
+import { accountRoutes } from './routes/account';
 import { healthRoutes } from './routes/health';
 import { listingRoutes } from './routes/listings';
+import { meRoutes } from './routes/me';
 import { storeRoutes } from './routes/stores';
 
 export const app = new OpenAPIHono({
@@ -26,6 +28,15 @@ app.use('*', cors({ origin: ['http://localhost:3000'] }));
 app.route('/', healthRoutes);
 app.route('/', listingRoutes);
 app.route('/', storeRoutes);
+app.route('/', meRoutes);
+app.route('/', accountRoutes);
+
+// Endpoints for an account take the Supabase sign in token.
+app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {
+  type: 'http',
+  scheme: 'bearer',
+  bearerFormat: 'JWT',
+});
 
 app.doc31('/openapi.json', {
   openapi: '3.1.0',
@@ -33,7 +44,7 @@ app.doc31('/openapi.json', {
     title: 'Swap & Top API',
     version: '0.1.0',
     description:
-      'The system of record for Swap & Top. Public endpoints need no sign in; the rest arrive with sign in (backend plan, Phase 2).',
+      'The system of record for Swap & Top. Public endpoints need no sign in. Endpoints for an account take the Supabase sign in token as a Bearer token.',
   },
 });
 

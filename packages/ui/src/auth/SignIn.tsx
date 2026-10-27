@@ -9,7 +9,7 @@
  * they were on.
  *
  * It offers the ways in — Google, Facebook (neither connected yet) and
- * "Continue with email", which goes to the sign-in page and back.
+ * "Continue with email", which goes to the sign in page and back.
  *
  * `SignInGate` is for a whole screen that belongs to an account — the
  * saved listings, offers, Me — and moves anyone signed out on from it.
@@ -60,7 +60,7 @@ function SignInBody({ reason }: { reason: string }) {
   const closeSheet = useCloseSheet();
 
   /**
-   * "Continue with email": to the sign-in page, which brings them back to
+   * "Continue with email": to the sign in page, which brings them back to
    * this page once they are in. The sheet sinks away as they go.
    */
   function toSignInPage() {
@@ -103,8 +103,8 @@ function SignInBody({ reason }: { reason: string }) {
 
       <div className={styles.or}>or</div>
 
-      {/* The usual third way in, after Google and Facebook: email, on the
-          sign-in page. */}
+      {/* The main way in: email and password, or a phone, on the sign in
+          page. */}
       <Button size="lg" block onClick={toSignInPage}>
         Continue with email
       </Button>

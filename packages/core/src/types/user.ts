@@ -10,9 +10,6 @@
 export type Role =
   | 'guest'
   | 'user'
-  // Runs a store. Until people own stores (decision P31), the account and
-  // its store are one.
-  | 'store'
   | 'moderator'
   | 'admin'
   | 'super_admin';
@@ -40,14 +37,13 @@ export interface User {
   replyHours?: number;
   /** Whether any report against this account has been upheld. */
   hasUpheldReports: boolean;
-  /** Set when the user is a store. */
+  /** Set when the user owns a store. Stores are a membership, not a role. */
   storeId?: string;
 }
 
 const ROLE_RANK: Record<Role, number> = {
   guest: 0,
   user: 1,
-  store: 1,
   moderator: 2,
   admin: 3,
   super_admin: 4,

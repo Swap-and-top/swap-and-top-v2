@@ -28,7 +28,7 @@ import {
   contactWaysFor,
   useLiveListings,
   myOfferOn,
-  requireSignIn,
+  requireVerifiedPhone,
   sendOfferOptimistically,
   takesCashOffers,
   useOfferStore,
@@ -236,7 +236,10 @@ function OfferForm({ listing }: { listing: OfferableListing }) {
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!ready) return;
-    requireSignIn('Sign in to send your offer.', () => void send());
+    requireVerifiedPhone(
+      { signIn: 'Sign in to send your offer.', phone: 'Verify your phone number to send offers.' },
+      () => void send(),
+    );
   }
 
   async function send() {

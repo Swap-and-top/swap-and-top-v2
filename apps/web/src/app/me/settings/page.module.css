@@ -1,0 +1,22 @@
+.title {
+  margin: 0;
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+}
+
+.lead {
+  margin: var(--snt-space-2) 0 var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.save {
+  margin-top: var(--snt-space-5);
+}

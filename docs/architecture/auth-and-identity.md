@@ -57,6 +57,7 @@ A suspended user registers again with a fresh address in thirty seconds. Discipl
 - It is the key that raises the soft listing cap
 - It is the foundation for auction bidding later, where accountability is the whole integrity model
 - Email becomes optional, used for receipts, invoices and moderation records
+- An account can start with an email, Google or Facebook, with no phone. The phone is verified before the account can post, make offers or reach anyone, and each phone belongs to one account only, so a ban still holds: a new email account cannot verify the banned phone
 
 See [../product/trust-and-safety.md](../product/trust-and-safety.md).
 

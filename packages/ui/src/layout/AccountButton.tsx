@@ -14,7 +14,7 @@
  */
 
 import { useRef, useState } from 'react';
-import { getUser, useSessionStore, useViewerId } from '@snt/core';
+import { useSessionStore, viewerName } from '@snt/core';
 import { AppMenu } from './AppMenu';
 import { BurgerLines } from './BurgerLines';
 import { GuestMark } from './GuestMark';
@@ -22,10 +22,10 @@ import styles from './Headers.module.css';
 
 export function AccountButton() {
   const signedIn = useSessionStore((state) => state.signedIn);
-  const viewerId = useViewerId();
+  const viewer = useSessionStore((state) => state.viewer);
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
-  const name = signedIn && viewerId ? getUser(viewerId)?.displayName : undefined;
+  const name = signedIn && viewer ? viewerName(viewer) : undefined;
 
   return (
     <>

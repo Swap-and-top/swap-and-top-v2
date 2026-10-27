@@ -1,0 +1,21 @@
+/** Why the sheet asks, under its title. */
+.reason {
+  margin: 0;
+  font-size: var(--snt-text-md);
+  line-height: 1.45;
+  color: var(--snt-ink);
+}
+
+.line {
+  margin: 0;
+  font-size: var(--snt-text-base);
+  color: var(--snt-ink);
+}
+
+/** A small line under a box. */
+.note {
+  margin: calc(var(--snt-space-2) * -1) 0 0;
+  padding-left: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}

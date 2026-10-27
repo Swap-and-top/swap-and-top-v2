@@ -122,3 +122,25 @@ export const StoreSchema = z
 export const ErrorSchema = z
   .object({ error: z.string().openapi({ example: 'Listing not found' }) })
   .openapi('Error');
+
+export const MeSchema = z
+  .object({
+    id: z.string().openapi({ example: 'u-tarisai' }),
+    /** Empty for a new person until they give their name. */
+    displayName: z.string().openapi({ example: 'Tarisai M.' }),
+    phone: z.string().optional().openapi({ example: '+263770000001' }),
+    /** Needed to post, make offers and reach other people. */
+    phoneVerified: z.boolean(),
+    role: z.enum(['user', 'moderator', 'admin', 'super_admin']),
+    standing: z.enum(['good', 'warned', 'limited', 'suspended', 'banned']),
+    /** The stores they own or work for. */
+    stores: z.array(
+      z.object({
+        id: z.string(),
+        slug: z.string(),
+        name: z.string(),
+        role: z.enum(['owner', 'staff']),
+      }),
+    ),
+  })
+  .openapi('Me');

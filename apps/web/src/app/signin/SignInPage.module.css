@@ -39,11 +39,25 @@
 
 /* White and flat, like every card in the app. */
 .form {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px 30px 30px;
+  padding: 10px 30px 16px;
   border-radius: 30px;
   background: var(--snt-bg-card);
+}
+
+/* As tall as the sign in card, so moving between the pages the card keeps
+   its size; what is in it sits in the middle. */
+.tall {
+  justify-content: center;
+  min-height: 600px;
+}
+
+/* Sign up's steps, along the top of the card. */
+.form .stepBar {
+  margin: 16px 0 0;
 }
 
 .door {
@@ -86,9 +100,8 @@
  */
 .box {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   height: var(--snt-touch);
-  padding: 0 20px;
   border-radius: var(--snt-radius-pill);
   background: var(--snt-bg-inset);
   cursor: text;
@@ -99,11 +112,17 @@
   box-shadow: var(--snt-focus-ring);
 }
 
+/* The writing fills the whole pill, so a tap anywhere on the pale blue
+   lands in it and the pointer is the typing one all over. */
 .input {
   flex: 1 1 auto;
   min-width: 0;
+  height: 100%;
+  padding: 0 20px;
   border: 0;
+  border-radius: inherit;
   background: none;
+  cursor: text;
   color: var(--snt-control-active);
   font-size: var(--snt-text-md);
   outline: none;
@@ -121,11 +140,124 @@
   }
 }
 
+/*
+ * Where the email and phone forms go: both in the same spot, the one not in
+ * use hidden but still taking its room, so the card keeps the taller one's
+ * height and the shorter sits in the middle.
+ */
+.stage {
+  display: grid;
+}
+
+.pane {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.paneHidden {
+  visibility: hidden;
+}
+
+/** A line under the box: where the code goes, or went. */
+.note {
+  margin: 6px 20px 15px;
+  font-size: 0.8em;
+  color: var(--snt-card-ink-muted);
+}
+
+.forgot {
+  align-self: flex-start;
+  margin: 6px 20px 15px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #2572a2;
+  font-size: 0.8em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The paper plane at the top of "Please verify your email": wide, so set
+   by its width. Shown at every size, as the card's own picture. */
+.plane {
+  width: 170px;
+  margin: 10px auto 0;
+}
+
+.plane img {
+  display: block;
+  width: 100%;
+}
+
+/* A line under a heading, at every size: what this card is for. */
+.lead {
+  margin: 12px 0 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* First name and surname, side by side. */
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pair > * {
+  min-width: 0;
+}
+
+.pair .label {
+  margin-left: 16px;
+}
+
+.pair .input {
+  padding: 0 16px;
+}
+
+/* A done step: the tick in a green round. */
+.tick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 20px auto 0;
+  border-radius: 50%;
+  background: #1f978d;
+  color: #fff;
+}
+
+/* Small print under a button: the terms. */
+.small {
+  margin: 12px 10px 0;
+  font-size: 0.75em;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--snt-card-ink-muted);
+}
+
+.small a {
+  color: #2572a2;
+  font-weight: var(--snt-weight-bold);
+  text-decoration: none;
+}
+
+/* A second action under the main one: Back to sign in. */
+.back {
+  margin-top: var(--snt-space-4);
+}
+
 /** Show or hide the password: the first app's eye, in the bold blue. */
 .eye {
   display: flex;
   flex-shrink: 0;
-  margin-left: 10px;
+  align-items: center;
+  margin-right: 20px;
   padding: 0;
   border: 0;
   background: none;
@@ -138,25 +270,13 @@
   overflow: visible;
 }
 
-.forgot {
-  align-self: flex-start;
-  margin: 6px 20px 15px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: #2572a2;
-  font-size: 0.8em;
-  cursor: pointer;
-}
-
 /*
  * --- the buttons, as on the sign-in sheet: 48px pills, flat, no shadow --
- * Sign in keeps the brand gradient and Create new account the header's
- * yellow; Google and Facebook are exactly the sheet's.
+ * Send code and Sign in keep the brand gradient; Google and Facebook are
+ * exactly the sheet's.
  */
 
 .signIn,
-.create,
 .platform {
   display: flex;
   align-items: center;
@@ -174,9 +294,13 @@
 }
 
 .signIn:hover,
-.create:hover,
 .platform:hover {
   filter: brightness(0.96);
+}
+
+.signIn:disabled:not([aria-busy]) {
+  cursor: default;
+  opacity: 0.6;
 }
 
 .signIn {
@@ -184,10 +308,8 @@
   color: var(--snt-ink-on-dark);
 }
 
-.create {
+.change {
   margin-top: var(--snt-space-4);
-  background: var(--snt-brand-yellow);
-  color: var(--snt-post-ink);
 }
 
 /** "or", grey, with a grey rule either side — as on the sign-in sheet. */
@@ -226,6 +348,47 @@
   color: #1f1f1f;
 }
 
+/* Each way in after the first, a little below the one above. */
+.next {
+  margin-top: var(--snt-space-4);
+}
+
+/* The other way in, phone or email: the app's blue, with white type and
+   icon, as Facebook's button is in its own blue. */
+.other {
+  background: var(--snt-accent);
+  color: var(--snt-ink-on-dark);
+}
+
+/* "Don't have an account? Sign up" (and on sign up, "Already have an
+   account? Sign in"), small and centred at the foot. */
+.join {
+  margin: 20px 0 0;
+  font-size: 0.85em;
+  text-align: center;
+  color: var(--snt-card-ink-muted);
+}
+
+.joinLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #2572a2;
+  font: inherit;
+  font-weight: var(--snt-weight-bold);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Sign up, once sent: where the link went. */
+.sent {
+  margin: 16px 0 24px;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--snt-card-ink-muted);
+}
+
 /* Facebook: its blue, with white type. */
 .facebook {
   margin-top: var(--snt-space-4);
@@ -250,6 +413,10 @@
   .content {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    align-items: center;
+    /* Sign in's height on every page, so a short card (forgot password)
+       sits in the middle and each picture has the same room. */
+    min-height: 600px;
     padding: 40px;
     border-radius: 40px;
     background-image: linear-gradient(-90deg, #255dab, #1cb67f);
@@ -293,13 +460,42 @@
     font-size: 3em;
   }
 
+  .hero.heroSmall {
+    top: 150px;
+    width: 560px;
+    margin-right: 40px;
+  }
+
+  /* A third line, under "Swap & Top". */
+  .after {
+    margin-top: -6px;
+    font-size: 1.8em;
+  }
+
+  /* Sign up and its email check: the card on the left, the picture on the
+     right, the gradient turned to match. */
+  .flipped {
+    background-image: linear-gradient(90deg, #255dab, #1cb67f);
+  }
+
+  .flipped .picture {
+    order: 2;
+  }
+
+  /* Wider than its half of the page, so it reaches under the card: it never
+     takes a tap, and the card sits above it. */
   .hero {
+    pointer-events: none;
     position: absolute;
     top: 68px;
     width: 800px;
     max-width: none;
     margin-right: 100px;
     overflow: visible;
+  }
+
+  .tall {
+    min-height: 500px;
   }
 
   /* The phone's door and heading give way to the welcome. */

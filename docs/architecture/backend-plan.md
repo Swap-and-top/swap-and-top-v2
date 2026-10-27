@@ -2,7 +2,7 @@
 
 ## How we move from mock data to a real API and database, in order
 
-**Status:** Approved 2026-10-27. Phase 1 built the same day (see [Where it stands](#where-it-stands)).
+**Status:** Approved 2026-10-27. Phases 1 and 2 built the same day (see [Where it stands](#where-it-stands)).
 **Read this if:** you are about to write the API, the database schema, sign in, or the staff tools for reports.
 
 ---
@@ -212,6 +212,23 @@ Seeded in development only, each signing in with its phone number and the fixed 
 - Read endpoints, all public: health check, browse listings (live only, owners in good standing, cursor paged), get a listing, get a store.
 - **Swagger** at `/api/docs` lists every endpoint and can run each one (open it, Try it out, Execute). The contract itself is at `/api/openapi.json`.
 
+**Phase 2 is built** (2026-10-27): phone sign in.
+
+- Supabase Auth has phone sign in on, with the seven test numbers taking the code `123456` and sending no SMS. Any other number needs a real SMS provider (Twilio's details in Supabase are placeholders for now).
+- **The auth pages follow the first app's arrangement and pictures**, in this app's style, on one shared frame (`apps/web/src/app/signin/AuthLayout.tsx`): sign in (`/signin`, the door), sign up (`/signup`, the clipboard, then the envelope; picture on the right), forgot password (`/signin/forgot`) and the new password page (`/signin/reset`, both the key and arrows).
+- **Sign in** opens on email and password, with Continue with phone (a number and a one time code), Google and Facebook under "or" (Google and Facebook not connected yet). The phone and email forms keep the same height.
+- **Sign up** is three steps, shown along the top of the card: Your details (first name, surname, email), Password (neighbourhood, city or town from the first app's list `TOWNS`, starting on Harare, then the password twice), Verify email (a code). Verified, they are signed in. Signing in by email before verifying asks for the code first, as the first app did.
+- **Mock codes, until email and SMS are set up.** `POST /api/auth/signup` makes the account through Supabase's admin API without sending email; `POST /api/auth/verify-email` and `POST /api/me/phone` take the code `123456` (`MOCK_CODE` in `apps/api/src/supabaseAdmin.ts`) and send nothing. The screens say so under the box. Remove them once real email and SMS are set up.
+- **A phone is optional to join** (decided 2026-10-27), because Google and Facebook accounts arrive without one. Anyone can browse and save. Posting and sending offers need a verified phone: `requireVerifiedPhone` in `@snt/core` opens the verify phone sheet (`apps/web/src/components/VerifyPhone.tsx`) and carries on once it is done; Settings has the same form. A phone belongs to one account only (409 otherwise), which keeps a ban in place. Someone who joined by phone is asked their name once (`AskName`, `PATCH /api/me`).
+- Settings (`/me/settings`, from Me) has the phone number, and the email and password. The browser's Supabase client lives in `apps/web/src/lib/supabase.ts`, with `apiAsViewer` for calls as the signed in person.
+- `SessionRestore` keeps the session store in `@snt/core` in step with Supabase. `useViewerId` is now the real person's id, and the header and menu show their real name.
+- The API checks the sign in token against Supabase's public keys (`apps/api/src/auth.ts`). `GET /api/me` returns the signed in person, linking the Supabase user to the person with that phone the first time, or adding a new person with the name from sign up.
+- In development the database pool is kept on `globalThis`, so the dev server's reloads do not use up Supabase's 15 session connections.
+- The `'store'` stand in role is gone from `@snt/core`.
+- **For email to work beyond testing:** Supabase's built in email only sends to the project's team members, a few an hour. Before launch, set a real email sender under Authentication, Emails, SMTP Settings. Also list the site under Authentication, URL Configuration, Redirect URLs (`http://localhost:3000/**` and the Vercel address with `/**`), or reset links are refused.
+- Test account 1 (077 000 0001) also has the test email `tarisai.test@example.com` with the password `testpass123`.
+- Not yet: the Me page, offers and deals still show the mock account (Tarisai M.) whoever signs in. Each moves to the API with its page in Phase 3.
+
 ### Running it
 
 The settings live in the root `.env` (git ignores it): `DATABASE_URL` and the four `SUPABASE_` values. Then:
@@ -235,7 +252,7 @@ No server to rent. The web app serves the API at `/api` through one route (`apps
 | Your laptop, the API on its own | http://localhost:4000/api | http://localhost:4000/api/docs |
 | Vercel | `https://<site>/api` | `https://<site>/api/docs` |
 
-**On Vercel** the project needs one setting, `DATABASE_URL`, under Settings, Environment Variables. Use Supabase's **Transaction pooler** string there (Connect, Transaction pooler, URI, with the password filled in), which suits Vercel, where each request borrows a connection for a moment. The Session pooler string in `.env` is for the laptop.
+**On Vercel** the project needs `DATABASE_URL`, and for sign in `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the same values as `apps/web/.env.local`; they are built into the page, so add them before the push). They go under Settings, Environment Variables. For `DATABASE_URL` use Supabase's **Transaction pooler** string there (Connect, Transaction pooler, URI, with the password filled in), which suits Vercel, where each request borrows a connection for a moment. The Session pooler string in `.env` is for the laptop.
 
 **When a server of its own is worth it:** for work that runs between visits (expiring listings, lead alerts, closing auctions) or to answer with no first request delay (decision A16). Then `apps/api/src/index.ts` runs the same app on a small always on host, about $5 a month, not a VPS to look after.
 

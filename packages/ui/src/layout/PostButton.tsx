@@ -13,12 +13,13 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent, ReactNode } from 'react';
-import { requireSignIn, useSessionStore } from '@snt/core';
+import { requireVerifiedPhone, useSessionStore } from '@snt/core';
 import { startPageLoad } from '../pageLoad';
 
 /**
  * For a link into the posting flow: what to spread on it. A guest's tap
- * opens the sign in sheet instead and stays on the page, so the top loading
+ * opens the sign in sheet instead, and someone without a verified phone the
+ * verify phone sheet, and stays on the page, so the top loading
  * bar is told not to start; it starts once they are in. `then` runs as the
  * move to posting happens (e.g. clearing the feed's filters), not while a
  * guest is still deciding whether to sign in.
@@ -26,24 +27,30 @@ import { startPageLoad } from '../pageLoad';
 export function useSignInToPost(href: string, then?: () => void) {
   const router = useRouter();
   const signedIn = useSessionStore((state) => state.signedIn);
+  const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? true);
 
   function onClick(event: MouseEvent<HTMLAnchorElement>) {
-    // Signed in, or opening in a new tab or window: an ordinary link.
-    if (signedIn || event.metaKey || event.ctrlKey || event.shiftKey) {
+    // Signed in with a verified phone, or opening in a new tab or window: an
+    // ordinary link.
+    if ((signedIn && phoneVerified) || event.metaKey || event.ctrlKey || event.shiftKey) {
       then?.();
       return;
     }
     event.preventDefault();
-    requireSignIn('Sign in to post a listing.', () => {
-      then?.();
-      startPageLoad();
-      router.push(href);
-    });
+    requireVerifiedPhone(
+      { signIn: 'Sign in to post a listing.', phone: 'Verify your phone number to post listings.' },
+      () => {
+        then?.();
+        startPageLoad();
+        router.push(href);
+      },
+    );
   }
 
   return {
     onClick,
-    'data-no-page-load': signedIn ? undefined : '',
+    // A sheet opens instead of a page: no loading bar.
+    'data-no-page-load': signedIn && phoneVerified ? undefined : '',
   };
 }
 

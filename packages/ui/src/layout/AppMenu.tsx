@@ -17,11 +17,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import {
   COMPANY,
-  getUser,
   telHref,
   useDealStore,
   useSessionStore,
-  useViewerId,
+  viewerName,
 } from '@snt/core';
 import {
   CloseIcon,
@@ -187,8 +186,7 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
   const signedIn = useSessionStore((state) => state.signedIn);
   const signOut = useSessionStore((state) => state.signOut);
-  const viewerId = useViewerId();
-  const user = viewerId ? getUser(viewerId) : undefined;
+  const user = useSessionStore((state) => state.viewer);
   const { confirmedDeals } = useDealStore();
   const next = pathname && pathname !== '/signin' ? pathname : '/';
   const year = new Date().getFullYear();
@@ -205,10 +203,10 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
           <>
             <div className={styles.who}>
               <span className={styles.whoAvatar}>
-                <Avatar size={56} initials={initialsOf(user.displayName)} />
+                <Avatar size={56} initials={initialsOf(viewerName(user))} />
               </span>
               <div className={styles.whoText}>
-                <span className={styles.name}>{user.displayName}</span>
+                <span className={styles.name}>{viewerName(user)}</span>
                 <ConfirmedDealsBadge count={confirmedDeals} size="md" long />
               </div>
             </div>

@@ -57,6 +57,7 @@ export default function MePage() {
   const { ids } = useSavedStore();
   const { answers, confirmedDeals } = useDealStore();
   const signOut = useSessionStore((state) => state.signOut);
+  const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? false);
   const offers = useOfferStore((store) => store.offers);
   /** Offers made, plus those waiting on the user's own listings. */
   const offerTotal = offers.filter(
@@ -150,10 +151,10 @@ export default function MePage() {
             <h2 className={styles.section}>Account</h2>
             <ListGroup>
               <ListRow
-                href="/me"
+                href="/me/settings"
                 icon={<ShieldCheckIcon size={19} />}
                 label="Verification"
-                value="Phone verified"
+                value={phoneVerified ? 'Phone verified' : 'Phone not verified'}
               />
               <ListRow
                 href="/help"
@@ -161,7 +162,7 @@ export default function MePage() {
                 label="Safety tips"
               />
               <ListRow
-                href="/me"
+                href="/me/settings"
                 icon={<SettingsIcon size={19} />}
                 label="Settings"
               />

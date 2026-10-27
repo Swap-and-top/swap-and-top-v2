@@ -22,15 +22,25 @@ import styles from './StepBar.module.css';
 
 export interface Step {
   label: string;
-  href: string;
+  /** A page of its own: a step already done links back to it. Without one
+      (steps on one page) a done step is just ticked. */
+  href?: string;
 }
 
 /** The step each flow's bar last showed, keyed by the flow's first page. It
     lives as long as the app does in the tab, so a fresh load starts still. */
 const lastShown = new Map<string, number>();
 
-export function StepBar({ steps, current }: { steps: Step[]; current: number }) {
-  const flow = steps[0]?.href ?? '';
+export function StepBar({
+  steps,
+  current,
+  className,
+}: {
+  steps: Step[];
+  current: number;
+  className?: string;
+}) {
+  const flow = steps[0]?.href ?? steps[0]?.label ?? '';
   const [shown, setShown] = useState(() => lastShown.get(flow) ?? current);
   const [direction, setDirection] = useState<'forward' | 'back'>('forward');
 
@@ -52,7 +62,9 @@ export function StepBar({ steps, current }: { steps: Step[]; current: number }) 
 
   return (
     <nav
-      className={[styles.bar, direction === 'back' ? styles.back : ''].filter(Boolean).join(' ')}
+      className={[styles.bar, direction === 'back' ? styles.back : '', className ?? '']
+        .filter(Boolean)
+        .join(' ')}
       aria-label={`Step ${current} of ${steps.length}`}
     >
       <ol className={styles.steps}>
@@ -84,7 +96,7 @@ export function StepBar({ steps, current }: { steps: Step[]; current: number }) 
                 />
               ) : null}
               <li className={[styles.step, state].join(' ')}>
-                {done ? (
+                {done && step.href ? (
                   <Link href={step.href} className={styles.stepLink}>
                     {mark}
                   </Link>

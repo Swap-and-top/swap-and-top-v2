@@ -16,14 +16,20 @@ console with stock, leads, offers and stats. The product docs live in
 
 Everything runs on mock data in the browser for now. There is no backend:
 stores hold state in memory, so a full page reload resets offers, saves and
-deal answers. Signing in is the exception: it is kept in local storage
-(`snt-session`) until you sign out.
+deal answers. Signing in is the exception: it is real, by phone and a one
+time code through Supabase (test numbers 077 000 0001 to 0007, code
+123456), or by email and password from the three step sign up page. Email
+and phone codes are mock ones for now: 123456, nothing is sent. A phone is
+optional to join; posting and offers ask for a verified phone first.
+Supabase keeps the sign in in the browser until you sign out.
 
 The backend is planned in `docs/architecture/backend-plan.md`: Postgres on
-Supabase, Drizzle, Hono in `apps/api`, phone sign in. Phase 1 is built: the
-tables, the seed data and the first read endpoints. The web app serves the
+Supabase, Drizzle, Hono in `apps/api`, phone sign in. Phases 1 and 2 are
+built: the tables, the seed data, the first read endpoints and phone sign in
+(GET /api/me links the sign in to a person by phone). The web app serves the
 API at /api (Swagger at /api/docs), so Vercel deploys both together; Vercel
-needs DATABASE_URL set. The web pages do not use the API yet. Roles (user, moderator, admin, super
+needs DATABASE_URL, NEXT_PUBLIC_SUPABASE_URL and
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY set. The web pages do not use the API yet. Roles (user, moderator, admin, super
 admin) and reports go into the first schema; person, free store and paid
 store are not roles but store membership and passes.
 
