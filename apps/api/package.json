@@ -1,0 +1,36 @@
+{
+  "name": "@snt/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Swap & Top API: Hono, Drizzle and Postgres. The system of record; every client goes through it.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo \"@snt/api: no linter configured yet\"",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx src/db/seed.ts",
+    "clean": "rm -rf .turbo node_modules *.tsbuildinfo"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "drizzle-kit": "0.31.11",
+    "tsx": "4.23.15",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@hono/node-server": "2.1.5",
+    "@hono/swagger-ui": "0.6.1",
+    "@hono/zod-openapi": "1.6.3",
+    "@snt/core": "workspace:*",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.14",
+    "postgres": "3.4.9",
+    "zod": "4.6.7"
+  },
+  "exports": {
+    "./vercel": "./src/vercel.ts"
+  }
+}

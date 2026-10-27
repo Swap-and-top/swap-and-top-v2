@@ -144,18 +144,18 @@ Listings from suspended and banned accounts never appear in the feed, in search,
 ```ascii
 SUPER ADMIN  ─── everything
      │
-   ADMIN      ─── full management, moderation, billing, verification
+   ADMIN      ─── bans, appeals, store verification, payments, staff
      │
  MODERATOR    ─── report queue, listing removal, warnings, suspensions
      │
-  DEALER      ─── own stock, leads, promotion
-     │
-   USER       ─── post, swap, request, save, report
+   USER       ─── post, swap, request, save, report, open stores
      │
   GUEST       ─── browse, search, reveal
 ```
 
 **Higher roles include everything below them.** This must genuinely cascade.
+
+**Stores are not a rank.** Running a store, as owner or staff, is a membership a user has, not a role. Person, free store and paid store all sit under USER. See [../architecture/backend-plan.md](../architecture/backend-plan.md).
 
 In v1 the role check was an exact string comparison, so a super admin was refused on every route restricted to admin — the platform owner could load the dashboard and then be denied by the API behind it. There was also a route restricted to a role with no authentication check in front of it, which crashed rather than refusing. See [../reference/v1-lessons.md](../reference/v1-lessons.md).
 

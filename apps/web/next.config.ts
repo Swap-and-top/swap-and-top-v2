@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
    * Next compiles them itself. This is what lets `@snt/ui` use CSS Modules —
    * they are processed as part of this app's build.
    */
-  transpilePackages: ['@snt/ui', '@snt/core', '@snt/assets'],
+  transpilePackages: ['@snt/ui', '@snt/core', '@snt/assets', '@snt/api'],
 
   eslint: {
     // No lint config yet; `pnpm typecheck` is the gate for now.

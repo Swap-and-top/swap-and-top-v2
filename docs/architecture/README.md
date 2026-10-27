@@ -15,6 +15,7 @@ This folder explains how the system is built and why each significant technical 
 - **[background-jobs.md](./background-jobs.md)** — expiry, alerts, scheduled work
 - **[seo-and-rendering.md](./seo-and-rendering.md)** — the acquisition channel, in technical terms
 - **[deployment-and-hosting.md](./deployment-and-hosting.md)** — environments, cost, operational limits
+- **[backend-plan.md](./backend-plan.md)**: the stack, roles and stores, reports, and the order of work from mock data to a real API (proposed)
 
 ---
 

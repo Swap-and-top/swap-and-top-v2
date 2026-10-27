@@ -12,6 +12,7 @@
     "clean": "rm -rf .next .turbo node_modules *.tsbuildinfo"
   },
   "dependencies": {
+    "@snt/api": "workspace:*",
     "@snt/assets": "workspace:*",
     "@snt/core": "workspace:*",
     "@snt/ui": "workspace:*",

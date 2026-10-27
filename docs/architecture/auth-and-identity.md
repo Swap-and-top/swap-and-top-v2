@@ -66,8 +66,8 @@ See [../product/trust-and-safety.md](../product/trust-and-safety.md).
 
 ```ascii
 SUPER ADMIN  ⊃  ADMIN  ⊃  MODERATOR  ⊃  USER  ⊃  GUEST
-                                    
-DEALER = USER + shop scope (an added surface, not a rank)
+
+STORE = a USER who owns or works in a store (a membership, not a rank)
 ```
 
 A role check must ask **"does this user have at least this level?"** — never **"is this user exactly this role?"**
@@ -78,9 +78,9 @@ The role check was an exact string comparison. A super admin was therefore refus
 
 All three are the same underlying mistake: authorisation treated as a string comparison rather than as a modelled hierarchy.
 
-### Dealer is a scope, not a rank
+### A store is a membership, not a rank
 
-A dealer is an ordinary user with a shop attached and an extra surface. They can swap, save and request as themselves. Dealer permissions are scoped to their own shop — never a general elevation.
+A person who runs a store is an ordinary user who is the owner or staff of that store. They can swap, save and ask as themselves. Store permissions reach only their own store, never a general elevation. Free and paid are not roles either: a store is paid exactly while a pass covers today. See [backend-plan.md](./backend-plan.md).
 
 ---
 

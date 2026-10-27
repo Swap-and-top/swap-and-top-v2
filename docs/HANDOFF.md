@@ -19,6 +19,14 @@ stores hold state in memory, so a full page reload resets offers, saves and
 deal answers. Signing in is the exception: it is kept in local storage
 (`snt-session`) until you sign out.
 
+The backend is planned in `docs/architecture/backend-plan.md`: Postgres on
+Supabase, Drizzle, Hono in `apps/api`, phone sign in. Phase 1 is built: the
+tables, the seed data and the first read endpoints. The web app serves the
+API at /api (Swagger at /api/docs), so Vercel deploys both together; Vercel
+needs DATABASE_URL set. The web pages do not use the API yet. Roles (user, moderator, admin, super
+admin) and reports go into the first schema; person, free store and paid
+store are not roles but store membership and passes.
+
 ## Repo layout
 
 pnpm workspace with Turborepo.
