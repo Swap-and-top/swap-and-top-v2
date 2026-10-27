@@ -154,6 +154,10 @@ The v1 pattern of scattered timeouts in route guards, waiting to see whether a t
 
 ## Verification, separate from authentication
 
+> **Updated 2026-10-27:** people, free stores and paid stores, the limits, store passes and verification are now decided in [../product/accounts-and-stores.md](../product/accounts-and-stores.md) (decisions B16 to B19, P31 to P37). Where this section disagrees, that document wins. "Dealer" is now "store" in everything people see.
+
+An account is always a person; stores are opened by people and run by an owner and staff, each signing in as themselves (P31, P32).
+
 Authentication proves control of a phone number. Verification asserts something further.
 
 | Tier | Method | Cost | Unlocks |

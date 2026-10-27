@@ -46,7 +46,8 @@ How the thing behaves and looks, independent of technology.
 - **[Search & Discovery](./product/search-and-discovery.md)** — the hero feature: specification-aware search
 - **[Post Flow](./product/post-flow.md)** — one posting flow with three outcomes
 - **[Contact & Reveals](./product/contact-and-reveals.md)** — how people reach each other, and the metric it produces
-- **[Dealer Console](./product/dealer-console.md)** — the business-facing surface
+- **[Accounts & Stores](./product/accounts-and-stores.md)** — people, free and paid stores, store passes, verification, settings
+- **[Dealer Console](./product/dealer-console.md)** — the business-facing surface (now the Store console)
 - **[Trust & Safety](./product/trust-and-safety.md)** — verification, stolen devices, safe meeting
 - **[Roadmap](./product/roadmap.md)** — sequence, and what is deliberately deferred
 

@@ -34,6 +34,10 @@ Revenue comes from dealers.
 
 ## What is paid
 
+> **Updated 2026-10-27:** people, free stores and paid stores, the limits, store passes and verification are now decided in [../product/accounts-and-stores.md](../product/accounts-and-stores.md) (decisions B16 to B19, P31 to P37). Where this section disagrees, that document wins. "Dealer" is now "store" in everything people see.
+
+In short: a paid store is a prepaid pass, **$1 a day, $5 a week or $15 a month**, which includes the Store console, unlimited listings and lead alerts; boosts are bought per listing by anyone. The products below are what a pass and a boost contain.
+
 Four products, listed in the order they begin to earn.
 
 ### 1. Lead alerts — dealers
@@ -133,6 +137,8 @@ See [go-to-market.md](./go-to-market.md) for what the drop is and why it exists.
 ---
 
 ## The listing cap, and why it is not a paywall
+
+> **Updated 2026-10-27 (P33):** the limits are now **5 live listings for a person, 15 for a free store, none for a paid store**, counting only listings for sale or swap (Wanted never counts). At the limit the app offers **Open a store**, which is free. Still spam control, still never a paywall. See [../product/accounts-and-stores.md](../product/accounts-and-stores.md).
 
 Ordinary users have a **soft cap on active listings** — roughly ten.
 

@@ -5,6 +5,8 @@
 **Status:** Decided — build after validation confirms demand
 **Read this if:** you are building the business-facing side, or you need to understand the commercial centre of the plan.
 
+> **Updated 2026-10-27:** the console is the **Store console**, and "dealer" is "store" in everything people see (P37). It opens with a store pass ($1 a day, $5 a week, $15 a month), run by an owner and staff; see [accounts-and-stores.md](./accounts-and-stores.md).
+
 ---
 
 ## Overview

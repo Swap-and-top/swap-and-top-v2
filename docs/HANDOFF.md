@@ -270,6 +270,16 @@ See `git log` for the full detail; each commit body explains its change.
 
 ## Known loose ends and ideas offered
 
+- **Decided, not built (2026-10-27):** accounts and stores, in
+  `docs/product/accounts-and-stores.md` (decisions B16 to B19, P31 to P37).
+  People free (5 live listings), free stores (15), paid stores by prepaid
+  pass ($1 a day, $5 a week, $15 a month: console, unlimited listings, lead
+  alerts); Wanted never counts; a lapsed pass pauses listings above 15. An
+  account is a person who opens stores (up to 3), run by an owner and staff;
+  "Post as" on Post New Item. Verify stores, not people. Settings rules for
+  what can change. "Store" everywhere, never "dealer"; the console becomes
+  the Store console. None of this is in the app yet.
+
 - **Where we stopped (end of 2026-10-27):** boosting works end to end in
   the mock, from Stock's Boosted tab. Likely next: wiring the real Paynow
   account (needs a backend), and whatever the user asks after looking at

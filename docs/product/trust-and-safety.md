@@ -33,6 +33,9 @@ This has a technical consequence — the authentication system must support phon
 
 ## 2. Verification tiers
 
+> **Updated 2026-10-27:** people, free stores and paid stores, the limits, store passes and verification are now decided in [./accounts-and-stores.md](./accounts-and-stores.md) (decisions B16 to B19, P31 to P37). Where this section disagrees, that document wins. "Dealer" is now "store" in everything people see.
+
+
 Two tiers, not three. The governing rule: **verify businesses, not people.**
 
 ```ascii
