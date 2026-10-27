@@ -92,8 +92,8 @@ export interface ListingBase {
   slug: string;
   type: ListingType;
   ownerId: string;
-  /** Present only when the owner is a dealer. */
-  shopId?: string;
+  /** Present only when the owner is a store. */
+  storeId?: string;
   category: Category;
   title: string;
   location: string;
@@ -118,12 +118,12 @@ export interface ListingBase {
   /** Who sees the contact details. Missing means `everyone`. */
   contactShownTo?: ContactShownTo;
   /**
-   * With `offers`: dealers may still see the details on the lead in their
+   * With `offers`: stores may still see the details on the lead in their
    * console, before any offer is accepted. Off unless the poster ticks it.
    */
-  contactToDealers?: boolean;
-  /** Whether this may appear in dealer lead feeds. Defaults on. */
-  allowDealerOffers: boolean;
+  contactToStores?: boolean;
+  /** Whether this may appear in store lead feeds. Defaults on. */
+  allowStoreOffers: boolean;
   viewCount: number;
   revealCount: number;
   promotion: PromotionSlot;
@@ -136,7 +136,7 @@ export interface SaleListing extends ListingBase {
   item: Item;
   price: number;
   negotiable: boolean;
-  /** How many of this model the dealer holds. Dealers only. */
+  /** How many of this model the store holds. Stores only. */
   stockCount?: number;
   /** Set when the price has been reduced since it was first published. */
   previousPrice?: number;
@@ -229,10 +229,10 @@ export function contactAfterOffer(listing: Listing): boolean {
   return listing.contactShownTo === 'offers';
 }
 
-/** Whether a dealer may see the poster's details on a lead, before any
+/** Whether a store may see the poster's details on a lead, before any
     offer of theirs is accepted. */
-export function contactOpenToDealers(listing: Listing): boolean {
-  return !contactAfterOffer(listing) || Boolean(listing.contactToDealers);
+export function contactOpenToStores(listing: Listing): boolean {
+  return !contactAfterOffer(listing) || Boolean(listing.contactToStores);
 }
 
 export const isSale = (l: Listing): l is SaleListing => l.type === 'sale';

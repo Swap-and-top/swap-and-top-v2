@@ -1,4 +1,4 @@
-/** Console, Shop profile: the shopfront, at its own width, by the sidebar. */
+/** Console, Store profile: the storefront, at its own width, by the sidebar. */
 
 .toolbar {
   display: flex;
@@ -8,9 +8,9 @@
   margin-top: var(--snt-space-6);
 }
 
-/* The shopfront's column, from the console's left edge rather than centred:
+/* The storefront's column, from the console's left edge rather than centred:
    its tabs line up with the card above them. */
-.shop {
+.store {
   --snt-column-inset: 0px;
   max-width: var(--snt-column-max);
 }

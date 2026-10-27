@@ -9,7 +9,7 @@
  *  1. The ThinkPad appears at $285 in the feed and $265 with a DROPPED badge in
  *     Saved. Here it is $265 with `previousPrice: 285`, so the drop shows
  *     everywhere rather than only on one screen.
- *  2. The shopfront's third trust statistic was the year joined; it is now the
+ *  2. The storefront's third trust statistic was the year joined; it is now the
  *     confirmed-deal count, which is the stronger signal.
  */
 
@@ -180,7 +180,7 @@ const thinkpad: SaleListing = {
   slug: 'lenovo-thinkpad-t480-i5-16gb-256gb-harare-a3f9',
   type: 'sale',
   ownerId: 'u-kopje',
-  shopId: 's-kopje',
+  storeId: 's-kopje',
   category: 'laptops',
   title: 'Lenovo ThinkPad T480',
   location: 'Harare CBD',
@@ -189,7 +189,7 @@ const thinkpad: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2 hours ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 218,
   revealCount: 9,
   promotion: 'organic',
@@ -215,7 +215,7 @@ const macbookSwap: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '5h ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 7,
   revealCount: 4,
   promotion: 'organic',
@@ -233,7 +233,7 @@ const dellLatitude: SaleListing = {
   slug: 'dell-latitude-7490-i7-16gb-512gb-harare-b118',
   type: 'sale',
   ownerId: 'u-kopje',
-  shopId: 's-kopje',
+  storeId: 's-kopje',
   category: 'laptops',
   title: 'Dell Latitude 7490',
   location: 'Harare CBD',
@@ -242,7 +242,7 @@ const dellLatitude: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '4 days ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 742,
   revealCount: 31,
   /** Paid placement. Always labelled in the feed, never sorted to the top. */
@@ -279,7 +279,7 @@ const hpEliteBook: SaleListing = {
   slug: 'hp-elitebook-840-g5-i5-8gb-256gb-harare-d402',
   type: 'sale',
   ownerId: 'u-kopje',
-  shopId: 's-kopje',
+  storeId: 's-kopje',
   category: 'laptops',
   title: 'HP EliteBook 840 G5',
   location: 'Harare CBD',
@@ -288,7 +288,7 @@ const hpEliteBook: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '6 days ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 164,
   revealCount: 6,
   promotion: 'organic',
@@ -319,7 +319,7 @@ const rx580: SaleListing = {
   slug: 'sapphire-rx-580-8gb-harare-9f30',
   type: 'sale',
   ownerId: 'u-kopje',
-  shopId: 's-kopje',
+  storeId: 's-kopje',
   category: 'parts',
   title: 'Sapphire RX 580 8GB',
   location: 'Harare CBD',
@@ -328,7 +328,7 @@ const rx580: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Sold 3 days ago',
   contactChannels: ['whatsapp'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 389,
   revealCount: 14,
   promotion: 'organic',
@@ -353,7 +353,7 @@ const redmiNote12: SaleListing = {
   slug: 'redmi-note-12-128gb-harare-5a77',
   type: 'sale',
   ownerId: 'u-kopje',
-  shopId: 's-kopje',
+  storeId: 's-kopje',
   category: 'phones',
   title: 'Redmi Note 12',
   location: 'Harare CBD',
@@ -362,7 +362,7 @@ const redmiNote12: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '3 days ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 97,
   revealCount: 4,
   promotion: 'organic',
@@ -387,7 +387,7 @@ const eliteDeskDraft: SaleListing = {
   slug: 'hp-elitedesk-800-g3-draft',
   type: 'sale',
   ownerId: 'u-kopje',
-  shopId: 's-kopje',
+  storeId: 's-kopje',
   category: 'desktops',
   title: 'HP EliteDesk 800 G3',
   location: 'Harare CBD',
@@ -396,7 +396,7 @@ const eliteDeskDraft: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Draft',
   contactChannels: ['whatsapp'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 0,
   revealCount: 0,
   promotion: 'organic',
@@ -414,13 +414,13 @@ const eliteDeskDraft: SaleListing = {
   negotiable: true,
 };
 
-/** Paused by the shop: off the feed for now, back with one tap. */
+/** Paused by the store: off the feed for now, back with one tap. */
 const iphone12Paused: SaleListing = {
   id: 'l-iphone-12-paused',
   slug: 'iphone-12-64gb-harare-c41e',
   type: 'sale',
   ownerId: 'u-kopje',
-  shopId: 's-kopje',
+  storeId: 's-kopje',
   category: 'phones',
   title: 'iPhone 12 64GB',
   location: 'Harare CBD',
@@ -429,7 +429,7 @@ const iphone12Paused: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '6 days ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 141,
   revealCount: 5,
   promotion: 'organic',
@@ -462,7 +462,7 @@ const hpProBook: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '3h ago',
   contactChannels: ['whatsapp', 'sms'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 41,
   revealCount: 2,
   promotion: 'organic',
@@ -497,7 +497,7 @@ const gtxSwap: SwapListing = {
   contactChannels: ['whatsapp'],
   // Tarisai's offer here was accepted, so she sees the number.
   contactShownTo: 'offers',
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 33,
   revealCount: 1,
   promotion: 'organic',
@@ -538,9 +538,9 @@ const galaxySwap: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2 days ago',
   contactChannels: ['whatsapp', 'call'],
-  // Offers first; no dealer leads either.
+  // Offers first; no store leads either.
   contactShownTo: 'offers',
-  allowDealerOffers: false,
+  allowStoreOffers: false,
   viewCount: 58,
   revealCount: 3,
   promotion: 'organic',
@@ -582,9 +582,9 @@ const rtxWanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '1h ago',
   contactChannels: ['whatsapp', 'call'],
-  // Offers first; dealers see the lead but not the number.
+  // Offers first; stores see the lead but not the number.
   contactShownTo: 'offers',
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 22,
   revealCount: 0,
   promotion: 'organic',
@@ -609,7 +609,7 @@ const ps5Wanted: RequestListing = {
   contactChannels: ['whatsapp'],
   // Tarisai's own: offers first.
   contactShownTo: 'offers',
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 14,
   revealCount: 0,
   promotion: 'organic',
@@ -639,10 +639,10 @@ const redmiWanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '6h ago',
   contactChannels: ['whatsapp', 'call'],
-  // Offers first, but dealers may see the number.
+  // Offers first, but stores may see the number.
   contactShownTo: 'offers',
-  contactToDealers: true,
-  allowDealerOffers: true,
+  contactToStores: true,
+  allowStoreOffers: true,
   viewCount: 19,
   revealCount: 0,
   promotion: 'organic',
@@ -661,7 +661,7 @@ const redmiWanted: RequestListing = {
 
 /**
  * Someone who wants something and has something to give: a swap, with the
- * cash as a ceiling. Swaps are shown to dealers as demand, so this is a lead
+ * cash as a ceiling. Swaps are shown to stores as demand, so this is a lead
  * as well as a swap.
  */
 const cadDesktopSwap: SwapListing = {
@@ -679,7 +679,7 @@ const cadDesktopSwap: SwapListing = {
   contactChannels: ['whatsapp', 'call'],
   // Offers first; Kopje's offer was declined, so it never sees the number.
   contactShownTo: 'offers',
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 27,
   revealCount: 0,
   promotion: 'organic',
@@ -720,7 +720,7 @@ const sodimmWanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2 days ago',
   contactChannels: ['whatsapp'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 11,
   revealCount: 0,
   promotion: 'organic',
@@ -752,7 +752,7 @@ const iphone11: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '1h ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 36,
   revealCount: 3,
   promotion: 'organic',
@@ -789,7 +789,7 @@ const ps4Slim: SaleListing = {
   contactChannels: ['whatsapp'],
   /** This seller shows their number to signed-in users only. */
   contactSignedInOnly: true,
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 52,
   revealCount: 2,
   promotion: 'organic',
@@ -824,7 +824,7 @@ const airpodsPro: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '6h ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 29,
   revealCount: 1,
   promotion: 'organic',
@@ -860,7 +860,7 @@ const ideaPad: SaleListing = {
   contactChannels: ['whatsapp', 'sms'],
   // A plain sale, offers first: buyers offer before they see the number.
   contactShownTo: 'offers',
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 44,
   revealCount: 2,
   promotion: 'organic',
@@ -896,7 +896,7 @@ const optiplex: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2 days ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 61,
   revealCount: 4,
   promotion: 'organic',
@@ -918,14 +918,14 @@ const optiplex: SaleListing = {
   negotiable: true,
 };
 
-/* ----------------------------------------------------- other shops' stock - */
+/* ----------------------------------------------------- other stores' stock - */
 
 const iphoneXr: SaleListing = {
   id: 'l-iphone-xr',
   slug: 'iphone-xr-64gb-harare-cbd-3c55',
   type: 'sale',
   ownerId: 'u-samora',
-  shopId: 's-samora',
+  storeId: 's-samora',
   category: 'phones',
   title: 'iPhone XR 64GB',
   location: 'Harare CBD',
@@ -934,7 +934,7 @@ const iphoneXr: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '3h ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 120,
   revealCount: 7,
   promotion: 'organic',
@@ -963,7 +963,7 @@ const galaxyA14: SaleListing = {
   slug: 'galaxy-a14-64gb-harare-cbd-8d20',
   type: 'sale',
   ownerId: 'u-samora',
-  shopId: 's-samora',
+  storeId: 's-samora',
   category: 'phones',
   title: 'Galaxy A14 64GB',
   location: 'Harare CBD',
@@ -972,7 +972,7 @@ const galaxyA14: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Yesterday',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 88,
   revealCount: 5,
   promotion: 'organic',
@@ -999,7 +999,7 @@ const sodimm: SaleListing = {
   slug: 'crucial-16gb-ddr4-sodimm-msasa-66a1',
   type: 'sale',
   ownerId: 'u-msasa',
-  shopId: 's-msasa',
+  storeId: 's-msasa',
   category: 'parts',
   title: 'Crucial 16GB DDR4 SODIMM',
   location: 'Msasa',
@@ -1008,7 +1008,7 @@ const sodimm: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '5h ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 47,
   revealCount: 3,
   promotion: 'organic',
@@ -1034,7 +1034,7 @@ const dualSense: SaleListing = {
   slug: 'ps5-dualsense-controller-avondale-2b90',
   type: 'sale',
   ownerId: 'u-avgames',
-  shopId: 's-avondale-games',
+  storeId: 's-avondale-games',
   category: 'consoles',
   title: 'PS5 DualSense Controller',
   location: 'Avondale',
@@ -1043,7 +1043,7 @@ const dualSense: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Yesterday',
   contactChannels: ['whatsapp'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 73,
   revealCount: 6,
   promotion: 'organic',
@@ -1070,7 +1070,7 @@ const xboxOneS: SaleListing = {
   slug: 'xbox-one-s-1tb-avondale-f417',
   type: 'sale',
   ownerId: 'u-avgames',
-  shopId: 's-avondale-games',
+  storeId: 's-avondale-games',
   category: 'consoles',
   title: 'Xbox One S 1TB',
   location: 'Avondale',
@@ -1079,7 +1079,7 @@ const xboxOneS: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '3 days ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 95,
   revealCount: 4,
   promotion: 'organic',
@@ -1124,7 +1124,7 @@ const iphone11Big: SaleListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2h ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 37,
   revealCount: 3,
   promotion: 'organic',
@@ -1157,7 +1157,7 @@ const ps4ForXbox: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '4h ago',
   contactChannels: ['whatsapp'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 29,
   revealCount: 2,
   promotion: 'organic',
@@ -1198,7 +1198,7 @@ const iphoneXrForGalaxy: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Yesterday',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 44,
   revealCount: 4,
   promotion: 'organic',
@@ -1240,7 +1240,7 @@ const ideaPadForThinkpad: SwapListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2 days ago',
   contactChannels: ['whatsapp'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 18,
   revealCount: 1,
   promotion: 'organic',
@@ -1282,7 +1282,7 @@ const galaxyS21Wanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '5h ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 26,
   revealCount: 1,
   promotion: 'organic',
@@ -1312,7 +1312,7 @@ const keyboardWanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: 'Yesterday',
   contactChannels: ['whatsapp'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 12,
   revealCount: 0,
   promotion: 'organic',
@@ -1342,7 +1342,7 @@ const ssdWanted: RequestListing = {
   expiresAt: THIRTY_DAYS_ON,
   postedLabel: '2 days ago',
   contactChannels: ['whatsapp', 'call'],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   viewCount: 15,
   revealCount: 1,
   promotion: 'organic',
@@ -1415,13 +1415,13 @@ export function getListingBySlug(slug: string): Listing | undefined {
   return mockListings.find((l) => l.slug === slug);
 }
 
-/** A dealer's stock is their listings, seen from the console side. */
-export function getShopListings(shopId: string): Listing[] {
-  return mockListings.filter((l) => l.shopId === shopId);
+/** A store's stock is their listings, seen from the console side. */
+export function getStoreListings(storeId: string): Listing[] {
+  return mockListings.filter((l) => l.storeId === storeId);
 }
 
 export const featuredSlugs = {
-  dealerSale: thinkpad.slug,
+  storeSale: thinkpad.slug,
   swap: macbookSwap.slug,
   userSale: hpProBook.slug,
   request: rtxWanted.slug,

@@ -45,7 +45,7 @@
 /*
  * Under the photo: set in from the card's edges by the feed card's padding,
  * so the rules stop short of the edges just as the feed card's line above a
- * shop does.
+ * store does.
  */
 .body {
   padding: 0 var(--snt-card-pad);

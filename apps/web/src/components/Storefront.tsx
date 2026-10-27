@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * Shopfront.
+ * Storefront.
  *
  * The trust statistics are stock count, confirmed deals and typical reply time.
- * The confirmed-deal count replaced the year the shop joined: a deal count is a
+ * The confirmed-deal count replaced the year the store joined: a deal count is a
  * far stronger signal than a date.
  *
- * Wireframe artboard: `Shopfront`.
+ * Wireframe artboard: `Shopfront` (its name in the design file).
  */
 
 import { useState } from 'react';
@@ -16,7 +16,7 @@ import {
   CATEGORY_LABELS,
   type Category,
   type Listing,
-  type Shop,
+  type Store,
 } from '@snt/core';
 import {
   AppHeader,
@@ -26,25 +26,25 @@ import {
   GridCardListSkeleton,
   Screen,
   ScreenBody,
-  ShopMark,
+  StoreMark,
   StatStrip,
   StatStripSkeleton,
   Tabs,
-  VerifiedDealerBadge,
+  VerifiedStoreBadge,
   replyShort,
   type TabItem,
 } from '@snt/ui';
 import { ShareIcon } from '@snt/ui/icons';
 import { RevealAction } from './RevealAction';
-import styles from './Shopfront.module.css';
+import styles from './Storefront.module.css';
 
-type ShopTab = Category | 'all';
+type StoreTab = Category | 'all';
 
-export function Shopfront({
-  shop,
+export function Storefront({
+  store,
   listings,
 }: {
-  shop: Shop;
+  store: Store;
   listings: Listing[];
 }) {
   return (
@@ -53,33 +53,33 @@ export function Shopfront({
       <AppHeader />
 
       <ScreenBody>
-        <ShopfrontBody shop={shop} listings={listings} />
+        <StorefrontBody store={store} listings={listings} />
       </ScreenBody>
     </Screen>
   );
 }
 
 /**
- * The shop itself, without the page around it: on the public shopfront under
- * the feed's header, and in the dealer console beside its sidebar.
+ * The store itself, without the page around it: on the public storefront under
+ * the feed's header, and in the Store console beside its sidebar.
  */
-export function ShopfrontBody({
-  shop,
+export function StorefrontBody({
+  store,
   listings,
 }: {
-  shop: Shop;
+  store: Store;
   listings: Listing[];
 }) {
-  const [tab, setTab] = useState<ShopTab>('all');
+  const [tab, setTab] = useState<StoreTab>('all');
 
   const categories = Array.from(
     new Set(listings.map((listing) => listing.category)),
   );
 
-  const tabs: TabItem<ShopTab>[] = [
+  const tabs: TabItem<StoreTab>[] = [
     { value: 'all', label: 'All', count: listings.length },
     ...categories.map((category) => ({
-      value: category as ShopTab,
+      value: category as StoreTab,
       label: CATEGORY_LABELS[category],
       count: listings.filter((l) => l.category === category).length,
     })),
@@ -92,11 +92,11 @@ export function ShopfrontBody({
 
   /** The phone's own share sheet where there is one, a copied link if not. */
   async function share() {
-    // The shop's public address, wherever it is shared from.
-    const url = `${window.location.origin}/shop/${shop.slug}`;
+    // The store's public address, wherever it is shared from.
+    const url = `${window.location.origin}/store/${store.slug}`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: shop.name, url });
+        await navigator.share({ title: store.name, url });
       } else {
         await navigator.clipboard.writeText(url);
         toast.success('Link copied');
@@ -108,15 +108,15 @@ export function ShopfrontBody({
 
   return (
     <>
-      {/* The shop: one white card, as the profile page is. */}
+      {/* The store: one white card, as the profile page is. */}
       <section className={styles.card}>
         <div className={styles.head}>
-          <ShopMark initials={shop.initials} size={56} />
+          <StoreMark initials={store.initials} size={56} />
           <div className={styles.headBody}>
-            <h1 className={styles.name}>{shop.name}</h1>
-            {shop.verified ? (
+            <h1 className={styles.name}>{store.name}</h1>
+            {store.verified ? (
               <div className={styles.badgeRow}>
-                <VerifiedDealerBadge size="md" label="Verified dealer" />
+                <VerifiedStoreBadge size="md" label="Verified store" />
               </div>
             ) : null}
           </div>
@@ -131,26 +131,26 @@ export function ShopfrontBody({
         </div>
 
         <p className={styles.description}>
-          {shop.description}
+          {store.description}
           <br />
-          {shop.location} · {shop.openingHours}
+          {store.location} · {store.openingHours}
         </p>
 
         <StatStrip
           stats={[
-            { value: shop.stockCount, label: 'in stock' },
+            { value: store.stockCount, label: 'in stock' },
             {
-              value: shop.confirmedDeals,
+              value: store.confirmedDeals,
               label: 'deals confirmed',
               tone: 'trust',
             },
-            { value: replyShort(shop.replyHours), label: 'replies in' },
+            { value: replyShort(store.replyHours), label: 'replies in' },
           ]}
         />
 
         {/* Two actions, half each. */}
         <div className={styles.actions}>
-          <RevealAction listingId={`shop-${shop.id}`} ownerId="u-kopje" />
+          <RevealAction listingId={`store-${store.id}`} ownerId="u-kopje" />
           <Button variant="secondary" size="lg" block>
             Follow
           </Button>
@@ -169,12 +169,12 @@ export function ShopfrontBody({
 }
 
 /**
- * The shop while it loads, built from its own styles: the card with its mark,
+ * The store while it loads, built from its own styles: the card with its mark,
  * name and badge, the description, the numbers with their labels, the two
  * buttons, then the tabs and the stock grid. For the public page and the
- * console's Shop profile alike.
+ * console's Store profile alike.
  */
-export function ShopfrontBodySkeleton() {
+export function StorefrontBodySkeleton() {
   return (
     <div aria-busy aria-label="Loading the store">
       <section className={styles.card}>
@@ -212,13 +212,13 @@ export function ShopfrontBodySkeleton() {
   );
 }
 
-/** The public shop page while it loads: the feed's header, then the shop. */
-export function ShopfrontSkeleton() {
+/** The public store page while it loads: the feed's header, then the store. */
+export function StorefrontSkeleton() {
   return (
     <Screen>
       <AppHeader />
       <ScreenBody>
-        <ShopfrontBodySkeleton />
+        <StorefrontBodySkeleton />
       </ScreenBody>
     </Screen>
   );

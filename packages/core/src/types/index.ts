@@ -1,6 +1,6 @@
 export * from './listing';
 export * from './user';
-export * from './shop';
+export * from './store';
 export * from './deal';
 export * from './lead';
 export * from './offer';

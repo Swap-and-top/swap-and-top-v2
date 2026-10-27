@@ -1,6 +1,6 @@
-# Dealer Console
+# Store Console
 
-## The surface dealers pay for
+## The surface stores pay for
 
 **Status:** Decided — build after validation confirms demand
 **Read this if:** you are building the business-facing side, or you need to understand the commercial centre of the plan.

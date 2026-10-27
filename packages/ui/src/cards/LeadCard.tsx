@@ -1,16 +1,16 @@
 'use client';
 
 /**
- * LeadCard — the dealer console's most important component.
+ * LeadCard — the Store console's most important component.
  *
- * When demonstrating the platform to a dealer, this is the screen to open
+ * When demonstrating the platform to a store, this is the screen to open
  * twenty seconds in: here is someone who wants what you stock, here is what
  * they are swapping in, here is the cash, and here is your matching item.
  *
  * A lead is someone's Wanted listing, so it is set as the Wanted card in the
  * feed is: the green label on its icon tiles, the item wanted as the green
  * title, the facts small and grey, what they have in its strip with a photo,
- * and who is asking with the little person mark. Then what the dealer does:
+ * and who is asking with the little person mark. Then what the store does:
  * the match, and the buttons.
  */
 

@@ -25,7 +25,7 @@ This folder describes what gets built and why, at the level of screens, flows an
 ### Business-facing and protective
 
 - **[accounts-and-stores.md](./accounts-and-stores.md)** — people, free and paid stores, store passes, verification, settings
-- **[dealer-console.md](./dealer-console.md)** — the surface stores pay for (the Store console)
+- **[store-console.md](./store-console.md)** — the surface stores pay for (the Store console)
 - **[trust-and-safety.md](./trust-and-safety.md)** — verification, stolen devices, safe meeting, discipline
 
 ---

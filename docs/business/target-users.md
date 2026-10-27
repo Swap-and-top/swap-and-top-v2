@@ -140,7 +140,7 @@ Phone number is the identity anchor rather than email: SIMs are registered again
 - [Monetization](./monetization.md) — who pays and for what
 - [Go To Market](./go-to-market.md) — how each group is acquired
 - [Trust & Safety](../product/trust-and-safety.md) — verification and safe meeting
-- [Dealer Console](../product/dealer-console.md) — the dealer-facing surface
+- [Dealer Console](../product/store-console.md) — the dealer-facing surface
 
 ---
 

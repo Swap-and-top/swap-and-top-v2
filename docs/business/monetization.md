@@ -193,7 +193,7 @@ If yes, there is a business, and the architecture work is justified. If no, no a
 - [Target Users](./target-users.md) — who pays and who does not
 - [Go To Market](./go-to-market.md) — the drop, and how dealers are recruited
 - [Payments & Invoicing](../operations/payments-and-invoicing.md) — collection mechanics
-- [Dealer Console](../product/dealer-console.md) — the paid surface
+- [Dealer Console](../product/store-console.md) — the paid surface
 - [Feed & Filters](../features/feed-and-filters.md) — sponsored slot placement rules
 - [Validation Test](../operations/validation-test.md) — how willingness to pay gets tested
 

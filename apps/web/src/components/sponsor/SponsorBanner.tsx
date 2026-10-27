@@ -2,7 +2,7 @@
 
 /**
  * The "Boost this listing" banner, above an owner's own listing: on a
- * dealer's item in Stock (its edit page), and on a person's own listing
+ * store's item in Stock (its edit page), and on a person's own listing
  * page. In the app's call to action colours, the yellow and green of Post
  * New Item: what sponsoring does, a button that opens the Sponsor sheet,
  * and an X to close it for that listing.

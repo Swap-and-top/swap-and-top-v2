@@ -126,7 +126,7 @@ For a dealer, a sale listing and a stock item are the same record seen from two 
 - In the **console**, it is stock: price, status, reveals, actions
 - In the **marketplace**, it is a listing: photos, specifications, contact
 
-When the dealer console exists, adding stock publishes a listing in one action. That is the mechanic that inverts the cold-start problem. See [../product/dealer-console.md](../product/dealer-console.md).
+When the dealer console exists, adding stock publishes a listing in one action. That is the mechanic that inverts the cold-start problem. See [../product/store-console.md](../product/store-console.md).
 
 ---
 
@@ -159,7 +159,7 @@ When the dealer console exists, adding stock publishes a listing in one action. 
 - [Listing Types](./listing-types.md) — the shared model
 - [Swap & Top](./swap-and-top.md) — the differentiated type
 - [Card System](../product/card-system.md) — the two sale cards
-- [Dealer Console](../product/dealer-console.md) — stock as the other side of a listing
+- [Dealer Console](../product/store-console.md) — stock as the other side of a listing
 - [Notifications](./notifications.md) — price drop alerts
 
 ---

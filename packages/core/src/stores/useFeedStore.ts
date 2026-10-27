@@ -45,7 +45,7 @@ export function filterFeed(
 
 /**
  * Interleave sponsored listings among the rest instead of sorting them
- * first. Sorting promoted listings to the top means a handful of paying dealers
+ * first. Sorting promoted listings to the top means a handful of paying stores
  * own the entire first screen — docs/product/principles.md rule 5.
  *
  * One sponsored listing after every `everyNth` others, never two together.

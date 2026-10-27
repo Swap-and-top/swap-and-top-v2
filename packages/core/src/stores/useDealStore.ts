@@ -42,7 +42,7 @@ export const useDealStore = create<DealState>((set, get) => ({
 }));
 
 /** Whether the other side of this deal has already said yes, on one of the
-    signed in user's own deals: a shop's answer counts on the shop, not here. */
+    signed in user's own deals: a store's answer counts on the store, not here. */
 function bothYes(confirmationId: string): boolean {
   const deal = getDealConfirmation(confirmationId);
   if (!deal) return false;

@@ -64,7 +64,7 @@
   /** Decorative only — placeholder icons. Never body text. */
   --snt-ink-faint: #a8a8a8;
   /**
-   * Text inside a card. Darker text (names of people and shops, prices) and
+   * Text inside a card. Darker text (names of people and stores, prices) and
    * the smaller grey text (specs, areas, times) — 4.6:1 on white. Set on the
    * card itself, so text outside cards keeps the inks above.
    */
@@ -160,12 +160,12 @@
   --snt-success-tint: #e2f6ee;
 
   /* --- dark surfaces ------------------------------------------------- */
-  /* The dealer console chrome.                                          */
+  /* The Store console chrome.                                          */
 
   --snt-dark: #1a1a18;
   --snt-dark-raised: #33322e;
-  /** A shop's initials mark. */
-  --snt-shop-mark: #2b2b2b;
+  /** A store's initials mark. */
+  --snt-store-mark: #2b2b2b;
 
   /* --- typography ---------------------------------------------------- */
   /* `--font-poppins` comes from next/font/local in apps/web, which serves  */
@@ -237,7 +237,7 @@
   --snt-card-pad: 16px;
   /** Vertical gap between feed cards. */
   --snt-card-gap: 16px;
-  /** Shape of a sale card's photo. One ratio for dealer and private alike. */
+  /** Shape of a sale card's photo. One ratio for store and private alike. */
   --snt-photo-ratio: 5 / 2;
 
   /* --- radii --------------------------------------------------------- */

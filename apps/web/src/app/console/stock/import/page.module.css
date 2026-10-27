@@ -163,7 +163,7 @@
   background-image: none;
 }
 
-/* The item's name and price: the shop's own things, in the blue. */
+/* The item's name and price: the store's own things, in the blue. */
 .name {
   grid-column: 1 / -1;
   font-size: var(--snt-text-md);

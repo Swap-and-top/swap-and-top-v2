@@ -1,11 +1,11 @@
 /**
- * Lead alerts — a dealer's settings for the message they get the moment
+ * Lead alerts — a store's settings for the message they get the moment
  * someone posts demand that matches what they sell. The paid product: see
  * docs/features/notifications.md ("Matching demand alert").
  *
  * This is the whole contract the backend works to. It stores one of these
- * per shop, and for every new swap or request decides, from it, whether to
- * alert the shop and on which channels, then records how it did on the lead
+ * per store, and for every new swap or request decides, from it, whether to
+ * alert the store and on which channels, then records how it did on the lead
  * (see Lead.alert).
  */
 
@@ -16,7 +16,7 @@ export type AlertChannel = 'whatsapp' | 'inApp';
 
 /** What counts as a match. */
 export type AlertMatch =
-  /** Demand for items like the ones in the shop's live stock. */
+  /** Demand for items like the ones in the store's live stock. */
   | 'stock'
   /** Any demand in the chosen categories, stock or not: for sourcing. */
   | 'categories';
@@ -26,7 +26,7 @@ export interface LeadAlertSettings {
   enabled: boolean;
   whatsapp: {
     on: boolean;
-    /** The number alerts go to, as the dealer typed it. */
+    /** The number alerts go to, as the store typed it. */
     number: string;
     /** Proved by a one time code. Nothing goes to an unconfirmed number. */
     confirmed: boolean;
@@ -40,7 +40,7 @@ export interface LeadAlertSettings {
   /** Only demand with at least this budget (requests) or this much cash on
       top (swaps). Null for any. */
   minBudget: number | null;
-  /** No WhatsApp between these times (24 hour "HH:MM", the shop's time);
+  /** No WhatsApp between these times (24 hour "HH:MM", the store's time);
       alerts still arrive in the app, and the WhatsApp goes out after. */
   quietHours: { on: boolean; from: string; to: string };
   /** When the last alert went out, for the status line. Set by the backend. */
@@ -51,7 +51,7 @@ export interface LeadAlertSettings {
 export type LeadAlertStatus =
   /** Sending. */
   | 'on'
-  /** Switched off by the dealer. */
+  /** Switched off by the store. */
   | 'paused'
   /** On, but something must be done first: WhatsApp unconfirmed, or no
       category chosen. */

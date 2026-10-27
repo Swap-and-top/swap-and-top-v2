@@ -4,24 +4,24 @@
  * One entry point, so a feed can render a mixed stream without switching on
  * type at every call site.
  *
- * Scaffold note: the seller and shop are resolved here from the mock data in
+ * Scaffold note: the seller and store are resolved here from the mock data in
  * `@snt/core`. When listings come from the API they will arrive with their owner
  * embedded, and these two lookups become props.
  */
 
 import type { Listing } from '@snt/core';
-import { getShop, getUser } from '@snt/core';
+import { getStore, getUser } from '@snt/core';
 import { SaleCard } from './SaleCard';
 import { SwapCard } from './SwapCard';
 import { WantedCard } from './WantedCard';
 
 export function ListingCard({ listing }: { listing: Listing }) {
   const owner = getUser(listing.ownerId);
-  const shop = getShop(listing.shopId);
+  const store = getStore(listing.storeId);
 
   switch (listing.type) {
     case 'sale':
-      return <SaleCard listing={listing} shop={shop} seller={owner} />;
+      return <SaleCard listing={listing} store={store} seller={owner} />;
 
     case 'swap':
       return <SwapCard listing={listing} seller={owner} />;

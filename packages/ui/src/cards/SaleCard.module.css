@@ -1,7 +1,7 @@
 /**
  * Sale card — the baseline. Everything else is a variation on it.
  *
- * The dealer variant adds a rule and a shop row. The absence of that row on a
+ * The store variant adds a rule and a store row. The absence of that row on a
  * private seller's card is itself the signal: a buyer knows immediately what
  * kind of transaction they are entering.
  *
@@ -156,8 +156,8 @@
   color: var(--snt-ink);
 }
 
-/** Dealer: a shop row under a light rule. */
-.shopRow {
+/** Store: a store row under a light rule. */
+.storeRow {
   display: flex;
   align-items: center;
   gap: var(--snt-space-4);
@@ -168,9 +168,9 @@
 
 /**
  * Name and verified badge. Stacked on a phone, where one line would wrap the
- * shop name; side by side from tablet up, as drawn.
+ * store name; side by side from tablet up, as drawn.
  */
-.shopIdentity {
+.storeIdentity {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -178,13 +178,13 @@
   min-width: 0;
 }
 
-.shopName,
-.shopName:hover {
+.storeName,
+.storeName:hover {
   color: var(--snt-ink);
 }
 
-/** The shop's picture, as a way to its page. */
-.shopMark {
+/** The store's picture, as a way to its page. */
+.storeMark {
   position: relative;
   z-index: 1;
   display: flex;
@@ -193,23 +193,23 @@
 }
 
 /*
- * Over the shop's picture or its name, both answer together: the name and its
+ * Over the store's picture or its name, both answer together: the name and its
  * storefront turn blue, and the picture dims — so it is plain this goes to
- * the shop, not to the listing. Dimmed by fading it, which shows on the dark
+ * the store, not to the listing. Dimmed by fading it, which shows on the dark
  * initials tile as well as it will on a photo.
  */
 @media (hover: hover) {
-  .shopRow:has(.shopLink:hover) .shopName {
+  .storeRow:has(.storeLink:hover) .storeName {
     color: var(--snt-accent-bold);
   }
 
-  .shopRow:has(.shopLink:hover) .shopMark {
+  .storeRow:has(.storeLink:hover) .storeMark {
     opacity: 0.7;
   }
 }
 
-.shopName {
-  /* Above the card's stretched link: it goes to the shop, not the listing. */
+.storeName {
+  /* Above the card's stretched link: it goes to the store, not the listing. */
   position: relative;
   z-index: 1;
   font-size: var(--snt-text-xs);
@@ -224,8 +224,8 @@
   flex-grow: 1;
 }
 
-/** Right of the shop row: stock count on top, icons beneath, right-aligned. */
-.shopAside {
+/** Right of the store row: stock count on top, icons beneath, right-aligned. */
+.storeAside {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -233,7 +233,7 @@
 }
 
 /* Lines the text up with the icons' visual edge, not their hit area. */
-.shopAside .stock {
+.storeAside .stock {
   margin-right: var(--snt-space-1);
 }
 
@@ -244,7 +244,7 @@
 }
 
 @media (min-width: 768px) {
-  .shopIdentity {
+  .storeIdentity {
     flex-direction: row;
     align-items: center;
     gap: var(--snt-space-4);

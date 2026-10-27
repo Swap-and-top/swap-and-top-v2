@@ -1,5 +1,5 @@
 /**
- * Sponsored slots: which of a shop's items are sponsored, at what daily
+ * Sponsored slots: which of a store's items are sponsored, at what daily
  * budget, until when, and how they have done since.
  *
  * Set as boosting a post is on WhatsApp and Facebook: a daily budget from
@@ -215,11 +215,11 @@ export const useSponsorStore = create<SponsorState>((set) => ({
     })),
 }));
 
-/** The sponsorships on one shop's listings: what its console shows. */
-export function useShopSponsorships(shopId: string): Sponsorship[] {
+/** The sponsorships on one store's listings: what its console shows. */
+export function useStoreSponsorships(storeId: string): Sponsorship[] {
   const sponsorships = useSponsorStore((state) => state.sponsorships);
   return sponsorships.filter(
-    (s) => mockListings.find((l) => l.id === s.listingId)?.shopId === shopId,
+    (s) => mockListings.find((l) => l.id === s.listingId)?.storeId === storeId,
   );
 }
 

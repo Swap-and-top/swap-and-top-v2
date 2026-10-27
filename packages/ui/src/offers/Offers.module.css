@@ -500,7 +500,7 @@
   font-weight: var(--snt-weight-bold);
 }
 
-/* The shop or person mark sits closer to its name than the name does to
+/* The store or person mark sits closer to its name than the name does to
    the deals badge: 3px, not the row's 6px. */
 .who > :first-child {
   margin-right: -3px;

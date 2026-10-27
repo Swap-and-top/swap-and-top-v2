@@ -5,14 +5,14 @@
  * then the four numbers, the graph and the best items, in bones.
  */
 
-import { currentShop, newLeadCount } from '@snt/core';
+import { currentStore, newLeadCount } from '@snt/core';
 import { Bone, ConsoleShell, Tabs } from '@snt/ui';
 import styles from './page.module.css';
 
 export default function Loading() {
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Stats"
       meta="How your store is doing, and ways to grow it"
       newLeadCount={newLeadCount}

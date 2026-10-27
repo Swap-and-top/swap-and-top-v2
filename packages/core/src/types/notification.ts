@@ -1,13 +1,13 @@
 /**
  * Notifications — the in-app record of everything worth knowing (see
  * docs/features/notifications.md). One list for a person, on their
- * Notifications page; one for a shop, in the dealer console. Each entry is a
+ * Notifications page; one for a store, in the Store console. Each entry is a
  * short line, a time, and a way to the thing it is about. There is no
  * messaging: people talk on WhatsApp or the phone.
  */
 
-/** Whose list it is on: a person's, or a shop's in the console. */
-export type NotificationAudience = 'user' | 'shop';
+/** Whose list it is on: a person's, or a store's in the console. */
+export type NotificationAudience = 'user' | 'store';
 
 /** What it is about, which picks its icon. */
 export type NotificationKind =

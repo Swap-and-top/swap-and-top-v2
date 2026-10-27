@@ -34,7 +34,7 @@ export const useNotificationStore = create<NotificationState>((set) => ({
     })),
 }));
 
-/** A list, newest first: a person's, or the shop's. */
+/** A list, newest first: a person's, or the store's. */
 export function notificationsFor(
   audience: NotificationAudience,
 ): AppNotification[] {

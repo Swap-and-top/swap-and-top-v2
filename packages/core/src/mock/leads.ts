@@ -1,7 +1,7 @@
 /**
- * Mock dealer leads.
+ * Mock store leads.
  *
- * A lead is a swap or request listing matched against the dealer's stock. The
+ * A lead is a swap or request listing matched against the store's stock. The
  * match line — "matches your Dell Latitude 7490" — is what turns a
  * notification into a tool, so it is part of the shape rather than an extra.
  */
@@ -79,8 +79,8 @@ export function getLead(id: string): Lead | undefined {
 
 export const newLeadCount = mockLeads.filter((l) => l.isNew).length;
 
-/** Who revealed the shop's number lately, newest first. */
-export const mockShopReveals: NumberReveal[] = [
+/** Who revealed the store's number lately, newest first. */
+export const mockStoreReveals: NumberReveal[] = [
   {
     id: 'rv-1',
     userId: 'u-tendai',

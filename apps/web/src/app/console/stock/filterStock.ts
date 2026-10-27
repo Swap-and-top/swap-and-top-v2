@@ -1,5 +1,5 @@
 /**
- * The stock list as the dealer has asked to see it: searched, filtered and
+ * The stock list as the store has asked to see it: searched, filtered and
  * ordered. Shared by the page and the Filters sheet, which counts what its
  * choices would show before they are applied.
  */
@@ -41,7 +41,7 @@ export function filterStock(
     case 'reveals':
       return [...shown].sort((a, b) => b.revealCount - a.revealCount);
     default:
-      // As the shop holds them: what it added last comes first.
+      // As the store holds them: what it added last comes first.
       return shown;
   }
 }

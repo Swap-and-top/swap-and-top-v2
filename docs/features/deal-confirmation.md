@@ -266,7 +266,7 @@ The right framing for dealers is *"at least 12 confirmed deals"*, not *"12 deals
 - [Swap & Top](./swap-and-top.md) — offers, whose acceptance triggers it
 - [Notifications](./notifications.md) — the prompt
 - [Metrics](../operations/metrics.md) — confirmed deals as a measure
-- [Dealer Console](../product/dealer-console.md) — where dealers see it
+- [Dealer Console](../product/store-console.md) — where dealers see it
 - [Card System](../product/card-system.md) — the card footer
 - [Decisions Log](../reference/decisions-log.md) — decisions P11 and P20
 

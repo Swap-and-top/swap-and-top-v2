@@ -50,15 +50,15 @@ interface PostDraftState {
   acceptsSwaps: boolean;
 
   contactChannels: ContactChannel[];
-  /** Whether the listing may appear in dealer lead feeds. Defaults on. */
-  allowDealerOffers: boolean;
+  /** Whether the listing may appear in store lead feeds. Defaults on. */
+  allowStoreOffers: boolean;
   /** Whether only signed-in users may see the number. Defaults off. */
   contactSignedInOnly: boolean;
   /** Who sees the details: everyone, or only those whose offer is
       accepted. Starts on everyone, the first choice. */
   contactShownTo: ContactShownTo;
-  /** With offers first: dealers may still see the details. Defaults off. */
-  contactToDealers: boolean;
+  /** With offers first: stores may still see the details. Defaults off. */
+  contactToStores: boolean;
 
   setKind: (kind: PostKind) => void;
   setCategory: (category: Category) => void;
@@ -81,10 +81,10 @@ interface PostDraftState {
   addPhoto: () => void;
   removePhoto: () => void;
   toggleChannel: (channel: ContactChannel) => void;
-  setAllowDealerOffers: (allow: boolean) => void;
+  setAllowStoreOffers: (allow: boolean) => void;
   setContactSignedInOnly: (only: boolean) => void;
   setContactShownTo: (shownTo: ContactShownTo) => void;
-  setContactToDealers: (toDealers: boolean) => void;
+  setContactToStores: (toStores: boolean) => void;
   reset: () => void;
 }
 
@@ -92,7 +92,7 @@ interface PostDraftState {
  * A new post starts with nothing typed or added for them: every text box
  * shows only a faded example of what goes in it. Every choice starts on its
  * first option, so something is always chosen: the first category, the
- * first condition, "I pay", WhatsApp, and dealer offers on.
+ * first condition, "I pay", WhatsApp, and store offers on.
  */
 const initial = {
   kind: null,
@@ -110,10 +110,10 @@ const initial = {
   cashUpTo: false,
   acceptsSwaps: false,
   contactChannels: ['whatsapp'] as ContactChannel[],
-  allowDealerOffers: true,
+  allowStoreOffers: true,
   contactSignedInOnly: false,
   contactShownTo: 'everyone' as ContactShownTo,
-  contactToDealers: false,
+  contactToStores: false,
 };
 
 export const usePostDraftStore = create<PostDraftState>((set) => ({
@@ -136,10 +136,10 @@ export const usePostDraftStore = create<PostDraftState>((set) => ({
         ? state.contactChannels.filter((c) => c !== channel)
         : [...state.contactChannels, channel],
     })),
-  setAllowDealerOffers: (allowDealerOffers) => set({ allowDealerOffers }),
+  setAllowStoreOffers: (allowStoreOffers) => set({ allowStoreOffers }),
   setContactSignedInOnly: (contactSignedInOnly) => set({ contactSignedInOnly }),
   setContactShownTo: (contactShownTo) => set({ contactShownTo }),
-  setContactToDealers: (contactToDealers) => set({ contactToDealers }),
+  setContactToStores: (contactToStores) => set({ contactToStores }),
   reset: () => set(initial),
 }));
 

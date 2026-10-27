@@ -19,7 +19,7 @@ import {
   CONDITION_LABELS,
   contactWaysFor,
   getListing,
-  getShop,
+  getStore,
   getUser,
   setOfferStateOptimistically,
   type OfferableListing,
@@ -69,8 +69,8 @@ export function OfferCard({
   // The other person: the offerer to the owner, the owner to the offerer.
   const otherId = readerIsOwner ? offer.fromUserId : listing.ownerId;
   const other = getUser(otherId);
-  const otherShop = getShop(other?.shopId);
-  const otherName = otherShop?.name ?? other?.displayName ?? 'Someone';
+  const otherStore = getStore(other?.storeId);
+  const otherName = otherStore?.name ?? other?.displayName ?? 'Someone';
 
   const cash = cashLine(offer, target, readerIsOwner);
   const wanted =
@@ -134,14 +134,14 @@ export function OfferCard({
       <div className={styles.offerHead}>
         {readerIsOwner ? (
           <span className={styles.who}>
-            <SellerIcon kind={otherShop ? 'shop' : 'person'} />
+            <SellerIcon kind={otherStore ? 'store' : 'person'} />
             {otherName}
             {other ? <ConfirmedDealsBadge count={other.confirmedDeals} /> : null}
           </span>
         ) : underListing ? (
           // The listing is just above: say only who it went to.
           <span className={styles.who}>
-            <SellerIcon kind={otherShop ? 'shop' : 'person'} />
+            <SellerIcon kind={otherStore ? 'store' : 'person'} />
             Sent to {otherName}
           </span>
         ) : (

@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Console — Stats: how the shop is doing, to decide what to do next.
+ * Console — Stats: how the store is doing, to decide what to do next.
  *
  * One switch for the stretch of time (today by the hour, a week or a month
  * by the day, a year or all time by the month). Under it the four numbers
@@ -19,13 +19,13 @@
 import { useState } from 'react';
 import {
   bestItemsFor,
-  currentShop,
+  currentStore,
   dollars,
   mockLeadSources,
   newLeadCount,
-  shopStatsFor,
+  storeStatsFor,
   useConsoleStore,
-  useShopSponsorships,
+  useStoreSponsorships,
   type StatsBucket,
   type StatsMetric,
   type StatsRange,
@@ -86,14 +86,14 @@ export default function ConsoleStatsPage() {
   const [range, setRange] = useState<StatsRange>('week');
   /** The number the graph shows: the leads, to start. */
   const [metric, setMetric] = useState<StatsMetric>('reveals');
-  const stats = shopStatsFor(range);
+  const stats = storeStatsFor(range);
   const shown = METRICS.find((m) => m.value === metric)!;
-  const best = bestItemsFor(currentShop.id, stats.totals).slice(0, 5);
+  const best = bestItemsFor(currentStore.id, stats.totals).slice(0, 5);
   const whatsapp = Math.round(mockLeadSources.whatsappShare * 100);
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Stats"
       meta="How your store is doing, and ways to grow it"
       newLeadCount={newLeadCount}
@@ -345,8 +345,8 @@ function BarChart({
  * tab, where each is extended or stopped), and a button to boost another. Lead alerts live on Leads, with their settings.
  */
 function SponsoredSlots() {
-  // The shop's own: other people sponsor their listings too.
-  const sponsorships = useShopSponsorships(currentShop.id);
+  // The store's own: other people sponsor their listings too.
+  const sponsorships = useStoreSponsorships(currentStore.id);
   const setStockTab = useConsoleStore((state) => state.setStockTab);
   /** The Sponsor sheet, to pick an item and sponsor it. */
   const [sheet, setSheet] = useState(false);

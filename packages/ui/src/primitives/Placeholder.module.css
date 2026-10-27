@@ -60,14 +60,14 @@
   letter-spacing: 0.3px;
 }
 
-/** Shop mark: square, near-black, initials. */
-.shopMark {
+/** Store mark: square, near-black, initials. */
+.storeMark {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border-radius: var(--snt-radius-xs);
-  background: var(--snt-shop-mark);
+  background: var(--snt-store-mark);
   color: var(--snt-ink-on-dark);
   font-family: var(--snt-font-display);
   font-weight: var(--snt-weight-bold);

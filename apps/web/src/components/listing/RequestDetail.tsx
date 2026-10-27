@@ -188,9 +188,9 @@ export function RequestDetail({
               when you preview it as a buyer sees it). */}
           {mine ? null : (
             <Note icon={<InfoIcon size={17} />} tone="subtle">
-              {listing.allowDealerOffers
-                ? 'This person accepts offers from dealers.'
-                : 'This person has turned off dealer offers.'}
+              {listing.allowStoreOffers
+                ? 'This person accepts offers from stores.'
+                : 'This person has turned off store offers.'}
             </Note>
           )}
         </Stack>

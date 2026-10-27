@@ -6,7 +6,7 @@
  * Renders both wireframe artboards: `ConsoleStockM` at phone width and
  * `ConsoleStockD` from `lg` up. Same component, same markup, different grid.
  *
- * The reveal count per item is the point of this screen: it is the dealer's
+ * The reveal count per item is the point of this screen: it is the store's
  * evidence that the platform delivers, visible every time they open it.
  */
 
@@ -14,12 +14,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import {
-  currentShop,
+  currentStore,
   newLeadCount,
   NO_STOCK_FILTERS,
   useConsoleStore,
   useListingStatusStore,
-  useShopStock,
+  useStoreStock,
   useSponsorStore,
   type Listing,
   type ListingStatus,
@@ -72,8 +72,8 @@ export default function ConsoleStockPage() {
     null,
   );
 
-  // What the shop holds, with what it has added since first.
-  const all = useShopStock(currentShop.id);
+  // What the store holds, with what it has added since first.
+  const all = useStoreStock(currentStore.id);
   const stock = filterStock(all, stockFilters, stockQuery);
   const inUse = filtersInUse(stockFilters);
   const setStatus = useListingStatusStore((state) => state.setStatus);
@@ -224,7 +224,7 @@ export default function ConsoleStockPage() {
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Stock"
       newLeadCount={newLeadCount}
       stockCount={all.length}
@@ -282,7 +282,7 @@ export default function ConsoleStockPage() {
                     </span>
                   ) : null}
                 </button>
-                {/* Bulk import: the fastest way to onboard a dealer is to take
+                {/* Bulk import: the fastest way to onboard a store is to take
                 their existing list and load it. */}
                 <ButtonLink
                   href="/console/stock/import"
@@ -376,7 +376,7 @@ export default function ConsoleStockPage() {
                       sponsored={listing.promotion === 'sponsored'}
                     />
 
-                    {/* How many the shop holds; one when no number is given. */}
+                    {/* How many the store holds; one when no number is given. */}
                     <span className={styles.inStock}>
                       {listing.type === 'sale' ? (listing.stockCount ?? 1) : 1}
                     </span>

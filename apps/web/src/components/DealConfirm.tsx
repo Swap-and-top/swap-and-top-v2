@@ -23,7 +23,7 @@
 import Link from 'next/link';
 import {
   getListing,
-  getShop,
+  getStore,
   getUser,
   CURRENT_USER_ID,
   isOwnerOn,
@@ -59,15 +59,15 @@ export function DealConfirm({
 
   const listing = getListing(confirmation.listingId);
   const owner = isOwnerOn(confirmation);
-  /** A shop answering from its console, rather than the signed in user:
+  /** A store answering from its console, rather than the signed in user:
       its own record, and back to Leads. */
   const viewer = viewerOn(confirmation);
-  const asShop = viewer !== CURRENT_USER_ID;
+  const asStore = viewer !== CURRENT_USER_ID;
   const otherName = otherNameOn(confirmation);
   /** A yes counts only once the other side has said yes too. */
   const counted = given === 'yes' && theirAnswerOn(confirmation) === 'yes';
-  /** The record it adds to: the signed in user's, or the shop's own. */
-  const record = asShop
+  /** The record it adds to: the signed in user's, or the store's own. */
+  const record = asStore
     ? (getUser(viewer)?.confirmedDeals ?? 0) + (counted ? 1 : 0)
     : confirmedDeals;
 
@@ -183,11 +183,11 @@ export function DealConfirm({
 
         {/* Back to where it was opened from, as a button. */}
         <ButtonLink
-          href={asShop ? '/console/leads' : '/me/deals'}
+          href={asStore ? '/console/leads' : '/me/deals'}
           variant="secondary"
           block
         >
-          {asShop ? 'Back to leads' : 'Back to deals to confirm'}
+          {asStore ? 'Back to leads' : 'Back to deals to confirm'}
         </ButtonLink>
         </section>
 
@@ -203,8 +203,8 @@ export function DealConfirm({
             </span>
           </div>
           <p className={styles.recordNote}>
-            {asShop
-              ? 'Buyers see it on your shopfront and your listings, beside your verified badge.'
+            {asStore
+              ? 'Buyers see it on your storefront and your listings, beside your verified badge.'
               : 'This is how buyers judge a private seller. There are no badges for who you are or what you do, only what you have actually done.'}
           </p>
         </section>
@@ -213,10 +213,10 @@ export function DealConfirm({
   );
 }
 
-/** The other person on the deal, by their shop's name where they have one. */
+/** The other person on the deal, by their store's name where they have one. */
 export function otherNameOn(deal: DealConfirmation): string {
   const other = getUser(otherPartyOn(deal));
-  return getShop(other?.shopId)?.name ?? other?.displayName ?? 'Someone';
+  return getStore(other?.storeId)?.name ?? other?.displayName ?? 'Someone';
 }
 
 /**

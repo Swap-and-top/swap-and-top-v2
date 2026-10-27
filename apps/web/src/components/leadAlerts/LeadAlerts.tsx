@@ -3,7 +3,7 @@
 /**
  * Lead alerts: the chip that says how they stand, and the sheet it opens to
  * change them (see LeadAlertSettings in @snt/core for the shape the backend
- * stores). On the Leads page, under the title; and on Shop profile.
+ * stores). On the Leads page, under the title; and on Store profile.
  *
  * The chip: on (green, with where alerts go), paused (grey), or needing
  * setting up (amber: a WhatsApp number to confirm, or no category chosen).

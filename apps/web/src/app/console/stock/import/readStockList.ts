@@ -1,7 +1,7 @@
 /**
- * Reads a dealer's stock list: a CSV file, or rows pasted from a spreadsheet
+ * Reads a store's stock list: a CSV file, or rows pasted from a spreadsheet
  * (which arrive separated by tabs). The first row names the columns; they are
- * matched loosely, in any order, so a list kept for years in the dealer's own
+ * matched loosely, in any order, so a list kept for years in the store's own
  * words still comes in. Unknown columns are left out.
  */
 

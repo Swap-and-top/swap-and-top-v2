@@ -9,9 +9,9 @@
  *     seller checks their own work, and it teaches them what a good listing
  *     looks like.
  *  2. **Contact preferences**: the ways to reach them, a toggle to share
- *     them only with people whose offer they accept, and the dealer offers
- *     consent. Dealer offers default on, but visible and easy to
- *     change: it keeps the platform from feeling like a dealer channel and
+ *     them only with people whose offer they accept, and the store offers
+ *     consent. Store offers default on, but visible and easy to
+ *     change: it keeps the platform from feeling like a store channel and
  *     makes the lead product defensible.
  *  3. **Say what happens next** — live immediately, taken down on report,
  *     expires in 30 days.
@@ -172,9 +172,9 @@ export default function PostReviewPage() {
 
           {/* Consent, not a surprise. Keeps the lead product honest. */}
           <TickTile
-            checked={draft.allowDealerOffers}
-            onChange={draft.setAllowDealerOffers}
-            label="Let dealers send me offers"
+            checked={draft.allowStoreOffers}
+            onChange={draft.setAllowStoreOffers}
+            label="Let stores send me offers"
             hint="Stores that stock what you want can make you an offer."
           />
 
@@ -190,12 +190,12 @@ export default function PostReviewPage() {
           />
 
           {afterOffer ? (
-            // Offers first, but shops may still reach them from a lead.
-            draft.allowDealerOffers ? (
+            // Offers first, but stores may still reach them from a lead.
+            draft.allowStoreOffers ? (
               <TickTile
-                checked={draft.contactToDealers}
-                onChange={draft.setContactToDealers}
-                label="Let dealers see my contact details"
+                checked={draft.contactToStores}
+                onChange={draft.setContactToStores}
+                label="Let stores see my contact details"
                 hint="Stores that get your listing as a lead can reach you before you accept an offer."
               />
             ) : null

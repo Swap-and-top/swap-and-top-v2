@@ -16,8 +16,8 @@ import { CURRENT_USER_ID } from '../mock/users';
 import type { Offer, OfferDraft, OfferState } from '../types/offer';
 
 const SAMPLE_OFFERS: Offer[] = [
-  // A trade-in offer to a dealer: towards Kopje Computers' ThinkPad, which
-  // takes swaps. It shows on the dealer console's Trade-ins.
+  // A trade-in offer to a store: towards Kopje Computers' ThinkPad, which
+  // takes swaps. It shows on the Store console's Trade-ins.
   {
     id: 'o-chipo-thinkpad-tradein',
     listingId: 'l-thinkpad-t480',
@@ -42,7 +42,7 @@ const SAMPLE_OFFERS: Offer[] = [
     cashAmount: 260,
     cashFrom: 'owner',
     message:
-      'Core i7, 16GB, 512GB SSD, in the shop now. $260 on top of your MacBook and it is yours today.',
+      'Core i7, 16GB, 512GB SSD, in the store now. $260 on top of your MacBook and it is yours today.',
     state: 'pending',
     sentLabel: '3h ago',
     counted: true,
@@ -118,7 +118,7 @@ const SAMPLE_OFFERS: Offer[] = [
     state: 'declined',
     sentLabel: '3 days ago',
   },
-  // More the shop has sent, in each state, for the console's "Offers sent".
+  // More the store has sent, in each state, for the console's "Offers sent".
   {
     id: 'o-kopje-redmi',
     listingId: 'l-redmi-wanted',

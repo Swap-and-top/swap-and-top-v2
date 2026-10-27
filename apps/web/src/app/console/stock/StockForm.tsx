@@ -21,12 +21,12 @@ import { toast } from 'sonner';
 import {
   CATEGORY_LABELS,
   CONDITION_LABELS,
-  currentShop,
+  currentStore,
   newLeadCount,
   editedStockListing,
   newStockListing,
   useListingStatusStore,
-  useShopStock,
+  useStoreStock,
   useStockStore,
   type Category,
   type Condition,
@@ -91,7 +91,7 @@ function dollars(text: string): number | undefined {
 
 export function StockForm({ editing }: { editing?: SaleListing }) {
   const router = useRouter();
-  const stock = useShopStock(currentShop.id);
+  const stock = useStoreStock(currentStore.id);
   const addStock = useStockStore((state) => state.addStock);
   const saveStock = useStockStore((state) => state.saveStock);
   const setStatus = useListingStatusStore((state) => state.setStatus);
@@ -200,7 +200,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
               : 'Changes saved.',
       );
     } else {
-      const listing = newStockListing(currentShop, input);
+      const listing = newStockListing(currentStore, input);
       addStock([listing]);
       toast.success(
         listing.status === 'live'
@@ -223,7 +223,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title={heading.title}
       meta={heading.meta}
       newLeadCount={newLeadCount}

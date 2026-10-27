@@ -33,7 +33,7 @@ const SCREENS: [string, string, string][] = [
   ['A listing for sale', 'listing-sale', '/listing/iphone-11-64gb-borrowdale-7e02'],
   ['A swap', 'listing-swap', '/listing/macbook-air-2017-for-i7-16gb-mt-pleasant-7c21'],
   ['A wanted post', 'listing-wanted', '/listing/wanted-rtx-3060-12gb-harare-4d12'],
-  ['A store', 'shop', '/store/kopje-computers'],
+  ['A store', 'store', '/store/kopje-computers'],
   ['Saved', 'saved', '/saved'],
   ['Your account', 'me', '/me'],
   ['My listings', 'me-listings', '/me/listings'],
@@ -45,7 +45,7 @@ const SCREENS: [string, string, string][] = [
   ['Console: Leads', 'leads', '/console/leads'],
   ['Console: Offers', 'swap-offers', '/console/trade-ins'],
   ['Console: Stats', 'stats', '/console/stats'],
-  ['Console: Store profile', 'console-shop', '/console/store'],
+  ['Console: Store profile', 'console-store', '/console/store'],
 ];
 
 export default function SkeletonReferencePage() {

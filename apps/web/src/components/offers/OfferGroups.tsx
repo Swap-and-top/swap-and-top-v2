@@ -5,12 +5,12 @@
  * photo, kind and status, name, terms, where and when, and a way to open
  * it), then its offers hung under it on a thread line, like replies.
  *
- * The same on the profile's Offers page and the dealer console's: only whose
- * side it is read from changes (`viewerId`), the person or the shop.
+ * The same on the profile's Offers page and the Store console's: only whose
+ * side it is read from changes (`viewerId`), the person or the store.
  */
 
 import {
-  getShop,
+  getStore,
   getUser,
   offersMadeBy,
   offersOn,
@@ -72,7 +72,7 @@ export function OfferGroups({
   groups: { listing: OfferableListing; offers: Offer[] }[];
   /** Offers on the viewer's own listings, or offers they made. */
   view: 'received' | 'made';
-  /** Whose side it is read from: the person, or the shop's account. */
+  /** Whose side it is read from: the person, or the store's account. */
   viewerId: string;
   /** What to say when there are none. */
   none: string;
@@ -135,7 +135,7 @@ function ListingSummary({
   const mine = listing.ownerId === viewerId;
   const owner = getUser(listing.ownerId);
   const ownerName =
-    getShop(owner?.shopId)?.name ?? owner?.displayName ?? 'Someone';
+    getStore(owner?.storeId)?.name ?? owner?.displayName ?? 'Someone';
 
   return (
     <div className={styles.summary}>

@@ -1,5 +1,5 @@
 /**
- * A lead, as a dealer sees it, set as the Wanted card in the feed is (see
+ * A lead, as a store sees it, set as the Wanted card in the feed is (see
  * WantedCard.module.css): the same label, title, facts, strip and name, so
  * a lead looks like what it is, someone's Wanted listing.
  */
@@ -75,7 +75,7 @@
   margin-inline: var(--snt-space-3);
 }
 
-/* How the dealer was told of the lead: small, in the green of a match. */
+/* How the store was told of the lead: small, in the green of a match. */
 .alerted {
   display: flex;
   align-items: center;

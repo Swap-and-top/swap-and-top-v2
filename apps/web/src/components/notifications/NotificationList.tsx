@@ -2,7 +2,7 @@
 
 /**
  * A list of notifications, newest first: a person's on their Notifications
- * page, or the shop's in the console. One white card; each row its kind's
+ * page, or the store's in the console. One white card; each row its kind's
  * icon on a pale tile, one short line, the time, and a blue dot while it is
  * unread. A tap reads it and goes to what it is about.
  */

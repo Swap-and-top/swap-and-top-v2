@@ -6,14 +6,14 @@
  */
 
 import { useParams } from 'next/navigation';
-import { currentShop, newLeadCount, useShopStock } from '@snt/core';
+import { currentStore, newLeadCount, useStoreStock } from '@snt/core';
 import { ButtonLink, ConsoleShell } from '@snt/ui';
 import { StockForm } from '../../StockForm';
 import styles from '../../StockForm.module.css';
 
 export default function EditStockPage() {
   const { id } = useParams<{ id: string }>();
-  const stock = useShopStock(currentShop.id);
+  const stock = useStoreStock(currentStore.id);
   const listing = stock.find((item) => item.id === id);
 
   if (listing?.type === 'sale') {
@@ -23,7 +23,7 @@ export default function EditStockPage() {
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Item not found"
       newLeadCount={newLeadCount}
       stockCount={stock.length}

@@ -1,5 +1,5 @@
 /**
- * Trust signals: verified dealer, and confirmed deals.
+ * Trust signals: verified store, and confirmed deals.
  *
  * These are the only two trust markers on the platform.
  *
@@ -14,12 +14,12 @@ import styles from './Trust.module.css';
 export type TrustSize = 'sm' | 'md';
 
 /** A registered business stands behind this listing. The only badge. */
-export function VerifiedDealerBadge({
+export function VerifiedStoreBadge({
   size = 'sm',
-  label = 'Verified Seller',
+  label = 'Verified store',
 }: {
   size?: TrustSize;
-  /** "Verified Seller" on a feed card; shorter or longer where space differs. */
+  /** "Verified store" on a feed card; shorter or longer where space differs. */
   label?: string;
 }) {
   return (

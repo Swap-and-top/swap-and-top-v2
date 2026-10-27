@@ -2,8 +2,8 @@
 
 /**
  * Notifications: everything worth knowing, newest first, one list (see
- * NotificationList). Reached from the bell in the header. A dealer's shop
- * has its own, in the console.
+ * NotificationList). Reached from the bell in the header. A store has its
+ * own, in the console.
  */
 
 import {

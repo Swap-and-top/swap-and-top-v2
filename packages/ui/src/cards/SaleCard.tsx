@@ -1,20 +1,20 @@
 /**
  * SaleCard.
  *
- * One component, two presentations. Pass a `shop` and it renders the dealer
- * variant: a rule, then a shop row with the shop's mark, name, verified badge
+ * One component, two presentations. Pass a `store` and it renders the store
+ * variant: a rule, then a store row with the store's mark, name, verified badge
  * and stock count. Leave it off and it renders as a private seller, with a
  * single trust line instead.
  */
 
 import Link from 'next/link';
 import { contactAfterOffer } from '@snt/core';
-import type { SaleListing, Shop, User } from '@snt/core';
+import type { SaleListing, Store, User } from '@snt/core';
 import { CARD_CONDITION } from '../format';
 import { MegaphoneIcon } from '../icons';
 import { Badge } from '../primitives/Badge';
 import { PhotoGallery } from '../primitives/PhotoGallery';
-import { ShopMark } from '../primitives/Placeholder';
+import { StoreMark } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
 import { ItemName, Meta, Price } from '../primitives/Text';
 import { specParts } from '../primitives/SpecGrid';
@@ -22,15 +22,15 @@ import {
   OwnerOfferCount,
   UnlessOwnerOfferCount,
 } from '../offers/OwnerOfferCount';
-import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
+import { ConfirmedDealsBadge, VerifiedStoreBadge } from '../primitives/Trust';
 import { CardActions } from './CardActions';
 import { SellerIcon } from './SellerIcon';
 import styles from './SaleCard.module.css';
 
 export interface SaleCardProps {
   listing: SaleListing;
-  /** Present for a dealer listing. Drives the shop row. */
-  shop?: Shop;
+  /** Present for a store listing. Drives the store row. */
+  store?: Store;
   /** Present for a private seller. Drives the trust line. */
   seller?: User;
   /** Fixes the photo height instead of the shared photo ratio. */
@@ -39,7 +39,7 @@ export interface SaleCardProps {
 
 export function SaleCard({
   listing,
-  shop,
+  store,
   seller,
   imageHeight,
 }: SaleCardProps) {
@@ -59,7 +59,7 @@ export function SaleCard({
           <PhotoGallery
             images={listing.item.images}
             alt={listing.item.name}
-            tone={shop ? 'shop' : 'person'}
+            tone={store ? 'store' : 'person'}
             height={imageHeight}
             className={imageHeight ? undefined : styles.photo}
           />
@@ -115,34 +115,34 @@ export function SaleCard({
             </div>
           </Link>
 
-          {shop ? (
-            <div className={styles.shopRow}>
-              {/* A shop has a page of its own, so its picture and its name
+          {store ? (
+            <div className={styles.storeRow}>
+              {/* A store has a page of its own, so its picture and its name
                   open it — and say so on hover, by turning blue. A private
                   seller has none; their name is just a name. The picture is
                   a second way to the same place, so only the name is a stop
                   for the keyboard and for screen readers. */}
               <Link
-                href={`/store/${shop.slug}`}
-                className={[styles.shopLink, styles.shopMark].join(' ')}
+                href={`/store/${store.slug}`}
+                className={[styles.storeLink, styles.storeMark].join(' ')}
                 tabIndex={-1}
                 aria-hidden
               >
-                <ShopMark initials={shop.initials} size={40} />
+                <StoreMark initials={store.initials} size={40} />
               </Link>
-              <span className={styles.shopIdentity}>
+              <span className={styles.storeIdentity}>
                 <Link
-                  href={`/store/${shop.slug}`}
-                  className={[styles.shopLink, styles.shopName].join(' ')}
+                  href={`/store/${store.slug}`}
+                  className={[styles.storeLink, styles.storeName].join(' ')}
                 >
-                  <SellerIcon kind="shop" />
-                  {shop.name}
+                  <SellerIcon kind="store" />
+                  {store.name}
                 </Link>
-                {shop.verified ? <VerifiedDealerBadge /> : null}
+                {store.verified ? <VerifiedStoreBadge /> : null}
               </span>
               <span className={styles.spacer} />
               {/* Stock count above the save and share icons. */}
-              <span className={styles.shopAside}>
+              <span className={styles.storeAside}>
                 {listing.stockCount && listing.stockCount > 1 ? (
                   <span className={styles.stock}>
                     {listing.stockCount} in Stock
@@ -188,7 +188,7 @@ export function SaleCard({
           {/* Your own, taking swaps: how many offers it has had, the icons
               beside it in the bottom corner. */}
           <OwnerOfferCount listing={listing} className={styles.ownerOffers}>
-            {shop ? null : (
+            {store ? null : (
               <CardActions listingId={listing.id} href={href} title={listing.title} />
             )}
           </OwnerOfferCount>

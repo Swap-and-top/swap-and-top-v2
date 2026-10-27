@@ -3,7 +3,7 @@
 /**
  * Console — Bulk import.
  *
- * The fastest way to bring a dealer on is to take the list they already keep
+ * The fastest way to bring a store on is to take the list they already keep
  * and load it. Two steps, each a white card: bring the list in (a CSV file,
  * or rows pasted straight from a spreadsheet), then check what will come in
  * before importing it. Rows with a price go live; rows without one wait as
@@ -16,10 +16,10 @@ import { toast } from 'sonner';
 import {
   CATEGORY_LABELS,
   CONDITION_LABELS,
-  currentShop,
+  currentStore,
   newLeadCount,
   newStockListing,
-  useShopStock,
+  useStoreStock,
   useStockStore,
 } from '@snt/core';
 import { Badge, Button, ButtonLink, ConsoleShell, startPageLoad } from '@snt/ui';
@@ -35,7 +35,7 @@ const RESULT = {
 
 export default function BulkImportPage() {
   const router = useRouter();
-  const stock = useShopStock(currentShop.id);
+  const stock = useStoreStock(currentStore.id);
   const addStock = useStockStore((state) => state.addStock);
 
   const [pasted, setPasted] = useState('');
@@ -96,7 +96,7 @@ export default function BulkImportPage() {
 
   function importRows() {
     setImporting(true);
-    addStock(coming.map((row) => newStockListing(currentShop, row.stock)));
+    addStock(coming.map((row) => newStockListing(currentStore, row.stock)));
     toast.success(
       `${coming.length} ${coming.length === 1 ? 'item' : 'items'} added to your stock.`,
     );
@@ -106,7 +106,7 @@ export default function BulkImportPage() {
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Bulk import"
       meta="Bring in the list you already keep"
       newLeadCount={newLeadCount}

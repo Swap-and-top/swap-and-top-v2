@@ -486,7 +486,7 @@ export const TrendIcon = (props: IconProps) => (
   </Svg>
 );
 
-export const ShopIcon = (props: IconProps) => (
+export const StoreIcon = (props: IconProps) => (
   <Svg {...props}>
     <path d="M4 9.5h16v10.5H4z" />
     <path d="M4 9.5L6 4h12l2 5.5" />
@@ -597,8 +597,8 @@ export const TagIcon = ({
 );
 
 /**
- * A storefront, as marketplaces draw one: a scalloped awning over a shop
- * with a door. Marks a seller as a shop or dealer rather than a person.
+ * A storefront, as marketplaces draw one: a scalloped awning over a store
+ * with a door. Marks a seller as a store rather than a person.
  */
 export const StorefrontIcon = (props: IconProps) => (
   <Svg {...props}>

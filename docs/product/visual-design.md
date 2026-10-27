@@ -65,7 +65,7 @@ THE FEED, AS DRAWN:
 | `--snt-ink-muted` | `#6B6B6B` | Condition, meta, ages, counts, specs under a name. Darkened from the PDF's `#8E8E8E` for readability |
 | `--snt-owned-ink` | `#255DAB` | The **name** of something owned or for sale |
 | `--snt-wanted-ink` | `#12875C` | The **name** of something wanted, and the WANTED label — a shade deeper than brand green so it reads as text |
-| `--snt-shop-mark` | `#2B2B2B` | A shop's initials mark |
+| `--snt-store-mark` | `#2B2B2B` | A store's initials mark |
 
 The gradient runs **left to right across the full viewport**, not across the content column: `linear-gradient(90deg, #255DAB, #1CB67F)`.
 

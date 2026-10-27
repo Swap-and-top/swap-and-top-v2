@@ -6,7 +6,7 @@
  * Renders both wireframe artboards: `ConsoleLeadsM` as a feed of cards at phone
  * width, and `ConsoleLeadsD` as a two-pane review queue from `lg` up.
  *
- * This is the screen to open twenty seconds into a dealer conversation: here is
+ * This is the screen to open twenty seconds into a store conversation: here is
  * someone who wants what you stock, here is what they are trading in, here is
  * the cash, and here is your matching item.
  */
@@ -14,10 +14,10 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
-  contactOpenToDealers,
-  currentShop,
+  contactOpenToStores,
+  currentStore,
   mockLeads,
-  mockShopReveals,
+  mockStoreReveals,
   mockUsers,
   newLeadCount,
   useConsoleStore,
@@ -46,9 +46,9 @@ import { LeadTabs } from './LeadTabs';
 import styles from './page.module.css';
 
 
-/** The shop's own account: the offers it sends are made from it. */
-const dealerId =
-  mockUsers.find((user) => user.shopId === currentShop.id)?.id ?? '';
+/** The store's own account: the offers it sends are made from it. */
+const storeOwnerId =
+  mockUsers.find((user) => user.storeId === currentStore.id)?.id ?? '';
 
 export default function ConsoleLeadsPage() {
   const {
@@ -72,17 +72,17 @@ export default function ConsoleLeadsPage() {
 
   const counts: Record<LeadTab, number> = {
     matching: mockLeads.length,
-    reveals: mockShopReveals.length,
+    reveals: mockStoreReveals.length,
   };
 
-  /** Sends the offer in the composer, as the shop, to the open request. */
+  /** Sends the offer in the composer, as the store, to the open request. */
   function sendOffer() {
     if (!active) return;
     const amount = Number(offerPrice.replace(/[^\d]/g, ''));
     addOffer({
       id: `o-${Date.now()}`,
       listingId: active.demand.id,
-      fromUserId: dealerId,
+      fromUserId: storeOwnerId,
       item: {
         listingId: active.matchedStockId,
         name: active.matchedStockLabel ?? 'Sourced to order',
@@ -97,7 +97,7 @@ export default function ConsoleLeadsPage() {
     toast.success(
       `Offer sent to ${active.requester.displayName.replace(/\.$/, '')}.`,
       {
-        // To the Offers page, on Sent, where the shop's offers are.
+        // To the Offers page, on Sent, where the store's offers are.
         action: {
           label: 'See it',
           onClick: () => {
@@ -111,7 +111,7 @@ export default function ConsoleLeadsPage() {
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Leads"
       meta="People asking for what you sell, newest first"
       newLeadCount={newLeadCount}
@@ -129,11 +129,11 @@ export default function ConsoleLeadsPage() {
         </>
       }
     >
-      {/* Number reveals: who revealed the shop's number, and the deal
+      {/* Number reveals: who revealed the store's number, and the deal
           check on each. Matching requests: the feed and review queue. The
-          shop's own offers are on the Offers page, under Sent. */}
+          store's own offers are on the Offers page, under Sent. */}
       {leadTab === 'reveals' ? (
-        <RevealsTable reveals={mockShopReveals} />
+        <RevealsTable reveals={mockStoreReveals} />
       ) : (
         <>
           {/* Phone: a feed. */}
@@ -255,7 +255,7 @@ export default function ConsoleLeadsPage() {
                   ) : (
                     <div className={styles.matchBody}>
                       <span className={styles.placeholder}>
-                        Dealers routinely source to order, so this is still a
+                        Stores routinely source to order, so this is still a
                         lead.
                       </span>
                     </div>
@@ -296,7 +296,7 @@ export default function ConsoleLeadsPage() {
                     }
                   />
                   {/* They keep their details back until they accept an
-                      offer, and did not open them to dealers. */}
+                      offer, and did not open them to stores. */}
                   {canReach(active, offers) ? null : (
                     <p className={styles.keptBack}>
                       <InfoIcon size={14} weight={1.9} />
@@ -315,15 +315,15 @@ export default function ConsoleLeadsPage() {
 }
 
 /**
- * Whether the shop may see the requester's details: they show them to
- * everyone, or let dealers see them, or accepted the shop's offer.
+ * Whether the store may see the requester's details: they show them to
+ * everyone, or let stores see them, or accepted the store's offer.
  */
 function canReach(lead: Lead, offers: Offer[]): boolean {
-  if (contactOpenToDealers(lead.demand)) return true;
+  if (contactOpenToStores(lead.demand)) return true;
   return offers.some(
     (offer) =>
       offer.listingId === lead.demand.id &&
-      offer.fromUserId === dealerId &&
+      offer.fromUserId === storeOwnerId &&
       offer.state === 'accepted',
   );
 }

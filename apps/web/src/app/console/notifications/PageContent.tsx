@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * Console — Notifications: everything for the shop, newest first, one list
+ * Console — Notifications: everything for the store, newest first, one list
  * (see NotificationList): new leads, offers on stock, replies to its offers,
  * deal checks to answer, the weekly summary, its subscription. Reached from
  * the bell in the console's header, or Notifications in its sidebar.
  */
 
-import { currentShop, newLeadCount } from '@snt/core';
+import { currentStore, newLeadCount } from '@snt/core';
 import { Button, ConsoleShell } from '@snt/ui';
 import {
   NotificationList,
@@ -16,11 +16,11 @@ import {
 import styles from './page.module.css';
 
 export default function ConsoleNotificationsPage() {
-  const { unread, markAllRead } = useMarkAllRead('shop');
+  const { unread, markAllRead } = useMarkAllRead('store');
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Notifications"
       meta="Everything for your store, newest first"
       newLeadCount={newLeadCount}
@@ -38,7 +38,7 @@ export default function ConsoleNotificationsPage() {
       }
     >
       <div className={styles.column}>
-        <NotificationList audience="shop" />
+        <NotificationList audience="store" />
       </div>
     </ConsoleShell>
   );

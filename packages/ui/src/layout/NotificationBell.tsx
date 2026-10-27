@@ -5,7 +5,7 @@
  * in white, with the unread count in a red round on its corner, as counts
  * are on the console's sections. In the marketplace's header it is a
  * person's list (signed in only: a guest has none); in the console's, the
- * shop's.
+ * store's.
  */
 
 import Link from 'next/link';

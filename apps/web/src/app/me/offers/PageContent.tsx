@@ -8,7 +8,7 @@
  * the listing they went to, with what became of each. Each group starts with
  * the listing in brief (what it is, its price or terms, where and when, and
  * a way to open it), its offers under it (see OfferGroups, shared with the
- * dealer console's Offers page). An accepted offer on either side shows the
+ * Store console's Offers page). An accepted offer on either side shows the
  * other person's number and a way into WhatsApp.
  */
 

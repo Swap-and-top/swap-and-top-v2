@@ -48,7 +48,7 @@ export function replyLabel(hours: number | undefined): string | undefined {
   return `Usually replies within ${hours}h`;
 }
 
-/** 1 → '< 1h', 3 → '3h'. For the compact shopfront statistic. */
+/** 1 → '< 1h', 3 → '3h'. For the compact storefront statistic. */
 export function replyShort(hours: number): string {
   return hours <= 1 ? '< 1h' : `${hours}h`;
 }

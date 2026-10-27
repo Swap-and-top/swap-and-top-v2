@@ -1,12 +1,12 @@
 /**
- * The dealer console shell.
+ * The Store console shell.
  *
  * One responsive surface, not two pages. At phone width it is a blue header, a
  * stacked list and a bottom nav. From `lg` up the nav becomes a blue sidebar
  * and the content area gains room for a real table. The blue frame marks the
- * console as the dealer's own tool, apart from the marketplace.
+ * console as the store's own tool, apart from the marketplace.
  *
- * Mobile is the primary build: most small shops are run from a phone behind a
+ * Mobile is the primary build: most small stores are run from a phone behind a
  * counter, and nobody opens a laptop to add one item.
  */
 
@@ -32,8 +32,8 @@
   border-bottom-right-radius: var(--snt-header-curve);
   background: var(--snt-accent-strong);
   color: var(--snt-ink-on-dark);
-  /* The shop's mark, a lighter tile on the blue rather than black. */
-  --snt-shop-mark: color-mix(in srgb, white 18%, transparent);
+  /* The store's mark, a lighter tile on the blue rather than black. */
+  --snt-store-mark: color-mix(in srgb, white 18%, transparent);
 }
 
 .headerMark {
@@ -52,22 +52,22 @@
   min-width: 0;
 }
 
-/* The shop's name and "Dealer console", cut short with dots if the row is
+/* The store's name and "Store console", cut short with dots if the row is
    narrow, so the buttons always fit. */
-.shopName,
-.shopKicker {
+.storeName,
+.storeKicker {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.shopName {
+.storeName {
   font-size: var(--snt-text-md);
   font-weight: var(--snt-weight-bold);
 }
 
-.shopKicker {
+.storeKicker {
   font-size: var(--snt-text-xs);
   color: color-mix(in srgb, white 82%, transparent);
 }
@@ -250,7 +250,7 @@
     transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
     background: var(--snt-accent-strong);
     color: var(--snt-ink-on-dark);
-    --snt-shop-mark: color-mix(in srgb, white 18%, transparent);
+    --snt-store-mark: color-mix(in srgb, white 18%, transparent);
   }
 
   .sidebarHead {
@@ -258,7 +258,7 @@
     flex-direction: column;
     gap: var(--snt-space-5);
     padding: 0 var(--snt-space-7) var(--snt-space-8) var(--snt-space-9);
-    /* The line under the shop: set in from both edges, as the lines between
+    /* The line under the store: set in from both edges, as the lines between
        rows are across the app, rather than running edge to edge. */
     background-image: linear-gradient(
       color-mix(in srgb, white 20%, transparent),
@@ -269,7 +269,7 @@
     background-repeat: no-repeat;
   }
 
-  /* The shop's mark at the left, the fold button at the right. */
+  /* The store's mark at the left, the fold button at the right. */
   .sidebarTop {
     display: flex;
     align-items: center;
@@ -277,7 +277,7 @@
     gap: var(--snt-space-4);
   }
 
-  .sidebarShop {
+  .sidebarStore {
     display: flex;
     flex-direction: column;
     gap: var(--snt-space-1);
@@ -313,7 +313,7 @@
     white-space: nowrap;
   }
 
-  /* --- folded: the shop's mark, the icons, the way back --- */
+  /* --- folded: the store's mark, the icons, the way back --- */
 
   .collapsed {
     width: var(--snt-console-sidebar-collapsed-w);
@@ -342,7 +342,7 @@
   }
 
   /* The words go, but stay for screen readers. */
-  .collapsed .sidebarShop,
+  .collapsed .sidebarStore,
   .collapsed .sidebarLabel {
     position: absolute;
     width: 1px;

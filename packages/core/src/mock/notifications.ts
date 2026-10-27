@@ -1,6 +1,6 @@
 /**
  * Mock notifications: Tarisai's (the signed in person) and Kopje Computers'
- * (the shop in the console), newest first. Each points at something already
+ * (the store in the console), newest first. Each points at something already
  * in the mock: an offer, a deal check, a lead.
  */
 
@@ -75,7 +75,7 @@ export const mockNotifications: AppNotification[] = [
   // --- Kopje Computers -------------------------------------------------------
   {
     id: 'n-s1',
-    audience: 'shop',
+    audience: 'store',
     kind: 'lead',
     text: 'New lead: Tarisai M. wants Any Core i7. Matches your Dell Latitude 7490.',
     atLabel: '12 minutes ago',
@@ -84,7 +84,7 @@ export const mockNotifications: AppNotification[] = [
   },
   {
     id: 'n-s2',
-    audience: 'shop',
+    audience: 'store',
     kind: 'offer',
     text: 'Chipo N. made an offer on your Lenovo ThinkPad T480',
     atLabel: '1h ago',
@@ -93,7 +93,7 @@ export const mockNotifications: AppNotification[] = [
   },
   {
     id: 'n-s3',
-    audience: 'shop',
+    audience: 'store',
     kind: 'deal',
     text: 'Farai D. says they bought your HP EliteBook 840 G5. Is that right?',
     atLabel: '3 days ago',
@@ -102,7 +102,7 @@ export const mockNotifications: AppNotification[] = [
   },
   {
     id: 'n-s7',
-    audience: 'shop',
+    audience: 'store',
     kind: 'sponsor',
     text: 'The boost on your Dell Latitude 7490 ends in 7 days. Extend it from Stock.',
     atLabel: 'Today',
@@ -111,7 +111,7 @@ export const mockNotifications: AppNotification[] = [
   },
   {
     id: 'n-s4',
-    audience: 'shop',
+    audience: 'store',
     kind: 'offer-reply',
     text: 'Rudo K. accepted your offer on their Redmi Note 12 Wanted listing',
     atLabel: 'Yesterday',
@@ -120,7 +120,7 @@ export const mockNotifications: AppNotification[] = [
   },
   {
     id: 'n-s5',
-    audience: 'shop',
+    audience: 'store',
     kind: 'reveal',
     text: 'This week: 49 number reveals, up 17% on last week',
     atLabel: '2 days ago',
@@ -129,7 +129,7 @@ export const mockNotifications: AppNotification[] = [
   },
   {
     id: 'n-s6',
-    audience: 'shop',
+    audience: 'store',
     kind: 'account',
     text: 'Your lead alerts renew in 3 days, at $10 a month',
     atLabel: '4 days ago',

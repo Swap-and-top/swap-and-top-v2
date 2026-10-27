@@ -28,9 +28,9 @@ import styles from './PhotoGallery.module.css';
 
 /**
  * Who posted the photos, which sets the viewer's tint to match the card: an
- * individual's sale or swap is blue, a Wanted post green, a shop's untinted.
+ * individual's sale or swap is blue, a Wanted post green, a store's untinted.
  */
-export type PhotoTone = 'person' | 'wanted' | 'shop';
+export type PhotoTone = 'person' | 'wanted' | 'store';
 
 /**
  * Where a photo's picture actually sits on screen. A photo shown whole inside
@@ -236,7 +236,7 @@ function useRubberBand(track: RefObject<HTMLDivElement | null>) {
 export function PhotoGallery({
   images,
   alt,
-  tone = 'shop',
+  tone = 'store',
   height,
   className,
 }: {
@@ -392,7 +392,7 @@ export function PhotoGallery({
 export function PhotoThumb({
   images,
   alt,
-  tone = 'shop',
+  tone = 'store',
   size = 44,
   className,
 }: {

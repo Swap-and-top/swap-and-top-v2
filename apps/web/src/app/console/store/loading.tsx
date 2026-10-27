@@ -1,17 +1,17 @@
 /**
  * Loading: Store profile. The heading and its button are the page's own; the
- * shop itself in bones (see ShopfrontBodySkeleton).
+ * store itself in bones (see StorefrontBodySkeleton).
  */
 
-import { currentShop, newLeadCount } from '@snt/core';
+import { currentStore, newLeadCount } from '@snt/core';
 import { Bone, ConsoleShell } from '@snt/ui';
-import { ShopfrontBodySkeleton } from '@/components/Shopfront';
+import { StorefrontBodySkeleton } from '@/components/Storefront';
 import styles from './page.module.css';
 
 export default function Loading() {
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Store profile"
       meta="Your store as buyers find it"
       newLeadCount={newLeadCount}
@@ -22,8 +22,8 @@ export default function Loading() {
         </div>
       }
     >
-      <div className={styles.shop}>
-        <ShopfrontBodySkeleton />
+      <div className={styles.store}>
+        <StorefrontBodySkeleton />
       </div>
     </ConsoleShell>
   );

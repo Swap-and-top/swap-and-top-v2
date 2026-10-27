@@ -1,5 +1,5 @@
 /**
- * ImagePlaceholder, Avatar and ShopMark. The photo carousel is in PhotoGallery.
+ * ImagePlaceholder, Avatar and StoreMark. The photo carousel is in PhotoGallery.
  *
  * A photo slot shows the listing's photo, cropped to fill, when there is one,
  * and a plain grey box otherwise. The image glyph only shows on an empty
@@ -119,8 +119,8 @@ export function Avatar({
   );
 }
 
-/** A shop's square initials mark, standing in for a logo. */
-export function ShopMark({
+/** A store's square initials mark, standing in for a logo. */
+export function StoreMark({
   initials,
   size = 20,
 }: {
@@ -129,7 +129,7 @@ export function ShopMark({
 }) {
   return (
     <span
-      className={styles.shopMark}
+      className={styles.storeMark}
       style={{
         width: size,
         height: size,

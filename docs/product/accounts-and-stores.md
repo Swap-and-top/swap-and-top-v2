@@ -23,8 +23,10 @@ never a login of its own.
   the app, not in help text, not in docs written from now on. The console is
   the **Store console**, the badge is **Verified store**, and settings say
   "Let stores see my contact details", "Accepts offers from stores".
-- Code names (`Shop`, `shopId`, `currentShop`, `dealer` in older files) can
-  stay; they are not seen.
+- Code names say store too (`Store`, `storeId`, `currentStore`,
+  `allowStoreOffers`, `VerifiedStoreBadge`). Only the names of frames in the
+  design file (`Shopfront`, `DetailDealer`) keep the old words, so they can
+  still be found there.
 - A store's public page lives at `/store/<slug>`, its console page at
   `/console/store` (moved from `/shop` on 2026-10-27; the old addresses
   redirect).
@@ -219,4 +221,4 @@ simpler, safer, and nothing to squat on.
 - [./trust-and-safety.md](./trust-and-safety.md): verification and safety
 - [../architecture/auth-and-identity.md](../architecture/auth-and-identity.md):
   sign in and identity
-- [./dealer-console.md](./dealer-console.md): the Store console
+- [./store-console.md](./store-console.md): the Store console

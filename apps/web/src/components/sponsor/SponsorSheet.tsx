@@ -6,7 +6,7 @@
  * a time:
  *
  *  1. **Plan.** The item (already chosen when opened from it; otherwise the
- *     shop's live items, the first picked), a daily budget on a slider from
+ *     store's live items, the first picked), a daily budget on a slider from
  *     $1 up with about how many people a day it reaches, and how long: a
  *     day, a week or a month. The total, and when it ends.
  *  2. **Pay.** What it costs, and one button: every payment goes through
@@ -27,12 +27,12 @@ import {
   SPONSOR_DURATIONS,
   SPONSOR_MAX_DAILY,
   SPONSOR_MIN_DAILY,
-  currentShop,
+  currentStore,
   daysFromToday,
   dollars,
   getListing,
   reachPerDay,
-  useShopStock,
+  useStoreStock,
   useSponsorStore,
   type Listing,
 } from '@snt/core';
@@ -106,7 +106,7 @@ function SponsorFlow({
   extending: boolean;
 }) {
   const close = useCloseSheet();
-  const stock = useShopStock(currentShop.id);
+  const stock = useStoreStock(currentStore.id);
   const sponsorships = useSponsorStore((state) => state.sponsorships);
   const start = useSponsorStore((state) => state.start);
   const extend = useSponsorStore((state) => state.extend);
@@ -129,7 +129,7 @@ function SponsorFlow({
   const [paidUntil, setPaidUntil] = useState('');
   const whichLabel = useId();
 
-  // A shop's stock item, or any listing opened from its own page: every
+  // A store's stock item, or any listing opened from its own page: every
   // listing can be sponsored, a person's swap or Wanted listing too.
   const item = picked
     ? (stock.find((l) => l.id === picked) ?? getListing(picked))

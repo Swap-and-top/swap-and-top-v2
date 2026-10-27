@@ -3,7 +3,7 @@
 /**
  * Wanted — demand.
  *
- * Top-level navigation on purpose: this is the dealer product and the platform's
+ * Top-level navigation on purpose: this is the store product and the platform's
  * structural difference from a supply-only board like Facebook Marketplace.
  * Burying it inside search would hide the thing that makes the business work.
  *
@@ -105,7 +105,7 @@ export function WantedFeed({ initial }: { initial: FeedFilterParams }) {
         ) : (
           <EmptyState
             title="No requests in this category"
-            body="Nobody is looking for one of these right now. Post what you are looking for and dealers will come to you."
+            body="Nobody is looking for one of these right now. Post what you are looking for and stores will come to you."
           />
         )}
       </ScreenBody>

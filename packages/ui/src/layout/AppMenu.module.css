@@ -366,7 +366,7 @@
 }
 
 /* Each icon on a soft tile of its own colour, a rounded square as in the
-   dealer console. */
+   Store console. */
 .rowIcon,
 .contactIcon {
   display: flex;

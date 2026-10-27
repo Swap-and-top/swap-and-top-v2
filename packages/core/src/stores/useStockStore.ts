@@ -1,16 +1,16 @@
 /**
- * A dealer's stock: what the mock data holds, plus what the dealer has added
+ * A store's stock: what the mock data holds, plus what the store has added
  * since, one at a time from Add stock or many at once from Bulk import.
  *
  * The mock listings are fixed, so new items are kept here, newest first, and
- * the console asks for the shop's stock through `useShopStock`. In the real
+ * the console asks for the store's stock through `useStoreStock`. In the real
  * system each is a create on the listings endpoint (see docs/api/endpoints.md);
  * an import is the same create, once per row.
  */
 
 import { create } from 'zustand';
-import { getShopListings } from '../mock/listings';
-import type { Shop } from '../types/shop';
+import { getStoreListings } from '../mock/listings';
+import type { Store } from '../types/store';
 import type {
   Category,
   Condition,
@@ -21,7 +21,7 @@ import type {
 import { statusOf, useListingStatusStore } from './useListingStatusStore';
 import { useSponsorStore, withPromotion } from './useSponsorStore';
 
-/** What the dealer gives for one item, from the form or a row of a sheet. */
+/** What the store gives for one item, from the form or a row of a sheet. */
 export interface NewStock {
   title: string;
   category: Category;
@@ -29,7 +29,7 @@ export interface NewStock {
   /** Without one the item is kept as a draft: nothing is listed unpriced. */
   price?: number;
   specs?: ItemSpecs;
-  /** How many of this model the shop holds. */
+  /** How many of this model the store holds. */
   quantity?: number;
   acceptsSwaps?: boolean;
   /** Photo URLs, in order. */
@@ -41,9 +41,9 @@ export interface NewStock {
 }
 
 interface StockState {
-  /** Items the dealer has added, newest first. */
+  /** Items the store has added, newest first. */
   added: SaleListing[];
-  /** Listing id → the item as the dealer has since edited it. */
+  /** Listing id → the item as the store has since edited it. */
   edited: Record<string, SaleListing>;
   addStock: (items: SaleListing[]) => void;
   /** Keeps an edited item in place of what it was. */
@@ -68,8 +68,8 @@ export const useStockStore = create<StockState>((set) => ({
 
 let made = 0;
 
-/** A sale listing for the shop, as a new item is created. */
-export function newStockListing(shop: Shop, input: NewStock): SaleListing {
+/** A sale listing for the store, as a new item is created. */
+export function newStockListing(store: Store, input: NewStock): SaleListing {
   made += 1;
   const id = `l-new-${Date.now().toString(36)}-${made}`;
   const slug = `${input.title
@@ -82,18 +82,18 @@ export function newStockListing(shop: Shop, input: NewStock): SaleListing {
     id,
     slug,
     type: 'sale',
-    // The shop's owner, as on the rest of its stock.
-    ownerId: getShopListings(shop.id)[0]?.ownerId ?? `u-${shop.slug}`,
-    shopId: shop.id,
+    // The store's owner, as on the rest of its stock.
+    ownerId: getStoreListings(store.id)[0]?.ownerId ?? `u-${store.slug}`,
+    storeId: store.id,
     category: input.category,
     title: input.title,
-    location: shop.location,
+    location: store.location,
     status: priced && !input.draft ? 'live' : 'draft',
     createdAt: new Date().toISOString().slice(0, 10),
     expiresAt: '',
     postedLabel: 'Just now',
     contactChannels: ['whatsapp', 'call'],
-    allowDealerOffers: true,
+    allowStoreOffers: true,
     viewCount: 0,
     revealCount: 0,
     promotion: 'organic',
@@ -115,7 +115,7 @@ export function newStockListing(shop: Shop, input: NewStock): SaleListing {
 }
 
 /**
- * An item with the dealer's changes. It keeps its id, address, counts and
+ * An item with the store's changes. It keeps its id, address, counts and
  * placement. A draft given a price goes live, unless kept as a draft; an item
  * already listed takes the status chosen on the form, or keeps its own.
  */
@@ -151,18 +151,18 @@ export function editedStockListing(
 }
 
 /**
- * The shop's stock now: what it has added, newest first, then the rest, each
+ * The store's stock now: what it has added, newest first, then the rest, each
  * with the status its owner has since given it, leaving out what was deleted.
  */
-export function useShopStock(shopId: string): Listing[] {
+export function useStoreStock(storeId: string): Listing[] {
   const added = useStockStore((state) => state.added);
   const edited = useStockStore((state) => state.edited);
   const changes = useListingStatusStore((state) => state.changes);
   const sponsorships = useSponsorStore((state) => state.sponsorships);
 
   return [
-    ...added.filter((listing) => listing.shopId === shopId),
-    ...getShopListings(shopId).map((listing) => edited[listing.id] ?? listing),
+    ...added.filter((listing) => listing.storeId === storeId),
+    ...getStoreListings(storeId).map((listing) => edited[listing.id] ?? listing),
   ]
     .map((listing) => {
       const status = statusOf(listing, changes);

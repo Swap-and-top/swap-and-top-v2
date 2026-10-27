@@ -47,7 +47,7 @@ How the thing behaves and looks, independent of technology.
 - **[Post Flow](./product/post-flow.md)** — one posting flow with three outcomes
 - **[Contact & Reveals](./product/contact-and-reveals.md)** — how people reach each other, and the metric it produces
 - **[Accounts & Stores](./product/accounts-and-stores.md)** — people, free and paid stores, store passes, verification, settings
-- **[Dealer Console](./product/dealer-console.md)** — the business-facing surface (now the Store console)
+- **[Store Console](./product/store-console.md)** — the business-facing surface
 - **[Trust & Safety](./product/trust-and-safety.md)** — verification, stolen devices, safe meeting
 - **[Roadmap](./product/roadmap.md)** — sequence, and what is deliberately deferred
 
@@ -117,7 +117,7 @@ The wireframes fix structure, not style. The visual design — colours, type, sp
 SWAP & TOP v2 ARCHITECTURE:
 ┌──────────────────────────────────────────────────────────────────────┐
 │  CLIENTS                                                             │
-│  Marketplace (web, server-rendered)  │  Dealer console  │  Mobile app │
+│  Marketplace (web, server-rendered)  │  Store console   │  Mobile app │
 │                                      │                  │  (later)    │
 ├──────────────────────────────────────────────────────────────────────┤
 │  API — one REST contract, published as a machine-readable spec        │

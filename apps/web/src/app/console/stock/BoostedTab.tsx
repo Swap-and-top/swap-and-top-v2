@@ -1,18 +1,18 @@
 'use client';
 
 /**
- * Stock's Boosted tab: the shop's boosted listings, each with how its boost
+ * Stock's Boosted tab: the store's boosted listings, each with how its boost
  * is doing (until when, at what a day, reveals since) and a menu to extend
  * or stop it; above them the yellow "Boost a listing"; under them, the
- * shop's live items buyers ask about most, as "Worth boosting", each one tap
+ * store's live items buyers ask about most, as "Worth boosting", each one tap
  * from its boost.
  */
 
 import Link from 'next/link';
 import { toast } from 'sonner';
 import {
-  currentShop,
-  useShopSponsorships,
+  currentStore,
+  useStoreSponsorships,
   useSponsorStore,
   type Listing,
 } from '@snt/core';
@@ -32,12 +32,12 @@ export function BoostedTab({
   stock,
   onBoost,
 }: {
-  /** Everything the shop holds. */
+  /** Everything the store holds. */
   stock: Listing[];
   /** Opens the boost sheet: on one item, or to pick one. */
   onBoost: (listingId?: string) => void;
 }) {
-  const sponsorships = useShopSponsorships(currentShop.id);
+  const sponsorships = useStoreSponsorships(currentStore.id);
   const stop = useSponsorStore((state) => state.stop);
   const restore = useSponsorStore((state) => state.restore);
 

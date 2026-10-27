@@ -63,11 +63,11 @@ export default function Loading() {
               <ListRow href="/saved" icon={<SaveStarIcon size={19} />} label="Saved" />
             </ListGroup>
 
-            <h2 className={styles.section}>For dealers</h2>
+            <h2 className={styles.section}>For stores</h2>
             <ConsoleEntryRow
               href="/console/stock"
               icon={<BoxIcon size={20} />}
-              title="Switch to dealer console"
+              title="Switch to Store console"
               subtitle="Stock, leads and promotion"
             />
 

@@ -1,5 +1,5 @@
 /**
- * The shop's lead alert settings (see types/leadAlerts.ts), kept here as a
+ * The store's lead alert settings (see types/leadAlerts.ts), kept here as a
  * stand in for the backend: the sheet reads and saves them, the chip on
  * Leads shows how they stand. Confirming a WhatsApp number is mocked: any
  * six digit code is taken.

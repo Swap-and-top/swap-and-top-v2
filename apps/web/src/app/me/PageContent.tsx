@@ -138,12 +138,12 @@ export default function MePage() {
               />
             </ListGroup>
 
-            {/* Visible only to dealer accounts in the real app. */}
-            <h2 className={styles.section}>For dealers</h2>
+            {/* Visible only to store accounts in the real app. */}
+            <h2 className={styles.section}>For stores</h2>
             <ConsoleEntryRow
               href="/console/stock"
               icon={<BoxIcon size={20} />}
-              title="Switch to dealer console"
+              title="Switch to Store console"
               subtitle="Stock, leads and promotion"
             />
 

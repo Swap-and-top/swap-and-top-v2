@@ -3,35 +3,35 @@
 /**
  * Console — Store profile.
  *
- * The shop as buyers find it, kept inside the console: the sidebar stays, so
- * the dealer can look and move straight on to Stock or Leads. Only what is
- * live shows, as on the public page, with the dealer's own edits. The public
+ * The store as buyers find it, kept inside the console: the sidebar stays, so
+ * the store can look and move straight on to Stock or Leads. Only what is
+ * live shows, as on the public page, with the store's own edits. The public
  * page itself, under the marketplace's header, is one button away.
  */
 
-import { currentShop, newLeadCount, useShopStock } from '@snt/core';
+import { currentStore, newLeadCount, useStoreStock } from '@snt/core';
 import { ButtonLink, ConsoleShell } from '@snt/ui';
-import { ShopfrontBody } from '@/components/Shopfront';
+import { StorefrontBody } from '@/components/Storefront';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
 import styles from './page.module.css';
 
-export default function ConsoleShopPage() {
-  const stock = useShopStock(currentShop.id);
+export default function ConsoleStorePage() {
+  const stock = useStoreStock(currentStore.id);
   const live = stock.filter((listing) => listing.status === 'live');
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Store profile"
       meta="Your store as buyers find it"
       newLeadCount={newLeadCount}
       stockCount={stock.length}
       actions={
         <div className={styles.toolbar}>
-          {/* Lead alerts are a shop setting, so they can be found here too. */}
+          {/* Lead alerts are a store setting, so they can be found here too. */}
           <LeadAlertsChip />
           <ButtonLink
-            href={`/store/${currentShop.slug}`}
+            href={`/store/${currentStore.slug}`}
             variant="secondary"
             size="sm"
           >
@@ -40,8 +40,8 @@ export default function ConsoleShopPage() {
         </div>
       }
     >
-      <div className={styles.shop}>
-        <ShopfrontBody shop={currentShop} listings={live} />
+      <div className={styles.store}>
+        <StorefrontBody store={currentStore} listings={live} />
       </div>
     </ConsoleShell>
   );

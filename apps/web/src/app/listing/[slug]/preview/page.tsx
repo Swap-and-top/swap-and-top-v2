@@ -2,7 +2,7 @@
  * Buyer preview of a listing, for its owner: the listing page exactly as a
  * buyer sees it, with the owner's own tools (status, counts, Edit and
  * Manage, offers received) left out, under a banner saying so. Reached from
- * "View as a buyer" in the dealer console. Kept out of search engines.
+ * "View as a buyer" in the Store console. Kept out of search engines.
  */
 
 import type { Metadata } from 'next';

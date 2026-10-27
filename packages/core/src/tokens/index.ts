@@ -56,10 +56,10 @@ export const colors = {
   success: '#1B847C',
   successTint: '#E2F6EE',
 
-  /** A shop's initials mark. */
-  shopMark: '#2B2B2B',
+  /** A store's initials mark. */
+  storeMark: '#2B2B2B',
 
-  /** Dark surfaces: the dealer console chrome. */
+  /** Dark surfaces: the Store console chrome. */
   dark: '#1A1A18',
   darkRaised: '#33322E',
   darkLine: '#34332F',
@@ -122,7 +122,7 @@ export const breakpoints = {
   sm: 480,
   /** Tablet. */
   md: 768,
-  /** Laptop — the dealer console gains its sidebar and table here. */
+  /** Laptop — the Store console gains its sidebar and table here. */
   lg: 1024,
   /** Desktop. */
   xl: 1280,

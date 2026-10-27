@@ -69,7 +69,7 @@
   color: #b42318;
 }
 
-/** New lead. Solid, because it is the one thing a dealer must not miss. */
+/** New lead. Solid, because it is the one thing a store must not miss. */
 .accentSolid {
   background: var(--snt-accent);
   color: var(--snt-ink-on-dark);
@@ -83,7 +83,7 @@
 
 /** Sponsored, overlaid on a listing image. Must read on any photograph. */
 .dark {
-  background: var(--snt-shop-mark);
+  background: var(--snt-store-mark);
   color: var(--snt-ink-on-dark);
 }
 

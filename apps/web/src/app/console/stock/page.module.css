@@ -149,7 +149,7 @@
   grid-area: thumb;
 }
 
-/* The shop's own things: names and prices in the blue of things owned. */
+/* The store's own things: names and prices in the blue of things owned. */
 .title {
   grid-area: title;
   font-size: var(--snt-text-md);

@@ -133,7 +133,7 @@ export function BrowseFeed({ initial }: { initial: FeedFilterParams }) {
         ) : (
           <EmptyState
             title="Nothing here yet"
-            body="No listings match those filters. Clear them, or post what you are looking for and let dealers come to you."
+            body="No listings match those filters. Clear them, or post what you are looking for and let stores come to you."
             action={
               <ButtonLink href="/post" variant="primary" {...postGate}>
                 Post what you are looking for

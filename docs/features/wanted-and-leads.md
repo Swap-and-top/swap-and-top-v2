@@ -199,7 +199,7 @@ Mitigations:
 
 - [Swap & Top](./swap-and-top.md) — the higher-value source of demand
 - [Card System](../product/card-system.md) — the Wanted card
-- [Dealer Console](../product/dealer-console.md) — where leads are worked
+- [Dealer Console](../product/store-console.md) — where leads are worked
 - [Notifications](./notifications.md) — how alerts are delivered
 - [Monetization](../business/monetization.md) — pricing and earning timeline
 - [The Wedge](../business/the-wedge.md) — why this is the structural difference

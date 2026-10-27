@@ -1,5 +1,5 @@
 export * from './users';
-export * from './shops';
+export * from './stores';
 export * from './listings';
 export * from './leads';
 export * from './deals';

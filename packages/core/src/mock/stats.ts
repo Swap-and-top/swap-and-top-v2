@@ -1,16 +1,16 @@
 /**
- * Mock shop statistics for the console's Stats page.
+ * Mock store statistics for the console's Stats page.
  *
  * Made up, but the same every time: each figure comes from a fixed seed, so
  * the server and the browser draw the same graph and nothing jumps on load.
- * The shape is plausible for a small phone and laptop shop: views in the
+ * The shape is plausible for a small phone and laptop store: views in the
  * hundreds a day, a few number reveals, an offer or two, a deal every few
  * days; busiest in the working day and at the weekend, growing over the year.
  * Real figures come from the reveal, offer and deal records once there is a
- * backend (see docs/product/dealer-console.md).
+ * backend (see docs/product/store-console.md).
  */
 
-import { getShopListings } from './listings';
+import { getStoreListings } from './listings';
 
 export type StatsRange = 'today' | 'week' | 'month' | 'year' | 'all';
 export type StatsMetric = 'views' | 'reveals' | 'offers' | 'deals';
@@ -25,7 +25,7 @@ export interface StatsBucket extends StatsFigures {
   short: string;
 }
 
-export interface ShopStats {
+export interface StoreStats {
   buckets: StatsBucket[];
   totals: StatsFigures;
   /** The same length of time just before, for the change. */
@@ -37,7 +37,7 @@ export interface ShopStats {
 /** "Today" in the mock: Monday 26 October 2026, at 3pm. */
 const NOW = { year: 2026, month: 9, day: 26, hour: 15 };
 
-/** When the shop joined, for All time: January 2025. */
+/** When the store joined, for All time: January 2025. */
 const JOINED = { year: 2025, month: 0 };
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -181,8 +181,8 @@ function months(from: { year: number; month: number }): StatsBucket[] {
   return list;
 }
 
-/** The shop's figures for a stretch of time, as a graph and in total. */
-export function shopStatsFor(range: StatsRange): ShopStats {
+/** The store's figures for a stretch of time, as a graph and in total. */
+export function storeStatsFor(range: StatsRange): StoreStats {
   switch (range) {
     case 'today': {
       const buckets = hours(0, NOW.hour);
@@ -231,7 +231,7 @@ export function shopStatsFor(range: StatsRange): ShopStats {
       return {
         buckets,
         totals: sum(buckets),
-        // Nothing came before the shop joined: no change to show.
+        // Nothing came before the store joined: no change to show.
         previous: sum(buckets),
         against: '',
       };
@@ -246,11 +246,11 @@ export interface ItemStats extends StatsFigures {
 }
 
 /**
- * The shop's items, best first by reveals: each takes a share of the shop's
+ * The store's items, best first by reveals: each takes a share of the store's
  * figures in line with how much interest it draws.
  */
-export function bestItemsFor(shopId: string, totals: StatsFigures): ItemStats[] {
-  const stock = getShopListings(shopId).filter(
+export function bestItemsFor(storeId: string, totals: StatsFigures): ItemStats[] {
+  const stock = getStoreListings(storeId).filter(
     (listing) => listing.type === 'sale' && listing.status === 'live',
   );
   const weight = (i: number, reveals: number) =>
@@ -272,7 +272,7 @@ export function bestItemsFor(shopId: string, totals: StatsFigures): ItemStats[] 
     .sort((a, b) => b.reveals - a.reveals || b.views - a.views);
 }
 
-/** How people reached the shop, and how sponsored listings did. */
+/** How people reached the store, and how sponsored listings did. */
 export const mockLeadSources = {
   /** Of reveals: WhatsApp, the rest calls. */
   whatsappShare: 0.68,

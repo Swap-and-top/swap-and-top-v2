@@ -1,7 +1,7 @@
 /**
  * The tappable menu row: icon, label, optional value, chevron.
  *
- * Used for the account hub's groups and for the console's shop section. Always
+ * Used for the account hub's groups and for the console's store section. Always
  * a real link or button, never a div with a handler — Tab has to reach it.
  */
 

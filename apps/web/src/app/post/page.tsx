@@ -26,7 +26,7 @@ import {
   ChevronRightIcon,
   InfoIcon,
   SearchIcon,
-  ShopIcon,
+  StoreIcon,
   SwapIcon,
 } from '@snt/ui/icons';
 import styles from './page.module.css';
@@ -47,7 +47,7 @@ const OPTIONS: Option[] = [
     title: 'Sell something',
     description: 'Set a price. Buyers call or message you directly.',
     tone: 'sale',
-    glyph: <ShopIcon size={21} weight={1.8} />,
+    glyph: <StoreIcon size={21} weight={1.8} />,
   },
   {
     kind: 'swap',
@@ -60,7 +60,7 @@ const OPTIONS: Option[] = [
   {
     kind: 'request',
     title: 'Looking for something',
-    description: 'Say what you want and your budget. Dealers come to you.',
+    description: 'Say what you want and your budget. Stores come to you.',
     tone: 'wanted',
     glyph: <SearchIcon size={21} weight={1.8} />,
   },
@@ -121,10 +121,10 @@ export default function PostTypePage() {
         <Note
           icon={<InfoIcon size={17} />}
           tone="subtle"
-          className={styles.dealerNote}
+          className={styles.storeNote}
         >
-          Selling a lot? A dealer account gives you a shopfront, bulk stock
-          upload and lead alerts.
+          Selling a lot? Open a store for a store page, bulk stock upload
+          and lead alerts.
         </Note>
       </ScreenBody>
     </Screen>

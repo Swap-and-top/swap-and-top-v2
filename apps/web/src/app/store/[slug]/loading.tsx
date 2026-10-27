@@ -1,7 +1,7 @@
-/** Loading: a shop. The feed's header, then the shop in bones. */
+/** Loading: a store. The feed's header, then the store in bones. */
 
-import { ShopfrontSkeleton } from '@/components/Shopfront';
+import { StorefrontSkeleton } from '@/components/Storefront';
 
 export default function Loading() {
-  return <ShopfrontSkeleton />;
+  return <StorefrontSkeleton />;
 }

@@ -208,7 +208,7 @@ A dealer is a normal user with an extra surface, not a separate account type. Th
 - [Card System](./card-system.md) — what appears inside the feed
 - [Search & Discovery](./search-and-discovery.md) — the `Search` screen in full
 - [Post Flow](./post-flow.md) — the three posting screens
-- [Dealer Console](./dealer-console.md) — console behaviour in detail
+- [Dealer Console](./store-console.md) — console behaviour in detail
 - [Feed & Filters](../features/feed-and-filters.md) — how the feed is composed
 - [SEO & Rendering](../architecture/seo-and-rendering.md) — why the rendering split is what it is
 

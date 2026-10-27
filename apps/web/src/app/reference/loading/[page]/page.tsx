@@ -10,7 +10,7 @@ import { notFound } from 'next/navigation';
 import FeedLoading from '../../../(browse)/loading';
 import SearchLoading from '../../../search/loading';
 import WantedLoading from '../../../wanted/loading';
-import ShopLoading from '../../../store/[slug]/loading';
+import StoreLoading from '../../../store/[slug]/loading';
 import SavedLoading from '../../../saved/loading';
 import MeLoading from '../../../me/loading';
 import MyListingsLoading from '../../../me/listings/loading';
@@ -22,7 +22,7 @@ import EditStockLoading from '../../../console/stock/edit/[id]/loading';
 import LeadsLoading from '../../../console/leads/loading';
 import SwapOffersLoading from '../../../console/trade-ins/loading';
 import StatsLoading from '../../../console/stats/loading';
-import ConsoleShopLoading from '../../../console/store/loading';
+import ConsoleStoreLoading from '../../../console/store/loading';
 import {
   RequestListingSkeleton,
   SaleListingSkeleton,
@@ -36,7 +36,7 @@ const SCREENS = {
   'listing-sale': SaleListingSkeleton,
   'listing-swap': SwapListingSkeleton,
   'listing-wanted': RequestListingSkeleton,
-  shop: ShopLoading,
+  store: StoreLoading,
   saved: SavedLoading,
   me: MeLoading,
   'me-listings': MyListingsLoading,
@@ -48,7 +48,7 @@ const SCREENS = {
   leads: LeadsLoading,
   'swap-offers': SwapOffersLoading,
   stats: StatsLoading,
-  'console-shop': ConsoleShopLoading,
+  'console-store': ConsoleStoreLoading,
 } as const;
 
 export default async function LoadingReferencePage({

@@ -5,7 +5,7 @@
  */
 
 import { Bone, ConsoleShell } from '@snt/ui';
-import { currentShop, newLeadCount } from '@snt/core';
+import { currentStore, newLeadCount } from '@snt/core';
 import styles from './StockForm.module.css';
 
 /** A labelled box: its label bar set in over a pale pill. */
@@ -30,7 +30,7 @@ export function StockFormSkeleton({
 }) {
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title={title}
       meta={meta}
       newLeadCount={newLeadCount}

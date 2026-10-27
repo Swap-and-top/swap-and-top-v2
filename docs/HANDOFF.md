@@ -40,7 +40,7 @@ the user asks. `main` deploys live.
 | Who | Id | Notes |
 |---|---|---|
 | Tarisai M. | `u-tarisai` | The signed in test user (`CURRENT_USER_ID`). Owns the MacBook swap (`l-macbook-swap`) and the PS5 controller Wanted listing (`l-ps5-controller-wanted`). |
-| Kopje Computers | `u-kopje`, shop `s-kopje` | The dealer (`currentShop`) shown in the console. |
+| Kopje Computers | `u-kopje`, store `s-kopje` | The store (`currentStore`) shown in the console. |
 | Chipo N., Rudo K., Blessing T., Tendai C., Farai D., Nyasha P., Avondale Games | `u-chipo`, `u-rudo`, `u-blessing`, `u-tendai`, `u-farai`, `u-nyasha`, `u-avgames` | Other people offering or posting. |
 
 Sponsored in the mock (`useSponsorStore`): the Dell Latitude 7490 (Kopje's,
@@ -115,11 +115,18 @@ Patterns the user has settled on:
   "Boosted until …", "Extend boost", "Stop boost", the Stats card "Boosts").
   Only the label buyers see on a card stays "Sponsored". Code names
   (`useSponsorStore`, `SponsorSheet`) keep "sponsor".
+- **Store, never dealer, in code too.** Code names say store:
+  `allowStoreOffers`, `contactToStores`, `contactOpenToStores`,
+  `VerifiedStoreBadge`, `ownsStore`, the role `'store'`, and the console doc
+  is `docs/product/store-console.md`. "Shop" is gone from the code too:
+  `Store`, `storeId`, `currentStore`, `getStore`, `useStoreStock`,
+  `mockStores` (`mock/stores.ts`, `types/store.ts`), the `Storefront`
+  component, `StoreMark`, `--snt-store-mark`. Only the design file's frame
+  names (`DetailDealer`, `Shopfront`) keep the old words.
 - **Store, not shop, in what people see.** A dealer's page is a store:
   "Store profile" (storefront icon, "Store" on the phone bar), addresses
   `/store/<slug>` and `/console/store`. The old `/shop/...` and
-  `/console/shop` redirect there (`apps/web/next.config.ts`). Code names
-  (`Shop`, `currentShop`, `shopId`) keep "shop".
+  `/console/shop` redirect there (`apps/web/next.config.ts`).
 - **Boosting lives in Stock.** Stock has two tabs, Stock and Boosted
   (`stockTab` in `useConsoleStore`). Boosted (`console/stock/BoostedTab.tsx`):
   a yellow "Boost a listing", each boosted listing with "Until … · $3 a day
@@ -302,7 +309,7 @@ See `git log` for the full detail; each commit body explains its change.
 - **With the API: one home per account.** A dealer's own profile should
   point shop matters (My listings, Offers, shop deal checks) to the console
   rather than repeat them; only personal things (Saved, Settings) stay in
-  the profile. See docs/product/dealer-console.md, "One home per account".
+  the profile. See docs/product/store-console.md, "One home per account".
 - The Leads tabs could move onto the shared `Tabs` component.
 - Made offers are listed in store order, not strictly newest first; real
   dates would allow sorting.

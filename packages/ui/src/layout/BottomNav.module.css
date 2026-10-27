@@ -43,7 +43,7 @@
 
 /*
  * The tile behind an icon: a rounded rectangle, pale blue when idle, as on
- * the dealer console's bar and icons across the app. On the active item it
+ * the Store console's bar and icons across the app. On the active item it
  * fills with the control blue and its icon turns white — far easier to pick
  * out at a glance than a change of icon weight alone.
  *

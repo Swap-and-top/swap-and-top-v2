@@ -1,9 +1,9 @@
 /**
- * Dealer console state.
+ * Store console state.
  *
  * One responsive surface: at phone width it is a stacked list with a bottom
  * nav, and from the `lg` breakpoint up it gains a sidebar and a real table.
- * Mobile is the primary build — most small shops are run from a phone behind a
+ * Mobile is the primary build — most small stores are run from a phone behind a
  * counter, and nobody opens a laptop to add one item.
  */
 
@@ -39,7 +39,7 @@ export const NO_STOCK_FILTERS: StockFilters = {
   swapsOnly: false,
 };
 
-/** Stock's two tabs: everything the shop holds, and what is boosted. */
+/** Stock's two tabs: everything the store holds, and what is boosted. */
 export type StockTab = 'stock' | 'boosted';
 
 interface ConsoleState {
@@ -54,7 +54,7 @@ interface ConsoleState {
   stockFilters: StockFilters;
   /** Stock's tab: kept, so Stats' "Boosted listings" can open it there. */
   stockTab: StockTab;
-  /** The desktop sidebar folded to its icons. Kept as the dealer moves on. */
+  /** The desktop sidebar folded to its icons. Kept as the store moves on. */
   sidebarCollapsed: boolean;
   /** Offer composer, on the desktop lead detail pane. */
   offerPrice: string;

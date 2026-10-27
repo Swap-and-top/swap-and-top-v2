@@ -4,14 +4,14 @@
  * since it never changes), and a row of bones for each item.
  */
 
-import { currentShop, newLeadCount } from '@snt/core';
+import { currentStore, newLeadCount } from '@snt/core';
 import { Bone, ConsoleShell } from '@snt/ui';
 import styles from './page.module.css';
 
 export default function Loading() {
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Stock"
       newLeadCount={newLeadCount}
       actions={

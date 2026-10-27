@@ -8,7 +8,7 @@
  *    for" over a band, then the terms; then the poster and buttons.
  *  - Wanted: no photo at all, since the poster does not have the thing: the
  *    card with the request and budget, its details; then the poster and
- *    buttons, and the note about dealer offers.
+ *    buttons, and the note about store offers.
  */
 
 import {

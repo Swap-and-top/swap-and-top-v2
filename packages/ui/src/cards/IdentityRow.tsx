@@ -1,5 +1,5 @@
 /**
- * PosterRow and ShopRow.
+ * PosterRow and StoreRow.
  *
  * The "who am I dealing with" block on a listing detail screen. Both show
  * behaviour: confirmed deals, typical reply time, account age, clean record.
@@ -7,11 +7,11 @@
 
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import type { Shop, User } from '@snt/core';
+import type { Store, User } from '@snt/core';
 import { ChevronRightIcon } from '../icons';
-import { Avatar, ShopMark } from '../primitives/Placeholder';
+import { Avatar, StoreMark } from '../primitives/Placeholder';
 import { Panel } from '../primitives/Surface';
-import { ConfirmedDealsBadge, VerifiedDealerBadge } from '../primitives/Trust';
+import { ConfirmedDealsBadge, VerifiedStoreBadge } from '../primitives/Trust';
 import { monthYear, replyLabel } from '../format';
 import styles from './IdentityRow.module.css';
 
@@ -49,24 +49,24 @@ export function PosterRow({
   );
 }
 
-/** A dealer's shop, linking through to the shopfront. */
-export function ShopRow({ shop }: { shop: Shop }) {
+/** A store, linking through to its page. */
+export function StoreRow({ store }: { store: Store }) {
   const meta = [
-    `${shop.stockCount} listings`,
-    replyLabel(shop.replyHours)?.toLowerCase(),
+    `${store.stockCount} listings`,
+    replyLabel(store.replyHours)?.toLowerCase(),
   ]
     .filter(Boolean)
     .join(' · ');
 
   return (
     <Panel>
-      <Link href={`/store/${shop.slug}`} className={styles.row}>
-        <ShopMark initials={shop.initials} size={36} />
+      <Link href={`/store/${store.slug}`} className={styles.row}>
+        <StoreMark initials={store.initials} size={36} />
         <div className={styles.body}>
           <div className={styles.nameLine}>
-            <span className={styles.name}>{shop.name}</span>
-            {shop.verified ? (
-              <VerifiedDealerBadge size="md" label="Verified dealer" />
+            <span className={styles.name}>{store.name}</span>
+            {store.verified ? (
+              <VerifiedStoreBadge size="md" label="Verified store" />
             ) : null}
           </div>
           <div className={styles.meta}>{meta}</div>

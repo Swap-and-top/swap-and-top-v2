@@ -10,7 +10,9 @@
 export type Role =
   | 'guest'
   | 'user'
-  | 'dealer'
+  // Runs a store. Until people own stores (decision P31), the account and
+  // its store are one.
+  | 'store'
   | 'moderator'
   | 'admin'
   | 'super_admin';
@@ -38,14 +40,14 @@ export interface User {
   replyHours?: number;
   /** Whether any report against this account has been upheld. */
   hasUpheldReports: boolean;
-  /** Set when the user is a dealer. */
-  shopId?: string;
+  /** Set when the user is a store. */
+  storeId?: string;
 }
 
 const ROLE_RANK: Record<Role, number> = {
   guest: 0,
   user: 1,
-  dealer: 1,
+  store: 1,
   moderator: 2,
   admin: 3,
   super_admin: 4,
@@ -59,4 +61,4 @@ export function hasAtLeastRole(role: Role, required: Role): boolean {
   return ROLE_RANK[role] >= ROLE_RANK[required];
 }
 
-export const isDealer = (user: User): boolean => user.shopId !== undefined;
+export const ownsStore = (user: User): boolean => user.storeId !== undefined;

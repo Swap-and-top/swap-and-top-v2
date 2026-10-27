@@ -1,12 +1,12 @@
 /**
  * CompactListingRow and GridCard.
  *
- * Reduced forms of the same cards, for Saved lists and the shopfront grid.
+ * Reduced forms of the same cards, for Saved lists and the storefront grid.
  */
 
 import Link from 'next/link';
 import type { Listing, SwapListing } from '@snt/core';
-import { getShop, getUser } from '@snt/core';
+import { getStore, getUser } from '@snt/core';
 import { ImagePlaceholder, listingPhoto } from '../primitives/Placeholder';
 import { Bone } from '../primitives/Skeleton';
 import { Panel } from '../primitives/Surface';
@@ -27,7 +27,7 @@ function isGone(listing: Listing): boolean {
 /** Horizontal line item. Used by Saved. */
 export function CompactListingRow({ listing }: { listing: Listing }) {
   const gone = isGone(listing);
-  const shop = getShop(listing.shopId);
+  const store = getStore(listing.storeId);
   const owner = getUser(listing.ownerId);
 
   const dropped =
@@ -92,10 +92,10 @@ export function CompactListingRow({ listing }: { listing: Listing }) {
           </div>
 
           <div className={styles.rowMeta}>
-            {/* Who is selling: a shop or dealer, or a person. */}
+            {/* Who is selling: a store, or a person. */}
             <strong className={styles.seller}>
-              <SellerIcon kind={shop ? 'shop' : 'person'} />
-              {shop?.name ?? owner?.displayName ?? 'Unknown seller'}
+              <SellerIcon kind={store ? 'store' : 'person'} />
+              {store?.name ?? owner?.displayName ?? 'Unknown seller'}
             </strong>{' '}
             · {gone ? listing.postedLabel : listing.location}
           </div>
@@ -145,7 +145,7 @@ function SwapLines({ listing }: { listing: SwapListing }) {
   );
 }
 
-/** Two-up grid of small cards. Used by the shopfront. */
+/** Two-up grid of small cards. Used by the storefront. */
 export function GridCardList({ listings }: { listings: Listing[] }) {
   return (
     <div className={styles.gridWrap}>

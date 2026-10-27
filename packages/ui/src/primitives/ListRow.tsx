@@ -68,7 +68,7 @@ export function ListRow({
   );
 }
 
-/** The dark row that takes a dealer into the console. */
+/** The dark row that takes a store into the console. */
 export function ConsoleEntryRow({
   href,
   icon,

@@ -51,7 +51,7 @@ export type { PhotoTone } from './primitives/PhotoGallery';
 export {
   Avatar,
   ImagePlaceholder,
-  ShopMark,
+  StoreMark,
   firstPhoto,
   listingPhoto,
 } from './primitives/Placeholder';
@@ -88,7 +88,7 @@ export {
 
 export {
   ConfirmedDealsBadge,
-  VerifiedDealerBadge,
+  VerifiedStoreBadge,
 } from './primitives/Trust';
 export type { TrustSize } from './primitives/Trust';
 
@@ -100,7 +100,7 @@ export {
   GridCardList,
   GridCardListSkeleton,
 } from './cards/CompactCards';
-export { PosterRow, ShopRow } from './cards/IdentityRow';
+export { PosterRow, StoreRow } from './cards/IdentityRow';
 export {
   LeadCard,
   LeadLabel,

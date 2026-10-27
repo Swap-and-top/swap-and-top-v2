@@ -1,8 +1,8 @@
-/** Mock shops. Names are placeholders. */
+/** Mock stores. Names are placeholders. */
 
-import type { Shop } from '../types/shop';
+import type { Store } from '../types/store';
 
-export const mockShops: Shop[] = [
+export const mockStores: Store[] = [
   {
     id: 's-kopje',
     slug: 'kopje-computers',
@@ -46,7 +46,7 @@ export const mockShops: Shop[] = [
     joinedAt: '2025-06-02',
   },
   {
-    /** Not yet verified — the shop row shows no badge, only the name. */
+    /** Not yet verified — the store row shows no badge, only the name. */
     id: 's-avondale-games',
     slug: 'avondale-games',
     name: 'Avondale Games',
@@ -62,14 +62,14 @@ export const mockShops: Shop[] = [
   },
 ];
 
-export function getShop(id: string | undefined): Shop | undefined {
+export function getStore(id: string | undefined): Store | undefined {
   if (!id) return undefined;
-  return mockShops.find((s) => s.id === id);
+  return mockStores.find((s) => s.id === id);
 }
 
-export function getShopBySlug(slug: string): Shop | undefined {
-  return mockShops.find((s) => s.slug === slug);
+export function getStoreBySlug(slug: string): Store | undefined {
+  return mockStores.find((s) => s.slug === slug);
 }
 
-/** The shop whose console is shown in this scaffold. */
-export const currentShop: Shop = mockShops[0]!;
+/** The store whose console is shown in this scaffold. */
+export const currentStore: Store = mockStores[0]!;

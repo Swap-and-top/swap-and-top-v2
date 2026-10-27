@@ -1,18 +1,18 @@
 /**
- * Dealer shopfront.
+ * A store's public page.
  *
- * Public and indexable: a dealer's shopfront ranking in Google is a reason for
+ * Public and indexable: a store's page ranking in Google is a reason for
  * them to value the account, which is part of what the console is sold on.
  */
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getShopBySlug, getShopListings, mockShops } from '@snt/core';
-import { Shopfront } from '@/components/Shopfront';
+import { getStoreBySlug, getStoreListings, mockStores } from '@snt/core';
+import { Storefront } from '@/components/Storefront';
 import { slowDown } from '@/components/slowDown';
 
 export function generateStaticParams() {
-  return mockShops.map((shop) => ({ slug: shop.slug }));
+  return mockStores.map((store) => ({ slug: store.slug }));
 }
 
 export async function generateMetadata({
@@ -21,29 +21,29 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const shop = getShopBySlug(slug);
-  if (!shop) return { title: 'Store not found · Swap & Top' };
+  const store = getStoreBySlug(slug);
+  if (!store) return { title: 'Store not found · Swap & Top' };
 
   return {
-    title: `${shop.name} · Swap & Top`,
-    description: `${shop.description} ${shop.location}.`,
+    title: `${store.name} · Swap & Top`,
+    description: `${store.description} ${store.location}.`,
   };
 }
 
-export default async function ShopPage({
+export default async function StorePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   await slowDown();
   const { slug } = await params;
-  const shop = getShopBySlug(slug);
+  const store = getStoreBySlug(slug);
 
-  if (!shop) notFound();
+  if (!store) notFound();
 
-  const listings = getShopListings(shop.id).filter(
+  const listings = getStoreListings(store.id).filter(
     (listing) => listing.status === 'live',
   );
 
-  return <Shopfront shop={shop} listings={listings} />;
+  return <Storefront store={store} listings={listings} />;
 }

@@ -10,7 +10,7 @@
 import type { Metadata } from 'next';
 import {
   getListing,
-  getShop,
+  getStore,
   getUser,
   type RequestListing,
   type SaleListing,
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function CardReferencePage() {
   const userSale = getListing('l-hp-probook-450') as SaleListing;
-  const dealerSale = getListing('l-dell-latitude-7490') as SaleListing;
+  const storeSale = getListing('l-dell-latitude-7490') as SaleListing;
   const swap = getListing('l-macbook-swap') as SwapListing;
   const wanted = getListing('l-rtx-wanted') as RequestListing;
 
@@ -48,7 +48,7 @@ export default function CardReferencePage() {
           </div>
           <p className={styles.note}>
             The plainest card. Photo, price, condition, one spec line, seller and
-            age. No badge, and the absence of a shop row is itself the signal: a
+            age. No badge, and the absence of a store row is itself the signal: a
             buyer can tell instantly this is a private seller, which changes what
             they expect about price and negotiation.
           </p>
@@ -56,13 +56,13 @@ export default function CardReferencePage() {
 
         <section className={styles.row}>
           <div className={styles.sampleCol}>
-            <div className={styles.label}>2. Dealer sale</div>
+            <div className={styles.label}>2. Store sale</div>
             <div className={styles.sample}>
-              <SaleCard listing={dealerSale} shop={getShop(dealerSale.shopId)} />
+              <SaleCard listing={storeSale} store={getStore(storeSale.storeId)} />
             </div>
           </div>
           <p className={styles.note}>
-            Adds a shop row: logo, name, verified badge, stock count. Reads as
+            Adds a store row: logo, name, verified badge, stock count. Reads as
             commercial and accountable. Paid placement is labelled{' '}
             <strong>Sponsored</strong> on the image, never hidden, and slots are
             interleaved through the feed rather than sorted to the top.
@@ -88,14 +88,14 @@ export default function CardReferencePage() {
 
         <section className={styles.row}>
           <div className={styles.sampleCol}>
-            <div className={styles.label}>4. Wanted (the dealer product)</div>
+            <div className={styles.label}>4. Wanted (the store product)</div>
             <div className={styles.sample}>
               <WantedCard listing={wanted} requester={getUser(wanted.ownerId)} />
             </div>
           </div>
           <p className={styles.note}>
             No photo, because they do not have the thing. Text first, then the
-            budget, then one button. That button is the lead a dealer pays to be
+            budget, then one button. That button is the lead a store pays to be
             alerted about. A request with something to swap gets a swap strip,
             which makes it the higher-value lead.
           </p>

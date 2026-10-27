@@ -67,7 +67,7 @@
   width: 42px;
   height: 42px;
   flex-shrink: 0;
-  /* A rounded square, as the dealer console's icon tiles are. */
+  /* A rounded square, as the Store console's icon tiles are. */
   border-radius: var(--snt-radius-lg);
   background: var(--snt-bg-inset);
   color: var(--option-ink);
@@ -100,6 +100,6 @@
   display: flex;
 }
 
-.dealerNote {
+.storeNote {
   margin-top: var(--snt-space-12);
 }

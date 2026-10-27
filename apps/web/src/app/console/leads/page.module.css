@@ -1,7 +1,7 @@
 /**
  * Console leads — the screen that sells the platform.
  *
- * Phone: a feed of lead cards, which is how dealers already read WhatsApp.
+ * Phone: a feed of lead cards, which is how stores already read WhatsApp.
  * Desktop from `lg`: two white cards, the request list beside the selected
  * request's detail and an offer composer. Set as the rest of the app is: no
  * outlines, thin pale lines that stop short of the edges, what someone wants
@@ -13,7 +13,7 @@
   margin-top: var(--snt-space-5);
 }
 
-/* A lead's line saying how the dealer was told of it. */
+/* A lead's line saying how the store was told of it. */
 .listAlert {
   display: block;
   margin-top: var(--snt-space-2);
@@ -170,7 +170,7 @@
     display: none;
   }
 
-  /* --- match: the dealer's own item, in the blue of things owned --- */
+  /* --- match: the store's own item, in the blue of things owned --- */
 
   .matchPanel {
     margin-top: var(--snt-space-5);

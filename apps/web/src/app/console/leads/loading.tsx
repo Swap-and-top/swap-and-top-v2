@@ -4,7 +4,7 @@
  * of lead cards in bones and from a laptop the two cards side by side.
  */
 
-import { currentShop, newLeadCount } from '@snt/core';
+import { currentStore, newLeadCount } from '@snt/core';
 import { Bone, ConsoleShell, Panel } from '@snt/ui';
 import styles from './page.module.css';
 import skeleton from './loading.module.css';
@@ -35,7 +35,7 @@ function LeadCardBones({ swap }: { swap: boolean }) {
 export default function Loading() {
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Leads"
       meta="People asking for what you sell, newest first"
       newLeadCount={newLeadCount}

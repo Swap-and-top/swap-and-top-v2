@@ -206,7 +206,7 @@ A purchase covers a period. Recognise it across that period rather than all at o
 - [Data Model](../architecture/data-model.md) — payment and payment event entities
 - [Background Jobs](../architecture/background-jobs.md) — reconciliation
 - [API Endpoints](../api/endpoints.md) — the billing and administration surfaces
-- [Dealer Console](../product/dealer-console.md) — where dealers see and buy
+- [Dealer Console](../product/store-console.md) — where dealers see and buy
 
 ---
 

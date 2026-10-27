@@ -16,7 +16,7 @@
  */
 
 import {
-  getShop,
+  getStore,
   getUser,
   takesOffers,
   useViewerId,
@@ -33,7 +33,7 @@ import {
   PosterRow,
   Screen,
   ScreenBody,
-  ShopRow,
+  StoreRow,
   specRowsFor,
 } from '@snt/ui';
 import { CheckIcon } from '@snt/ui/icons';
@@ -59,7 +59,7 @@ export function SaleDetail({
    */
   preview?: boolean;
 }) {
-  const shop = getShop(listing.shopId);
+  const store = getStore(listing.storeId);
   const owner = getUser(listing.ownerId);
   /** Your own listing: your panel in place of a buyer's actions. */
   const viewer = useViewerId();
@@ -98,13 +98,13 @@ export function SaleDetail({
             <PhotoGallery
               images={listing.item.images}
               alt={listing.item.name}
-              tone={shop ? 'shop' : 'person'}
+              tone={store ? 'store' : 'person'}
               className={styles.photo}
             />
           </div>
 
           {/* Everything under the photo is set in from the card's edges,
-              rules too, as the feed card's line above a shop is. */}
+              rules too, as the feed card's line above a store is. */}
           <div className={styles.body}>
             {/* On your own listing, its status comes first. */}
             {mine ? (
@@ -197,8 +197,8 @@ export function SaleDetail({
         {mine ? null : (
           <>
             <div className={styles.identity}>
-              {shop ? (
-                <ShopRow shop={shop} />
+              {store ? (
+                <StoreRow store={store} />
               ) : owner ? (
                 <PosterRow user={owner} />
               ) : null}

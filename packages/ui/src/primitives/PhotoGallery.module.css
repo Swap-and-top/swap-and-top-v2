@@ -229,7 +229,7 @@
  * --- viewer: full screen, photos whole ---
  * The ground is the v1 app's: the page blurred behind a light tint that
  * matches the card — blue for an individual, green for a Wanted post, none
- * for a shop. The controls sit on dark translucent circles, as in v1, so they
+ * for a store. The controls sit on dark translucent circles, as in v1, so they
  * read on any of them.
  */
 
@@ -271,7 +271,7 @@
   background: rgb(185 235 215 / 0.3);
 }
 
-/* A shop's photos: blur only, no tint — the viewer's default. */
+/* A store's photos: blur only, no tint — the viewer's default. */
 
 .viewerTrack {
   position: relative;

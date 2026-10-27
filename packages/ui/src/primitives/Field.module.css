@@ -126,7 +126,7 @@
   color: var(--snt-ink);
 }
 
-/** A checkbox group separated from the one above it, e.g. dealer offers. */
+/** A checkbox group separated from the one above it, e.g. store offers. */
 .checkRowDivided {
   border-top: 1px solid var(--snt-line-subtle);
   padding-top: var(--snt-space-5);

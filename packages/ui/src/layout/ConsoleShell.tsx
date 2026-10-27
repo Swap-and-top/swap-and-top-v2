@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * ConsoleShell — the dealer console's responsive frame.
+ * ConsoleShell — the Store console's responsive frame.
  *
  * One component renders both wireframe artboards: the phone layout with a dark
  * header and bottom nav, and the desktop layout with a sidebar. Which one you
@@ -12,11 +12,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import {
-  getShopListings,
+  getStoreListings,
   useConsoleStore,
   useOfferStore,
   useUnreadCount,
-  type Shop,
+  type Store,
 } from '@snt/core';
 import {
   BoxIcon,
@@ -30,7 +30,7 @@ import {
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
 import { NotificationBell } from './NotificationBell';
-import { ShopMark } from '../primitives/Placeholder';
+import { StoreMark } from '../primitives/Placeholder';
 import { Bone } from '../primitives/Skeleton';
 import { ScreenTitle } from '../primitives/Text';
 import styles from './ConsoleShell.module.css';
@@ -47,7 +47,7 @@ interface ConsoleNavItem {
 }
 
 export function ConsoleShell({
-  shop,
+  store,
   title,
   meta,
   actions,
@@ -55,7 +55,7 @@ export function ConsoleShell({
   stockCount,
   children,
 }: {
-  shop: Shop;
+  store: Store;
   /** Section title, e.g. "Stock". Empty while the page loads. */
   title: string;
   /** Secondary line under the title, e.g. "42 live · 3 sold this week". */
@@ -69,10 +69,10 @@ export function ConsoleShell({
   const pathname = usePathname();
   const collapsed = useConsoleStore((state) => state.sidebarCollapsed);
   const toggleSidebar = useConsoleStore((state) => state.toggleSidebar);
-  // Trade-in offers on the shop's stock still waiting for a reply.
+  // Trade-in offers on the store's stock still waiting for a reply.
   const offers = useOfferStore((store) => store.offers);
   const stockIds = new Set(
-    getShopListings(shop.id).map((listing) => listing.id),
+    getStoreListings(store.id).map((listing) => listing.id),
   );
   const tradeInCount = offers.filter(
     (offer) => stockIds.has(offer.listingId) && offer.state === 'pending',
@@ -96,7 +96,7 @@ export function ConsoleShell({
       count: newLeadCount,
     },
     {
-      // Offers on the shop's stock, cash or a swap, to accept or decline;
+      // Offers on the store's stock, cash or a swap, to accept or decline;
       // and the offers it sent from Leads.
       href: '/console/trade-ins',
       label: 'Offers',
@@ -108,7 +108,7 @@ export function ConsoleShell({
       count: tradeInCount,
     },
     {
-      // The shop's numbers over time, and ways to grow them at the foot.
+      // The store's numbers over time, and ways to grow them at the foot.
       href: '/console/stats',
       label: 'Stats',
       shortLabel: 'Stats',
@@ -116,12 +116,12 @@ export function ConsoleShell({
       titleIcon: <TrendIcon size={24} />,
     },
     {
-      // The shop as buyers see it, inside the console; the public page is a
+      // The store as buyers see it, inside the console; the public page is a
       // button away from there.
       href: '/console/store',
       label: 'Store profile',
       shortLabel: 'Store',
-      // The storefront, awning and door, as shops are marked on cards.
+      // The storefront, awning and door, as stores are marked on cards.
       icon: (active) => (
         <StorefrontIcon size={20} weight={active ? 1.9 : 1.7} />
       ),
@@ -131,11 +131,11 @@ export function ConsoleShell({
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
-  /** The shop's notifications: not a section of the bar at the foot of a
+  /** The store's notifications: not a section of the bar at the foot of a
       phone (it has five), but a bell in the header, and on a laptop a link
       at the top of the sidebar. */
   const notificationsHref = '/console/notifications';
-  const unread = useUnreadCount('shop');
+  const unread = useUnreadCount('store');
   const onNotifications = isActive(notificationsHref);
   /** The section this page is in: its icon heads the page. */
   const section = onNotifications
@@ -146,7 +146,7 @@ export function ConsoleShell({
     <div className={styles.shell}>
       {/* Sidebar — from the lg breakpoint up. */}
       {/* Folds to its icons with the button at its head, and opens again
-          with the same button: a narrow strip of the shop's mark, the
+          with the same button: a narrow strip of the store's mark, the
           icons, and the way back. */}
       <aside
         className={[styles.sidebar, collapsed ? styles.collapsed : '']
@@ -154,10 +154,10 @@ export function ConsoleShell({
           .join(' ')}
       >
         <div className={styles.sidebarHead}>
-          {/* The mark and the fold button on one line, the shop's name
+          {/* The mark and the fold button on one line, the store's name
               under them with room to breathe. */}
           <div className={styles.sidebarTop}>
-            <ShopMark initials={shop.initials} size={34} />
+            <StoreMark initials={store.initials} size={34} />
             <button
               type="button"
               className={styles.fold}
@@ -169,14 +169,14 @@ export function ConsoleShell({
               <SidebarIcon size={20} open={!collapsed} />
             </button>
           </div>
-          <span className={styles.sidebarShop}>
-            <span className={styles.shopName}>{shop.name}</span>
-            <span className={styles.shopKicker}>Dealer console</span>
+          <span className={styles.sidebarStore}>
+            <span className={styles.storeName}>{store.name}</span>
+            <span className={styles.storeKicker}>Store console</span>
           </span>
         </div>
 
         <nav className={styles.sidebarNav} aria-label="Console">
-          {/* The shop's notifications, first, apart from the sections. */}
+          {/* The store's notifications, first, apart from the sections. */}
           <Link
             href={notificationsHref}
             aria-current={onNotifications ? 'page' : undefined}
@@ -239,20 +239,20 @@ export function ConsoleShell({
 
       {/* Dark header — phone only. */}
       <header className={styles.header}>
-        {/* Left out on a narrow phone, so the shop's name fits beside the
+        {/* Left out on a narrow phone, so the store's name fits beside the
             bell and Back to marketplace. */}
         <span className={styles.headerMark}>
-          <ShopMark initials={shop.initials} size={36} />
+          <StoreMark initials={store.initials} size={36} />
         </span>
         <span className={styles.headerBody}>
-          <span className={styles.shopName}>{shop.name}</span>
-          <span className={styles.shopKicker}>Dealer console</span>
+          <span className={styles.storeName}>{store.name}</span>
+          <span className={styles.storeKicker}>Store console</span>
         </span>
         {/* The way out of the console, as the sidebar's foot is on a
             laptop, the size of the marketplace's Post New Item. The store as
             buyers see it is under Store. */}
-        {/* The shop's notifications, a bell with its unread count. */}
-        <NotificationBell audience="shop" href={notificationsHref} />
+        {/* The store's notifications, a bell with its unread count. */}
+        <NotificationBell audience="store" href={notificationsHref} />
         <Link href="/" className={styles.headerLink}>
           Back to marketplace
         </Link>

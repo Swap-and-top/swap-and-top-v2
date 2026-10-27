@@ -3,7 +3,7 @@
 /**
  * Console — Offers.
  *
- * Everything the shop has going in offers, in one place, as the profile's
+ * Everything the store has going in offers, in one place, as the profile's
  * Offers page has it for a person (see OfferGroups): Received, the offers on
  * its stock, cash or a swap, to accept or decline; and Sent, the offers it
  * made on Wanted listings from Leads, with what became of each. Each group
@@ -13,8 +13,8 @@
  */
 
 import {
-  currentShop,
-  getShopListings,
+  currentStore,
+  getStoreListings,
   mockUsers,
   newLeadCount,
   takesOffers,
@@ -36,32 +36,32 @@ const TABS: TabItem<ConsoleOffersTab>[] = [
   { value: 'sent', label: 'Sent' },
 ];
 
-/** The shop's own account: its offers are made from it, and its stock is
+/** The store's own account: its offers are made from it, and its stock is
     read as its own. */
-const shopUserId =
-  mockUsers.find((user) => user.shopId === currentShop.id)?.id ?? '';
+const storeUserId =
+  mockUsers.find((user) => user.storeId === currentStore.id)?.id ?? '';
 
 export default function ConsoleOffersPage() {
   const offers = useOfferStore((store) => store.offers);
   const tab = useConsoleStore((state) => state.offersTab);
   const setTab = useConsoleStore((state) => state.setOffersTab);
 
-  const stock = getShopListings(currentShop.id).filter(
+  const stock = getStoreListings(currentStore.id).filter(
     (listing): listing is OfferableListing => takesOffers(listing),
   );
   const received = receivedGroups(offers, stock);
-  const sent = madeGroups(offers, shopUserId);
+  const sent = madeGroups(offers, storeUserId);
   const waiting = received
     .flatMap((group) => group.offers)
     .filter((offer) => offer.state === 'pending').length;
 
   return (
     <ConsoleShell
-      shop={currentShop}
+      store={currentStore}
       title="Offers"
       meta={`${waiting} waiting for a reply`}
       newLeadCount={newLeadCount}
-      stockCount={getShopListings(currentShop.id).length}
+      stockCount={getStoreListings(currentStore.id).length}
       actions={
         <div className={styles.tabs}>
           <Tabs
@@ -79,14 +79,14 @@ export default function ConsoleOffersPage() {
           <OfferGroups
             groups={sent}
             view="made"
-            viewerId={shopUserId}
+            viewerId={storeUserId}
             none="No offers sent yet. Send one from Leads, on any request that matches your stock."
           />
         ) : (
           <OfferGroups
             groups={received}
             view="received"
-            viewerId={shopUserId}
+            viewerId={storeUserId}
             none="No offers yet. Buyers can make an offer on any item marked negotiable or “Swaps accepted”, straight from the listing."
           />
         )}

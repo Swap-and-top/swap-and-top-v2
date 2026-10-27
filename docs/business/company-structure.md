@@ -81,7 +81,7 @@ This is the strategic centre of the whole plan:
 
 The most likely good outcome of validation is that dealers pay for **software** before they pay for **leads**. That outcome is better than it looks.
 
-See [../product/dealer-console.md](../product/dealer-console.md).
+See [../product/store-console.md](../product/store-console.md).
 
 ---
 
@@ -156,7 +156,7 @@ One structural note, not investment advice: this sum is either operating runway 
 
 - [Go To Market](./go-to-market.md) — the ground work that needs an operator
 - [Monetization](./monetization.md) — what the dealer console sells
-- [Dealer Console](../product/dealer-console.md) — the product that bridges both companies
+- [Dealer Console](../product/store-console.md) — the product that bridges both companies
 - [Validation Test](../operations/validation-test.md) — the pre-relocation test and its deliverables
 - [Roadmap](../product/roadmap.md) — what happens after a pass
 

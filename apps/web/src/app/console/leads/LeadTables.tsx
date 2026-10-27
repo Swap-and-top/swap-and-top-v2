@@ -21,7 +21,7 @@ import styles from './LeadTables.module.css';
 
 /* ------------------------------------------------------ number reveals --- */
 
-/** Where the deal check stands, with the shop's own answer taken in. */
+/** Where the deal check stands, with the store's own answer taken in. */
 type DealStage = NumberReveal['deal'] | 'closed';
 
 const DEAL_BADGE: Record<DealStage, { tone: BadgeTone; label: string }> = {
@@ -45,7 +45,7 @@ function dealHint(stage: DealStage, days: number): string {
   }
 }
 
-/** The stage, once the shop has answered: yes confirms it (they said yes
+/** The stage, once the store has answered: yes confirms it (they said yes
     first), no closes it; not yet leaves it asked. */
 function stageOf(reveal: NumberReveal, answers: Record<string, string>): DealStage {
   const given = reveal.dealId ? answers[reveal.dealId] : undefined;
@@ -75,7 +75,7 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
         const listing = getListing(reveal.listingId);
         const stage = stageOf(reveal, answers);
         /** Who it was, only once they say a deal went through: until then
-            the shop is told nothing about them beyond their area. */
+            the store is told nothing about them beyond their area. */
         const named = stage !== 'waiting';
         const name = named
           ? (user?.displayName ?? 'Someone')
@@ -92,13 +92,13 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
         const dealLabel =
           stage === 'waiting'
             ? // When we will ask them whether they bought it, worded as the
-              // column and the shop's own check are: a deal check.
+              // column and the store's own check are: a deal check.
               `Deal check in ${reveal.daysToAsk ?? 3} days`
             : deal.label;
 
         return (
           <div key={reveal.id} className={styles.row}>
-            {/* Only a row waiting on the shop's answer opens anything: its
+            {/* Only a row waiting on the store's answer opens anything: its
                 deal check. The rest have nothing to do, so stay still. */}
             {stage === 'asked' && reveal.dealId ? (
               <Link

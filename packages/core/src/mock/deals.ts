@@ -1,5 +1,5 @@
 /**
- * Mock deal confirmations and dealer promotion state.
+ * Mock deal confirmations and store promotion state.
  *
  * One of each case the current user (Tarisai) can meet: numbers she revealed
  * and has not answered, a buyer's yes on her own listing waiting for her,
@@ -101,7 +101,7 @@ export const mockDealConfirmations: DealConfirmation[] = [
   },
   {
     // Farai revealed Kopje's number on the EliteBook and says the deal went
-    // through: the shop is asked to confirm, from Leads (Number reveals).
+    // through: the store is asked to confirm, from Leads (Number reveals).
     id: 'dc-8',
     source: 'reveal',
     revealId: 'rv-4',
@@ -136,7 +136,7 @@ export function getDealConfirmation(id: string): DealConfirmation | undefined {
 
 /**
  * Whose side the deal check is shown from: the signed in user's where they
- * are on it; otherwise the listing's owner, which in this mock is the shop
+ * are on it; otherwise the listing's owner, which in this mock is the store
  * answering from its console.
  */
 export function viewerOn(d: DealConfirmation): string {
@@ -206,7 +206,7 @@ export function confirmationsAwaiting(
 /* ------------------------------------------------------- promotion state - */
 
 /**
- * What a dealer can pay for to grow their numbers. The Friday Drop is paused
+ * What a store can pay for to grow their numbers. The Friday Drop is paused
  * for now and left out (see docs/business/monetization.md); it may return.
  */
 export interface PromotionProduct {

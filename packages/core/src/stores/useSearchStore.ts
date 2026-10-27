@@ -2,7 +2,7 @@
  * Specification search.
  *
  * The platform's main advantage over a title-only search, and the screen a
- * dealer judges in four seconds. Filter sets are per category: choosing
+ * store judges in four seconds. Filter sets are per category: choosing
  * Laptops shows processor and graphics, choosing Phones shows battery health.
  */
 
@@ -201,7 +201,7 @@ function specHaystack(listing: Listing): string {
 }
 
 /**
- * Deliberately generous. A dealer would rather dismiss a marginal result than
+ * Deliberately generous. A store would rather dismiss a marginal result than
  * never see a real one — the same principle as lead matching.
  */
 export function searchListings(
