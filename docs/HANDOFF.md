@@ -2,7 +2,7 @@
 
 Written on 2026-10-22 to carry the work to a new Claude account, and
 brought up to date on 2026-10-26, 2026-10-27 (the second account change)
-and again later on 2026-10-27 (back on the first account). The rules
+and twice more later on 2026-10-27 (back on the first account). The rules
 for working on this repo are in `/CLAUDE.md`; read that first. This file is
 the state of the code and the recent work.
 
@@ -148,6 +148,26 @@ Patterns the user has settled on:
 
 See `git log` for the full detail; each commit body explains its change.
 
+- **2026-10-27, third session** (`70e2dea`, `6ea172c`):
+  - **Accounts and stores decided** (docs only, nothing built):
+    `docs/product/accounts-and-stores.md`, decisions B16 to B19 and P31 to
+    P37, with dated notes in monetization, trust and safety, sign in and
+    identity, and the console doc. Summary under "Decided, not built" below.
+  - **Store everywhere, never dealer or shop.** Visible text: Store
+    console, Verified store (the feed cards' "Verified Seller" too),
+    "For stores" and "Switch to Store console" on the profile, "accepts
+    offers from stores", "Let stores send me offers", "Let stores see my
+    contact details", "Stores come to you".
+  - **The code follows.** `allowStoreOffers`, `contactToStores`,
+    `contactOpenToStores`, `VerifiedStoreBadge`, `ownsStore`, the role
+    `'store'`; and Shop renamed to Store throughout: `Store`, `storeId`,
+    `currentStore`, `getStore`, `getStoreBySlug`, `useStoreStock`,
+    `useStoreSponsorships`, `mockStores`, `mockStoreReveals`, the
+    `Storefront` component (`components/Storefront.tsx`), `StoreMark`,
+    `StoreIcon`, `--snt-store-mark`, files `types/store.ts` and
+    `mock/stores.ts`. The console doc is now
+    `docs/product/store-console.md`. Only the design file's frame names,
+    `DetailDealer` and `Shopfront`, keep the old words.
 - **2026-10-27, second session** (`c5ebf63`, back on the first account):
   - **Boost, not sponsor, for sellers.** Every seller facing word says boost
     ("Boost this listing", "Boost a listing", "Boosted until …", "Extend
@@ -284,14 +304,16 @@ See `git log` for the full detail; each commit body explains its change.
   alerts); Wanted never counts; a lapsed pass pauses listings above 15. An
   account is a person who opens stores (up to 3), run by an owner and staff;
   "Post as" on Post New Item. Verify stores, not people. Settings rules for
-  what can change. "Store" everywhere, never "dealer"; the console becomes
-  the Store console. None of this is in the app yet.
+  what can change. None of this is in the app yet, except the naming:
+  "store" everywhere and the Store console are done, in text and code.
 
 - **Where we stopped (end of 2026-10-27):** boosting works end to end in
-  the mock, from Stock's Boosted tab. Likely next: wiring the real Paynow
-  account (needs a backend), and whatever the user asks after looking at
-  the Boosted tab, the top right Sponsored badges and the store pages on
-  their phone.
+  the mock, from Stock's Boosted tab, and the app and its code say store
+  everywhere. The accounts and stores plan is decided but not built. Likely
+  next: building that plan (the 5 and 15 listing limits with the Open a
+  store prompt, opening a store from a person account, Post as, store
+  passes, store verification requests, settings), or wiring the real Paynow
+  account (needs a backend).
 - The feed shows one sponsored listing per three others, so on short type
   tabs (Swaps, Wanted) only one of two sponsored shows; spacing every two
   was offered, not built.
