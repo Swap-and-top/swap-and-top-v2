@@ -1,8 +1,8 @@
 # Handoff: where the redesign stands
 
 Written on 2026-10-22 to carry the work to a new Claude account, and
-brought up to date on 2026-10-26 and 2026-10-27 (the second account
-change). The rules
+brought up to date on 2026-10-26, 2026-10-27 (the second account change)
+and again later on 2026-10-27 (back on the first account). The rules
 for working on this repo are in `/CLAUDE.md`; read that first. This file is
 the state of the code and the recent work.
 
@@ -141,7 +141,43 @@ Patterns the user has settled on:
 
 See `git log` for the full detail; each commit body explains its change.
 
-- **2026-10-27 session** (committed with this update):
+- **2026-10-27, second session** (`c5ebf63`, back on the first account):
+  - **Boost, not sponsor, for sellers.** Every seller facing word says boost
+    ("Boost this listing", "Boost a listing", "Boosted until …", "Extend
+    boost", "Stop boost", the Stats card "Boosts"); buyers still see the
+    "Sponsored" badge. Code names keep "sponsor".
+  - **Boosting lives in Stock**, with **Stock and Boosted tabs**
+    (`stockTab` in `useConsoleStore`; text width on a laptop, full width on a
+    phone). The Boosted tab (`console/stock/BoostedTab.tsx`): a yellow "Boost
+    a listing", each boost with "Until … · $3 a day · N reveals since" and a
+    menu (Extend boost, View as a buyer, Stop boost with Undo), then **Worth
+    boosting**, the three live items with the most reveals, each with a
+    yellow Boost button. Stock rows' menus have Boost / Extend / Stop boost.
+    The Sponsored items page under Stats was removed; Stats' "Boosted
+    listings" opens the Boosted tab. The two Stats buttons share a row on a
+    phone.
+  - **Boost sheet**: "Which listing" is a dropdown of the boostable items
+    (live, for sale, not boosted already), the chosen one shown under it.
+  - **Stores, not shops.** "Store profile" with the storefront icon
+    ("Store" on the phone bar); addresses `/store/<slug>` and
+    `/console/store`, old `/shop/…` and `/console/shop` redirect
+    (`apps/web/next.config.ts`). Visible copy says store; code names keep
+    "shop".
+  - **Sponsored in the top right** on every card: a sale's photo, a swap's
+    "Looking for" tile, the right of a Wanted card's top row with the
+    responses and time under it. "New" on Leads stays on the left.
+  - **Feed spacing**: one sponsored listing after every three others, never
+    two together; extras wait rather than piling up at the end
+    (`interleaveSponsored` in `useFeedStore.ts`).
+  - **Deal check pills** on Leads, Number reveals: "Deal check in 3 days"
+    (was "Asking them in 3 days"), and every pill explains itself on hover
+    (browser tooltip); an "Answer needed" pill opens the check too.
+  - **Close buttons**: the boost banner's X is a pale green round, dark green
+    with a white X on hover; the header menu's X turns blue with a white X
+    on hover, as the sheets' do.
+  - **Console header on a phone**: the store's initials tile is hidden below
+    420px wide so the name fits beside the bell.
+- **2026-10-27, first session** (on the second account):
   - **Sponsored slots, built out** (Promote's place, at the foot of Stats).
     A daily budget like boosting a post on WhatsApp: a slider from $1 a day
     (to $100), with about how many people a day it reaches, for 1 day, 1
@@ -234,14 +270,21 @@ See `git log` for the full detail; each commit body explains its change.
 
 ## Known loose ends and ideas offered
 
-- **Where we stopped (2026-10-27):** sponsored slots are working end to end
-  in the mock. Likely next: wiring the real Paynow account (needs a backend),
-  and anything the user asks after looking at the sponsored badges and
-  banners on their phone.
+- **Where we stopped (end of 2026-10-27):** boosting works end to end in
+  the mock, from Stock's Boosted tab. Likely next: wiring the real Paynow
+  account (needs a backend), and whatever the user asks after looking at
+  the Boosted tab, the top right Sponsored badges and the store pages on
+  their phone.
+- The feed shows one sponsored listing per three others, so on short type
+  tabs (Swaps, Wanted) only one of two sponsored shows; spacing every two
+  was offered, not built.
+- The deal check pills' explanations are browser tooltips: they show on a
+  laptop only, not on a phone.
+- The desktop app sometimes starts its own preview server on port 3001
+  when a session reopens; stopping it from Claude was refused, so ask the
+  user to stop it if pages lose their styles.
 - The budget slider runs $1 to $100, so each dollar is a tiny movement on a
   phone; a lower top or minus and plus buttons were offered, not built.
-- On a phone, the console header's bell squeezes the shop name to
-  "Kopje Co…".
 - On sale and swap cards' bottom line, the place and age get trimmed first
   when space is short ("Gre… · Offers only").
 - Paynow is mocked: a payment "succeeds" after three seconds. Nothing is
