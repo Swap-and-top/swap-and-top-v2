@@ -29,6 +29,7 @@ import {
   StoreIcon,
   SwapIcon,
 } from '@snt/ui/icons';
+import { PostAsChoice } from '@/components/PostAs';
 import styles from './page.module.css';
 
 interface Option {
@@ -84,6 +85,8 @@ export default function PostTypePage() {
 
       <ScreenBody>
         <StepBar current={1} steps={POST_STEPS} />
+        {/* For someone with a store only: who it goes up as. */}
+        <PostAsChoice />
         <h1 className={styles.heading}>What do you want to do?</h1>
         <Body className={styles.intro}>
           Posting is free. Your listing goes live straight away.

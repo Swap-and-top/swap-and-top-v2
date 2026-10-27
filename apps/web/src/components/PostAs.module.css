@@ -1,0 +1,13 @@
+.postAs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  margin-bottom: var(--snt-space-6);
+}
+
+.label {
+  padding-left: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}

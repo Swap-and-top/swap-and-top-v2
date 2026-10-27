@@ -245,6 +245,13 @@ Seeded in development only, each signing in with its phone number and the fixed 
 - Still on the mock data: the Store console (Phase 4), and the names, store badges and deal counts shown for other people on cards and offers (they come from the mock people and stores, whose ids match the database). The seeded ids match the mock ones, so the two agree.
 - A production build makes pages in several workers at once, so each opens one database connection; Supabase's session pooler allows 15 in all.
 
+**Phase 4 has started** (2026-10-27), in slices: (1) limits, opening a store and Post as; (2) store passes; (3) the Store console on real data; (4) owner and staff.
+
+- **Slice 1 is built.** Posting and relisting check the limits on live listings for sale or swap: 5 for a person, 15 for a free store, none for a store with a pass covering today; Wanted listings never count. At a limit the API answers 403 with `code: 'limit'` and the app shows the limit message (`LimitSheet`), offering Open a store (for a person) and My listings.
+- `POST /api/stores` opens a store (name and area); the person is its owner; up to 3 each. `/store/new` is the form, reached from the limit message and from Me, which now lists the person's stores. The store page (`/store/[slug]`) reads from the database (`storeBySlug`), kept for a minute, so a new store has a page at once.
+- **Post as:** someone with a store chooses at the top of posting, starting on the store (`PostAs`); the listing goes up with the store's id, and the API checks they own or work for it.
+- Moving existing listings into a new store, and the store's own contact ways, are not built yet.
+
 ### Running it
 
 The settings live in the root `.env` (git ignores it): `DATABASE_URL` and the four `SUPABASE_` values. Then:

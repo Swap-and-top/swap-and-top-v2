@@ -1,13 +1,19 @@
-/** A store's public page: who they are, their trust numbers, their stock. */
+/**
+ * Stores: a store's public page, and opening one. A store is something a
+ * person opens and runs from their account (docs/product/
+ * accounts-and-stores.md); the one who opens it is its owner.
+ */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { and, count, eq, isNull } from 'drizzle-orm';
+import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
 import { loadListings } from '../listings';
 import { ErrorSchema, StoreSchema } from '../schemas';
+import { personFor } from './me';
 
-export const storeRoutes = new OpenAPIHono();
+export const storeRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
 const bySlug = createRoute({
   method: 'get',
@@ -32,13 +38,14 @@ const bySlug = createRoute({
   },
 });
 
-storeRoutes.openapi(bySlug, async (c) => {
-  const { slug } = c.req.valid('param');
+/** A store's page: who they are, their trust numbers and live listings.
+    Undefined for a closed or unknown store. */
+export async function storeBySlug(slug: string) {
   const [store] = await db
     .select()
     .from(t.stores)
     .where(and(eq(t.stores.slug, slug), isNull(t.stores.closedAt)));
-  if (!store) return c.json({ error: 'Store not found' }, 404);
+  if (!store) return undefined;
 
   const listings = await loadListings(
     and(eq(t.listings.storeId, store.id), eq(t.listings.status, 'live')),
@@ -51,22 +58,113 @@ storeRoutes.openapi(bySlug, async (c) => {
     .innerJoin(t.listings, eq(t.listings.id, t.dealChecks.listingId))
     .where(and(eq(t.listings.storeId, store.id), eq(t.dealChecks.state, 'confirmed')));
 
-  return c.json(
-    {
-      id: store.id,
-      slug: store.slug,
-      name: store.name,
-      initials: store.initials,
-      description: store.description,
-      location: store.location,
-      openingHours: store.openingHours,
-      verified: store.verifiedAt !== null,
-      stockCount: listings.filter((l) => l.type === 'sale' || l.type === 'swap').length,
-      confirmedDeals: deals?.n ?? 0,
-      joinedAt: store.createdAt.toISOString().slice(0, 10),
-      listings,
-    },
-    200,
-  );
+  return {
+    id: store.id,
+    slug: store.slug,
+    name: store.name,
+    initials: store.initials,
+    description: store.description,
+    location: store.location,
+    openingHours: store.openingHours,
+    verified: store.verifiedAt !== null,
+    stockCount: listings.filter((l) => l.type === 'sale' || l.type === 'swap').length,
+    confirmedDeals: deals?.n ?? 0,
+    // Not measured yet: "< 1h" until reply times are.
+    replyHours: 1,
+    joinedAt: store.createdAt.toISOString().slice(0, 10),
+    listings,
+  };
+}
+
+storeRoutes.openapi(bySlug, async (c) => {
+  const { slug } = c.req.valid('param');
+  const store = await storeBySlug(slug);
+  if (!store) return c.json({ error: 'Store not found' }, 404);
+  return c.json(store, 200);
 });
 
+/** Every open store's address, for building their pages ahead. */
+export async function storeSlugs(): Promise<string[]> {
+  const rows = await db.select({ slug: t.stores.slug }).from(t.stores).where(isNull(t.stores.closedAt));
+  return rows.map((row) => row.slug);
+}
+
+/* --- opening one ---------------------------------------------------------- */
+
+/** "Kopje Computers" → "KC"; "Samora" → "SA". */
+function initialsOf(name: string): string {
+  const words = name.split(/\s+/).filter((word) => /[a-z0-9]/i.test(word));
+  const letters =
+    words.length > 1 ? `${words[0]![0]}${words[1]![0]}` : (words[0] ?? 'ST').slice(0, 2);
+  return letters.toUpperCase();
+}
+
+const open = createRoute({
+  method: 'post',
+  path: '/stores',
+  tags: ['Stores'],
+  summary: 'Open a store',
+  description:
+    'A person opens a store from their account and becomes its owner. It starts as a free store: up to 15 live listings for sale or swap. A person can own up to 3 stores.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            name: z.string().trim().min(2, 'Give the store a name').max(60),
+            location: z.string().trim().min(2, 'Say where the store is').max(100),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'Opened',
+      content: { 'application/json': { schema: z.object({ id: z.string(), slug: z.string() }) } },
+    },
+    400: { description: 'Something is missing', content: { 'application/json': { schema: ErrorSchema } } },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Already owns 3 stores', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+storeRoutes.openapi(open, async (c) => {
+  const { name, location } = c.req.valid('json');
+  const person = await personFor(c.get('authUser'));
+  const [owned] = await db
+    .select({ n: count() })
+    .from(t.storeMembers)
+    .innerJoin(t.stores, eq(t.stores.id, t.storeMembers.storeId))
+    .where(
+      and(
+        eq(t.storeMembers.personId, person.id),
+        eq(t.storeMembers.role, 'owner'),
+        isNull(t.storeMembers.removedAt),
+        isNull(t.stores.closedAt),
+      ),
+    );
+  if ((owned?.n ?? 0) >= 3) return c.json({ error: 'A person can own up to 3 stores.' }, 403);
+
+  const base =
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40) || 'store';
+  const [taken] = await db.select({ id: t.stores.id }).from(t.stores).where(eq(t.stores.slug, base));
+  // "new" is the Open a store page's own address.
+  const slug = taken || base === 'new' ? `${base}-${crypto.randomUUID().slice(0, 4)}` : base;
+
+  const made = await db.transaction(async (tx) => {
+    const [store] = await tx
+      .insert(t.stores)
+      .values({ slug, name, initials: initialsOf(name), location })
+      .returning({ id: t.stores.id, slug: t.stores.slug });
+    await tx.insert(t.storeMembers).values({ storeId: store!.id, personId: person.id, role: 'owner' });
+    return store!;
+  });
+  return c.json(made, 201);
+});

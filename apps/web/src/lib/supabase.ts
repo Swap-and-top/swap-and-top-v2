@@ -42,12 +42,13 @@ export async function fetchViewer(token: string) {
 
 /**
  * A call to the API as the signed in person: their sign in token goes with
- * it. Returns the parsed body, or `error` with the API's message.
+ * it. Returns the parsed body, or `error` with the API's message (and its
+ * `code`, such as `limit`, where it gives one).
  */
 export async function apiAsViewer<T>(
   path: string,
   init: { method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; body?: unknown },
-): Promise<{ data?: T; error?: string }> {
+): Promise<{ data?: T; error?: string; code?: string }> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
   if (!token) return { error: 'Sign in again to carry on.' };
@@ -56,7 +57,11 @@ export async function apiAsViewer<T>(
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: init.body === undefined ? undefined : JSON.stringify(init.body),
   }).catch(() => null);
-  const body = (await response?.json().catch(() => ({}))) as { error?: string } | undefined;
-  if (!response?.ok) return { error: body?.error ?? 'Something went wrong. Try again in a minute.' };
+  const body = (await response?.json().catch(() => ({}))) as
+    | { error?: string; code?: string }
+    | undefined;
+  if (!response?.ok) {
+    return { error: body?.error ?? 'Something went wrong. Try again in a minute.', code: body?.code };
+  }
   return { data: body as T };
 }

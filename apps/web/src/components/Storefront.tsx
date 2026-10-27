@@ -133,7 +133,8 @@ export function StorefrontBody({
         <p className={styles.description}>
           {store.description}
           <br />
-          {store.location} · {store.openingHours}
+          {/* A new store has no opening hours yet: just where it is. */}
+          {store.openingHours ? `${store.location} · ${store.openingHours}` : store.location}
         </p>
 
         <StatStrip

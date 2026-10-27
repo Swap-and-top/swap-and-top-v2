@@ -1,0 +1,28 @@
+.title {
+  margin: 0;
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+.town {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.label {
+  /* As every form's labels (Field): set in to line up with the box. */
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}

@@ -34,6 +34,7 @@
   },
   "exports": {
     "./vercel": "./src/vercel.ts",
-    "./listings": "./src/listings.ts"
+    "./listings": "./src/listings.ts",
+    "./stores": "./src/routes/stores.ts"
   }
 }

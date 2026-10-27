@@ -53,11 +53,15 @@ import {
 import { DevTools } from '@/components/DevTools';
 import styles from './page.module.css';
 
+/** One empty list, so a guest's stores are the same each time they are read. */
+const NO_STORES: never[] = [];
+
 export default function MePage() {
   const { ids } = useSavedStore();
   const { answers, confirmedDeals, deals } = useDealStore();
   const signOut = useSessionStore((state) => state.signOut);
   const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? false);
+  const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
   const offers = useOfferStore((store) => store.offers);
   /** Offers made, plus those waiting on the user's own listings. */
   const offerTotal = offers.filter(
@@ -139,14 +143,35 @@ export default function MePage() {
               />
             </ListGroup>
 
-            {/* Visible only to store accounts in the real app. */}
+            {/* Their stores, and the console; or, without one, the way to
+                open one. */}
             <h2 className={styles.section}>For stores</h2>
-            <ConsoleEntryRow
-              href="/console/stock"
-              icon={<BoxIcon size={20} />}
-              title="Switch to Store console"
-              subtitle="Stock, leads and promotion"
-            />
+            {stores.length ? (
+              <Stack gap={4}>
+                {stores.map((store) => (
+                  <ConsoleEntryRow
+                    key={store.id}
+                    href={`/store/${store.slug}`}
+                    icon={<BoxIcon size={20} />}
+                    title={store.name}
+                    subtitle={store.role === 'owner' ? 'Your store page' : 'A store you work for'}
+                  />
+                ))}
+                <ConsoleEntryRow
+                  href="/console/stock"
+                  icon={<BoxIcon size={20} />}
+                  title="Switch to Store console"
+                  subtitle="Stock, leads and promotion"
+                />
+              </Stack>
+            ) : (
+              <ConsoleEntryRow
+                href="/store/new"
+                icon={<BoxIcon size={20} />}
+                title="Open a store"
+                subtitle="Your own page and up to 15 listings, free"
+              />
+            )}
 
             <h2 className={styles.section}>Account</h2>
             <ListGroup>

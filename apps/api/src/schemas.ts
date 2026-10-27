@@ -114,13 +114,18 @@ export const StoreSchema = z
     /** Live listings for sale or swap. */
     stockCount: z.number().int(),
     confirmedDeals: z.number().int(),
+    replyHours: z.number(),
     joinedAt: z.string(),
     listings: z.array(ListingSchema),
   })
   .openapi('Store');
 
 export const ErrorSchema = z
-  .object({ error: z.string().openapi({ example: 'Listing not found' }) })
+  .object({
+    error: z.string().openapi({ example: 'Listing not found' }),
+    /** Set where the app acts on it: `limit` when a listing limit is reached. */
+    code: z.string().optional(),
+  })
   .openapi('Error');
 
 export const MeSchema = z

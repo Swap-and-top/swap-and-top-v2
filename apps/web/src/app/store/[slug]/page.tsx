@@ -7,12 +7,16 @@
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getStoreBySlug, getStoreListings, mockStores } from '@snt/core';
 import { Storefront } from '@/components/Storefront';
 import { slowDown } from '@/components/slowDown';
+import { allStoreSlugs, storeFor } from '@/lib/stores';
 
-export function generateStaticParams() {
-  return mockStores.map((store) => ({ slug: store.slug }));
+/** Built ahead for every open store, kept for a minute; a store opened since
+    is made on its first visit. */
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return (await allStoreSlugs()).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -21,12 +25,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const store = getStoreBySlug(slug);
+  const store = (await storeFor(slug))?.store;
   if (!store) return { title: 'Store not found · Swap & Top' };
 
   return {
     title: `${store.name} · Swap & Top`,
-    description: `${store.description} ${store.location}.`,
+    description: `${store.description ? `${store.description} ` : ''}${store.location}.`,
   };
 }
 
@@ -37,13 +41,8 @@ export default async function StorePage({
 }) {
   await slowDown();
   const { slug } = await params;
-  const store = getStoreBySlug(slug);
+  const found = await storeFor(slug);
+  if (!found) notFound();
 
-  if (!store) notFound();
-
-  const listings = getStoreListings(store.id).filter(
-    (listing) => listing.status === 'live',
-  );
-
-  return <Storefront store={store} listings={listings} />;
+  return <Storefront store={found.store} listings={found.listings} />;
 }

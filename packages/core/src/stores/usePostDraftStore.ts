@@ -19,6 +19,11 @@ export type PostKind = 'sale' | 'swap' | 'request';
 
 interface PostDraftState {
   kind: PostKind | null;
+  /**
+   * Who it goes up as, for someone with a store: a store's id, or null for
+   * themselves. Undefined until they choose, which means their first store.
+   */
+  postAs: string | null | undefined;
   /** None until they pick one: nothing is chosen for them. */
   category: Category | null;
 
@@ -61,6 +66,7 @@ interface PostDraftState {
   contactToStores: boolean;
 
   setKind: (kind: PostKind) => void;
+  setPostAs: (postAs: string | null) => void;
   setCategory: (category: Category) => void;
   setField: (
     field: Extract<
@@ -96,6 +102,7 @@ interface PostDraftState {
  */
 const initial = {
   kind: null,
+  postAs: undefined as string | null | undefined,
   category: 'laptops' as Category | null,
   haveTitle: '',
   specs: {} as ItemSpecs,
@@ -119,6 +126,7 @@ const initial = {
 export const usePostDraftStore = create<PostDraftState>((set) => ({
   ...initial,
   setKind: (kind) => set({ kind }),
+  setPostAs: (postAs) => set({ postAs }),
   setCategory: (category) => set({ category }),
   setField: (field, value) => set({ [field]: value } as Partial<PostDraftState>),
   setCashDirection: (cashDirection) => set({ cashDirection }),

@@ -12,3 +12,8 @@ export async function refreshListing(slug: string) {
   revalidatePath('/');
   revalidatePath(`/listing/${slug}`);
 }
+
+/** After a store is opened: its page is built on its first visit. */
+export async function refreshStore(slug: string) {
+  revalidatePath(`/store/${slug}`);
+}

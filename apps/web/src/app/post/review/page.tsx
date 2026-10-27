@@ -52,6 +52,8 @@ import {
   WhatsAppIcon,
 } from '@snt/ui/icons';
 import { apiAsViewer } from '@/lib/supabase';
+import { LimitSheet } from '@/components/LimitSheet';
+import { usePostAs } from '@/components/PostAs';
 import { refreshListing } from '@/lib/refresh';
 import styles from './page.module.css';
 
@@ -69,21 +71,27 @@ export default function PostReviewPage() {
   const router = useRouter();
   const draft = usePostDraftStore();
   const kind = draft.kind ?? 'swap';
+  /** The store it goes up as, or null for themselves (see Post as). */
+  const postAs = usePostAs();
   const chosen = CHANNELS.filter((channel) =>
     draft.contactChannels.includes(channel.value),
   );
   /** Contact details only for people whose offer they accept. */
   const afterOffer = draft.contactShownTo === 'offers';
 
+  /** At a listing limit: the API's message, shown in the limit sheet. */
+  const [limit, setLimit] = useState<string | null>(null);
+
   /** Saves it (POST /api/listings), then opens it: it is live at once. */
   async function post() {
     const amount = (typed: string) => Number(typed.replace(/[^0-9.]/g, '')) || undefined;
     const category = draft.category ?? 'other';
     setPosting(true);
-    const { data, error } = await apiAsViewer<{ slug: string }>('/listings', {
+    const { data, error, code } = await apiAsViewer<{ slug: string }>('/listings', {
       method: 'POST',
       body: {
         kind,
+        storeId: postAs ?? undefined,
         category,
         haveTitle: kind === 'request' ? undefined : draft.haveTitle.trim(),
         // Only the details its category asks for, and only those filled in.
@@ -110,7 +118,8 @@ export default function PostReviewPage() {
     });
     if (error || !data) {
       setPosting(false);
-      toast.error(error ?? 'We could not post it. Try again in a minute.');
+      if (code === 'limit' && error) setLimit(error);
+      else toast.error(error ?? 'We could not post it. Try again in a minute.');
       return;
     }
     await refreshListing(data.slug);
@@ -283,6 +292,9 @@ export default function PostReviewPage() {
           >
             Post listing
           </Button>
+          {limit ? (
+            <LimitSheet message={limit} asStore={postAs !== null} onClose={() => setLimit(null)} />
+          ) : null}
         </div>
       </ScreenBody>
     </Screen>

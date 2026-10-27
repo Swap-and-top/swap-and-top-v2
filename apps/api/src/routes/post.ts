@@ -8,11 +8,16 @@
  *
  * Posting needs a sign in and a verified phone (docs/architecture/
  * auth-and-identity.md); the app asks for the phone first, and this checks it
- * again. The listing limits for people and stores come with Phase 4.
+ * again. Someone with a store can post as the store (`storeId`).
+ *
+ * The limits (docs/product/accounts-and-stores.md): live listings for sale or
+ * swap, 5 for a person and 15 for a free store; a store with a pass that
+ * covers today has none. Wanted listings never count. At a limit the answer
+ * is a 403 with `code: 'limit'`, which the app turns into its limit message.
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, eq, notInArray } from 'drizzle-orm';
+import { and, count, eq, gt, inArray, isNull, lte, notInArray } from 'drizzle-orm';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
@@ -28,6 +33,8 @@ const money = z.number().positive().max(1_000_000);
 const NewListing = z
   .object({
     kind: z.enum(['sale', 'swap', 'request']),
+    /** Post as this store, which they own or work for. Missing: as themselves. */
+    storeId: z.string().optional(),
     category,
     /** What they have: a sale's item, a swap's own side. */
     haveTitle: z.string().trim().max(80).optional(),
@@ -48,6 +55,62 @@ const NewListing = z
     contactToStores: z.boolean(),
   })
   .openapi('NewListing');
+
+const PERSON_LIMIT = 5;
+const FREE_STORE_LIMIT = 15;
+
+/**
+ * Why one more live listing for sale or swap may not go up, as the person
+ * or as the store: null when it may.
+ */
+async function overLimit(personId: string, storeId: string | null): Promise<string | null> {
+  const now = new Date();
+  if (storeId) {
+    const [pass] = await db
+      .select({ id: t.storePasses.id })
+      .from(t.storePasses)
+      .where(and(eq(t.storePasses.storeId, storeId), lte(t.storePasses.startsAt, now), gt(t.storePasses.endsAt, now)));
+    if (pass) return null;
+  }
+  const [live] = await db
+    .select({ n: count() })
+    .from(t.listings)
+    .where(
+      and(
+        eq(t.listings.status, 'live'),
+        inArray(t.listings.type, ['sale', 'swap']),
+        storeId
+          ? eq(t.listings.storeId, storeId)
+          : and(eq(t.listings.ownerId, personId), isNull(t.listings.storeId)),
+      ),
+    );
+  const n = live?.n ?? 0;
+  if (storeId) {
+    return n >= FREE_STORE_LIMIT
+      ? `Your store has ${n} live listings, the most for a free store. Get a store pass to post more, or mark one as sold.`
+      : null;
+  }
+  return n >= PERSON_LIMIT
+    ? `You have ${n} live listings, the most for a personal account. Open a store to post more, or mark one as sold.`
+    : null;
+}
+
+/** Whether this person may act for this store: its owner or staff. */
+async function isMember(personId: string, storeId: string): Promise<boolean> {
+  const [member] = await db
+    .select({ role: t.storeMembers.role })
+    .from(t.storeMembers)
+    .innerJoin(t.stores, eq(t.stores.id, t.storeMembers.storeId))
+    .where(
+      and(
+        eq(t.storeMembers.storeId, storeId),
+        eq(t.storeMembers.personId, personId),
+        isNull(t.storeMembers.removedAt),
+        isNull(t.stores.closedAt),
+      ),
+    );
+  return Boolean(member);
+}
 
 const post = createRoute({
   method: 'post',
@@ -90,6 +153,15 @@ postRoutes.openapi(post, async (c) => {
     return c.json({ error: 'Your account cannot post listings right now.' }, 403);
   }
 
+  const storeId = body.storeId ?? null;
+  if (storeId && !(await isMember(person.id, storeId))) {
+    return c.json({ error: 'You cannot post as that store.' }, 403);
+  }
+  if (body.kind !== 'request') {
+    const problem = await overLimit(person.id, storeId);
+    if (problem) return c.json({ error: problem, code: 'limit' }, 403);
+  }
+
   const have = body.haveTitle ?? '';
   const want = body.wantTitle ?? '';
   if (body.kind !== 'request' && !have) return c.json({ error: 'Say what you have.' }, 400);
@@ -127,6 +199,7 @@ postRoutes.openapi(post, async (c) => {
         slug: slugFor(body.kind === 'request' ? `wanted ${title}` : title, area),
         type: body.kind,
         ownerId: person.id,
+        storeId,
         category: body.category,
         title,
         location: area,
@@ -221,7 +294,10 @@ const status = createRoute({
       content: { 'application/json': { schema: z.object({ id: z.string(), slug: z.string(), status: z.string() }) } },
     },
     401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
-    403: { description: 'Not your listing', content: { 'application/json': { schema: ErrorSchema } } },
+    403: {
+      description: 'Not your listing, or at a listing limit',
+      content: { 'application/json': { schema: ErrorSchema } },
+    },
     404: { description: 'No such listing', content: { 'application/json': { schema: ErrorSchema } } },
   },
 });
@@ -235,6 +311,11 @@ postRoutes.openapi(status, async (c) => {
     return c.json({ error: 'That listing is not there any more.' }, 404);
   }
   if (listing.ownerId !== person.id) return c.json({ error: 'That listing is not yours.' }, 403);
+  // Relisting puts it back among the live ones, so the limit applies.
+  if (next === 'live' && listing.status !== 'live' && listing.type !== 'request') {
+    const problem = await overLimit(person.id, listing.storeId);
+    if (problem) return c.json({ error: problem, code: 'limit' }, 403);
+  }
 
   const now = new Date();
   const [changed] = await db
