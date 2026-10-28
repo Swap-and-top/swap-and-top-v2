@@ -43,12 +43,46 @@ function shownName(name: string | null): string {
   return last ? `${first} ${last.charAt(0).toUpperCase()}.` : first!;
 }
 
+type Person = typeof t.people.$inferSelect;
+
+/**
+ * Who each sign in is, kept for a few seconds: the app asks for several
+ * things at once as someone signs in, and each request starts by finding the
+ * person; one lookup now serves them all. Changes to the person here (name,
+ * phone) update it at once (`rememberPerson`).
+ */
+const PERSON_FOR_MS = 15_000;
+const people = new Map<string, { at: number; person: Promise<Person> }>();
+
+/** Puts the person as just saved in place of what was kept. */
+function rememberPerson(authUserId: string, person: Person) {
+  people.set(authUserId, { at: Date.now(), person: Promise.resolve(person) });
+}
+
 /** The person for this sign in, linking or adding them as needed. */
-export async function personFor(user: AuthUser) {
+export async function personFor(user: AuthUser): Promise<Person> {
+  const kept = people.get(user.id);
+  if (kept && Date.now() - kept.at < PERSON_FOR_MS) return kept.person;
+  const person = findPerson(user);
+  people.set(user.id, { at: Date.now(), person });
+  person.catch(() => people.delete(user.id));
+  return person;
+}
+
+/** "Last seen", noted at most every few minutes, and never waited for. */
+const SEEN_EVERY_MS = 5 * 60_000;
+
+async function findPerson(user: AuthUser): Promise<Person> {
   const now = new Date();
   const [linked] = await db.select().from(t.people).where(eq(t.people.authUserId, user.id));
   if (linked) {
-    await db.update(t.people).set({ lastSeenAt: now }).where(eq(t.people.id, linked.id));
+    if (!linked.lastSeenAt || now.getTime() - linked.lastSeenAt.getTime() > SEEN_EVERY_MS) {
+      void db
+        .update(t.people)
+        .set({ lastSeenAt: now })
+        .where(eq(t.people.id, linked.id))
+        .catch(() => undefined);
+    }
     return linked;
   }
   if (user.phone) {
@@ -150,6 +184,7 @@ meRoutes.openapi(name, async (c) => {
     .set({ displayName: shownName(`${firstName} ${surname}`) })
     .where(eq(t.people.id, person.id))
     .returning();
+  rememberPerson(c.get('authUser').id, updated!);
   return c.json(await viewerOut(updated!), 200);
 });
 
@@ -210,5 +245,6 @@ meRoutes.openapi(phone, async (c) => {
     .set({ phone: number, phoneVerifiedAt: new Date() })
     .where(eq(t.people.id, person.id))
     .returning();
+  rememberPerson(user.id, updated!);
   return c.json(await viewerOut(updated!), 200);
 });

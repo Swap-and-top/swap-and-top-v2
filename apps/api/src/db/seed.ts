@@ -28,6 +28,8 @@ const TEST_ACCOUNTS: Record<
   'u-rumbi': { phone: '+263770000005', role: 'moderator' },
   'u-tafadzwa': { phone: '+263770000006', role: 'admin' },
   'u-hillary': { phone: '+263770000007', role: 'super_admin' },
+  'u-patrick': { phone: '+263770000008', role: 'admin' },
+  'u-ray': { phone: '+263770000009', role: 'admin' },
 };
 
 /** People the mock data does not have: store staff and platform staff. */
@@ -36,6 +38,8 @@ const EXTRA_PEOPLE = [
   { id: 'u-rumbi', displayName: 'Rumbi M.', location: 'Harare' },
   { id: 'u-tafadzwa', displayName: 'Tafadzwa A.', location: 'Harare' },
   { id: 'u-hillary', displayName: 'Hillary M.', location: 'Harare' },
+  { id: 'u-patrick', displayName: 'Patrick M.', location: 'Harare' },
+  { id: 'u-ray', displayName: 'Ray L.', location: 'Harare' },
 ];
 
 /**

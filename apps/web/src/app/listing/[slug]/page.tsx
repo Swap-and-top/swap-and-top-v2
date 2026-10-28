@@ -20,6 +20,9 @@ import { slowDown } from '@/components/slowDown';
 import { ViewRecorder } from '@/components/ViewRecorder';
 import { feedListings, listingFor } from '@/lib/listings';
 
+/** On Vercel, near the database (see app/api/[[...route]]/route.ts). */
+export const preferredRegion = 'dub1';
+
 /** Built ahead for every live listing, kept for a minute; a listing newer
     than the last build is made on its first visit. */
 export const revalidate = 60;

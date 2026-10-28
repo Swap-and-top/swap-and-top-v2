@@ -4,7 +4,7 @@
  * come from other records (reveals, offers, boosts).
  */
 
-import { and, count, desc, eq, gt, inArray, isNull, lte, ne, notInArray, type SQL } from 'drizzle-orm';
+import { and, count, desc, eq, gt, inArray, isNull, lte, ne, notInArray, or, type SQL } from 'drizzle-orm';
 import type { z } from '@hono/zod-openapi';
 import { db } from './db/client';
 import * as t from './db/schema';
@@ -58,7 +58,9 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
   const ids = rows.map((row) => row.listing.id);
   const now = new Date();
 
-  const [sales, swaps, requests, reveals, offers, boosts] = await Promise.all([
+  // Everything else in one batch, the items too, found through the details
+  // rather than after them: each trip to the database is slow from afar.
+  const [sales, swaps, requests, reveals, offers, boosts, itemRows] = await Promise.all([
     db.select().from(t.saleDetails).where(inArray(t.saleDetails.listingId, ids)),
     db.select().from(t.swapDetails).where(inArray(t.swapDetails.listingId, ids)),
     db.select().from(t.requestDetails).where(inArray(t.requestDetails.listingId, ids)),
@@ -84,19 +86,35 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
           isNull(t.boosts.stoppedAt),
         ),
       ),
+    db
+      .select()
+      .from(t.items)
+      .where(
+        or(
+          inArray(
+            t.items.id,
+            db.select({ id: t.saleDetails.itemId }).from(t.saleDetails).where(inArray(t.saleDetails.listingId, ids)),
+          ),
+          inArray(
+            t.items.id,
+            db.select({ id: t.swapDetails.hasItemId }).from(t.swapDetails).where(inArray(t.swapDetails.listingId, ids)),
+          ),
+          inArray(
+            t.items.id,
+            db.select({ id: t.swapDetails.wantsItemId }).from(t.swapDetails).where(inArray(t.swapDetails.listingId, ids)),
+          ),
+          inArray(
+            t.items.id,
+            db
+              .select({ id: t.requestDetails.wantsItemId })
+              .from(t.requestDetails)
+              .where(inArray(t.requestDetails.listingId, ids)),
+          ),
+        ),
+      ),
   ]);
 
-  const itemIds = [
-    ...sales.map((s) => s.itemId),
-    ...swaps.flatMap((s) => [s.hasItemId, s.wantsItemId]),
-    ...requests.map((r) => r.wantsItemId),
-  ];
-  const items = new Map(
-    (itemIds.length
-      ? await db.select().from(t.items).where(inArray(t.items.id, itemIds))
-      : []
-    ).map((item) => [item.id, item]),
-  );
+  const items = new Map(itemRows.map((item) => [item.id, item]));
 
   const itemOut = (id: string): ItemOut => {
     const item = items.get(id)!;

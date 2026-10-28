@@ -21,13 +21,19 @@ import { toast } from 'sonner';
 import {
   contactAfterOffer,
   useListingStatus,
+  useSessionStore,
   type Listing,
   type ListingStatus,
 } from '@snt/core';
 import { Button, Sheet, startPageLoad, useCloseSheet } from '@snt/ui';
-import { CheckIcon, PauseIcon, TrashIcon } from '@snt/ui/icons';
+import { CheckIcon, PauseIcon, StoreIcon, TrashIcon } from '@snt/ui/icons';
 import { saveStatus } from '@/lib/listingStatus';
+import { refreshListing, refreshStore } from '@/lib/refresh';
+import { apiAsViewer } from '@/lib/supabase';
 import styles from './OwnerTools.module.css';
+
+/** One empty list, so a guest's stores are the same each time they are read. */
+const NO_STORES: never[] = [];
 
 /**
  * How long a message with Undo stays up: two seconds longer than the usual
@@ -197,6 +203,36 @@ function ManageBody({
   const router = useRouter();
   const close = useCloseSheet();
   const done = DONE[listing.type];
+  /** The stores they own, which a personal listing can move into. */
+  const ownStores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES).filter(
+    (store) => store.role === 'owner',
+  );
+
+  /** Into a store (or back, with null); it keeps its offers and history. */
+  async function moveTo(storeId: string | null): Promise<boolean> {
+    const { error } = await apiAsViewer(`/listings/${encodeURIComponent(listing.id)}/store`, {
+      method: 'PATCH',
+      body: { storeId },
+    });
+    if (error) {
+      toast.error(error);
+      return false;
+    }
+    await refreshListing(listing.slug);
+    const store = ownStores.find((one) => one.id === (storeId ?? listing.storeId));
+    if (store) await refreshStore(store.slug);
+    router.refresh();
+    return true;
+  }
+
+  async function moveInto(store: { id: string; name: string }) {
+    close();
+    if (!(await moveTo(store.id))) return;
+    toast.success(`Moved to ${store.name}. Its offers came with it.`, {
+      action: { label: 'Undo', onClick: () => void moveTo(null) },
+      duration: UNDO_TOAST_MS,
+    });
+  }
 
   /** Changes it, says so, and offers to put it back as it was. */
   async function change(next: ListingStatus, told: string) {
@@ -278,6 +314,20 @@ function ManageBody({
           </li>
         </>
       ) : null}
+      {/* A personal listing, for someone who owns a store: into the store. */}
+      {listing.storeId
+        ? null
+        : ownStores.map((store) => (
+            <li key={store.id}>
+              <button type="button" className={styles.row} onClick={() => void moveInto(store)}>
+                <span className={styles.rowIcon}>
+                  <StoreIcon size={18} />
+                </span>
+                <span className={styles.rowLabel}>Move to {store.name}</span>
+                <span className={styles.rowNote}>Its offers come with it</span>
+              </button>
+            </li>
+          ))}
       <li>
         <button
           type="button"

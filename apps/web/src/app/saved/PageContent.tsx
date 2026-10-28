@@ -21,12 +21,14 @@ import {
   AppHeader,
   ButtonLink,
   CompactListingRow,
+  CompactListingRowSkeleton,
   EmptyState,
   Screen,
   ScreenBody,
   ScreenTitle,
   Stack,
   Tabs,
+  TabsSkeleton,
   type TabItem,
   SignInGate,
 } from '@snt/ui';
@@ -42,14 +44,16 @@ export default function SavedPage() {
   const { ids } = useSavedStore();
   const [tab, setTab] = useState<SavedTab>('all');
   const viewerId = useSessionStore((state) => state.viewer?.id);
-  /** The saved listings themselves, from the API (GET /api/me/saved). */
-  const [listings, setListings] = useState<Listing[]>([]);
+  /** The saved listings themselves, from the API (GET /api/me/saved); null
+      until it answers, while the page shows its skeleton rather than
+      "Nothing saved yet". */
+  const [listings, setListings] = useState<Listing[] | null>(null);
 
   useEffect(() => {
     if (!viewerId) return;
     let current = true;
     void apiAsViewer<{ listings: Listing[] }>('/me/saved', { method: 'GET' }).then(({ data }) => {
-      if (current && data) setListings(data.listings);
+      if (current) setListings(data?.listings ?? []);
     });
     return () => {
       current = false;
@@ -58,7 +62,7 @@ export default function SavedPage() {
 
   // In the order saved, newest first; one unsaved here leaves at once.
   const saved = ids
-    .map((id) => listings.find((listing) => listing.id === id))
+    .map((id) => listings?.find((listing) => listing.id === id))
     .filter((listing): listing is Listing => listing !== undefined);
 
   const available = saved.filter((listing) => !isGone(listing));
@@ -77,12 +81,24 @@ export default function SavedPage() {
     <Screen>
       <AppHeader>
         <ScreenTitle>Saved</ScreenTitle>
-        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Saved" />
+        {/* While the saved listings load: the page's own skeleton, as
+            loading.tsx has it. */}
+        {listings === null ? (
+          <TabsSkeleton widths={[40, 76, 54]} />
+        ) : (
+          <Tabs tabs={tabs} active={tab} onChange={setTab} label="Saved" />
+        )}
       </AppHeader>
 
       <ScreenBody>
         <SignInGate>
-          {shown.length > 0 ? (
+          {listings === null ? (
+            <Stack gap={5}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <CompactListingRowSkeleton key={i} />
+              ))}
+            </Stack>
+          ) : shown.length > 0 ? (
             <Stack gap={5}>
               {shown.map((listing) => (
                 <CompactListingRow key={listing.id} listing={listing} />

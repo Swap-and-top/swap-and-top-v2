@@ -36,7 +36,7 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
 
 **Next, in order:**
 
-1. **Slice 4, owner and staff (built 2026-10-28, not yet committed):**
+1. **Slice 4, owner and staff (built 2026-10-28, `325827e`):**
    `GET`, `POST` and `DELETE /api/stores/{id}/members` (in
    `apps/api/src/routes/stores.ts`): the owner adds staff by phone (the
    number must have an account; they are told in their notifications)
@@ -48,18 +48,35 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
    `useConsoleRole()` (`apps/web/src/lib/consoleRole.ts`) hides boost
    buttons from staff in Stock, Boosted and Stats. Tested through the
    API and in the browser as owner and as staff.
-2. **Store settings (built 2026-10-28, not yet committed):** the owner
+2. **Store settings (built 2026-10-28, `ac2ffe6`):** the owner
    edits the store's description, opening hours and area at
    `/store/[slug]/edit` (`PATCH /api/stores/{id}`, owner only), reached
    from Me ("Edit store details" under the store) and the console's Store
    profile. No database change was needed.
-3. **The rest of Phase 4:** moving existing listings into a new store,
-   switching between several stores in the console (it opens the first
-   with a pass for now), closing a store, the store's own contact ways and
+3. **Moving listings into a store (built 2026-10-28, not yet committed):**
+   in a personal listing's Manage sheet, "Move to <store>" for each store
+   the person owns, with Undo (`PATCH /api/listings/{id}/store`, storeId
+   or null). It stays the same listing, so offers and history go with it;
+   the store's limit applies to a live listing for sale or swap. One at a
+   time; a "move them all" was not built.
+4. **Switching between stores (built 2026-10-28, not yet committed):**
+   someone in more than one store gets an "Open Store console" button
+   under each store on Me, which opens `/console/stock?store=<id>`; the
+   console keeps that store (remembered in the browser,
+   `apps/web/src/lib/consoleChoice.ts`) until another is chosen. With one
+   store, the single "Switch to Store console" row opens it. Without a
+   choice the console opens the first store with a pass.
+   **Also 2026-10-28:** the Saved page shows its skeleton until the
+   saved listings arrive (it flashed "Nothing saved yet"); signed in
+   requests make fewer trips to the database (the person kept for 15
+   seconds, "last seen" not waited for, items read with the details);
+   the live API runs in Dublin next to the database; two more admins,
+   Patrick M. and Ray L. (see the test accounts).
+5. **The rest of Phase 4:** closing a store, the store's own contact ways and
    the name change rule ("formerly …" for 30 days; these two need new
    columns, so a migration, so ask first), and Verified store requests
    (best alongside Phase 5's staff screens).
-4. **Phase 5, the report queue for staff** (tables `reports`,
+6. **Phase 5, the report queue for staff** (tables `reports`,
    `moderation_actions`, `appeals` exist). See the backend plan,
    section 2.
 
@@ -159,9 +176,14 @@ Sign in with a phone (Continue with phone) and the code **123456**:
 | 077 000 0005 | Rumbi M. (`u-rumbi`) | Moderator. |
 | 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Admin. |
 | 077 000 0007 | Hillary M. (`u-hillary`) | Super admin. |
+| 077 000 0008 | Patrick M. (`u-patrick`) | Admin, no store. Also email `patrick.test@example.com`, password `testpass123`. |
+| 077 000 0009 | Ray L. (`u-ray`) | Admin, no store. Also email `ray.test@example.com`, password `testpass123`. |
 
-Only these seven numbers can sign in by phone (Supabase test numbers); any
-other number needs real SMS. Any Zimbabwe number can be *verified* in
+Only numbers listed as test numbers in Supabase can sign in by phone (1 to 7
+are; 8 and 9 need adding there: Authentication, Sign In / Providers, Phone,
+Test phone numbers, `263770000008=123456` and `263770000009=123456`);
+Patrick and Ray can sign in by email meanwhile. Any other number needs real
+SMS. Any Zimbabwe number can be *verified* in
 Settings or the verify phone sheet with 123456. Sign up with any email
 works (code 123456).
 

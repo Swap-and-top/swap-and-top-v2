@@ -10,7 +10,7 @@
  * (`useConsoleTarget`).
  */
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useSessionStore, type Store } from '@snt/core';
 import {
   AppHeader,
@@ -24,6 +24,7 @@ import {
   Stack,
 } from '@snt/ui';
 import { StorePassSheet } from '@/components/StorePassSheet';
+import { useConsoleChoice } from '@/lib/consoleChoice';
 
 /** "Kopje Computers" → "KC"; "Samora" → "SA", as the API makes them. */
 function initialsOf(name: string): string {
@@ -44,8 +45,21 @@ export default function ConsoleLayout({ children }: { children: ReactNode }) {
 function Gate({ children }: { children: ReactNode }) {
   const viewer = useSessionStore((state) => state.viewer);
   const [buying, setBuying] = useState(false);
-  // Their first store with a pass running; else their first store.
-  const mine = viewer?.stores.find((s) => s.paidUntil) ?? viewer?.stores[0];
+  const chosen = useConsoleChoice((state) => state.storeId);
+  const choose = useConsoleChoice((state) => state.choose);
+
+  // Opened from Me for one store: `?store=<id>` chooses it.
+  useEffect(() => {
+    const asked = new URLSearchParams(window.location.search).get('store');
+    if (asked) choose(asked);
+  }, [choose]);
+
+  // The store they chose, if they are still in it; else their first store
+  // with a pass running; else their first store.
+  const mine =
+    viewer?.stores.find((s) => s.id === chosen) ??
+    viewer?.stores.find((s) => s.paidUntil) ??
+    viewer?.stores[0];
 
   const store = useMemo<Store | null>(
     () =>

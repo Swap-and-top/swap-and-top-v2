@@ -15,6 +15,9 @@ import { BrowseFeed } from './BrowseFeed';
 import { slowDown } from '@/components/slowDown';
 import { feedListings } from '@/lib/listings';
 
+/** On Vercel, near the database (see app/api/[[...route]]/route.ts). */
+export const preferredRegion = 'dub1';
+
 export const revalidate = 60;
 
 // Held at most a few seconds, so a phone slow to start the page still sees

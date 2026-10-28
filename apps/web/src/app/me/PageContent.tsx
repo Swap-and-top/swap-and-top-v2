@@ -186,6 +186,12 @@ export default function MePage() {
                             : 'A store you work for'
                       }
                     />
+                    {/* With more than one store: the console for this one. */}
+                    {stores.length > 1 ? (
+                      <ButtonLink href={`/console/stock?store=${store.id}`} block>
+                        Open Store console
+                      </ButtonLink>
+                    ) : null}
                     {/* The owner buys its pass and edits its details; staff
                         cannot. */}
                     {store.role === 'owner' ? (
@@ -200,12 +206,16 @@ export default function MePage() {
                     ) : null}
                   </Stack>
                 ))}
-                <ConsoleEntryRow
-                  href="/console/stock"
-                  icon={<BoxIcon size={20} />}
-                  title="Switch to Store console"
-                  subtitle="Stock, leads and promotion"
-                />
+                {/* One store: one way into its console. More than one: each
+                    has its own button above. */}
+                {stores.length === 1 ? (
+                  <ConsoleEntryRow
+                    href={`/console/stock?store=${stores[0]!.id}`}
+                    icon={<BoxIcon size={20} />}
+                    title="Switch to Store console"
+                    subtitle="Stock, leads and promotion"
+                  />
+                ) : null}
               </Stack>
             ) : (
               <ConsoleEntryRow

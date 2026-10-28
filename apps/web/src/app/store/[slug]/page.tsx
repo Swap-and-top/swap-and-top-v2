@@ -11,6 +11,9 @@ import { Storefront } from '@/components/Storefront';
 import { slowDown } from '@/components/slowDown';
 import { allStoreSlugs, storeFor } from '@/lib/stores';
 
+/** On Vercel, near the database (see app/api/[[...route]]/route.ts). */
+export const preferredRegion = 'dub1';
+
 /** Built ahead for every open store, kept for a minute; a store opened since
     is made on its first visit. */
 export const revalidate = 60;

@@ -260,6 +260,10 @@ Seeded in development only, each signing in with its phone number and the fixed 
 
 - **Store settings are built** (2026-10-28): `PATCH /api/stores/{id}` lets the owner change the description, opening hours and area; the form is `/store/[slug]/edit`.
 
+- **Moving a listing into a store is built** (2026-10-28): `PATCH /api/listings/{id}/store` moves the person's own listing into a store they own, or back; the Manage sheet offers "Move to <store>" with Undo.
+
+- **Switching between stores is built** (2026-10-28): Me opens the console for each store (`?store=<id>`), and the console keeps the chosen store.
+
 ### Running it
 
 The settings live in the root `.env` (git ignores it): `DATABASE_URL` and the four `SUPABASE_` values. Then:

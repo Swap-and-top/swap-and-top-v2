@@ -5,7 +5,7 @@ laid out, the design patterns in use and what was done most recently; its
 "Where we stopped" says what comes next. The backend's phases, slices and
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
-As of 2026-10-28 Phase 4 slice 4 (owner and staff) and store settings are built; next is the rest of Phase 4, then Phase 5 (see the handoff).
+As of 2026-10-28 Phase 4 slice 4 (owner and staff), store settings, moving listings into a store and switching between stores are built; next is the rest of Phase 4, then Phase 5 (see the handoff).
 
 ## Standing rules from the product owner (Hillary)
 
@@ -63,6 +63,12 @@ These came from repeated feedback. Follow them without being asked.
 - **Connections:** Supabase's session pooler allows 15. One-off scripts use
   the transaction pooler (port 6543); the API keeps one pool across hot
   reloads and one connection per build worker.
+- **Speed:** the database is in Ireland (eu-west-1). On Vercel the API and
+  the pages that read the database run in Dublin (`preferredRegion =
+  'dub1'`); from the owner's laptop each trip is about half a second, so
+  local pages are slower than live. Keep trips few and in parallel: the
+  person for a sign in is kept for 15 seconds (`personFor`), "last seen"
+  is not waited for, and `loadListings` reads everything in one batch.
 - **A new endpoint** goes in `apps/api/src/routes/<area>.ts` with a
   `createRoute` (so it shows in Swagger at `/api/docs`), is registered in
   `apps/api/src/app.ts`, and is called from the web app with `apiAsViewer`

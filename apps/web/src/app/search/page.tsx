@@ -12,6 +12,9 @@ import { SearchResults } from './SearchResults';
 import { slowDown } from '@/components/slowDown';
 import { feedListings } from '@/lib/listings';
 
+/** On Vercel, near the database (see app/api/[[...route]]/route.ts). */
+export const preferredRegion = 'dub1';
+
 export default async function SearchPage({
   searchParams,
 }: {

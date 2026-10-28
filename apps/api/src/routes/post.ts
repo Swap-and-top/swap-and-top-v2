@@ -579,3 +579,55 @@ postRoutes.openapi(status, async (c) => {
     .returning({ id: t.listings.id, slug: t.listings.slug, status: t.listings.status });
   return c.json(changed!, 200);
 });
+
+/* --- moving a listing into a store ----------------------------------------- */
+
+const move = createRoute({
+  method: 'patch',
+  path: '/listings/{id}/store',
+  tags: ['Listings'],
+  summary: 'Move your listing into your store, or back',
+  description:
+    'A person moves one of their own listings into a store they own (storeId), or back to themselves (null). It stays the same listing, so its offers and history go with it. A live listing for sale or swap counts toward the limit where it goes.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    params: z.object({ id: z.string() }),
+    body: { content: { 'application/json': { schema: z.object({ storeId: z.string().nullable() }) } } },
+  },
+  responses: {
+    200: {
+      description: 'Moved',
+      content: { 'application/json': { schema: z.object({ slug: z.string(), storeId: z.string().nullable() }) } },
+    },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: {
+      description: 'Not yours, not your store, or at a listing limit',
+      content: { 'application/json': { schema: ErrorSchema } },
+    },
+    404: { description: 'No such listing', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+postRoutes.openapi(move, async (c) => {
+  const { id } = c.req.valid('param');
+  const { storeId } = c.req.valid('json');
+  const person = await personFor(c.get('authUser'));
+  const [listing] = await db.select().from(t.listings).where(eq(t.listings.id, id));
+  if (!listing || listing.status === 'withdrawn' || listing.status === 'removed') {
+    return c.json({ error: 'That listing is not there any more.' }, 404);
+  }
+  if (listing.ownerId !== person.id) return c.json({ error: 'That listing is not yours.' }, 403);
+  // Into a store they own; or back from one they own.
+  const store = storeId ?? listing.storeId;
+  if (store && (await roleIn(person.id, store)) !== 'owner') {
+    return c.json({ error: 'You can move listings only into and out of a store you own.' }, 403);
+  }
+  if (storeId === listing.storeId) return c.json({ slug: listing.slug, storeId }, 200);
+  if (listing.status === 'live' && listing.type !== 'request') {
+    const problem = await overLimit(person.id, storeId);
+    if (problem) return c.json({ error: problem, code: 'limit' }, 403);
+  }
+  await db.update(t.listings).set({ storeId, updatedAt: new Date() }).where(eq(t.listings.id, id));
+  return c.json({ slug: listing.slug, storeId }, 200);
+});
