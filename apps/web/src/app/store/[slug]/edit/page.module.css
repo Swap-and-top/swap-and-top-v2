@@ -58,3 +58,15 @@
 .textarea:focus {
   box-shadow: var(--snt-focus-ring);
 }
+
+/* Close store: red words on the outline button, a red button in the check. */
+.close {
+  color: var(--snt-alert);
+  border-color: color-mix(in srgb, var(--snt-alert) 45%, transparent);
+}
+
+.closeConfirm,
+.closeConfirm:hover:not(:disabled) {
+  background: var(--snt-alert);
+  color: var(--snt-ink-on-dark);
+}

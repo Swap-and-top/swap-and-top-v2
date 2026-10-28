@@ -521,3 +521,48 @@ storeRoutes.openapi(details, async (c) => {
     .returning({ slug: t.stores.slug });
   return c.json({ slug: saved!.slug }, 200);
 });
+
+/* --- closing it ------------------------------------------------------------- */
+
+const close = createRoute({
+  method: 'post',
+  path: '/stores/{id}/close',
+  tags: ['Stores'],
+  summary: 'Close the store',
+  description:
+    'The owner only. Its page comes down, its listings close for everyone, staff lose access and any pass time left goes. The owner carries on as a person, with their own listings as they were (docs/product/accounts-and-stores.md).',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: {
+      description: 'Closed',
+      content: { 'application/json': { schema: z.object({ slug: z.string(), closedListings: z.number().int() }) } },
+    },
+    ...memberErrors,
+  },
+});
+
+storeRoutes.openapi(close, async (c) => {
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if ((await roleIn(person.id, id)) !== 'owner') {
+    return c.json({ error: 'Only the store’s owner can close it.' }, 403);
+  }
+  const now = new Date();
+  const done = await db.transaction(async (tx) => {
+    const [store] = await tx
+      .update(t.stores)
+      .set({ closedAt: now })
+      .where(and(eq(t.stores.id, id), isNull(t.stores.closedAt)))
+      .returning({ slug: t.stores.slug });
+    // Its listings close with it: off every page, kept on record.
+    const closed = await tx
+      .update(t.listings)
+      .set({ status: 'withdrawn', updatedAt: now })
+      .where(and(eq(t.listings.storeId, id), notInArray(t.listings.status, ['withdrawn', 'removed'])))
+      .returning({ id: t.listings.id });
+    return { slug: store?.slug ?? '', closedListings: closed.length };
+  });
+  return c.json(done, 200);
+});

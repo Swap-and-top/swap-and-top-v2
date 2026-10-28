@@ -5,7 +5,7 @@ laid out, the design patterns in use and what was done most recently; its
 "Where we stopped" says what comes next. The backend's phases, slices and
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
-As of 2026-10-28 Phase 4 slice 4 (owner and staff), store settings, moving listings into a store and switching between stores are built; next is the rest of Phase 4, then Phase 5 (see the handoff).
+As of 2026-10-28 Phase 4 slice 4 (owner and staff), store settings, moving listings into a store, switching between stores and closing a store are built. The next job is item 6 in the handoff's "Where we stopped": real contact numbers on Show contact (today every buyer sees a made up number), the store's own phone number, and renaming a store with "formerly …" for 30 days. It needs a migration, so ask Hillary before `db:migrate`. Then Verified store requests and Phase 5.
 
 ## Standing rules from the product owner (Hillary)
 
@@ -64,9 +64,11 @@ These came from repeated feedback. Follow them without being asked.
   the transaction pooler (port 6543); the API keeps one pool across hot
   reloads and one connection per build worker.
 - **Speed:** the database is in Ireland (eu-west-1). On Vercel the API and
-  the pages that read the database run in Dublin (`preferredRegion =
-  'dub1'`); from the owner's laptop each trip is about half a second, so
-  local pages are slower than live. Keep trips few and in parallel: the
+  pages run in Dublin: the project's Function Region is set to Dublin
+  (dub1) in Vercel's settings (the code's `preferredRegion = 'dub1'` alone
+  was ignored on this plan). Live, signed in requests take about 0.6 s.
+  From the owner's laptop each trip is about half a second, so local pages
+  are slower than live. Keep trips few and in parallel: the
   person for a sign in is kept for 15 seconds (`personFor`), "last seen"
   is not waited for, and `loadListings` reads everything in one batch.
 - **A new endpoint** goes in `apps/api/src/routes/<area>.ts` with a

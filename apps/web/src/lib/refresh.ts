@@ -20,7 +20,9 @@ export async function refreshStorePass(slug: string) {
   revalidatePath(`/store/${slug}`);
 }
 
-/** After a store is opened: its page is built on its first visit. */
+/** After a store is opened, changed or closed: its page, and the feed its
+    listings are in, are built again on their next visit. */
 export async function refreshStore(slug: string) {
   revalidatePath(`/store/${slug}`);
+  revalidatePath('/');
 }

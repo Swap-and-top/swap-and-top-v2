@@ -53,13 +53,13 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
    `/store/[slug]/edit` (`PATCH /api/stores/{id}`, owner only), reached
    from Me ("Edit store details" under the store) and the console's Store
    profile. No database change was needed.
-3. **Moving listings into a store (built 2026-10-28, not yet committed):**
+3. **Moving listings into a store (built 2026-10-28, `bb4f6eb`):**
    in a personal listing's Manage sheet, "Move to <store>" for each store
    the person owns, with Undo (`PATCH /api/listings/{id}/store`, storeId
    or null). It stays the same listing, so offers and history go with it;
    the store's limit applies to a live listing for sale or swap. One at a
    time; a "move them all" was not built.
-4. **Switching between stores (built 2026-10-28, not yet committed):**
+4. **Switching between stores (built 2026-10-28, `bb4f6eb`):**
    someone in more than one store gets an "Open Store console" button
    under each store on Me, which opens `/console/stock?store=<id>`; the
    console keeps that store (remembered in the browser,
@@ -72,11 +72,71 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
    seconds, "last seen" not waited for, items read with the details);
    the live API runs in Dublin next to the database; two more admins,
    Patrick M. and Ray L. (see the test accounts).
-5. **The rest of Phase 4:** closing a store, the store's own contact ways and
-   the name change rule ("formerly …" for 30 days; these two need new
-   columns, so a migration, so ask first), and Verified store requests
-   (best alongside Phase 5's staff screens).
-6. **Phase 5, the report queue for staff** (tables `reports`,
+5. **Closing a store (built and committed 2026-10-28):** the owner
+   taps "Close store" at the foot of Edit store details and confirms in a
+   sheet. `POST /api/stores/{id}/close` (owner only) sets `closed_at` and
+   withdraws the store's listings in one transaction; the store's page and
+   listings come down, staff lose access, pass time left is lost, and it
+   cannot be opened again. The owner's account and personal listings stay.
+   Tested in the browser as Kuda with a test store, then deleted.
+6. **NEXT SLICE: real contact numbers, the store's phone number, and
+   renaming a store.** Planned 2026-10-28 and agreed with Hillary in
+   outline; nothing built yet. Keep each part as simple as written here.
+   - **The gap found:** Show contact still gives every buyer a made up
+     number. `RevealAction` (`apps/web/src/components/RevealAction.tsx`)
+     calls `contactWaysFor(ownerId)` in
+     `packages/core/src/stores/useRevealStore.ts`, which returns
+     `PLACEHOLDER_NUMBERS` / `FALLBACK_NUMBER` and the mock `SAMPLE_WAYS`.
+     No real phone ever reaches a buyer. `POST /api/listings/{id}/reveals`
+     (`apps/api/src/routes/reveals.ts`) only records the reveal and checks
+     the daily limit.
+   - **Part 1, real numbers.** The reveal endpoint returns the contact
+     details after its checks pass (limit, signed in only, shown only after
+     an accepted offer), so numbers never sit in the page HTML and cannot
+     be collected in bulk. For a personal listing: the poster's verified
+     phone (`people.phone`). For a store listing: the store's phone, or the
+     owner's when the store has none. Which ways show still comes from the
+     listing's `contactChannels` (whatsapp, call, email, messenger); email
+     and messenger have no stored values yet, so offer only call and
+     WhatsApp from real data for now. `RevealAction` shows what the API
+     returns instead of `contactWaysFor`; keep the mock only for listings
+     that are not in the database. Show the number in the 077 123 4567
+     style. Seeded sample people already have test phones.
+   - **Part 2, the store's phone number.** One new text box on Edit store
+     details (`apps/web/src/app/store/[slug]/edit/PageContent.tsx`):
+     "Store phone number", empty with a faded "e.g. 077 123 4567"
+     placeholder, used for calls and WhatsApp. Empty means the owner's
+     number is used. Saved through `PATCH /api/stores/{id}` (owner only,
+     in `apps/api/src/routes/stores.ts`), checked with the same `toPhone`
+     rule as members. No separate WhatsApp number, email or Messenger yet.
+   - **Part 3, renaming a store.** A "Store name" box at the top of the
+     same form. Saving a new name keeps the old one: the store page and
+     its cards show "formerly {old name}" under the name for 30 days
+     after the change (decision P36 in
+     `docs/reference/decisions-log.md`, and the store table in
+     `docs/product/accounts-and-stores.md`), so a record cannot be shed by
+     renaming. The web address (`slug`) stays the same. Initials follow
+     the new name. Renaming again within the 30 days keeps the first
+     former name. Pausing the Verified badge on a rename comes later, with
+     Verified store requests.
+   - **The database change:** three new nullable columns on `stores` in
+     `apps/api/src/db/schema.ts`: `phone` (text, +263 form like
+     `people.phone`), `formerName` (text) and `renamedAt` (timestamp with
+     time zone). `pnpm --filter @snt/api db:generate` writes migration
+     0004; **ask Hillary before `db:migrate`**, since it changes the live
+     database. Nothing existing changes; the columns start empty.
+   - **Also update:** `GET /api/stores/{slug}` and the store loaders
+     (`apps/api/src/routes/stores.ts`, `apps/web/src/lib/stores.ts`) to
+     return `formerName` while it is within 30 days; the Store type in
+     `@snt/core` if needed; `refreshStore(slug)` after saving.
+   - **Test:** as Kuda (077 000 0004) on a "Test …" store: set a store
+     number, check Show contact on a store listing shows it and a
+     personal listing shows the poster's phone; rename and check
+     "formerly …"; then delete the test store and listings. Then update
+     this list, the backend plan and CLAUDE.md's next job line.
+7. **After that, the rest of Phase 4:** Verified store requests (best
+   alongside Phase 5's staff screens).
+8. **Phase 5, the report queue for staff** (tables `reports`,
    `moderation_actions`, `appeals` exist). See the backend plan,
    section 2.
 

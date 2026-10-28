@@ -6,6 +6,10 @@
  * and web address are not here; changing them pauses the Verified store
  * badge, which comes later. Reached from Me and the console's Store profile.
  * Staff and others are told it is the owner's.
+ *
+ * At its foot, Close store, with a check first: its page and listings come
+ * down for everyone, staff lose access, any pass time left goes; the owner
+ * carries on as a person.
  */
 
 import { useEffect, useId, useState, type FormEvent } from 'react';
@@ -23,12 +27,13 @@ import {
   Panel,
   Screen,
   ScreenBody,
+  Sheet,
   SignInGate,
   Stack,
   startPageLoad,
 } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiAsViewer, fetchViewer, supabase } from '@/lib/supabase';
 import styles from './page.module.css';
 
 const TOWN_OPTIONS = TOWNS.map((town) => ({ value: town, label: town }));
@@ -55,6 +60,8 @@ export default function EditStorePage({ slug }: { slug: string }) {
   const [area, setArea] = useState('');
   const [town, setTown] = useState<Town>(DEFAULT_TOWN);
   const [busy, setBusy] = useState(false);
+  /** The check before closing it is open. */
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     let gone = false;
@@ -97,6 +104,25 @@ export default function EditStorePage({ slug }: { slug: string }) {
     toast.success('Store details saved');
     startPageLoad();
     router.push(`/store/${slug}`);
+  }
+
+  async function closeStore() {
+    if (!mine) return;
+    setBusy(true);
+    const { error } = await apiAsViewer(`/stores/${encodeURIComponent(mine.id)}/close`, { method: 'POST' });
+    if (error) {
+      setBusy(false);
+      toast.error(error);
+      return;
+    }
+    // Who they are now leaves the store out, for Me and Post as.
+    const { data: session } = await supabase.auth.getSession();
+    const token = session.session?.access_token;
+    if (token) useSessionStore.setState({ viewer: await fetchViewer(token) });
+    await refreshStore(slug);
+    toast.success(`${name} is closed`);
+    startPageLoad();
+    router.push('/me');
   }
 
   const owner = mine?.role === 'owner';
@@ -155,6 +181,28 @@ export default function EditStorePage({ slug }: { slug: string }) {
                   </Stack>
                 </form>
               </Panel>
+            ) : null}
+            {owner && loaded ? (
+              <Button variant="secondary" block className={styles.close} onClick={() => setClosing(true)}>
+                Close store
+              </Button>
+            ) : null}
+            {closing ? (
+              <Sheet narrow title={`Close ${name}`} onClose={() => setClosing(false)}>
+                <Stack gap={4}>
+                  <p className={styles.lead}>
+                    Are you sure you want to close {name}? Its page and its listings come down
+                    for everyone, staff lose access, and any store pass time left is lost. It
+                    can’t be opened again. Your own account and listings stay as they are.
+                  </p>
+                  <Button variant="secondary" size="lg" block onClick={() => setClosing(false)}>
+                    Keep the store
+                  </Button>
+                  <Button size="lg" block className={styles.closeConfirm} loading={busy} onClick={() => void closeStore()}>
+                    Close store
+                  </Button>
+                </Stack>
+              </Sheet>
             ) : null}
             <ButtonLink href="/me" variant="secondary" block>
               Cancel
