@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
     return [
       { source: '/shop/:slug', destination: '/store/:slug', permanent: true },
       { source: '/console/shop', destination: '/console/store', permanent: true },
+      { source: '/admin/verify', destination: '/staff/verify', permanent: true },
     ];
   },
 

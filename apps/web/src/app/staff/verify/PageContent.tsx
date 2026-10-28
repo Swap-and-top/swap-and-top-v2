@@ -1,8 +1,8 @@
 'use client';
 
 /**
- * Verify stores, for Trust and safety leads (and the super admin): the
- * stores asking for Verified store, oldest
+ * Verify stores, a section of the Staff console, for Trust and safety leads
+ * (and the super admin): the stores asking for Verified store, oldest
  * first (GET /api/admin/verifications). Each shows what the owner gave and
  * their number, to call them, see the documents and arrange a video call or
  * visit. Then Verify, or Decline with a reason the owner is told
@@ -12,20 +12,16 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import {
-  AppHeader,
   Button,
   ButtonLink,
-  Footer,
   Panel,
-  Screen,
-  ScreenBody,
   Sheet,
-  SignInGate,
   Stack,
 } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
 import { useInDepartment } from '@/lib/staff';
 import { apiAsViewer } from '@/lib/supabase';
+import { StaffPage } from '../StaffPage';
 import styles from './page.module.css';
 
 interface Pending {
@@ -94,12 +90,8 @@ export default function VerifyStoresPage() {
   }
 
   return (
-    <Screen>
-      <AppHeader />
-      <ScreenBody>
-        <SignInGate>
+    <StaffPage title="Verify stores" meta="Stores asking for the Verified store badge">
           <Stack gap={6}>
-            <h1 className={styles.title}>Verify stores</h1>
             {allowed === undefined ? null : !admin ? (
               <Panel padded>
                 <p className={styles.lead}>Only Trust and safety leads can verify stores.</p>
@@ -192,9 +184,6 @@ export default function VerifyStoresPage() {
               </Sheet>
             ) : null}
           </Stack>
-        </SignInGate>
-      </ScreenBody>
-      <Footer />
-    </Screen>
+    </StaffPage>
   );
 }

@@ -2,7 +2,7 @@
 
 ## Where our own team runs the platform, each person seeing what their department needs
 
-**Status:** Decided 2026-10-28 with Hillary (decisions P39 to P43). Being built in Phases 5 to 7 of [../architecture/backend-plan.md](../architecture/backend-plan.md). Built so far: the roles change and `staff_departments` (2026-10-28), with every staff check in the API asking for a department (`apps/api/src/staff.ts`).
+**Status:** Decided 2026-10-28 with Hillary (decisions P39 to P43). Being built in Phases 5 to 7 of [../architecture/backend-plan.md](../architecture/backend-plan.md). Built so far (2026-10-28): the roles change and `staff_departments`, with every staff check in the API asking for a department (`apps/api/src/staff.ts`); the console frame at `/staff` with its sections list (`apps/web/src/app/staff/sections.tsx`, showing only built sections); Verify stores inside it.
 **Read this if:** you are building anything staff use: reports, verifying stores, the team, business numbers, money, or system health.
 
 ---

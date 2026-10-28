@@ -1,4 +1,5 @@
-/** Verify stores: the admins' list of requests. See PageContent. */
+/** Verify stores, in the Staff console: Trust and safety leads' list of
+    requests. See PageContent. */
 
 import PageContent from './PageContent';
 

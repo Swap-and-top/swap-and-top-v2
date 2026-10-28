@@ -1,0 +1,14 @@
+/* More sections than fit on a phone: the bar scrolls sideways, each a
+   steady width, rather than squeezing them all in. */
+.scrolls {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.scrolls::-webkit-scrollbar {
+  display: none;
+}
+
+.scrolls > a {
+  flex: 0 0 76px;
+}

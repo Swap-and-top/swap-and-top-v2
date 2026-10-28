@@ -171,7 +171,18 @@ below; the full design is `docs/product/staff-console.md`).
      department (and lead where needed), the super admin passing all;
      `/admin/verify` and `routes/verification.ts` check for a Trust and
      safety lead instead of admin. Update the seed to match.
-   - **NEXT: the Staff console frame,** built like the Store console (the same
+   - **Done 2026-10-28: the Staff console frame.** `/staff`, gated in
+     `app/staff/layout.tsx` (signed in and on the team), opened from "Staff
+     console" under "For our team" on Me. `StaffShell` in `@snt/ui` shares
+     the Store console's styles (the bar at the foot scrolls sideways with
+     more than five sections). `app/staff/sections.tsx` lists every section
+     with its department, whether it needs a lead, and whether it is built;
+     each person sees the built ones of their departments (the super admin
+     all). Each page wraps itself in `StaffPage`. Verify stores moved to
+     `/staff/verify` (`/admin/verify` redirects). Built sections so far:
+     Verify stores. Tested as Kuda (refused), Patrick (laptop and phone).
+   - **NEXT: Team,** then Reports, People, Appeals and the Activity log.
+     What was planned for the frame: built like the Store console (the same
      shell, sidebar on a laptop, tabs on a phone), opened from "For our
      team" on Me (which today links to `/admin/verify`), showing only the
      sections of the person's departments; the server checks every

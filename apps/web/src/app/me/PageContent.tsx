@@ -53,7 +53,7 @@ import {
 } from '@snt/ui/icons';
 import { DevTools } from '@/components/DevTools';
 import { StorePassSheet, type PassStore } from '@/components/StorePassSheet';
-import { useInDepartment } from '@/lib/staff';
+import { useOnTeam } from '@/lib/staff';
 import { apiAsViewer } from '@/lib/supabase';
 import styles from './page.module.css';
 
@@ -70,7 +70,7 @@ export default function MePage() {
   const viewer = useSessionStore((state) => state.viewer);
   const me = viewer?.id;
   const name = viewer ? viewerName(viewer) : '';
-  const mayVerify = useInDepartment('trust_safety', true) === true;
+  const onTeam = useOnTeam();
   const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? false);
   const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
   const offers = useOfferStore((store) => store.offers);
@@ -228,16 +228,16 @@ export default function MePage() {
               />
             )}
 
-            {/* Trust and safety leads: the stores waiting for Verified
-                store. The Staff console replaces this in Phase 5. */}
-            {mayVerify ? (
+            {/* Our own team: the Staff console, showing the sections of
+                their departments. */}
+            {onTeam ? (
               <>
                 <h2 className={styles.section}>For our team</h2>
                 <ListGroup>
                   <ListRow
-                    href="/admin/verify"
+                    href="/staff"
                     icon={<ShieldCheckIcon size={19} />}
-                    label="Verify stores"
+                    label="Staff console"
                   />
                 </ListGroup>
               </>

@@ -156,6 +156,7 @@ export { WantedCard } from './cards/WantedCard';
 export { BottomNav } from './layout/BottomNav';
 export { ConsoleTargetContext, useConsoleTarget } from './layout/ConsoleTarget';
 export { ConsoleShell } from './layout/ConsoleShell';
+export { StaffShell, type StaffSection } from './layout/StaffShell';
 export {
   AppHeader,
   HeaderIconButton,
