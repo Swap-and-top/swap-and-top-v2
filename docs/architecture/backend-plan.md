@@ -178,10 +178,12 @@ Build [../product/accounts-and-stores.md](../product/accounts-and-stores.md): op
 
 Decided 2026-10-28; the whole design is in [../product/staff-console.md](../product/staff-console.md).
 
+- **First, the four holes found in built code** (the handoff's "Before launch", items 1 to 4): an admin verifying their own store, the store page's Show contacts not counted, the guest limit reset by clearing browser storage, and test staff accounts on the live site.
 - **The roles change** (one migration): a `staff_departments` table (person, department, lead, who added them, when); moderators move to Trust and safety members and admins to Trust and safety leads; `people.role` narrows to `user` or `super_admin`. Every staff check in the API asks for a department (and lead where needed), the super admin passing all. Verify stores, which checks for admin today, checks for a Trust and safety lead.
 - **The Staff console frame**, built like the Store console, opened from "For our team" on Me, showing only the sections of the person's departments.
 - **Team** (super admin; leads for their own department): one row per staff member, a toggle per department, a Lead switch beside each toggle that is on. Every change is logged.
 - **Trust and safety:** Report on a listing or a person; the Reports queue (claim, approve, change the reason, clear, in a few taps on a phone); People (find anyone, their record, warn, suspend, and for leads ban); Appeals (leads); Verify stores (moved in from `/admin/verify`); the Activity log.
+- **The safeguards** in [../product/staff-console.md](../product/staff-console.md) section 9 that belong to these sections: nobody acts on themselves or their own store, every action and look logged, only the super admin makes leads, reporters kept private, a daily limit on reports.
 - **Check:** report a listing as one test account, approve it as a Trust and safety member, and see the warning arrive; switch a department on for a person on Team and see their console change.
 
 ### Phase 6: the business side of the Staff console

@@ -2,7 +2,7 @@
 
 ## Where our own team runs the platform, each person seeing what their department needs
 
-**Status:** Decided 2026-10-28 with Hillary (decisions P39 to P41). Not built yet: it is Phases 5 to 7 of [../architecture/backend-plan.md](../architecture/backend-plan.md).
+**Status:** Decided 2026-10-28 with Hillary (decisions P39 to P43). Not built yet: it is Phases 5 to 7 of [../architecture/backend-plan.md](../architecture/backend-plan.md).
 **Read this if:** you are building anything staff use: reports, verifying stores, the team, business numbers, money, or system health.
 
 ---
@@ -135,10 +135,84 @@ Already recorded, ready for the numbers: sign ups, last seen, listings and their
 
 ---
 
+## 8. Production access: passwords sit outside the console
+
+The console decides what staff see **inside the app**. It cannot limit anyone who holds the live database password, Supabase or Vercel: they can read everything. So DevOps and anyone else with those keys are limited **on the accounts themselves** (decision P42):
+
+1. **Few people hold production keys.** Only Hillary and one or two trusted senior engineers get full access to the live database, Supabase and Vercel. Being in DevOps does not by itself give it.
+2. **Developers work on a separate development database** with sample data, never real people's details. Today localhost and the live site share one database; it must be split before real users join (see the handoff's "Before launch").
+3. **Everyone has their own named login,** never a shared password, so access shows who it was and one person can be removed alone.
+4. **Most production access is look only.** A read only database login for debugging; write access only for the one or two who need it. Supabase keeps a record of access.
+5. **Keys are changed** when someone with access leaves, and kept only in `.env` files and Vercel, never in chat, code or documents.
+6. **Logs carry no personal data:** phone numbers, emails and names are not written to error logs or request logs, so DevOps' everyday tools do not expose them.
+
+When a developer truly needs real data, they use their own logged access: a deliberate step, not a screen open all day.
+
+---
+
+## 9. Loopholes, and the rules that close them
+
+Found in a review on 2026-10-28, going through each kind of account. Each rule is part of the design; Phase 5 to 7 build them with the sections they belong to. Holes found in what is **already built** are listed in the handoff ("Before launch") to fix first.
+
+### Everyone on the team
+
+- **Staff sign in more strongly.** A code by SMS can be stolen by swapping someone's SIM card. Staff accounts need a password as well as the phone code (or an authenticator app) before the console opens.
+- **Checked on every request.** Departments are read from the database each time (no copy kept in the sign in), so removing someone takes effect at once.
+- **Nobody acts on themselves**, on a report they filed, a report about them, or anything about a store they own or work for. Those go to someone else.
+- **Every action and every look at a person's record is logged**, including exports and phone numbers shown, and the log cannot be edited or deleted from the console.
+- **Leaving the company:** one "Remove from the team" on Team takes away every department at once.
+- **No test staff accounts on the live site** (see the handoff's "Before launch").
+
+### Super admin (Hillary)
+
+- **Not a single point of failure.** If Hillary's phone is lost or her account is taken, nobody could manage the team. A second, sealed super admin account (or a written recovery step with the developers) is kept for emergencies, and its use is logged and noticed.
+- **Only the super admin makes leads**, and only the super admin can add someone to more than one department at once. A lead adds and removes members of their own department only.
+
+### Trust and safety
+
+- **Members act only on ordinary users;** reports about anyone on the team go to leads, and reports about a lead go to the super admin.
+- **Conflicts of interest:** a member who runs a store does not handle reports about that store or its listings.
+- **Reporters stay private:** the person reported never learns who reported them.
+- **Bans need a lead,** and an appeal is decided by a lead other than the one who acted.
+- **Verify stores:** nobody verifies a store they own or work for, and the decision names who made it.
+- **False reports:** a person can report a limited number of times a day, and reports cleared as false count on the reporter's record.
+- **Data requests:** a person asking for their data or for their account to be deleted (their right under the Cyber and Data Protection Act) is handled by a Trust and safety lead, with deal and report records kept as the law allows.
+
+### Sales
+
+- **Phone numbers are for calling, not copying:** shown one at a time, each look logged; exports (leads only) leave out phone numbers unless the super admin allows it.
+- **Store owners agree to be called** when they open a store (a line in the terms), and can say no; a store that said no is marked and not called.
+
+### Finance
+
+- **Look only.** Refunds, when Paynow is live, need a Finance lead and are logged; a large one needs the super admin too.
+- **Exports are logged** and hold no more personal data than the accounts need.
+
+### Marketing
+
+- **Totals only, and no tiny groups:** a figure about fewer than 5 people is not shown, so a total cannot point at one person.
+- **Searches are kept without who searched,** and anything that looks like a phone number or email is removed before it is stored.
+
+### DevOps
+
+- See section 8. In the console: health only, no people's data, no exports.
+
+### Executives and Board
+
+- **Totals only,** with the same "fewer than 5" rule.
+- **Board members are outside the company:** they get their own accounts in the Board department only, and the monthly summary holds no personal data. Removing a board member is one toggle.
+
+### Store owners and store staff (not our team, but the same kind of hole)
+
+- **Staff never see the store's payments** or its own phone number setting (already so), and lose access the moment they are removed (already so).
+- **Selling a store** (handing it to a new owner) pauses Verified store until the new owner is checked, when that is built.
+
+---
+
 ## Related documentation
 
 - [../architecture/backend-plan.md](../architecture/backend-plan.md): roles, the report chain, the phases
 - [../features/moderation.md](../features/moderation.md): reports, outcomes, the violation matrix, appeals
 - [./accounts-and-stores.md](./accounts-and-stores.md): people, stores, passes, verification
 - [./store-console.md](./store-console.md): the console the Staff console is built like
-- [../reference/decisions-log.md](../reference/decisions-log.md): P39 to P41
+- [../reference/decisions-log.md](../reference/decisions-log.md): P39 to P43
