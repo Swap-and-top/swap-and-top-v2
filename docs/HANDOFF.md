@@ -150,8 +150,8 @@ below; the full design is `docs/product/staff-console.md`).
 8. **NEXT: Phase 5, the Staff console** (decided with Hillary 2026-10-28,
    decisions P39 to P41; read `docs/product/staff-console.md` first, then
    the backend plan's Phase 5 and section 2 on reports). In order:
-   - **First, close the four holes found in built code** (listed under
-     "Before launch" below, items 1 to 4).
+   - **Done first (2026-10-28): the four holes found in built code are
+     closed** (see "Before launch" below, items 1 to 4).
    - **The roles change (one migration, ask Hillary before
      `db:migrate`):** a `staff_departments` table (person, department,
      lead, added by, added at); departments `trust_safety`, `sales`,
@@ -191,42 +191,48 @@ below; the full design is `docs/product/staff-console.md`).
 **Before launch (found in a review on 2026-10-28; see
 `docs/product/staff-console.md` sections 8 and 9):**
 
-Holes in code that is already built, to fix at the start of Phase 5:
+Holes found in built code, **fixed 2026-10-28 at the start of Phase 5**
+(migration `0006_bitter_big_bertha.sql` applied with Hillary's yes):
 
-1. **An admin can verify their own store.** `POST /api/admin/verifications/{id}`
-   (`apps/api/src/routes/verification.ts`) does not check that the one
-   deciding is not the store's owner or staff. Refuse it.
-2. **The store page's Show contacts is not counted.** `POST
-   /api/stores/{id}/contact` checks the daily limit but records nothing, so
-   store and owner numbers can be read without limit. Count it (record it,
-   or keep its own daily count) against the same limit.
-3. **A guest can reset the daily limit of 3** by clearing their browser
-   storage: the limit follows the browser's own id (`X-Device`) first and
-   the network address only without one. Count against both, so a new
-   browser id on the same address still meets the limit.
-4. **Test staff accounts live in the shared database** and sign in with the
-   fixed code 123456 on the live site too: Hillary M. super admin (0007)
-   and admins Tafadzwa (0006), Patrick (0008), Ray (0009). Once staff pages
-   are live anyone knowing a test number could act as staff. Before staff
-   pages go to `main`: take staff powers off test accounts in the live
-   database (keep them only in the development database once it is split),
-   and give real staff their own accounts.
+1. **An admin could verify their own store.** `POST
+   /api/admin/verifications/{id}` now refuses anyone who owns or works for
+   the store (`roleIn`).
+2. **The store page's Show contacts was not counted.** It is now recorded
+   in a `store_contacts` table and counts as one seller against the same
+   daily limit (`overDailyLimit` in `routes/reveals.ts`); the same store
+   again that day is free.
+3. **A guest could reset the limit of 3 by clearing their browser.**
+   Reveals and store contacts now keep the network address, hashed
+   (`address_hash`); all guests on one address share a cap of 50 sellers a
+   day (`ADDRESS_DAILY`), generous because a campus or a mobile network can
+   share an address. Signing in lifts it.
+4. **Test staff accounts on the live site.** On the live site
+   (`VERCEL_ENV=production`) any account on a test number (077 000 0001 to
+   0999) is treated as an ordinary user, whatever its role
+   (`withLiveRole` in `routes/me.ts`, applied in `personFor`). Localhost
+   and previews keep their roles for testing. **So on the live site there
+   is no super admin until Hillary's real account is made one** (item 5).
 
 Before real users join:
 
-5. **Split the database:** a development database with sample data for
+5. **Hillary's real account as super admin, and real staff accounts:** on
+   the live site the test accounts carry no staff powers now, so set
+   `role = 'super_admin'` on Hillary's own (non test) account, with her
+   say so, and give real staff their own accounts. Check that Vercel
+   exposes `VERCEL_ENV` to the functions (it does by default).
+6. **Split the database:** a development database with sample data for
    localhost and previews, the live one for production only (P42). Today
    they are one, which is why test data shows on the live site.
-6. **Real email and SMS,** replacing the mock codes (123456).
-7. **Stronger sign in for staff:** a password as well as the phone code,
+7. **Real email and SMS,** replacing the mock codes (123456).
+8. **Stronger sign in for staff:** a password as well as the phone code,
    or an authenticator app, before the Staff console opens (P43).
-8. **A second, sealed super admin** or a written recovery step, so the team
+9. **A second, sealed super admin** or a written recovery step, so the team
    can still be managed if Hillary's account is lost (P43).
-9. **Terms:** opening a store includes agreeing to be called about Swap &
+10. **Terms:** opening a store includes agreeing to be called about Swap &
    Top's products, with a way to say no (P43); data requests and account
    deletion handled by a Trust and safety lead.
-10. **Logs without personal data** (P42).
-11. **Real payment through Paynow** (below).
+11. **Logs without personal data** (P42).
+12. **Real payment through Paynow** (below).
 
 **Waiting on the owner (Hillary):**
 

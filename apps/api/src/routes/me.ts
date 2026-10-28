@@ -56,14 +56,32 @@ const people = new Map<string, { at: number; person: Promise<Person> }>();
 
 /** Puts the person as just saved in place of what was kept. */
 function rememberPerson(authUserId: string, person: Person) {
-  people.set(authUserId, { at: Date.now(), person: Promise.resolve(person) });
+  people.set(authUserId, { at: Date.now(), person: Promise.resolve(withLiveRole(person)) });
+}
+
+/**
+ * Our test numbers, 077 000 0001 to 0999: they sign in with the fixed test
+ * code, so anyone who knows one could use it. On the live site they never
+ * carry staff powers; on localhost and previews they do, for testing. Until
+ * the database is split (docs/HANDOFF.md, "Before launch") the same accounts
+ * serve both.
+ */
+const TEST_PHONE = /^\+263770000\d{3}$/;
+const LIVE = process.env.VERCEL_ENV === 'production';
+
+/** The person as the platform treats them: a test account on the live site
+    is an ordinary user, whatever its role in the database. */
+export function withLiveRole(person: Person): Person {
+  return LIVE && person.role !== 'user' && person.phone && TEST_PHONE.test(person.phone)
+    ? { ...person, role: 'user' }
+    : person;
 }
 
 /** The person for this sign in, linking or adding them as needed. */
 export async function personFor(user: AuthUser): Promise<Person> {
   const kept = people.get(user.id);
   if (kept && Date.now() - kept.at < PERSON_FOR_MS) return kept.person;
-  const person = findPerson(user);
+  const person = findPerson(user).then(withLiveRole);
   people.set(user.id, { at: Date.now(), person });
   person.catch(() => people.delete(user.id));
   return person;

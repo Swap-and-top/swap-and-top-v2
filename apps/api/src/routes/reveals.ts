@@ -6,8 +6,11 @@
  * the listing was in a sponsored slot, which is how boosts are sold on
  * evidence.
  *
- * The daily limit: a guest sees 3 sellers' details a day, a member 30;
- * another way on a seller already seen today is free. A signed in reveal
+ * The daily limit: a guest sees 3 sellers' details a day on their device,
+ * and all guests on one network address 50 between them (so clearing the
+ * browser is no way round it); a member 30. Another way on a seller already
+ * seen today is free. A store page's own number counts as a seller too
+ * (`store_contacts`). A signed in reveal
  * starts a deal check that asks the one who revealed three days on; the
  * seller is asked only once they say yes (decision P27). Guests are asked
  * nothing.
@@ -24,7 +27,7 @@
 
 import { createHash } from 'node:crypto';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, countDistinct, desc, eq, gt, inArray, isNull, lte, ne } from 'drizzle-orm';
+import { and, countDistinct, desc, eq, gt, inArray, isNull, lte, ne, type SQL } from 'drizzle-orm';
 import { optionalAuth, requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
@@ -39,6 +42,10 @@ export const revealRoutes = new OpenAPIHono<{ Variables: { authUser?: AuthUser }
 
 const GUEST_DAILY = 3;
 const MEMBER_DAILY = 30;
+/** All guests on one network address together, a day: clearing the browser
+    gives a new device id, not a way round this. Generous, since a campus or
+    a mobile network can share one address; signing in lifts it. */
+const ADDRESS_DAILY = 50;
 const DAY = 24 * 60 * 60 * 1000;
 
 const way = z.enum(['whatsapp', 'call', 'email', 'messenger']);
@@ -49,6 +56,63 @@ export function deviceHashOf(deviceId: string | undefined, address: string | und
     .update(deviceId || address || 'unknown')
     .digest('hex')
     .slice(0, 32);
+}
+
+/** Who is asking, for the daily limit: the person when signed in, else the
+    device and the network address, both only hashed. */
+interface Asker {
+  personId: string | null;
+  deviceHash: string;
+  addressHash: string | null;
+}
+
+function askerOf(c: { req: { header: (name: string) => string | undefined } }, personId: string | null): Asker {
+  const address = c.req.header('x-forwarded-for')?.split(',')[0]?.trim();
+  return {
+    personId,
+    deviceHash: deviceHashOf(c.req.header('X-Device'), address),
+    addressHash: address ? deviceHashOf(undefined, `address:${address}`) : null,
+  };
+}
+
+/** Sellers seen in the last day by these rows: listings revealed and store
+    pages' numbers seen, each counted once. */
+async function sellersSeen(listingWhere: SQL | undefined, storeWhere: SQL | undefined): Promise<number> {
+  const since = new Date(Date.now() - DAY);
+  const [[listings], [stores]] = await Promise.all([
+    db
+      .select({ n: countDistinct(t.reveals.listingId) })
+      .from(t.reveals)
+      .where(and(listingWhere, gt(t.reveals.createdAt, since))),
+    db
+      .select({ n: countDistinct(t.storeContacts.storeId) })
+      .from(t.storeContacts)
+      .where(and(storeWhere, gt(t.storeContacts.createdAt, since))),
+  ]);
+  return (listings?.n ?? 0) + (stores?.n ?? 0);
+}
+
+/** Why one more seller's details may not be shown today: the API's words,
+    or null when they may. A member has 30 a day; a guest 3 on their device,
+    and all guests on their address 50 between them. */
+async function overDailyLimit(asker: Asker): Promise<string | null> {
+  if (asker.personId) {
+    const n = await sellersSeen(eq(t.reveals.viewerId, asker.personId), eq(t.storeContacts.viewerId, asker.personId));
+    return n >= MEMBER_DAILY
+      ? `You have seen ${MEMBER_DAILY} sellers’ details today, which is the daily limit. Try again tomorrow.`
+      : null;
+  }
+  const signIn = `You have seen ${GUEST_DAILY} sellers’ details today, which is the limit without an account. Sign in to see more.`;
+  const onDevice = await sellersSeen(eq(t.reveals.deviceHash, asker.deviceHash), eq(t.storeContacts.deviceHash, asker.deviceHash));
+  if (onDevice >= GUEST_DAILY) return signIn;
+  if (asker.addressHash) {
+    const onAddress = await sellersSeen(
+      and(eq(t.reveals.addressHash, asker.addressHash), isNull(t.reveals.viewerId)),
+      and(eq(t.storeContacts.addressHash, asker.addressHash), isNull(t.storeContacts.viewerId)),
+    );
+    if (onAddress >= ADDRESS_DAILY) return signIn;
+  }
+  return null;
 }
 
 const record = createRoute({
@@ -105,9 +169,9 @@ revealRoutes.openapi(record, async (c) => {
   const contact = await contactForListing(listing);
   if (!contact) return c.json({ recorded: false, contact: null }, 201);
 
-  const deviceHash = deviceHashOf(c.req.header('X-Device'), c.req.header('x-forwarded-for')?.split(',')[0]);
+  const asker = askerOf(c, person?.id ?? null);
   const since = new Date(Date.now() - DAY);
-  const who = person ? eq(t.reveals.viewerId, person.id) : eq(t.reveals.deviceHash, deviceHash);
+  const who = person ? eq(t.reveals.viewerId, person.id) : eq(t.reveals.deviceHash, asker.deviceHash);
 
   // Another way on a seller already seen today is free; a new seller counts.
   const [seenHere] = await db
@@ -115,22 +179,8 @@ revealRoutes.openapi(record, async (c) => {
     .from(t.reveals)
     .where(and(who, eq(t.reveals.listingId, id), gt(t.reveals.createdAt, since)));
   if (!seenHere) {
-    const [today] = await db
-      .select({ n: countDistinct(t.reveals.listingId) })
-      .from(t.reveals)
-      .where(and(who, gt(t.reveals.createdAt, since)));
-    const limit = person ? MEMBER_DAILY : GUEST_DAILY;
-    if ((today?.n ?? 0) >= limit) {
-      return c.json(
-        {
-          error: person
-            ? `You have seen ${limit} sellers’ details today, which is the daily limit. Try again tomorrow.`
-            : `You have seen ${limit} sellers’ details today, which is the limit without an account. Sign in to see more.`,
-          code: 'limit',
-        },
-        429,
-      );
-    }
+    const limited = await overDailyLimit(asker);
+    if (limited) return c.json({ error: limited, code: 'limit' }, 429);
   }
 
   // Was it in a sponsored slot: a boost running on it now.
@@ -147,7 +197,8 @@ revealRoutes.openapi(record, async (c) => {
     .values({
       listingId: id,
       viewerId: person?.id ?? null,
-      deviceHash,
+      deviceHash: asker.deviceHash,
+      addressHash: asker.addressHash,
       slot: boost ? 'sponsored' : 'organic',
       way: chosen,
     })
@@ -179,7 +230,7 @@ const storeContact = createRoute({
   tags: ['Stores'],
   summary: 'Show a store\'s contact',
   description:
-    'The store\'s own number, else its owner\'s, for calls and WhatsApp: the Show contacts button on its page. No sign in needed. Held to the same daily limit as reveals on listings; not recorded as one, since it is on no listing.',
+    'The store\'s own number, else its owner\'s, for calls and WhatsApp: the Show contacts button on its page. No sign in needed. Recorded in `store_contacts` and counted against the same daily limit as reveals on listings, as one seller.',
   middleware: [optionalAuth] as const,
   request: { params: z.object({ id: z.string() }) },
   responses: {
@@ -202,25 +253,32 @@ revealRoutes.openapi(storeContact, async (c) => {
     .where(and(eq(t.stores.id, id), isNull(t.stores.closedAt)));
   if (!store) return c.json({ error: 'That store is not there any more.' }, 404);
 
-  const deviceHash = deviceHashOf(c.req.header('X-Device'), c.req.header('x-forwarded-for')?.split(',')[0]);
-  const who = person ? eq(t.reveals.viewerId, person.id) : eq(t.reveals.deviceHash, deviceHash);
-  const [today] = await db
-    .select({ n: countDistinct(t.reveals.listingId) })
-    .from(t.reveals)
-    .where(and(who, gt(t.reveals.createdAt, new Date(Date.now() - DAY))));
-  const limit = person ? MEMBER_DAILY : GUEST_DAILY;
-  if ((today?.n ?? 0) >= limit) {
-    return c.json(
-      {
-        error: person
-          ? `You have seen ${limit} sellers’ details today, which is the daily limit. Try again tomorrow.`
-          : `You have seen ${limit} sellers’ details today, which is the limit without an account. Sign in to see more.`,
-        code: 'limit',
-      },
-      429,
+  const contact = contactOf(await storePhone(id), ['call', 'whatsapp']);
+  if (!contact) return c.json({ contact: null }, 200);
+
+  // Counted as one seller, as a listing's reveal is: seen again today, free.
+  const asker = askerOf(c, person?.id ?? null);
+  const [seenHere] = await db
+    .select({ id: t.storeContacts.id })
+    .from(t.storeContacts)
+    .where(
+      and(
+        eq(t.storeContacts.storeId, id),
+        person ? eq(t.storeContacts.viewerId, person.id) : eq(t.storeContacts.deviceHash, asker.deviceHash),
+        gt(t.storeContacts.createdAt, new Date(Date.now() - DAY)),
+      ),
     );
+  if (!seenHere) {
+    const limited = await overDailyLimit(asker);
+    if (limited) return c.json({ error: limited, code: 'limit' }, 429);
+    await db.insert(t.storeContacts).values({
+      storeId: id,
+      viewerId: person?.id ?? null,
+      deviceHash: asker.deviceHash,
+      addressHash: asker.addressHash,
+    });
   }
-  return c.json({ contact: contactOf(await storePhone(id), ['call', 'whatsapp']) }, 200);
+  return c.json({ contact }, 200);
 });
 
 /* --- a store's reveals, for Leads ------------------------------------------ */

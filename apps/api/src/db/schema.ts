@@ -375,13 +375,45 @@ export const reveals = pgTable(
     viewerId: text().references(() => people.id),
     /** For rate limits only. Never an identity. */
     deviceHash: text().notNull(),
+    /** The network address, hashed: guests on one address share a daily
+        cap, so clearing the browser does not reset the limit. */
+    addressHash: text(),
     slot: promotionSlot().notNull().default('organic'),
     /** Which way was revealed: whatsapp, call, email or messenger. Each is
         recorded on its own, so a seller can be told how people reach them. */
     way: text(),
     createdAt: createdAt(),
   },
-  (t) => [index().on(t.listingId), index().on(t.deviceHash, t.createdAt)],
+  (t) => [
+    index().on(t.listingId),
+    index().on(t.deviceHash, t.createdAt),
+    index().on(t.addressHash, t.createdAt),
+  ],
+).enableRLS();
+
+/**
+ * Someone saw a store's own number from its page (Show contacts on
+ * /store/<slug>), which is on no listing. Kept so it counts against the
+ * same daily limit as reveals on listings.
+ */
+export const storeContacts = pgTable(
+  'store_contacts',
+  {
+    id: id(),
+    storeId: text()
+      .notNull()
+      .references(() => stores.id),
+    viewerId: text().references(() => people.id),
+    deviceHash: text().notNull(),
+    addressHash: text(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index().on(t.storeId),
+    index().on(t.deviceHash, t.createdAt),
+    index().on(t.addressHash, t.createdAt),
+    index().on(t.viewerId, t.createdAt),
+  ],
 ).enableRLS();
 
 /**

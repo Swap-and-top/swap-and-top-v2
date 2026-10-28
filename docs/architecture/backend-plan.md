@@ -178,7 +178,7 @@ Build [../product/accounts-and-stores.md](../product/accounts-and-stores.md): op
 
 Decided 2026-10-28; the whole design is in [../product/staff-console.md](../product/staff-console.md).
 
-- **First, the four holes found in built code** (the handoff's "Before launch", items 1 to 4): an admin verifying their own store, the store page's Show contacts not counted, the guest limit reset by clearing browser storage, and test staff accounts on the live site.
+- **Done first (2026-10-28), the four holes found in built code** (the handoff's "Before launch", items 1 to 4): an admin can no longer verify their own store; the store page's Show contacts is recorded in `store_contacts` and counted; guests on one network address share a cap of 50 sellers a day (`reveals.address_hash`), so clearing the browser is no way round the limit; on the live site, test accounts carry no staff powers (`withLiveRole`). Migration `0006_bitter_big_bertha.sql`, applied.
 - **The roles change** (one migration): a `staff_departments` table (person, department, lead, who added them, when); moderators move to Trust and safety members and admins to Trust and safety leads; `people.role` narrows to `user` or `super_admin`. Every staff check in the API asks for a department (and lead where needed), the super admin passing all. Verify stores, which checks for admin today, checks for a Trust and safety lead.
 - **The Staff console frame**, built like the Store console, opened from "For our team" on Me, showing only the sections of the person's departments.
 - **Team** (super admin; leads for their own department): one row per staff member, a toggle per department, a Lead switch beside each toggle that is on. Every change is logged.
