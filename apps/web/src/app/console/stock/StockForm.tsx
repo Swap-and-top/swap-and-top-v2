@@ -7,9 +7,12 @@
  * bold blue labels set in over pale rounded boxes, the details the category
  * asks for two to a row, and the buttons at the foot of the form.
  *
- * Photos are chosen from the device and shown at once; until there is
- * storage they live only in this browser. An item with a price goes live; one
- * without is kept as a draft, since nothing is listed unpriced.
+ * Saved through the API: a new item is posted as the store
+ * (POST /api/listings), an existing one changed in place
+ * (PATCH /api/listings/{id}), and a new status set through the status
+ * endpoint. Photos are chosen from the device and shown at once, but are not
+ * uploaded yet. An item with a price goes live; one without is kept as a
+ * draft, since nothing is listed unpriced.
  *
  * Given an item, the form opens filled in with it: "Finish" on a draft, to
  * price and list it, or "Edit" on anything else, to change it in place.
@@ -23,11 +26,7 @@ import {
   CONDITION_LABELS,
   currentStore,
   newLeadCount,
-  editedStockListing,
-  newStockListing,
   useListingStatusStore,
-  useStoreStock,
-  useStockStore,
   type Category,
   type Condition,
   type ItemSpecs,
@@ -45,9 +44,13 @@ import {
   specFieldsFor,
   startPageLoad,
   TickTile,
+  useConsoleTarget,
 } from '@snt/ui';
 import { CloseIcon, PlusIcon } from '@snt/ui/icons';
 import { SponsorBanner } from '@/components/sponsor/SponsorBanner';
+import { refreshListing } from '@/lib/refresh';
+import { apiAsViewer } from '@/lib/supabase';
+import { useConsoleStock } from './useConsoleStock';
 import styles from './StockForm.module.css';
 
 const CATEGORIES: Category[] = [
@@ -91,9 +94,8 @@ function dollars(text: string): number | undefined {
 
 export function StockForm({ editing }: { editing?: SaleListing }) {
   const router = useRouter();
-  const stock = useStoreStock(currentStore.id);
-  const addStock = useStockStore((state) => state.addStock);
-  const saveStock = useStockStore((state) => state.saveStock);
+  const store = useConsoleTarget() ?? currentStore;
+  const stock = useConsoleStock(store.id) ?? [];
   const setStatus = useListingStatusStore((state) => state.setStatus);
 
   const item = editing?.item;
@@ -167,45 +169,85 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
   /** Which button is saving, so it shows the spinner until Stock opens. */
   const [saving, setSaving] = useState<'draft' | 'listed' | null>(null);
 
-  function save(draft: boolean) {
+  async function save(draft: boolean) {
     setSaving(draft ? 'draft' : 'listed');
-    const input = {
+    const fields = {
       title: title.trim(),
       category,
       condition,
       price: dollars(price),
       specs: Object.fromEntries(
         Object.entries(specs).filter(([, value]) => value?.trim()),
-      ),
-      quantity: dollars(quantity),
+      ) as Record<string, string>,
+      stockCount: dollars(quantity),
       acceptsSwaps,
-      images: photos,
-      draft,
-      status: listedStatus,
     };
     kept.current = true;
 
+    /** Says what went wrong and lets them try again. */
+    const fail = (error?: string) => {
+      setSaving(null);
+      toast.error(error ?? 'We could not save it. Try again in a minute.');
+    };
+
     if (editing) {
-      const listing = editedStockListing(editing, input);
-      saveStock(listing);
-      // Its status now, over any it was given before.
-      setStatus(listing.id, listing.status);
+      // A draft with a price is listed when they choose to list it.
+      const publish = isDraft && !draft;
+      const { data, error } = await apiAsViewer<{ slug: string; status: string }>(
+        `/listings/${encodeURIComponent(editing.id)}`,
+        { method: 'PATCH', body: { ...fields, publish } },
+      );
+      if (error || !data) return fail(error);
+      // A new status chosen on the form, saved after the changes.
+      let status = data.status;
+      if (listedStatus && listedStatus !== editing.status && !isDraft) {
+        const changed = await apiAsViewer<{ status: string }>(
+          `/listings/${encodeURIComponent(editing.id)}/status`,
+          { method: 'PATCH', body: { status: listedStatus } },
+        );
+        if (changed.error) return fail(changed.error);
+        status = listedStatus;
+      }
+      setStatus(editing.id, status as SaleListing['status']);
+      await refreshListing(data.slug);
       toast.success(
-        isDraft && listing.status === 'live'
-          ? `${listing.title} is live in your stock.`
-          : listing.status === 'draft'
-            ? `${listing.title} is saved as a draft.`
-            : listing.status !== editing.status
-              ? `Changes saved, ${listing.title} is ${STATUS_SAVED[listing.status as ListedStatus]}.`
+        isDraft && status === 'live'
+          ? `${fields.title} is live in your stock.`
+          : status === 'draft'
+            ? `${fields.title} is saved as a draft.`
+            : status !== editing.status
+              ? `Changes saved, ${fields.title} is ${STATUS_SAVED[status as ListedStatus]}.`
               : 'Changes saved.',
       );
     } else {
-      const listing = newStockListing(currentStore, input);
-      addStock([listing]);
+      const { data, error } = await apiAsViewer<{ slug: string }>('/listings', {
+        method: 'POST',
+        body: {
+          kind: 'sale',
+          storeId: store.id,
+          category: fields.category,
+          haveTitle: fields.title,
+          condition: fields.condition,
+          specs: fields.specs,
+          price: fields.price,
+          stockCount: fields.stockCount,
+          acceptsSwaps: fields.acceptsSwaps,
+          draft,
+          // A store's stock is reached as the store is; its own contact
+          // ways come later.
+          contactChannels: ['whatsapp', 'call'],
+          allowStoreOffers: true,
+          contactSignedInOnly: false,
+          contactShownTo: 'everyone',
+          contactToStores: false,
+        },
+      });
+      if (error || !data) return fail(error);
+      await refreshListing(data.slug);
       toast.success(
-        listing.status === 'live'
-          ? `${listing.title} is live in your stock.`
-          : `${listing.title} is saved as a draft.`,
+        draft
+          ? `${fields.title} is saved as a draft.`
+          : `${fields.title} is live in your stock.`,
       );
     }
     startPageLoad();
@@ -223,7 +265,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
 
   return (
     <ConsoleShell
-      store={currentStore}
+      store={store}
       title={heading.title}
       meta={heading.meta}
       newLeadCount={newLeadCount}

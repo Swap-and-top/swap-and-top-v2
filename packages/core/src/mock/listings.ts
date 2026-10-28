@@ -1407,8 +1407,17 @@ export const liveListings: Listing[] = mockListings.filter(
   (l) => l.status === 'live',
 );
 
+/** Listings loaded from the API, so a lookup by id finds the ones that are
+    only in the database too (an offer card, a console page). */
+const known = new Map<string, Listing>();
+
+/** Keeps listings loaded from the API for `getListing`. */
+export function rememberListings(listings: Listing[]): void {
+  for (const listing of listings) known.set(listing.id, listing);
+}
+
 export function getListing(id: string): Listing | undefined {
-  return mockListings.find((l) => l.id === id);
+  return known.get(id) ?? mockListings.find((l) => l.id === id);
 }
 
 export function getListingBySlug(slug: string): Listing | undefined {

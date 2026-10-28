@@ -10,17 +10,18 @@
  * Wireframe artboard: `Me`.
  */
 
+import { useEffect, useState } from 'react';
 import {
   confirmationsAwaiting,
-  currentUser,
   useDealStore,
   useSavedStore,
   getListing,
-  mockListings,
   statusOf,
+  viewerName,
   useListingStatusStore,
   useOfferStore,
   useSessionStore,
+  type Listing,
 } from '@snt/core';
 import {
   Button,
@@ -51,15 +52,23 @@ import {
   SwapIcon,
 } from '@snt/ui/icons';
 import { DevTools } from '@/components/DevTools';
+import { StorePassSheet, type PassStore } from '@/components/StorePassSheet';
+import { apiAsViewer } from '@/lib/supabase';
 import styles from './page.module.css';
 
 /** One empty list, so a guest's stores are the same each time they are read. */
 const NO_STORES: never[] = [];
 
 export default function MePage() {
+  /** The store whose pass sheet is open, if any. */
+  const [passFor, setPassFor] = useState<PassStore | null>(null);
   const { ids } = useSavedStore();
   const { answers, confirmedDeals, deals } = useDealStore();
   const signOut = useSessionStore((state) => state.signOut);
+  // Who is signed in: their name and id, never the sample account's.
+  const viewer = useSessionStore((state) => state.viewer);
+  const me = viewer?.id;
+  const name = viewer ? viewerName(viewer) : '';
   const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? false);
   const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
   const offers = useOfferStore((store) => store.offers);
@@ -67,14 +76,25 @@ export default function MePage() {
   const offerTotal = offers.filter(
     (offer) =>
       offer.state !== 'withdrawn' &&
-      (offer.fromUserId === currentUser.id ||
-        getListing(offer.listingId)?.ownerId === currentUser.id),
+      (offer.fromUserId === me || getListing(offer.listingId)?.ownerId === me),
   ).length;
 
-  /** What the user has posted and still has up. */
+  /** What the user has posted and still has up, from the API. */
   const changes = useListingStatusStore((state) => state.changes);
-  const myListings = mockListings.filter((listing) => {
-    if (listing.ownerId !== currentUser.id) return false;
+  const [posted, setPosted] = useState<Listing[]>([]);
+  useEffect(() => {
+    if (!me) return;
+    let current = true;
+    void apiAsViewer<{ listings: Listing[] }>('/me/listings', { method: 'GET' }).then(
+      ({ data }) => {
+        if (current) setPosted(data?.listings ?? []);
+      },
+    );
+    return () => {
+      current = false;
+    };
+  }, [me]);
+  const myListings = posted.filter((listing) => {
     const status = statusOf(listing, changes);
     return status !== 'withdrawn' && status !== 'removed';
   });
@@ -92,9 +112,9 @@ export default function MePage() {
             <Panel padded>
               <div className={styles.head}>
                 {/* Their initials, as in the header's account circle. */}
-                <Avatar size={52} initials={initialsOf(currentUser.displayName)} />
+                <Avatar size={52} initials={initialsOf(name)} />
                 <div className={styles.headBody}>
-                  <div className={styles.name}>{currentUser.displayName}</div>
+                  <div className={styles.name}>{name}</div>
                   <div className={styles.trust}>
                     <ConfirmedDealsBadge count={confirmedDeals} size="md" long />
                   </div>
@@ -105,7 +125,11 @@ export default function MePage() {
                 className={styles.stats}
                 stats={[
                   { value: myListings.length, label: 'listings' },
-                  { value: 12, label: 'number reveals' },
+                  {
+                    // Everyone who saw how to reach them, on their listings.
+                    value: myListings.reduce((sum, l) => sum + (l.revealCount || 0), 0),
+                    label: 'number reveals',
+                  },
                   {
                     value: confirmedDeals,
                     label: 'deals confirmed',
@@ -149,13 +173,26 @@ export default function MePage() {
             {stores.length ? (
               <Stack gap={4}>
                 {stores.map((store) => (
-                  <ConsoleEntryRow
-                    key={store.id}
-                    href={`/store/${store.slug}`}
-                    icon={<BoxIcon size={20} />}
-                    title={store.name}
-                    subtitle={store.role === 'owner' ? 'Your store page' : 'A store you work for'}
-                  />
+                  <Stack key={store.id} gap={4}>
+                    <ConsoleEntryRow
+                      href={`/store/${store.slug}`}
+                      icon={<BoxIcon size={20} />}
+                      title={store.name}
+                      subtitle={
+                        store.paidUntil
+                          ? `Paid until ${store.paidUntil}`
+                          : store.role === 'owner'
+                            ? 'Free store, up to 15 listings'
+                            : 'A store you work for'
+                      }
+                    />
+                    {/* The owner buys its pass; staff cannot. */}
+                    {store.role === 'owner' ? (
+                      <Button variant="secondary" block onClick={() => setPassFor(store)}>
+                        {store.paidUntil ? 'Extend store pass' : 'Get a store pass'}
+                      </Button>
+                    ) : null}
+                  </Stack>
                 ))}
                 <ConsoleEntryRow
                   href="/console/stock"
@@ -209,6 +246,7 @@ export default function MePage() {
           </Stack>
         </SignInGate>
       </ScreenBody>
+      {passFor ? <StorePassSheet store={passFor} onClose={() => setPassFor(null)} /> : null}
       <Footer />
     </Screen>
   );

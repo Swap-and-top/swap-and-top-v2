@@ -5,12 +5,14 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, count, eq, isNull } from 'drizzle-orm';
+import { and, count, eq, isNull, notInArray } from 'drizzle-orm';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
 import { loadListings } from '../listings';
-import { ErrorSchema, StoreSchema } from '../schemas';
+import { buyPass, dayMonth, paidUntil, PASSES, settlePasses } from '../passes';
+import { isMember } from './post';
+import { ErrorSchema, ListingSchema, StoreSchema } from '../schemas';
 import { personFor } from './me';
 
 export const storeRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
@@ -41,6 +43,7 @@ const bySlug = createRoute({
 /** A store's page: who they are, their trust numbers and live listings.
     Undefined for a closed or unknown store. */
 export async function storeBySlug(slug: string) {
+  await settlePasses();
   const [store] = await db
     .select()
     .from(t.stores)
@@ -167,4 +170,123 @@ storeRoutes.openapi(open, async (c) => {
     return store!;
   });
   return c.json(made, 201);
+});
+
+/* --- store passes ---------------------------------------------------------- */
+
+const pass = createRoute({
+  method: 'post',
+  path: '/stores/{id}/passes',
+  tags: ['Stores'],
+  summary: 'Buy a store pass',
+  description:
+    'The store owner buys a pass: day ($1), week ($5) or month ($15). While a pass covers now the store has no listing limit, the Store console and lead alerts. Bought while one runs, it starts where that ends. Every listing paused when the last pass ended goes live again. A test payment, recorded as paid at once, until Paynow is set up.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    params: z.object({ id: z.string() }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({ kind: z.enum(['day', 'week', 'month']) }),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'Paid',
+      content: {
+        'application/json': {
+          schema: z.object({
+            endsAt: z.string(),
+            /** "10 Nov" */
+            endsLabel: z.string(),
+            amount: z.number(),
+            /** Listings paused by the last lapse, live again. */
+            restored: z.number(),
+          }),
+        },
+      },
+    },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not the store\'s owner', content: { 'application/json': { schema: ErrorSchema } } },
+    404: { description: 'No such store', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+storeRoutes.openapi(pass, async (c) => {
+  const { id } = c.req.valid('param');
+  const { kind } = c.req.valid('json');
+  const person = await personFor(c.get('authUser'));
+  const [store] = await db
+    .select({ id: t.stores.id })
+    .from(t.stores)
+    .where(and(eq(t.stores.id, id), isNull(t.stores.closedAt)));
+  if (!store) return c.json({ error: 'Store not found' }, 404);
+  const [owner] = await db
+    .select({ personId: t.storeMembers.personId })
+    .from(t.storeMembers)
+    .where(
+      and(
+        eq(t.storeMembers.storeId, id),
+        eq(t.storeMembers.personId, person.id),
+        eq(t.storeMembers.role, 'owner'),
+        isNull(t.storeMembers.removedAt),
+      ),
+    );
+  if (!owner) return c.json({ error: 'Only the store\'s owner can buy its pass.' }, 403);
+
+  const { endsAt, restored } = await buyPass(person.id, id, kind);
+  return c.json(
+    { endsAt: endsAt.toISOString(), endsLabel: dayMonth(endsAt), amount: PASSES[kind].price, restored },
+    201,
+  );
+});
+
+/* --- the Store console's stock -------------------------------------------- */
+
+const stock = createRoute({
+  method: 'get',
+  path: '/stores/{id}/stock',
+  tags: ['Stores'],
+  summary: 'A store\'s stock',
+  description:
+    'Everything the store has listed and not deleted, in every state, newest first, for the Store console. Its owner and staff only, while a store pass covers now.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: {
+      description: 'The stock',
+      content: {
+        'application/json': {
+          schema: z.object({
+            /** "26 Nov": when the store's paid time ends. */
+            paidUntil: z.string(),
+            listings: z.array(ListingSchema),
+          }),
+        },
+      },
+    },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    402: { description: 'No store pass covers now', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not the store\'s owner or staff', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+storeRoutes.openapi(stock, async (c) => {
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if (!(await isMember(person.id, id))) {
+    return c.json({ error: 'Only the store\'s owner and staff can see its stock here.' }, 403);
+  }
+  await settlePasses();
+  const until = await paidUntil(id);
+  if (!until) return c.json({ error: 'The Store console needs a store pass.', code: 'pass' }, 402);
+  const listings = await loadListings(
+    and(eq(t.listings.storeId, id), notInArray(t.listings.status, ['withdrawn', 'removed'])),
+    500,
+  );
+  return c.json({ paidUntil: dayMonth(until), listings }, 200);
 });

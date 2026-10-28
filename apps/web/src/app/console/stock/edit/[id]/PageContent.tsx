@@ -6,14 +6,20 @@
  */
 
 import { useParams } from 'next/navigation';
-import { currentStore, newLeadCount, useStoreStock } from '@snt/core';
-import { ButtonLink, ConsoleShell } from '@snt/ui';
+import { currentStore, newLeadCount } from '@snt/core';
+import { ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
 import { StockForm } from '../../StockForm';
+import { StockFormSkeleton } from '../../StockFormSkeleton';
+import { useConsoleStock } from '../../useConsoleStock';
 import styles from '../../StockForm.module.css';
 
 export default function EditStockPage() {
   const { id } = useParams<{ id: string }>();
-  const stock = useStoreStock(currentStore.id);
+  const store = useConsoleTarget() ?? currentStore;
+  const loaded = useConsoleStock(store.id);
+  // The store's stock, from the API: the form waits for it.
+  if (loaded === null) return <StockFormSkeleton title="Edit item" meta="Changes show on the listing once saved." editing />;
+  const stock = loaded;
   const listing = stock.find((item) => item.id === id);
 
   if (listing?.type === 'sale') {
@@ -23,7 +29,7 @@ export default function EditStockPage() {
 
   return (
     <ConsoleShell
-      store={currentStore}
+      store={store}
       title="Item not found"
       newLeadCount={newLeadCount}
       stockCount={stock.length}

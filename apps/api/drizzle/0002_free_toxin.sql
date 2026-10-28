@@ -1,0 +1,1 @@
+ALTER TABLE "reveals" ADD COLUMN "way" text;

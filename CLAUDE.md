@@ -5,6 +5,7 @@ laid out, the design patterns in use and what was done most recently; its
 "Where we stopped" says what comes next. The backend's phases, slices and
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
+As of 2026-10-28 the next job is Phase 4 slice 4 (owner and staff).
 
 ## Standing rules from the product owner (Hillary)
 
@@ -67,6 +68,14 @@ These came from repeated feedback. Follow them without being asked.
   `apps/api/src/app.ts`, and is called from the web app with `apiAsViewer`
   (`apps/web/src/lib/supabase.ts`). Pages built on the server read the API's
   own functions (`apps/web/src/lib/listings.ts`, `stores.ts`), not HTTP.
+- **Migrations:** `db:generate` writes one; `db:migrate` changes the shared
+  (live) database, so ask the owner before running it, every time.
+- **Payments are test ones** until a Paynow account is set up: store passes
+  and boosts record a `payments` row with provider `test`, paid at once.
+- **The Store console** opens for the store in `useConsoleTarget()`
+  (`@snt/ui`), not the mock `currentStore`; its endpoints answer 402 with
+  `code: 'pass'` when no pass covers now. Pages use the signed in person
+  from `useSessionStore`, never the mock `currentUser`.
 - **Test what you build** against the API (curl with a test number's token)
   and in the browser, then put the data back.
 

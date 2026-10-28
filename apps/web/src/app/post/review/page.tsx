@@ -293,7 +293,7 @@ export default function PostReviewPage() {
             Post listing
           </Button>
           {limit ? (
-            <LimitSheet message={limit} asStore={postAs !== null} onClose={() => setLimit(null)} />
+            <LimitSheet message={limit} storeId={postAs ?? null} onClose={() => setLimit(null)} />
           ) : null}
         </div>
       </ScreenBody>

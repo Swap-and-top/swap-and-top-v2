@@ -24,10 +24,17 @@ export async function notify(personId: string, kind: Kind, text: string, href: s
   await db.insert(t.notifications).values({ personId, kind, text, href });
 }
 
+/** Tells a store: its owner and staff see it in the Store console. */
+export async function notifyStore(storeId: string, kind: Kind, text: string, href: string) {
+  await db.insert(t.notifications).values({ storeId, kind, text, href });
+}
+
 const NotificationSchema = z
   .object({
     id: z.string(),
     audience: z.enum(['user', 'store']),
+    /** The store it is for, on a store's. */
+    storeId: z.string().optional(),
     kind: z.string(),
     text: z.string(),
     /** "12 minutes ago", "3h ago", "Yesterday", "4 days ago". */
@@ -40,7 +47,7 @@ const NotificationSchema = z
 function atLabel(at: Date): string {
   const minutes = Math.floor((Date.now() - at.getTime()) / 60000);
   if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes} minutes ago`;
+  if (minutes < 60) return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours}h ago`;
   if (hours < 48) return 'Yesterday';
@@ -92,6 +99,7 @@ notificationRoutes.openapi(list, async (c) => {
       notifications: rows.map((n) => ({
         id: n.id,
         audience: n.personId ? ('user' as const) : ('store' as const),
+        storeId: n.personId ? undefined : (n.storeId ?? undefined),
         kind: n.kind,
         text: n.text,
         atLabel: atLabel(n.createdAt),

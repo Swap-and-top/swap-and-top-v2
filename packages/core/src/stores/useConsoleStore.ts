@@ -80,9 +80,9 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   stockFilters: NO_STOCK_FILTERS,
   stockTab: 'stock',
   sidebarCollapsed: false,
-  offerPrice: '$255',
-  offerMessage:
-    'I have the Latitude 7490. Bring the Air in and we can do $255 on top.',
+  // Empty: the boxes show a faded example until something is typed.
+  offerPrice: '',
+  offerMessage: '',
   setLeadTab: (leadTab) => set({ leadTab }),
   setOffersTab: (offersTab) => set({ offersTab }),
   setActiveLead: (activeLeadId) => set({ activeLeadId }),

@@ -10,10 +10,14 @@
  * `promotion` is read through here (`promotionOf`), so starting or stopping
  * one shows at once in the feed, on its card and in Stock. See
  * docs/business/monetization.md.
+ *
+ * Kept on the server: the signed in person's running boosts are loaded
+ * (theirs and their stores'), and buying, stopping and taking back a stop
+ * go through it (connectSponsorApi). Everyone else's come with the listing,
+ * as its `promotion`.
  */
 
 import { create } from 'zustand';
-import { mockListings } from '../mock/listings';
 import type { Listing, PromotionSlot } from '../types/listing';
 
 /** The daily budget: from $1, in whole dollars, up to this. */
@@ -29,6 +33,8 @@ export const SPONSOR_DURATIONS = [
 
 export interface Sponsorship {
   listingId: string;
+  /** The store it is posted as, when it is a store's. */
+  storeId?: string;
   /** Dollars a day. */
   dailyBudget: number;
   /** Pre-formatted, as dates are across the mock. */
@@ -45,8 +51,6 @@ export interface Sponsorship {
   paymentRef?: string;
 }
 
-/** "Today" in the mock, for the dates a sponsorship runs to. */
-const TODAY = new Date(2026, 9, 27);
 const MONTHS = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
@@ -58,7 +62,7 @@ function dayMonth(date: Date): string {
 
 /** The day a run of `days` from today ends: "10 Nov". */
 export function daysFromToday(days: number): string {
-  const end = new Date(TODAY);
+  const end = new Date();
   end.setDate(end.getDate() + days);
   return dayMonth(end);
 }
@@ -76,92 +80,46 @@ export function dollars(amount: number): string {
   return `$${amount.toLocaleString('en-US')}`;
 }
 
+/** The server's side of boosts, connected by the web app. */
+export interface SponsorApi {
+  /** Pays for a boost, or more days on a running one; resolves with it. */
+  buy: (listingId: string, dailyBudget: number, days: number) => Promise<Sponsorship>;
+  stop: (listingId: string) => Promise<void>;
+  /** Takes back a stop; resolves with the boost running again. */
+  restore: (listingId: string) => Promise<Sponsorship>;
+}
+
+let api: SponsorApi | null = null;
+
+export function connectSponsorApi(connected: SponsorApi) {
+  api = connected;
+}
+
 interface SponsorState {
+  /** The signed in person's running boosts, and their stores'. */
   sponsorships: Sponsorship[];
+  /** Listings whose boost was stopped here, so they leave the Sponsored
+      slots at once, before the feed is read again. */
+  stopped: string[];
   /** Listings whose "Sponsor this item" banner was closed with its X. */
   dismissed: string[];
   dismiss: (listingId: string) => void;
-  /** A new sponsorship, once Paynow confirms the payment. */
-  start: (
-    listingId: string,
-    dailyBudget: number,
-    days: number,
-    paymentRef: string,
-  ) => void;
-  /** More days, at a budget that may change, once paid. */
-  extend: (
-    listingId: string,
-    dailyBudget: number,
-    days: number,
-    paymentRef: string,
-  ) => void;
-  stop: (listingId: string) => void;
+  /** Pays for a new boost, or more days at a budget that may change, and
+      keeps it as the server has it. Rejects if refused. */
+  buy: (listingId: string, dailyBudget: number, days: number) => Promise<Sponsorship>;
+  /** Stops one at once; put back if the server refuses. */
+  stop: (listingId: string) => Promise<void>;
   /** Puts back one just stopped, from the message's Undo. */
-  restore: (sponsorship: Sponsorship) => void;
+  restore: (sponsorship: Sponsorship) => Promise<void>;
 }
 
-export const useSponsorStore = create<SponsorState>((set) => ({
-  // The Dell Latitude 7490, sponsored a week ago at $3 a day for two weeks.
-  sponsorships: [
-    {
-      listingId: 'l-dell-latitude-7490',
-      dailyBudget: 3,
-      startedLabel: '20 Oct',
-      endsLabel: '3 Nov',
-      daysLeft: 7,
-      spent: 42,
-      revealsSince: 31,
-      lift: '3.4x the week before',
-      paymentRef: 'PN 4819 2207',
-    },
-    // Other people's, one of each kind, so the Sponsored label shows on
-    // every card in the feed: a sale, two swaps, two Wanted listings.
-    {
-      listingId: 'l-iphone-11-128',
-      dailyBudget: 2,
-      startedLabel: '25 Oct',
-      endsLabel: '1 Nov',
-      daysLeft: 5,
-      spent: 14,
-      revealsSince: 3,
-    },
-    {
-      listingId: 'l-ps4-for-xbox',
-      dailyBudget: 1,
-      startedLabel: '25 Oct',
-      endsLabel: '1 Nov',
-      daysLeft: 5,
-      spent: 7,
-      revealsSince: 2,
-    },
-    {
-      listingId: 'l-galaxy-swap',
-      dailyBudget: 3,
-      startedLabel: '23 Oct',
-      endsLabel: '30 Oct',
-      daysLeft: 3,
-      spent: 21,
-      revealsSince: 3,
-    },
-    {
-      listingId: 'l-rtx-wanted',
-      dailyBudget: 2,
-      startedLabel: '26 Oct',
-      endsLabel: '2 Nov',
-      daysLeft: 6,
-      spent: 14,
-      revealsSince: 0,
-    },
-    {
-      listingId: 'l-galaxy-s21-wanted',
-      dailyBudget: 1,
-      startedLabel: '25 Oct',
-      endsLabel: '26 Nov',
-      daysLeft: 30,
-      spent: 30,
-      revealsSince: 1,
-    },
-  ],
+function keep(sponsorships: Sponsorship[], sponsorship: Sponsorship): Sponsorship[] {
+  return [...sponsorships.filter((s) => s.listingId !== sponsorship.listingId), sponsorship];
+}
+
+export const useSponsorStore = create<SponsorState>((set, get) => ({
+  sponsorships: [],
+  stopped: [],
   dismissed: [],
   dismiss: (listingId) =>
     set((state) =>
@@ -169,68 +127,56 @@ export const useSponsorStore = create<SponsorState>((set) => ({
         ? state
         : { dismissed: [...state.dismissed, listingId] },
     ),
-  start: (listingId, dailyBudget, days, paymentRef) =>
+  buy: async (listingId, dailyBudget, days) => {
+    if (!api) throw new Error('Boosts are not connected.');
+    const sponsorship = await api.buy(listingId, dailyBudget, days);
     set((state) => ({
-      sponsorships: [
-        ...state.sponsorships.filter((s) => s.listingId !== listingId),
-        {
-          listingId,
-          dailyBudget,
-          startedLabel: dayMonth(TODAY),
-          endsLabel: daysFromToday(days),
-          daysLeft: days,
-          spent: dailyBudget * days,
-          revealsSince: 0,
-          paymentRef,
-        },
-      ],
-    })),
-  extend: (listingId, dailyBudget, days, paymentRef) =>
-    set((state) => ({
-      sponsorships: state.sponsorships.map((s) =>
-        s.listingId === listingId
-          ? {
-              ...s,
-              dailyBudget,
-              daysLeft: s.daysLeft + days,
-              endsLabel: daysFromToday(s.daysLeft + days),
-              spent: s.spent + dailyBudget * days,
-              paymentRef,
-            }
-          : s,
-      ),
-    })),
-  stop: (listingId) =>
+      sponsorships: keep(state.sponsorships, sponsorship),
+      stopped: state.stopped.filter((id) => id !== listingId),
+    }));
+    return sponsorship;
+  },
+  stop: async (listingId) => {
+    const was = get().sponsorships.find((s) => s.listingId === listingId);
     set((state) => ({
       sponsorships: state.sponsorships.filter((s) => s.listingId !== listingId),
-    })),
-  restore: (sponsorship) =>
+      stopped: [...state.stopped.filter((id) => id !== listingId), listingId],
+    }));
+    try {
+      await api?.stop(listingId);
+    } catch (error) {
+      set((state) => ({
+        sponsorships: was ? keep(state.sponsorships, was) : state.sponsorships,
+        stopped: state.stopped.filter((id) => id !== listingId),
+      }));
+      throw error;
+    }
+  },
+  restore: async (sponsorship) => {
     set((state) => ({
-      sponsorships: [
-        ...state.sponsorships.filter(
-          (s) => s.listingId !== sponsorship.listingId,
-        ),
-        sponsorship,
-      ],
-    })),
+      sponsorships: keep(state.sponsorships, sponsorship),
+      stopped: state.stopped.filter((id) => id !== sponsorship.listingId),
+    }));
+    const back = await api?.restore(sponsorship.listingId);
+    if (back) set((state) => ({ sponsorships: keep(state.sponsorships, back) }));
+  },
 }));
 
 /** The sponsorships on one store's listings: what its console shows. */
 export function useStoreSponsorships(storeId: string): Sponsorship[] {
   const sponsorships = useSponsorStore((state) => state.sponsorships);
-  return sponsorships.filter(
-    (s) => mockListings.find((l) => l.id === s.listingId)?.storeId === storeId,
-  );
+  return sponsorships.filter((s) => s.storeId === storeId);
 }
 
-/** A listing's slot now: sponsored while it has a sponsorship running. */
+/** A listing's slot now: sponsored while a boost runs on it, as the server
+    said, or as it has been bought or stopped here since. */
 export function promotionOf(
   listing: Listing,
   sponsorships: Sponsorship[],
 ): PromotionSlot {
-  return sponsorships.some((s) => s.listingId === listing.id)
-    ? 'sponsored'
-    : 'organic';
+  if (sponsorships.some((s) => s.listingId === listing.id)) return 'sponsored';
+  if (useSponsorStore.getState().stopped.includes(listing.id)) return 'organic';
+  return listing.promotion;
 }
 
 /** The listing with its slot as it stands now. */

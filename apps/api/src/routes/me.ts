@@ -14,6 +14,7 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
+import { dayMonth, paidUntil, settlePasses } from '../passes';
 import { ErrorSchema, MeSchema } from '../schemas';
 import { MOCK_CODE, supabaseAdmin } from '../supabaseAdmin';
 
@@ -77,7 +78,8 @@ export async function personFor(user: AuthUser) {
 
 /** The person as the API returns them, with the stores they belong to. */
 async function viewerOut(person: typeof t.people.$inferSelect) {
-  const stores = await db
+  await settlePasses();
+  const rows = await db
     .select({
       id: t.stores.id,
       slug: t.stores.slug,
@@ -100,7 +102,12 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
     phoneVerified: person.phoneVerifiedAt !== null,
     role: person.role,
     standing: person.standing,
-    stores,
+    stores: await Promise.all(
+      rows.map(async (store) => {
+        const until = await paidUntil(store.id);
+        return until ? { ...store, paidUntil: dayMonth(until) } : store;
+      }),
+    ),
   };
 }
 

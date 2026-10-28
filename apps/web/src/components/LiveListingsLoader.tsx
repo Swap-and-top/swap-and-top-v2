@@ -8,7 +8,7 @@
  */
 
 import { useEffect } from 'react';
-import { useListingSource, type Listing } from '@snt/core';
+import { rememberListings, useListingSource, type Listing } from '@snt/core';
 
 export function LiveListingsLoader() {
   useEffect(() => {
@@ -26,6 +26,8 @@ export function LiveListingsLoader() {
         cursor = body.nextCursor;
         if (!cursor) break;
       }
+      // Found by id too, wherever a listing is looked up (an offer card).
+      rememberListings(all);
       if (current) useListingSource.setState({ listings: all });
     })();
     return () => {

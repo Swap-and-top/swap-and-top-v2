@@ -154,6 +154,7 @@ export { WantedCard } from './cards/WantedCard';
 
 /* --- layout -------------------------------------------------------------- */
 export { BottomNav } from './layout/BottomNav';
+export { ConsoleTargetContext, useConsoleTarget } from './layout/ConsoleTarget';
 export { ConsoleShell } from './layout/ConsoleShell';
 export {
   AppHeader,

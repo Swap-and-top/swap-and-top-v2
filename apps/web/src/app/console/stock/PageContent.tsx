@@ -18,8 +18,6 @@ import {
   newLeadCount,
   NO_STOCK_FILTERS,
   useConsoleStore,
-  useListingStatusStore,
-  useStoreStock,
   useSponsorStore,
   type Listing,
   type ListingStatus,
@@ -38,6 +36,7 @@ import {
   StatusBadge,
   Tabs,
   specSummary,
+  useConsoleTarget,
 } from '@snt/ui';
 import {
   CheckIcon,
@@ -52,9 +51,11 @@ import {
   TrashIcon,
 } from '@snt/ui/icons';
 import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
+import { saveStatus } from '@/lib/listingStatus';
 import { BoostedTab } from './BoostedTab';
 import { filterStock, filtersInUse } from './filterStock';
 import { StockFiltersSheet } from './StockFiltersSheet';
+import { useConsoleStock } from './useConsoleStock';
 import styles from './page.module.css';
 
 export default function ConsoleStockPage() {
@@ -72,11 +73,13 @@ export default function ConsoleStockPage() {
     null,
   );
 
-  // What the store holds, with what it has added since first.
-  const all = useStoreStock(currentStore.id);
+  // What the store holds, from the API, for the store the console is open
+  // for (the mock store only outside the console's gate).
+  const target = useConsoleTarget() ?? currentStore;
+  const loaded = useConsoleStock(target.id);
+  const all = loaded ?? [];
   const stock = filterStock(all, stockFilters, stockQuery);
   const inUse = filtersInUse(stockFilters);
-  const setStatus = useListingStatusStore((state) => state.setStatus);
   const sponsorships = useSponsorStore((state) => state.sponsorships);
   const stopBoost = useSponsorStore((state) => state.stop);
   const restoreBoost = useSponsorStore((state) => state.restore);
@@ -85,22 +88,32 @@ export default function ConsoleStockPage() {
   function stop(listing: Listing) {
     const running = sponsorships.find((s) => s.listingId === listing.id);
     if (!running) return;
-    stopBoost(listing.id);
-    toast.success(`${listing.title} is no longer boosted.`, {
-      action: { label: 'Undo', onClick: () => restoreBoost(running) },
-      duration: 4500,
-    });
+    stopBoost(listing.id).then(
+      () =>
+        toast.success(`${listing.title} is no longer boosted.`, {
+          action: {
+            label: 'Undo',
+            onClick: () => restoreBoost(running).catch((error: Error) => toast.error(error.message)),
+          },
+          duration: 4500,
+        }),
+      (error: Error) => toast.error(error.message),
+    );
   }
 
   /**
    * Changes an item's status at once, says so, and offers to put it back
    * as it was: from a row's three dot menu.
    */
-  function change(listing: Listing, next: ListingStatus, told: string) {
+  async function change(listing: Listing, next: ListingStatus, told: string) {
     const was = listing.status;
-    setStatus(listing.id, next);
+    // Saved through the API; put back and explained if it is refused.
+    if (!(await saveStatus(listing, next))) return;
     toast.success(told, {
-      action: { label: 'Undo', onClick: () => setStatus(listing.id, was) },
+      action: {
+        label: 'Undo',
+        onClick: () => void saveStatus({ ...listing, status: next }, was),
+      },
       // Long enough to reach Undo, as on the listing's own tools.
       duration: 4500,
     });
@@ -235,11 +248,14 @@ export default function ConsoleStockPage() {
           <div className={styles.tabs}>
             <Tabs<StockTab>
               tabs={[
-                { value: 'stock', label: 'Stock', count: all.length },
+                // No counts until the stock has loaded, rather than a 0.
+                { value: 'stock', label: 'Stock', count: loaded ? all.length : undefined },
                 {
                   value: 'boosted',
                   label: 'Boosted',
-                  count: all.filter((l) => l.promotion === 'sponsored').length,
+                  count: loaded
+                    ? all.filter((l) => l.promotion === 'sponsored').length
+                    : undefined,
                 },
               ]}
               active={stockTab}
@@ -313,7 +329,7 @@ export default function ConsoleStockPage() {
       ) : (
         <>
           {/* What there is, just above the table. */}
-          <p className={styles.summary}>{summary}</p>
+          <p className={styles.summary}>{loaded === null ? '\u00a0' : summary}</p>
           <div className={styles.list}>
             {/* Desktop only — the table's column headings. */}
             <div className={styles.headerRow} aria-hidden>
@@ -410,7 +426,7 @@ export default function ConsoleStockPage() {
             })}
 
             {/* Searched or filtered down to nothing: say so, and the way back. */}
-            {stock.length === 0 ? (
+            {loaded !== null && stock.length === 0 ? (
               <div className={styles.none}>
                 <p>Nothing in your stock matches.</p>
                 <Button

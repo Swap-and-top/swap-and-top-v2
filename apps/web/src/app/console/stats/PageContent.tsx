@@ -14,31 +14,37 @@
  *
  * Confirmed deals are a floor, never a total: they count only when both
  * sides answer the deal check (see docs/features/deal-confirmation.md).
+ *
+ * From the API (GET /api/stores/{id}/stats), counting what is recorded on
+ * the store's listings: views, reveals, offers and confirmed deals. Each
+ * stretch is loaded once, as it is first chosen.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import {
-  bestItemsFor,
   currentStore,
   dollars,
-  mockLeadSources,
   newLeadCount,
-  storeStatsFor,
   useConsoleStore,
   useStoreSponsorships,
+  type ItemStats,
   type StatsBucket,
   type StatsMetric,
   type StatsRange,
+  type StoreStats,
 } from '@snt/core';
 import {
   Button,
   ButtonLink,
   ConsoleShell,
   Tabs,
+  useConsoleTarget,
   type TabItem,
 } from '@snt/ui';
 import { MegaphoneIcon, WhatsAppIcon } from '@snt/ui/icons';
 import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
+import { apiAsViewer } from '@/lib/supabase';
 import styles from './page.module.css';
 
 const RANGES: TabItem<StatsRange>[] = [
@@ -82,18 +88,49 @@ const METRICS: {
 
 const count = (n: number) => n.toLocaleString('en-US');
 
+/** A stretch's stats as the API gives them. */
+type Stats = StoreStats & {
+  best: ItemStats[];
+  /** Of reveals by WhatsApp or call, the share by WhatsApp. */
+  whatsappShare: number | null;
+  /** "3.4x", once there are reveals both while sponsored and not. */
+  sponsoredLift: string | null;
+};
+
 export default function ConsoleStatsPage() {
   const [range, setRange] = useState<StatsRange>('week');
   /** The number the graph shows: the leads, to start. */
   const [metric, setMetric] = useState<StatsMetric>('reveals');
-  const stats = storeStatsFor(range);
+  const store = useConsoleTarget() ?? currentStore;
+  /** Each stretch's stats, once loaded. */
+  const [loaded, setLoaded] = useState<Partial<Record<StatsRange, Stats>>>({});
+
+  useEffect(() => {
+    if (loaded[range]) return;
+    let gone = false;
+    void apiAsViewer<Stats>(
+      `/stores/${encodeURIComponent(store.id)}/stats?range=${range}`,
+      { method: 'GET' },
+    ).then(({ data, error }) => {
+      if (gone) return;
+      if (error || !data) {
+        toast.error(error ?? 'We could not load the stats.');
+        return;
+      }
+      setLoaded((current) => ({ ...current, [range]: data }));
+    });
+    return () => {
+      gone = true;
+    };
+  }, [store.id, range, loaded]);
+
+  const stats = loaded[range];
   const shown = METRICS.find((m) => m.value === metric)!;
-  const best = bestItemsFor(currentStore.id, stats.totals).slice(0, 5);
-  const whatsapp = Math.round(mockLeadSources.whatsappShare * 100);
+  const best = stats?.best ?? [];
 
   return (
     <ConsoleShell
-      store={currentStore}
+      store={store}
       title="Stats"
       meta="How your store is doing, and ways to grow it"
       newLeadCount={newLeadCount}
@@ -109,93 +146,115 @@ export default function ConsoleStatsPage() {
         </div>
       }
     >
-      {/* The four numbers; the one tapped is in the graph. */}
-      <div className={styles.tiles}>
-        {METRICS.map((m) => {
-          const now = stats.totals[m.value];
-          const before = stats.previous[m.value];
-          return (
-            <button
-              key={m.value}
-              type="button"
-              aria-pressed={metric === m.value}
-              className={[styles.tile, metric === m.value ? styles.tileOn : '']
-                .filter(Boolean)
-                .join(' ')}
-              onClick={() => setMetric(m.value)}
-            >
-              <span className={styles.tileLabel}>{m.label}</span>
-              <span className={styles.tileValue}>{count(now)}</span>
-              <Change now={now} before={before} against={stats.against} />
-            </button>
-          );
-        })}
-      </div>
-      <p className={styles.note}>
-        A deal counts once both sides say it went through, so there were at
-        least this many.
-      </p>
-
-      <section className={styles.card}>
-        <h2 className={styles.cardTitle}>
-          {shown.label}, {SPAN[range]}
-        </h2>
-        <BarChart
-          // A new stretch or number starts with no bar picked.
-          key={`${range}-${metric}`}
-          buckets={stats.buckets}
-          metric={metric}
-          one={shown.one}
-          many={shown.many}
-          total={stats.totals[metric]}
-        />
-      </section>
-
-      <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Your best items</h2>
-        <p className={styles.cardMeta}>
-          Most reveals first, {SPAN_PLAIN[range]}
-        </p>
-        <ol className={styles.items}>
-          {best.map((item) => (
-            <li key={item.listingId} className={styles.item}>
-              <span className={styles.itemName}>{item.name}</span>
-              <span className={styles.itemFigures}>
-                {count(item.views)} {item.views === 1 ? 'view' : 'views'} ·{' '}
-                {count(item.reveals)}{' '}
-                {item.reveals === 1 ? 'reveal' : 'reveals'} · {item.offers}{' '}
-                {item.offers === 1 ? 'offer' : 'offers'} · {item.deals}{' '}
-                {item.deals === 1 ? 'deal' : 'deals'}
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Where leads come from</h2>
-        <div className={styles.sources}>
-          <div className={styles.source}>
-            <span className={[styles.glyph, styles.glyphActive].join(' ')}>
-              <WhatsAppIcon size={18} />
-            </span>
-            <span>
-              <strong>{whatsapp}%</strong> of reveals are for WhatsApp, the
-              rest for calls
-            </span>
+      {stats ? (
+        <>
+          {/* The four numbers; the one tapped is in the graph. */}
+          <div className={styles.tiles}>
+            {METRICS.map((m) => {
+              const now = stats.totals[m.value];
+              const before = stats.previous[m.value];
+              return (
+                <button
+                  key={m.value}
+                  type="button"
+                  aria-pressed={metric === m.value}
+                  className={[
+                    styles.tile,
+                    metric === m.value ? styles.tileOn : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => setMetric(m.value)}
+                >
+                  <span className={styles.tileLabel}>{m.label}</span>
+                  <span className={styles.tileValue}>{count(now)}</span>
+                  <Change now={now} before={before} against={stats.against} />
+                </button>
+              );
+            })}
           </div>
-          <div className={styles.source}>
-            <span className={[styles.glyph, styles.glyphAccent].join(' ')}>
-              <MegaphoneIcon size={18} weight={1.9} />
-            </span>
-            <span>
-              Sponsored listings get{' '}
-              <strong>{mockLeadSources.sponsoredLift}</strong> the reveals of
-              the rest
-            </span>
-          </div>
-        </div>
-      </section>
+          <p className={styles.note}>
+            A deal counts once both sides say it went through, so there were at
+            least this many.
+          </p>
+
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>
+              {shown.label}, {SPAN[range]}
+            </h2>
+            <BarChart
+              // A new stretch or number starts with no bar picked.
+              key={`${range}-${metric}`}
+              buckets={stats.buckets}
+              metric={metric}
+              one={shown.one}
+              many={shown.many}
+              total={stats.totals[metric]}
+            />
+          </section>
+
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>Your best items</h2>
+            <p className={styles.cardMeta}>
+              Most reveals first, {SPAN_PLAIN[range]}
+            </p>
+            {best.length === 0 ? (
+              <p className={styles.cardMeta}>Nothing listed yet.</p>
+            ) : null}
+            <ol className={styles.items}>
+              {best.map((item) => (
+                <li key={item.listingId} className={styles.item}>
+                  <span className={styles.itemName}>{item.name}</span>
+                  <span className={styles.itemFigures}>
+                    {count(item.views)} {item.views === 1 ? 'view' : 'views'} ·{' '}
+                    {count(item.reveals)}{' '}
+                    {item.reveals === 1 ? 'reveal' : 'reveals'} · {item.offers}{' '}
+                    {item.offers === 1 ? 'offer' : 'offers'} · {item.deals}{' '}
+                    {item.deals === 1 ? 'deal' : 'deals'}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>Where leads come from</h2>
+            <div className={styles.sources}>
+              <div className={styles.source}>
+                <span className={[styles.glyph, styles.glyphActive].join(' ')}>
+                  <WhatsAppIcon size={18} />
+                </span>
+                <span>
+                  {stats.whatsappShare === null ? (
+                    'No number reveals yet in this time.'
+                  ) : (
+                    <>
+                      <strong>{Math.round(stats.whatsappShare * 100)}%</strong>{' '}
+                      of reveals are for WhatsApp, the rest for calls
+                    </>
+                  )}
+                </span>
+              </div>
+              <div className={styles.source}>
+                <span className={[styles.glyph, styles.glyphAccent].join(' ')}>
+                  <MegaphoneIcon size={18} weight={1.9} />
+                </span>
+                <span>
+                  {stats.sponsoredLift === null ? (
+                    'Boost a listing to see how many more reveals it gets.'
+                  ) : (
+                    <>
+                      Boosted listings get{' '}
+                      <strong>{stats.sponsoredLift}</strong> the reveals of the
+                      rest
+                    </>
+                  )}
+                </span>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : null}
 
       {/* What Promote was: the way to grow the numbers above. */}
       <h2 className={styles.section}>Grow these numbers</h2>
@@ -346,7 +405,7 @@ function BarChart({
  */
 function SponsoredSlots() {
   // The store's own: other people sponsor their listings too.
-  const sponsorships = useStoreSponsorships(currentStore.id);
+  const sponsorships = useStoreSponsorships((useConsoleTarget() ?? currentStore).id);
   const setStockTab = useConsoleStore((state) => state.setStockTab);
   /** The Sponsor sheet, to pick an item and sponsor it. */
   const [sheet, setSheet] = useState(false);
@@ -360,8 +419,8 @@ function SponsoredSlots() {
       <div className={styles.body}>
         <span className={styles.name}>Boosts</span>
         <p className={styles.description}>
-          Your listing shows in a labelled Sponsored slot in the feed, from $1
-          a day. The more a day, the more people see it. Paid through Paynow.
+          Your listing shows in a labelled Sponsored slot in the feed, from $1 a
+          day. The more a day, the more people see it. Paid through Paynow.
         </p>
         <p className={styles.runningSummary}>
           {sponsorships.length > 0

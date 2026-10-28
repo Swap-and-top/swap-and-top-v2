@@ -40,6 +40,9 @@ const base = {
   status: z.enum(['draft', 'live', 'paused', 'sold', 'expired', 'withdrawn', 'removed']),
   createdAt: z.string().openapi({ example: '2026-09-24' }),
   expiresAt: z.string(),
+  /** How long ago it went up, worked out as it is loaded: "2h ago",
+      "Yesterday", "4 days ago". Shown on cards and listing pages. */
+  postedLabel: z.string().openapi({ example: '2h ago' }),
   contactChannels: z.array(z.string()),
   contactSignedInOnly: z.boolean(),
   contactShownTo: z.enum(['everyone', 'offers']),
@@ -145,6 +148,9 @@ export const MeSchema = z
         slug: z.string(),
         name: z.string(),
         role: z.enum(['owner', 'staff']),
+        /** When its paid time ends ("10 Nov"), counting passes bought
+            ahead; missing while it is a free store. */
+        paidUntil: z.string().optional().openapi({ example: '10 Nov' }),
       }),
     ),
   })

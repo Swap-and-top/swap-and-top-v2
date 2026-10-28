@@ -8,9 +8,10 @@
  * contact" for one way and "Show contacts" for more, carrying their icons,
  * and opens a sheet of just those ways, where each is revealed on a tap.
  *
- * Wired to `useRevealStore`, which in the real system is a server action that
- * records an event carrying the listing, a device hash, the viewer's role and
- * the promotion slot at the time. That last field is what lets promotion be
+ * Each way revealed is recorded through the API (`recordReveal`), which keeps
+ * the listing, a device hash, who it was when signed in and the promotion
+ * slot at the time, counts the daily limit, and starts the deal check;
+ * `useRevealStore` keeps what this browser has revealed. That last field is what lets promotion be
  * sold on evidence rather than on a promise. Each way is revealed on its
  * own and recorded by way — opening a chat as much as showing a number — so
  * a seller can be told how people reach them, and one way does not give
@@ -51,6 +52,7 @@ import {
   type Listing,
 } from '@snt/core';
 import { Button, ContactWayList, Sheet, WAY_META, waysOffered } from '@snt/ui';
+import { recordReveal } from '@/lib/reveals';
 import styles from './RevealAction.module.css';
 
 /**
@@ -107,8 +109,15 @@ export function RevealAction({
    * reveals: the way's row then offers the chat, for WhatsApp and Messenger.
    */
   function use(way: ContactWay) {
-    const go = () => {
+    const go = async () => {
       const first = !useRevealStore.getState().isRevealed(listingId);
+      // Recorded first: the API holds the daily limit.
+      const { limited } = await recordReveal(listingId, way);
+      if (limited) {
+        if (useSessionStore.getState().signedIn) toast.error(limited);
+        else requireSignIn(limited, () => void go());
+        return;
+      }
       reveal(listingId, ownerId, way);
       // After, not before: they have what they came for; now the reason to
       // join. A message that goes by, so nothing is left on the page.
@@ -121,24 +130,24 @@ export function RevealAction({
     };
 
     if (seenSeller) {
-      go();
+      void go();
       return;
     }
     if (signedInOnly) {
       requireSignIn(
         'This seller shows their contact details to signed in users only.',
-        go,
+        () => void go(),
       );
       return;
     }
     if (!signedIn && revealsLeft(usedToday, false) === 0) {
       requireSignIn(
         `You have seen ${GUEST_DAILY_REVEALS} sellers’ details today, which is the limit without an account. It is there to stop sellers’ numbers being collected in bulk. Sign in to see more.`,
-        go,
+        () => void go(),
       );
       return;
     }
-    go();
+    void go();
   }
 
   if (offered.length === 0) return null;

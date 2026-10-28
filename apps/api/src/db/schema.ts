@@ -131,6 +131,11 @@ export const storePasses = pgTable(
     endsAt: timestamp({ withTimezone: true }).notNull(),
     paymentId: text().references(() => payments.id),
     createdAt: createdAt(),
+    /** When the owner was told it ends tomorrow, so they are told once. */
+    reminderSentAt: timestamp({ withTimezone: true }),
+    /** When its end was dealt with: the store's listings over the free
+        limit paused, and the owner told. */
+    lapseHandledAt: timestamp({ withTimezone: true }),
   },
   (t) => [index().on(t.storeId, t.endsAt)],
 ).enableRLS();
@@ -224,6 +229,9 @@ export const listings = pgTable(
     allowStoreOffers: boolean().notNull().default(true),
     viewCount: integer().notNull().default(0),
     tags: text().array().notNull().default(sql`'{}'`),
+    /** Paused because its store's pass ended, not by its owner: live again
+        with the next pass. */
+    pausedByLapse: boolean().notNull().default(false),
   },
   (t) => [
     index().on(t.status, t.type, t.category),
@@ -329,9 +337,31 @@ export const reveals = pgTable(
     /** For rate limits only. Never an identity. */
     deviceHash: text().notNull(),
     slot: promotionSlot().notNull().default('organic'),
+    /** Which way was revealed: whatsapp, call, email or messenger. Each is
+        recorded on its own, so a seller can be told how people reach them. */
+    way: text(),
     createdAt: createdAt(),
   },
   (t) => [index().on(t.listingId), index().on(t.deviceHash, t.createdAt)],
+).enableRLS();
+
+/**
+ * Someone opened a listing's page: one row a device a listing every half
+ * hour, never its owner. The time series behind Stats' views; each also adds
+ * one to the listing's `viewCount`.
+ */
+export const listingViews = pgTable(
+  'listing_views',
+  {
+    id: id(),
+    listingId: text()
+      .notNull()
+      .references(() => listings.id),
+    /** For counting once a half hour only. Never an identity. */
+    deviceHash: text().notNull(),
+    viewedAt: createdAt(),
+  },
+  (t) => [index().on(t.listingId, t.viewedAt), index().on(t.deviceHash, t.viewedAt)],
 ).enableRLS();
 
 export const offerState = pgEnum('offer_state', [

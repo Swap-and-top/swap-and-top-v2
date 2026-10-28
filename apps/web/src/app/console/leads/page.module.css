@@ -260,3 +260,10 @@
 .keptBack svg {
   flex-shrink: 0;
 }
+
+/* On a phone's offer sheet: who it goes to, and with what. */
+.sheetLead {
+  font-size: var(--snt-text-sm);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}

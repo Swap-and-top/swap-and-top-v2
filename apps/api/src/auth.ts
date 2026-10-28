@@ -55,6 +55,17 @@ async function verify(token: string): Promise<AuthUser | null> {
   }
 }
 
+/** Notes who is signed in, when a valid token comes; lets everyone through. */
+export const optionalAuth = createMiddleware<{ Variables: { authUser?: AuthUser } }>(
+  async (c, next) => {
+    const header = c.req.header('Authorization') ?? '';
+    const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+    const user = token ? await verify(token) : null;
+    if (user) c.set('authUser', user);
+    await next();
+  },
+);
+
 /** Lets a request through only with a valid sign in token. */
 export const requireAuth = createMiddleware<{ Variables: { authUser: AuthUser } }>(
   async (c, next) => {

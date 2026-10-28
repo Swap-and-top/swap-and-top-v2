@@ -14,11 +14,11 @@
 
 import { useState } from 'react';
 import {
-  currentUser,
   useLiveListings,
   useOfferStore,
   takesOffers,
   type OfferableListing,
+  useSessionStore,
 } from '@snt/core';
 import {
   AppHeader,
@@ -45,16 +45,18 @@ const VIEWS: TabItem<View>[] = [
 export default function OffersPage() {
   const [view, setView] = useState<View>('received');
   const offers = useOfferStore((store) => store.offers);
+  /** The signed in person; no one until they are. */
+  const me = useSessionStore((state) => state.viewer?.id) ?? '';
 
   /** The user's own listings that take offers, with what came in on
       each; and the offers they made, by the listing each went to. */
   const live = useLiveListings();
   const mine = live.filter(
     (listing): listing is OfferableListing =>
-      listing.ownerId === currentUser.id && takesOffers(listing),
+      listing.ownerId === me && takesOffers(listing),
   );
   const received = receivedGroups(offers, mine);
-  const made = madeGroups(offers, currentUser.id);
+  const made = madeGroups(offers, me);
 
   return (
     <Screen>
@@ -75,14 +77,14 @@ export default function OffersPage() {
             <OfferGroups
               groups={made}
               view="made"
-              viewerId={currentUser.id}
+              viewerId={me}
               none="You have not made any offers. Find something you have under Wanted or Swaps, and tap “Make an offer”."
             />
           ) : (
             <OfferGroups
               groups={received}
               view="received"
-              viewerId={currentUser.id}
+              viewerId={me}
               none="No offers on your listings yet. They will appear here, side by side, as they come in."
             />
           )}

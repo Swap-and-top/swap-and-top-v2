@@ -19,10 +19,12 @@
  *
  * Paynow is mocked for now: the steps are as they will be with the live
  * account (see docs/operations/payments-and-invoicing.md), each payment
- * "approved" after a moment.
+ * "approved" after a moment, then saved through the API as a test payment
+ * (POST /api/listings/{id}/boosts).
  */
 
 import { useEffect, useId, useState } from 'react';
+import { toast } from 'sonner';
 import {
   SPONSOR_DURATIONS,
   SPONSOR_MAX_DAILY,
@@ -32,7 +34,6 @@ import {
   dollars,
   getListing,
   reachPerDay,
-  useStoreStock,
   useSponsorStore,
   type Listing,
 } from '@snt/core';
@@ -44,7 +45,9 @@ import {
   Spinner,
   listingPhoto,
   useCloseSheet,
+  useConsoleTarget,
 } from '@snt/ui';
+import { useConsoleStock } from '@/app/console/stock/useConsoleStock';
 import { CheckIcon, MegaphoneIcon, ShieldCheckIcon } from '@snt/ui/icons';
 import styles from './SponsorSheet.module.css';
 
@@ -68,9 +71,13 @@ export function SponsorSheet({
   listingId?: string;
   onClose: () => void;
 }) {
-  const running = useSponsorStore((state) => state.sponsorships);
-  const extending = Boolean(
-    listingId && running.some((s) => s.listingId === listingId),
+  // As it was when opened: once paid, a new boost is running too, and the
+  // sheet should not turn into Extend boost.
+  const [extending] = useState(() =>
+    Boolean(
+      listingId &&
+        useSponsorStore.getState().sponsorships.some((s) => s.listingId === listingId),
+    ),
   );
   const title = extending ? 'Extend boost' : 'Boost a listing';
 
@@ -106,10 +113,12 @@ function SponsorFlow({
   extending: boolean;
 }) {
   const close = useCloseSheet();
-  const stock = useStoreStock(currentStore.id);
+  const store = useConsoleTarget() ?? currentStore;
+  // The store's stock to choose from, only when no listing was given.
+  const loaded = useConsoleStock(listingId ? undefined : store.id);
+  const stock = loaded ?? [];
   const sponsorships = useSponsorStore((state) => state.sponsorships);
-  const start = useSponsorStore((state) => state.start);
-  const extend = useSponsorStore((state) => state.extend);
+  const buy = useSponsorStore((state) => state.buy);
 
   /** What can be sponsored: live items for sale not sponsored already. */
   const choices = stock.filter(
@@ -128,6 +137,11 @@ function SponsorFlow({
       starts, `current` is the new sponsorship and would count it twice. */
   const [paidUntil, setPaidUntil] = useState('');
   const whichLabel = useId();
+  // The first choice, once the stock has loaded.
+  const first = choices[0]?.id;
+  useEffect(() => {
+    if (!picked && first) setPicked(first);
+  }, [picked, first]);
 
   // A store's stock item, or any listing opened from its own page: every
   // listing can be sponsored, a person's swap or Wanted listing too.
@@ -138,21 +152,37 @@ function SponsorFlow({
   const until = daysFromToday((current?.daysLeft ?? 0) + days);
   const [low, high] = reachPerDay(daily);
 
-  // Paynow, mocked: its page comes back paid after a moment; then the
-  // sponsorship starts. Live, this waits on Paynow's confirmation.
+  // Paynow, mocked: its page comes back paid after a moment; then the boost
+  // is saved, starting or extended. Live, this waits on Paynow's
+  // confirmation.
+  const itemId = item?.id;
   useEffect(() => {
-    if (step !== 'approve' || !item) return;
+    if (step !== 'approve' || !itemId) return;
+    let gone = false;
     const timer = window.setTimeout(() => {
-      const reference = `PN ${4000 + Math.floor(Math.random() * 5999)} ${1000 + Math.floor(Math.random() * 8999)}`;
-      setRef(reference);
-      setPaidUntil(until);
-      if (extending) extend(item.id, daily, days, reference);
-      else start(item.id, daily, days, reference);
-      setStep('done');
+      buy(itemId, daily, days).then(
+        (sponsorship) => {
+          if (gone) return;
+          setRef(sponsorship.paymentRef?.replace(/^TEST-(\w{8}).*$/, 'TEST $1').toUpperCase() ?? '');
+          setPaidUntil(sponsorship.endsLabel);
+          setStep('done');
+        },
+        (error: Error) => {
+          if (gone) return;
+          toast.error(error.message);
+          setStep('pay');
+        },
+      );
     }, 3000);
-    return () => window.clearTimeout(timer);
-  }, [step, item, extending, extend, start, daily, days, until]);
+    return () => {
+      gone = true;
+      window.clearTimeout(timer);
+    };
+  }, [step, itemId, buy, daily, days]);
 
+  if (!item && !listingId && !loaded) {
+    return <Spinner size={30} label="Loading your stock" />;
+  }
   if (!item) {
     return (
       <p className={styles.note}>

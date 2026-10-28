@@ -47,10 +47,15 @@ export interface NumberReveal {
   /** Who revealed it. Shown to the store only once they say a deal went
       through; until then the row says "Someone in" their area. */
   userId: string;
+  /** Their name and confirmed deals, once they may be shown. */
+  name?: string;
+  confirmedDeals?: number;
+  /** Not signed in: never asked about a deal, and no area known. */
+  guest?: boolean;
   /** The store's listing it was revealed on. */
   listingId: string;
   /** How they went on to make contact. */
-  way: 'whatsapp' | 'call';
+  way: 'whatsapp' | 'call' | 'email' | 'messenger';
   /** Pre-formatted, as on listings. */
   atLabel: string;
   area: string;

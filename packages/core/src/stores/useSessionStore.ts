@@ -26,7 +26,14 @@ export interface Viewer {
   role: Exclude<Role, 'guest'>;
   standing: 'good' | 'warned' | 'limited' | 'suspended' | 'banned';
   /** The stores they own or work for. */
-  stores: { id: string; slug: string; name: string; role: 'owner' | 'staff' }[];
+  stores: {
+    id: string;
+    slug: string;
+    name: string;
+    role: 'owner' | 'staff';
+    /** "10 Nov", while a store pass runs; missing for a free store. */
+    paidUntil?: string;
+  }[];
 }
 
 interface SessionState {

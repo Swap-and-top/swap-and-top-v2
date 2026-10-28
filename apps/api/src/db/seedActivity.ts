@@ -6,7 +6,8 @@
  * `pnpm --filter @snt/api db:seed-activity`.
  */
 
-import { mockDealConfirmations, mockNotifications, SAMPLE_OFFERS, SAMPLE_SAVED } from '@snt/core';
+import { mockDealConfirmations, mockNotifications, mockUsers, SAMPLE_OFFERS, SAMPLE_SAVED } from '@snt/core';
+import { inArray } from 'drizzle-orm';
 import { db } from './client';
 import * as t from './schema';
 
@@ -26,6 +27,20 @@ function when(label: string, now: Date): Date {
   return now;
 }
 
+/**
+ * The sample boosts: one of a store's (the Dell, in Kopje's console) and one
+ * of each other kind, so the Sponsored label shows on every kind of card.
+ * Started some days back, running some days on.
+ */
+const SAMPLE_BOOSTS = [
+  { listingId: 'l-dell-latitude-7490', dailyBudget: 3, startedDaysAgo: 7, daysLeft: 7 },
+  { listingId: 'l-iphone-11-128', dailyBudget: 2, startedDaysAgo: 2, daysLeft: 5 },
+  { listingId: 'l-ps4-for-xbox', dailyBudget: 1, startedDaysAgo: 2, daysLeft: 5 },
+  { listingId: 'l-galaxy-swap', dailyBudget: 3, startedDaysAgo: 4, daysLeft: 3 },
+  { listingId: 'l-rtx-wanted', dailyBudget: 2, startedDaysAgo: 1, daysLeft: 6 },
+  { listingId: 'l-galaxy-s21-wanted', dailyBudget: 1, startedDaysAgo: 2, daysLeft: 30 },
+];
+
 const answer = (value: string) => (value === 'unanswered' ? null : (value as 'yes' | 'no' | 'not-yet'));
 
 export async function seedActivity() {
@@ -42,6 +57,8 @@ export async function seedActivity() {
         id: offer.id,
         listingId: offer.listingId,
         fromPersonId: offer.fromUserId,
+        // A store's account sent it as the store (Kopje's, from Leads).
+        fromStoreId: offer.fromStoreId ?? mockUsers.find((user) => user.id === offer.fromUserId)?.storeId ?? null,
         itemListingId: offer.item?.listingId ?? null,
         itemName: offer.item?.name ?? null,
         itemCondition: offer.item?.condition ?? null,
@@ -101,8 +118,31 @@ export async function seedActivity() {
     }),
   );
 
+  // The sample boosts, put back as they were; real ones are left alone.
+  const boostIds = SAMPLE_BOOSTS.map((boost) => `b-sample-${boost.listingId}`);
+  await db.delete(t.boosts).where(inArray(t.boosts.id, boostIds));
+  const owners = await db
+    .select({ id: t.listings.id, ownerId: t.listings.ownerId })
+    .from(t.listings)
+    .where(inArray(t.listings.id, SAMPLE_BOOSTS.map((boost) => boost.listingId)));
+  const boosts = SAMPLE_BOOSTS.flatMap((boost) => {
+    const owner = owners.find((row) => row.id === boost.listingId);
+    if (!owner) return [];
+    return [
+      {
+        id: `b-sample-${boost.listingId}`,
+        listingId: boost.listingId,
+        boughtById: owner.ownerId,
+        dailyBudget: boost.dailyBudget,
+        startsAt: new Date(now.getTime() - boost.startedDaysAgo * 24 * HOUR),
+        endsAt: new Date(now.getTime() + boost.daysLeft * 24 * HOUR),
+      },
+    ];
+  });
+  if (boosts.length) await db.insert(t.boosts).values(boosts);
+
   console.log(
     `Seeded ${SAMPLE_OFFERS.length} offers, ${mockDealConfirmations.length} deal checks, ` +
-      `${SAMPLE_SAVED.length} saved listings and ${mockNotifications.length} notifications.`,
+      `${SAMPLE_SAVED.length} saved listings, ${mockNotifications.length} notifications and ${boosts.length} boosts.`,
   );
 }

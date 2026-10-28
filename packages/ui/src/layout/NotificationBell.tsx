@@ -21,11 +21,14 @@ import styles from './Headers.module.css';
 export function NotificationBell({
   audience,
   href,
+  storeId,
 }: {
   audience: NotificationAudience;
   href: string;
+  /** In the console: which store's. */
+  storeId?: string;
 }) {
-  const unread = useUnreadCount(audience);
+  const unread = useUnreadCount(audience, storeId);
   const signedIn = useSessionStore((state) => state.signedIn);
   // A guest has no list of their own.
   if (audience === 'user' && !signedIn) return null;

@@ -12,13 +12,16 @@ import {
   connectNotificationApi,
   connectOfferApi,
   connectSavedApi,
+  connectSponsorApi,
   useDealStore,
   useNotificationStore,
   useOfferStore,
   useSavedStore,
+  useSponsorStore,
   type AppNotification,
   type DealConfirmation,
   type Offer,
+  type Sponsorship,
 } from '@snt/core';
 import { apiAsViewer } from './supabase';
 
@@ -59,15 +62,42 @@ connectNotificationApi(async (ids) => {
   await apiAsViewer('/me/notifications/read', { method: 'POST', body: { ids } });
 });
 
+connectSponsorApi({
+  async buy(listingId, dailyBudget, days) {
+    const { data, error } = await apiAsViewer<Sponsorship>(
+      `/listings/${encodeURIComponent(listingId)}/boosts`,
+      { method: 'POST', body: { dailyBudget, days } },
+    );
+    if (error || !data) throw new Error(error ?? 'We could not boost it.');
+    return data;
+  },
+  async stop(listingId) {
+    const { error } = await apiAsViewer(`/listings/${encodeURIComponent(listingId)}/boosts/stop`, {
+      method: 'POST',
+    });
+    if (error) throw new Error(error);
+  },
+  async restore(listingId) {
+    const { data, error } = await apiAsViewer<Sponsorship>(
+      `/listings/${encodeURIComponent(listingId)}/boosts/restore`,
+      { method: 'POST' },
+    );
+    if (error || !data) throw new Error(error ?? 'We could not put it back.');
+    return data;
+  },
+});
+
 export async function loadAccountData() {
-  const [offers, deals, saved, notifications] = await Promise.all([
+  const [offers, deals, saved, notifications, boosts] = await Promise.all([
     apiAsViewer<{ offers: Offer[] }>('/me/offers', { method: 'GET' }),
     apiAsViewer<{ deals: DealConfirmation[]; confirmedDeals: number }>('/me/deals', {
       method: 'GET',
     }),
     apiAsViewer<{ ids: string[] }>('/me/saved', { method: 'GET' }),
     apiAsViewer<{ notifications: AppNotification[] }>('/me/notifications', { method: 'GET' }),
+    apiAsViewer<{ boosts: Sponsorship[] }>('/me/boosts', { method: 'GET' }),
   ]);
+  if (boosts.data) useSponsorStore.setState({ sponsorships: boosts.data.boosts, stopped: [] });
   if (offers.data) useOfferStore.setState({ offers: offers.data.offers });
   if (saved.data) useSavedStore.setState({ ids: saved.data.ids });
   if (notifications.data) {
@@ -87,4 +117,5 @@ export function clearAccountData() {
   useSavedStore.setState({ ids: [] });
   useNotificationStore.setState({ notifications: [], readIds: [] });
   useDealStore.setState({ deals: [], answers: {}, confirmedDeals: 0, loaded: false });
+  useSponsorStore.setState({ sponsorships: [], stopped: [] });
 }

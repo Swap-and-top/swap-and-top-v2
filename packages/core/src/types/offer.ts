@@ -32,6 +32,8 @@ export interface Offer {
   /** The swap or request this replies to. */
   listingId: string;
   fromUserId: string;
+  /** Set when it was sent as a store, by its owner or staff. */
+  fromStoreId?: string;
   /**
    * What is put forward. Missing on a cash offer: just a price, on a sale
    * whose poster shares their number only after accepting an offer.

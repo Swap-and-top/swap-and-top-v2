@@ -18,6 +18,7 @@ import {
 } from '@snt/core';
 import {
   ActionMenu,
+  useConsoleTarget,
   ImagePlaceholder,
   listingPhoto,
   type MenuAction,
@@ -37,7 +38,7 @@ export function BoostedTab({
   /** Opens the boost sheet: on one item, or to pick one. */
   onBoost: (listingId?: string) => void;
 }) {
-  const sponsorships = useStoreSponsorships(currentStore.id);
+  const sponsorships = useStoreSponsorships((useConsoleTarget() ?? currentStore).id);
   const stop = useSponsorStore((state) => state.stop);
   const restore = useSponsorStore((state) => state.restore);
 
@@ -75,11 +76,17 @@ export function BoostedTab({
         label: 'Stop boost',
         icon: <CloseIcon size={16} />,
         onSelect: () => {
-          stop(listing.id);
-          toast.success(`${listing.title} is no longer boosted.`, {
-            action: { label: 'Undo', onClick: () => restore(s) },
-            duration: 4500,
-          });
+          stop(listing.id).then(
+            () =>
+              toast.success(`${listing.title} is no longer boosted.`, {
+                action: {
+                  label: 'Undo',
+                  onClick: () => restore(s).catch((error: Error) => toast.error(error.message)),
+                },
+                duration: 4500,
+              }),
+            (error: Error) => toast.error(error.message),
+          );
         },
       },
     ];

@@ -2,12 +2,60 @@
 
 Written on 2026-10-22 to carry the work to a new Claude account, and
 brought up to date on 2026-10-26, 2026-10-27 (the second account change),
-twice more later on 2026-10-27, and at the end of the long 2026-10-27
-backend session (Phases 1 to 3 and Phase 4 slice 1). The rules for working
-on this repo are in `/CLAUDE.md`; read that first. This file is the state of
-the code and the recent work. **Start with "Where we stopped" below**, then
-`docs/architecture/backend-plan.md` ("Where it stands") for the backend in
-full.
+twice more later on 2026-10-27, at the end of the long 2026-10-27
+backend session (Phases 1 to 3 and Phase 4 slice 1), and on 2026-10-28
+(slices 2 and 3: store passes and the Store console on real data). The
+rules for working on this repo are in `/CLAUDE.md`; read that first. This
+file is the state of the code and the recent work. **Start with "Where we
+stopped" just below**, then `docs/architecture/backend-plan.md` ("Where it
+stands") for the backend in full.
+
+## Where we stopped (2026-10-28)
+
+**Done and committed:** Phases 1 to 3, and Phase 4 slices 1, 2 and 3. All
+of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
+
+- **Slice 2, store passes:** a day ($1), week ($5) or month ($15) pass,
+  bought as a test payment from Me or the limit message
+  (`apps/api/src/passes.ts`, `components/StorePassSheet.tsx`); a reminder
+  the day before it ends; when it ends, live listings above 15 are paused
+  and come back with the next pass.
+- **Slice 3, the Store console on real data:** every console page now
+  reads and saves through the API. The console opens only for a signed in
+  owner or staff member of a store with a pass (`console/layout.tsx`).
+  Stock (add, edit, drafts, status), Bulk import, Offers (received and
+  sent as the store), Leads (Matching requests and Number reveals), Stats
+  (real views, reveals, offers, deals), the store's own Notifications, and
+  boosts (buy, extend, stop, Undo as test payments; six sample boosts
+  seeded). Show contact records each reveal with the daily limit; opening
+  a listing records a view.
+- **Me page fixed (2026-10-28):** it showed the sample account Tarisai M.
+  to everyone; the name, initials, listings, reveals and offers counts now
+  belong to whoever is signed in, and the profile's Offers page sorts by
+  the signed in person too.
+
+**Next, in order:**
+
+1. **Slice 4, owner and staff:** the owner adds staff by phone and removes
+   them; staff can do stock, offers and leads, not payments,
+   verification, staff or settings. Table `store_members` already exists.
+2. **The rest of Phase 4:** moving existing listings into a new store, a
+   store's own contact ways and settings, Verified store requests, closing
+   a store, and a switch in the console between several stores (it opens
+   the first with a pass for now).
+3. **Phase 5, the report queue for staff** (tables `reports`,
+   `moderation_actions`, `appeals` exist). See the backend plan,
+   section 2.
+
+**Good to know before starting:**
+
+- Migrations `0001` to `0003` are applied to the shared database. A new
+  one is made with `db:generate`; running `db:migrate` changes the live
+  database, so ask the owner first.
+- Real payment waits on a Paynow merchant account; every payment is a test
+  one (`payments.provider = 'test'`) recorded as paid at once.
+- Test data: none left behind. `db:seed-activity` puts back the sample
+  offers, deal checks, saved listings, notifications and boosts.
 
 ## The project
 
@@ -17,26 +65,27 @@ post items for sale, swaps and Wanted listings; stores get a Store
 console with stock, leads, offers and stats. The product docs live in
 `docs/` (start at `docs/00-SUMMARY.md`).
 
-**State, end of 2026-10-27.** The app has a real backend: Postgres on
+**State, 2026-10-28.** The app has a real backend: Postgres on
 Supabase, Drizzle, a Hono API in `apps/api` served by the web app at `/api`
 (Swagger at `/api/docs`), deployed with the site on Vercel. Every page a
 person uses reads and saves through it: the feed, listing pages, search,
 Wanted, posting, My listings (pause, sold, delete, relist), offers (send,
 accept, decline, withdraw, undo), deal checks, saved listings, notifications,
-store pages, and opening a store. Sign in is real (Supabase Auth): email and
+store pages, opening a store, store passes, and the whole Store console.
+Sign in is real (Supabase Auth): email and
 password from a three step sign up, or phone and a one time code. Email and
 phone codes are **mock ones (123456)**, nothing is sent, until real email and
 SMS are set up. A phone is optional to join; posting and sending offers ask
 for a verified phone first.
 
-Still on the mock data: the **Store console** (Phase 4 slice 3), and other
-people's names, store badges and deal counts on cards and offers (from the
-mock people and stores, whose ids match the database).
+Still on the mock data: other people's names, store badges and deal counts
+on cards and offers (from the mock people and stores, whose ids match the
+database).
 
 The **database is shared** by localhost and the live site: anything posted,
 saved or answered on either shows on both. Clean up test data you make, and
 `pnpm --filter @snt/api db:seed-activity` puts the sample offers, deal
-checks, saved listings and notifications back.
+checks, saved listings, notifications and boosts back.
 
 Roles (user, moderator, admin, super admin) are on the person; person, free
 store and paid store are not roles but store membership and passes.
@@ -92,12 +141,13 @@ from, and what the Store console and other people's details still read:
 
 | Who | Id | Notes |
 |---|---|---|
-| Tarisai M. | `u-tarisai` | The signed in test user (`CURRENT_USER_ID`). Owns the MacBook swap (`l-macbook-swap`) and the PS5 controller Wanted listing (`l-ps5-controller-wanted`). |
+| Tarisai M. | `u-tarisai` | The mock's sample user (`CURRENT_USER_ID`); pages now use whoever is signed in instead. Owns the MacBook swap (`l-macbook-swap`) and the PS5 controller Wanted listing (`l-ps5-controller-wanted`). |
 | Kopje Computers | `u-kopje`, store `s-kopje` | The store (`currentStore`) shown in the console. |
 | Chipo N., Rudo K., Blessing T., Tendai C., Farai D., Nyasha P., Avondale Games | `u-chipo`, `u-rudo`, `u-blessing`, `u-tendai`, `u-farai`, `u-nyasha`, `u-avgames` | Other people offering or posting. |
 
-Sponsored in the mock (`useSponsorStore`): the Dell Latitude 7490 (Kopje's,
-the only one the console shows), and other people's iPhone 11 128GB (sale),
+Boosted in the seed (`SAMPLE_BOOSTS` in `seedActivity.ts`, ids
+`b-sample-<listing>`): the Dell Latitude 7490 (Kopje's, the only one the
+console shows), and other people's iPhone 11 128GB (sale),
 PS4 Slim for an Xbox One S and Galaxy A34 for a Pixel 7a (swaps), RTX 3060
 or Better and Galaxy S21 or newer (Wanted), so the Sponsored badge can be
 seen on every kind of card. Notifications: `mock/notifications.ts`. Deal
@@ -197,6 +247,16 @@ Patterns the user has settled on:
 ## What was built recently (newest first)
 
 See `git log` for the full detail; each commit body explains its change.
+
+- **2026-10-28, slices 2 and 3** (one commit): store passes, the Store
+  console on real data, boosts and bulk import through the API, and the Me
+  page fixed to show the signed in person. Details under "Where we
+  stopped" above and in `docs/architecture/backend-plan.md`. New API files:
+  `passes.ts`, `routes/leads.ts`, `routes/reveals.ts`, `routes/stats.ts`,
+  `routes/boosts.ts`; new web files: `console/layout.tsx`,
+  `console/stock/useConsoleStock.ts`, `components/StorePassSheet.tsx`,
+  `components/ViewRecorder.tsx`, `lib/reveals.ts`; `ConsoleTarget.tsx` in
+  `@snt/ui` (`useConsoleTarget()` is the store the console is open for).
 
 - **2026-10-27, backend session** (`5a25f1c` to `12faafa`): the backend
   plan, Phases 1 to 3 and Phase 4 slice 1. In order:
@@ -368,33 +428,7 @@ See `git log` for the full detail; each commit body explains its change.
 
 ## Known loose ends and ideas offered
 
-- **Where we stopped (end of the 2026-10-27 backend session):** Phases 1
-  to 3 are built and live; Phase 4 slice 1 is built and live. Everything is
-  committed and pushed (`main` deploys live). **Next: Phase 4 slice 2,
-  store passes**, then slices 3 and 4, then Phase 5:
-  - **Slice 2, store passes:** buy a day ($1), week ($5) or month ($15)
-    pass for a store (owner only); extending tops up from the current end;
-    the day before it ends a reminder (a notification); when it ends the
-    store keeps its 15 most recently updated listings live and pauses the
-    rest, all live again with a new pass. Payment is a **test payment**
-    until Paynow is set up (the owner needs a Paynow merchant account;
-    integration id and key would go in `.env` and Vercel). The tables
-    `store_passes`, `payments` and `payment_events` exist; the limit check
-    already reads passes (`overLimit` in `apps/api/src/routes/post.ts`).
-    The lapse needs a check on read or a scheduled job (Vercel cron).
-  - **Slice 3, the Store console on real data:** stock, leads, trade ins
-    (offers on store listings), stats, the store's notifications, boosts;
-    open only while a pass covers today.
-  - **Slice 4, owner and staff:** the owner adds staff by phone and removes
-    them; staff can do stock, offers and leads, not payments, verification,
-    staff or settings.
-  - **Also in Phase 4, not built:** moving existing listings into a new
-    store, a store's own contact ways and settings (name change rules),
-    Verified store requests (checked by staff), closing a store.
-  - **Phase 5, the report queue for staff:** report a listing or person;
-    a phone friendly queue (claim, approve, change the reason, clear);
-    appeals for admins. Tables `reports`, `moderation_actions` and
-    `appeals` exist. See `docs/architecture/backend-plan.md`, section 2.
+- **Where we stopped:** see the section near the top.
 - **Gaps in what is built:** photos are not uploaded (new listings show the
   grey placeholder); editing a listing is not built; Show contact does not
   ask for a verified phone yet; deal checks, expiring listings and leads
@@ -403,8 +437,8 @@ See `git log` for the full detail; each commit body explains its change.
   for anyone until real email (Supabase SMTP) and SMS (a provider in place
   of the Twilio placeholders) are set up; Supabase Redirect URLs need
   `http://localhost:3000/**` and the Vercel address for real reset links;
-  other people's names and badges on cards come from the mock data; the
-  Me page's own stats (listings, reveals) still use the mock.
+  other people's names and badges on cards come from the mock data; bulk
+  import and Add stock do not take photos yet.
 - The feed shows one sponsored listing per three others, so on short type
   tabs (Swaps, Wanted) only one of two sponsored shows; spacing every two
   was offered, not built.
@@ -417,9 +451,8 @@ See `git log` for the full detail; each commit body explains its change.
   phone; a lower top or minus and plus buttons were offered, not built.
 - On sale and swap cards' bottom line, the place and age get trimmed first
   when space is short ("Gre… · Offers only").
-- Paynow is mocked: a boost payment "succeeds" after three seconds.
-  Nothing is really charged; boosts live in memory (`useSponsorStore`), not
-  the database yet.
+- Paynow is mocked: a boost or pass payment "succeeds" after a moment and
+  is saved as a test payment. Nothing is really charged.
 - **With the API: one home per account.** A dealer's own profile should
   point shop matters (My listings, Offers, shop deal checks) to the console
   rather than repeat them; only personal things (Saved, Settings) stay in

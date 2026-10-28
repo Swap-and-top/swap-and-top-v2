@@ -8,6 +8,7 @@ import { and, count, desc, eq, gt, inArray, isNull, lte, ne, notInArray, type SQ
 import type { z } from '@hono/zod-openapi';
 import { db } from './db/client';
 import * as t from './db/schema';
+import { settlePasses } from './passes';
 import type { ItemSchema, ListingSchema } from './schemas';
 
 type ListingOut = z.infer<typeof ListingSchema>;
@@ -16,6 +17,21 @@ type ItemOut = z.infer<typeof ItemSchema>;
 /** Nulls from the database become missing fields, as in @snt/core. */
 const opt = <T>(value: T | null): T | undefined => value ?? undefined;
 const dateOnly = (value: Date | null) => (value ? value.toISOString().slice(0, 10) : '');
+
+/** "Just now", "12 minutes ago", "2h ago", "Yesterday", "4 days ago",
+    "3 weeks ago": when it went up. Worked out here, as it is loaded, so the
+    page and the browser show the same words. */
+function postedLabel(at: Date): string {
+  const minutes = Math.floor((Date.now() - at.getTime()) / 60000);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  if (hours < 48) return 'Yesterday';
+  const days = Math.floor(hours / 24);
+  if (days < 14) return `${days} days ago`;
+  return `${Math.floor(days / 7)} weeks ago`;
+}
 
 /**
  * Listings anyone may see: the owner is not suspended or banned, and the
@@ -114,6 +130,7 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
       status: listing.status,
       createdAt: dateOnly(listing.createdAt),
       expiresAt: dateOnly(listing.expiresAt),
+      postedLabel: postedLabel(listing.publishedAt ?? listing.createdAt),
       contactChannels: listing.contactChannels,
       contactSignedInOnly: listing.contactSignedInOnly,
       contactShownTo: listing.contactShownTo,
@@ -176,7 +193,9 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
 }
 
 /** Every live listing, newest first: the feed, built on the server. */
-export function liveListings(): Promise<ListingOut[]> {
+export async function liveListings(): Promise<ListingOut[]> {
+  // Ended store passes pause what a free store may not keep live first.
+  await settlePasses();
   return loadListings(eq(t.listings.status, 'live'), 500);
 }
 

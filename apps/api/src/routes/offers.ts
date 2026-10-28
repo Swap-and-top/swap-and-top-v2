@@ -15,9 +15,12 @@ import { and, desc, eq, inArray, ne, or } from 'drizzle-orm';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
-import { ErrorSchema } from '../schemas';
+import { loadListings } from '../listings';
+import { paidUntil } from '../passes';
+import { ErrorSchema, ListingSchema } from '../schemas';
 import { personFor } from './me';
-import { notify } from './notifications';
+import { isMember } from './post';
+import { notify, notifyStore } from './notifications';
 
 export const offerRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -29,6 +32,8 @@ const OfferSchema = z
     id: z.string(),
     listingId: z.string(),
     fromUserId: z.string(),
+    /** Set when it was sent as a store. */
+    fromStoreId: z.string().optional(),
     item: z
       .object({ listingId: z.string().optional(), name: z.string(), condition: condition.optional() })
       .optional(),
@@ -59,6 +64,7 @@ function offerOut(row: typeof t.offers.$inferSelect): z.infer<typeof OfferSchema
     id: row.id,
     listingId: row.listingId,
     fromUserId: row.fromPersonId,
+    fromStoreId: row.fromStoreId ?? undefined,
     item: row.itemName
       ? {
           listingId: row.itemListingId ?? undefined,
@@ -134,6 +140,8 @@ const send = createRoute({
             cashFrom: z.enum(['owner', 'offerer', 'none']),
             message: z.string().trim().max(500).optional(),
             reachOn: z.array(way).optional(),
+            /** Send it as this store, which they own or work for. */
+            storeId: z.string().optional(),
           }),
         },
       },
@@ -152,26 +160,40 @@ offerRoutes.openapi(send, async (c) => {
   if (person.standing === 'suspended' || person.standing === 'banned') {
     return c.json({ error: 'Your account cannot send offers right now.' }, 403);
   }
+  const storeId = body.storeId ?? null;
+  if (storeId && !(await isMember(person.id, storeId))) {
+    return c.json({ error: 'You cannot send offers as that store.' }, 403);
+  }
   const [listing] = await db.select().from(t.listings).where(eq(t.listings.id, body.listingId));
   if (!listing || listing.status !== 'live') return c.json({ error: 'That listing is not taking offers.' }, 404);
-  if (listing.ownerId === person.id) return c.json({ error: 'That listing is yours.' }, 403);
+  if (listing.ownerId === person.id || (storeId && listing.storeId === storeId)) {
+    return c.json({ error: 'That listing is yours.' }, 403);
+  }
+  if (storeId && !listing.allowStoreOffers) {
+    return c.json({ error: 'This person has turned off store offers.' }, 403);
+  }
+  // One standing offer each: from the person, or from the store.
   const [standing] = await db
     .select({ id: t.offers.id })
     .from(t.offers)
     .where(
       and(
         eq(t.offers.listingId, listing.id),
-        eq(t.offers.fromPersonId, person.id),
+        storeId ? eq(t.offers.fromStoreId, storeId) : eq(t.offers.fromPersonId, person.id),
         inArray(t.offers.state, ['pending', 'accepted']),
       ),
     );
   if (standing) return c.json({ error: 'You already have an offer on this listing.' }, 409);
+  const [store] = storeId
+    ? await db.select({ name: t.stores.name }).from(t.stores).where(eq(t.stores.id, storeId))
+    : [];
 
   const [offer] = await db
     .insert(t.offers)
     .values({
       listingId: listing.id,
       fromPersonId: person.id,
+      fromStoreId: storeId,
       itemListingId: body.item?.listingId ?? null,
       itemName: body.item?.name ?? null,
       itemCondition: body.item?.condition ?? null,
@@ -181,12 +203,10 @@ offerRoutes.openapi(send, async (c) => {
       reachOn: body.reachOn ?? [],
     })
     .returning();
-  await notify(
-    listing.ownerId,
-    'offer',
-    `${person.displayName || 'Someone'} made an offer on your ${listing.title}`,
-    '/me/offers',
-  );
+  // A store's listing: the store is told, in its console; else the poster.
+  const said = `${store?.name ?? (person.displayName || 'Someone')} made an offer on your ${listing.title}`;
+  if (listing.storeId) await notifyStore(listing.storeId, 'offer', said, '/console/trade-ins');
+  else await notify(listing.ownerId, 'offer', said, '/me/offers');
   return c.json(offerOut(offer!), 201);
 });
 
@@ -222,25 +242,31 @@ offerRoutes.openapi(change, async (c) => {
   const next = c.req.valid('json').state;
   const person = await personFor(c.get('authUser'));
   const [row] = await db
-    .select({ offer: t.offers, ownerId: t.listings.ownerId, title: t.listings.title })
+    .select({ offer: t.offers, ownerId: t.listings.ownerId, storeId: t.listings.storeId, title: t.listings.title })
     .from(t.offers)
     .innerJoin(t.listings, eq(t.listings.id, t.offers.listingId))
     .where(eq(t.offers.id, id));
   if (!row) return c.json({ error: 'That offer is not there any more.' }, 404);
-  const { offer, ownerId, title } = row;
+  const { offer, ownerId, storeId, title } = row;
+  // The listing's poster answers, or anyone running the store it is posted
+  // as; the sender withdraws, or anyone running the store it was sent as.
+  const answers = ownerId === person.id || (storeId !== null && (await isMember(person.id, storeId)));
+  const sent =
+    offer.fromPersonId === person.id ||
+    (offer.fromStoreId !== null && (await isMember(person.id, offer.fromStoreId)));
 
   if (next === 'withdrawn') {
-    if (offer.fromPersonId !== person.id) return c.json({ error: 'Only the one who sent it can withdraw it.' }, 403);
+    if (!sent) return c.json({ error: 'Only the one who sent it can withdraw it.' }, 403);
     if (offer.state === 'withdrawn') return c.json({ error: 'It is already withdrawn.' }, 409);
   } else if (next === 'pending') {
     // Taking an answer back: the owner's undo.
-    if (ownerId !== person.id) return c.json({ error: 'Only the listing owner can change the answer.' }, 403);
+    if (!answers) return c.json({ error: 'Only the listing owner can change the answer.' }, 403);
     const recent = offer.answeredAt !== null && Date.now() - offer.answeredAt.getTime() < 60 * 1000;
     if (!(offer.state === 'declined' || (offer.state === 'accepted' && recent))) {
       return c.json({ error: 'That answer cannot be taken back now.' }, 409);
     }
   } else {
-    if (ownerId !== person.id) return c.json({ error: 'Only the listing owner can answer it.' }, 403);
+    if (!answers) return c.json({ error: 'Only the listing owner can answer it.' }, 403);
     if (offer.state !== 'pending') return c.json({ error: 'That offer has already been answered.' }, 409);
   }
 
@@ -277,12 +303,59 @@ offerRoutes.openapi(change, async (c) => {
     return changed!;
   });
   if (next === 'accepted' || next === 'declined') {
-    await notify(
-      offer.fromPersonId,
-      'offer-reply',
-      `${person.displayName || 'The owner'} ${next} your offer on the ${title}`,
-      '/me/offers',
-    );
+    // Answered for a store: the store's name, not the one who answered.
+    const [store] = storeId
+      ? await db.select({ name: t.stores.name }).from(t.stores).where(eq(t.stores.id, storeId))
+      : [];
+    // Sent as a store: the store is told, in its console; else the sender.
+    const said = `${store?.name ?? (person.displayName || 'The owner')} ${next} your offer on the ${title}`;
+    if (offer.fromStoreId) await notifyStore(offer.fromStoreId, 'offer-reply', said, '/console/trade-ins');
+    else await notify(offer.fromPersonId, 'offer-reply', said, '/me/offers');
   }
   return c.json(offerOut(updated), 200);
+});
+
+/* --- a store's offers, for the Store console ------------------------------- */
+
+const storeOffers = createRoute({
+  method: 'get',
+  path: '/stores/{id}/offers',
+  tags: ['Offers'],
+  summary: 'A store\'s offers',
+  description:
+    'Offers on the store\'s listings, and offers sent as the store, newest first, whatever became of them, with the listings they are on. Its owner and staff only, while a store pass covers now.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: {
+      description: 'The store\'s offers',
+      content: {
+        'application/json': {
+          schema: z.object({ offers: z.array(OfferSchema), listings: z.array(ListingSchema) }),
+        },
+      },
+    },
+    401: errors[401],
+    402: { description: 'No store pass covers now', content: { 'application/json': { schema: ErrorSchema } } },
+    403: errors[403],
+  },
+});
+
+offerRoutes.openapi(storeOffers, async (c) => {
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if (!(await isMember(person.id, id))) {
+    return c.json({ error: 'Only the store\'s owner and staff can see its offers.' }, 403);
+  }
+  if (!(await paidUntil(id))) return c.json({ error: 'The Store console needs a store pass.', code: 'pass' }, 402);
+  const stock = db.select({ id: t.listings.id }).from(t.listings).where(eq(t.listings.storeId, id));
+  const rows = await db
+    .select()
+    .from(t.offers)
+    .where(or(eq(t.offers.fromStoreId, id), inArray(t.offers.listingId, stock)))
+    .orderBy(desc(t.offers.createdAt));
+  const ids = [...new Set(rows.map((row) => row.listingId))];
+  const listings = ids.length ? await loadListings(inArray(t.listings.id, ids), 500) : [];
+  return c.json({ offers: rows.map(offerOut), listings }, 200);
 });

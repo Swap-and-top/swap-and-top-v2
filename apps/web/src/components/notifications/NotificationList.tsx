@@ -42,12 +42,15 @@ const ICON: Record<NotificationKind, React.ReactNode> = {
 
 export function NotificationList({
   audience,
+  storeId,
 }: {
   audience: NotificationAudience;
+  /** On a store's list: which store's. */
+  storeId?: string;
 }) {
   const readIds = useNotificationStore((state) => state.readIds);
   const markRead = useNotificationStore((state) => state.markRead);
-  const list = useNotifications(audience);
+  const list = useNotifications(audience, storeId);
 
   if (list.length === 0) {
     return (
@@ -98,9 +101,9 @@ export function NotificationList({
 }
 
 /** "Mark all as read", or nothing to do when every one is read. */
-export function useMarkAllRead(audience: NotificationAudience) {
+export function useMarkAllRead(audience: NotificationAudience, storeId?: string) {
   const readIds = useNotificationStore((state) => state.readIds);
   const markAllRead = useNotificationStore((state) => state.markAllRead);
-  const unread = useNotifications(audience).some((n) => isUnread(n, readIds));
-  return { unread, markAllRead: () => markAllRead(audience) };
+  const unread = useNotifications(audience, storeId).some((n) => isUnread(n, readIds));
+  return { unread, markAllRead: () => markAllRead(audience, storeId) };
 }

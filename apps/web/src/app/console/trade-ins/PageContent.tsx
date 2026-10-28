@@ -10,25 +10,32 @@
  * starts with the listing in brief, its offers under it. Accepting shows the
  * other side's contact ways; the deal is finished in person, as every deal
  * is.
+ *
+ * From the API (GET /api/stores/{id}/offers), for the store the console is
+ * open for. The offers join the app's offer store, so accepting, declining
+ * and withdrawing work as they do on the profile's page, saved through the
+ * API.
  */
 
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import {
   currentStore,
-  getStoreListings,
-  mockUsers,
+  getListing,
   newLeadCount,
+  rememberListings,
   takesOffers,
   useConsoleStore,
   useOfferStore,
+  viewerId,
   type ConsoleOffersTab,
+  type Listing,
+  type Offer,
   type OfferableListing,
 } from '@snt/core';
-import { ConsoleShell, Tabs, type TabItem } from '@snt/ui';
-import {
-  OfferGroups,
-  madeGroups,
-  receivedGroups,
-} from '@/components/offers/OfferGroups';
+import { ConsoleShell, Tabs, useConsoleTarget, type TabItem } from '@snt/ui';
+import { OfferGroups, receivedGroups } from '@/components/offers/OfferGroups';
+import { apiAsViewer } from '@/lib/supabase';
 import styles from './page.module.css';
 
 const TABS: TabItem<ConsoleOffersTab>[] = [
@@ -36,32 +43,74 @@ const TABS: TabItem<ConsoleOffersTab>[] = [
   { value: 'sent', label: 'Sent' },
 ];
 
-/** The store's own account: its offers are made from it, and its stock is
-    read as its own. */
-const storeUserId =
-  mockUsers.find((user) => user.storeId === currentStore.id)?.id ?? '';
+/** Offers sent as the store, by the listing each went to. */
+function sentGroups(offers: Offer[], storeId: string) {
+  const groups: { listing: OfferableListing; offers: Offer[] }[] = [];
+  for (const offer of offers) {
+    if (offer.fromStoreId !== storeId) continue;
+    const listing = getListing(offer.listingId);
+    if (!listing || !takesOffers(listing)) continue;
+    const group = groups.find((entry) => entry.listing.id === listing.id);
+    if (group) group.offers.push(offer);
+    else groups.push({ listing, offers: [offer] });
+  }
+  return groups;
+}
 
 export default function ConsoleOffersPage() {
-  const offers = useOfferStore((store) => store.offers);
+  const store = useConsoleTarget() ?? currentStore;
+  const offers = useOfferStore((state) => state.offers);
   const tab = useConsoleStore((state) => state.offersTab);
   const setTab = useConsoleStore((state) => state.setOffersTab);
+  /** The store's own listings among those its offers are on. */
+  const [stock, setStock] = useState<OfferableListing[] | null>(null);
 
-  const stock = getStoreListings(currentStore.id).filter(
-    (listing): listing is OfferableListing => takesOffers(listing),
-  );
-  const received = receivedGroups(offers, stock);
-  const sent = madeGroups(offers, storeUserId);
+  useEffect(() => {
+    let gone = false;
+    void apiAsViewer<{ offers: Offer[]; listings: Listing[] }>(
+      `/stores/${encodeURIComponent(store.id)}/offers`,
+      { method: 'GET' },
+    ).then(({ data, error }) => {
+      if (gone) return;
+      if (error || !data) {
+        toast.error(error ?? 'We could not load the offers.');
+        setStock([]);
+        return;
+      }
+      // Found by id wherever an offer card looks its listing up.
+      rememberListings(data.listings);
+      // Joined with the person's own, each offer once.
+      useOfferStore.setState((state) => ({
+        offers: [
+          ...data.offers,
+          ...state.offers.filter((offer) => !data.offers.some((o) => o.id === offer.id)),
+        ],
+      }));
+      setStock(
+        data.listings.filter(
+          (listing): listing is OfferableListing =>
+            listing.storeId === store.id && takesOffers(listing),
+        ),
+      );
+    });
+    return () => {
+      gone = true;
+    };
+  }, [store.id]);
+
+  const received = receivedGroups(offers, stock ?? []);
+  const sent = sentGroups(offers, store.id);
   const waiting = received
     .flatMap((group) => group.offers)
     .filter((offer) => offer.state === 'pending').length;
+  const me = viewerId() ?? '';
 
   return (
     <ConsoleShell
-      store={currentStore}
+      store={store}
       title="Offers"
-      meta={`${waiting} waiting for a reply`}
+      meta={stock === null ? ' ' : `${waiting} waiting for a reply`}
       newLeadCount={newLeadCount}
-      stockCount={getStoreListings(currentStore.id).length}
       actions={
         <div className={styles.tabs}>
           <Tabs
@@ -75,18 +124,18 @@ export default function ConsoleOffersPage() {
       }
     >
       <div className={styles.column}>
-        {tab === 'sent' ? (
+        {stock === null ? null : tab === 'sent' ? (
           <OfferGroups
             groups={sent}
             view="made"
-            viewerId={storeUserId}
+            viewerId={me}
             none="No offers sent yet. Send one from Leads, on any request that matches your stock."
           />
         ) : (
           <OfferGroups
             groups={received}
             view="received"
-            viewerId={storeUserId}
+            viewerId={me}
             none="No offers yet. Buyers can make an offer on any item marked negotiable or “Swaps accepted”, straight from the listing."
           />
         )}

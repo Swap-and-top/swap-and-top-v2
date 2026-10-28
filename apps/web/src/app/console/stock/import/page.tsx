@@ -7,7 +7,8 @@
  * and load it. Two steps, each a white card: bring the list in (a CSV file,
  * or rows pasted straight from a spreadsheet), then check what will come in
  * before importing it. Rows with a price go live; rows without one wait as
- * drafts; rows without a name are skipped, and say so.
+ * drafts; rows without a name are skipped, and say so. The list is added
+ * as the store in one go (POST /api/stores/{id}/stock/import).
  */
 
 import { useRef, useState } from 'react';
@@ -18,12 +19,19 @@ import {
   CONDITION_LABELS,
   currentStore,
   newLeadCount,
-  newStockListing,
-  useStoreStock,
-  useStockStore,
 } from '@snt/core';
-import { Badge, Button, ButtonLink, ConsoleShell, startPageLoad } from '@snt/ui';
+import {
+  Badge,
+  Button,
+  ButtonLink,
+  ConsoleShell,
+  startPageLoad,
+  useConsoleTarget,
+} from '@snt/ui';
 import { DownloadIcon, UploadIcon } from '@snt/ui/icons';
+import { refreshStorePass } from '@/lib/refresh';
+import { apiAsViewer } from '@/lib/supabase';
+import { useConsoleStock } from '../useConsoleStock';
 import { readStockList, TEMPLATE, type ImportRow } from './readStockList';
 import styles from './page.module.css';
 
@@ -35,8 +43,8 @@ const RESULT = {
 
 export default function BulkImportPage() {
   const router = useRouter();
-  const stock = useStoreStock(currentStore.id);
-  const addStock = useStockStore((state) => state.addStock);
+  const store = useConsoleTarget() ?? currentStore;
+  const stock = useConsoleStock(store.id) ?? [];
 
   const [pasted, setPasted] = useState('');
   const [source, setSource] = useState<string | null>(null);
@@ -94,9 +102,31 @@ export default function BulkImportPage() {
 
   const [importing, setImporting] = useState(false);
 
-  function importRows() {
+  async function importRows() {
     setImporting(true);
-    addStock(coming.map((row) => newStockListing(currentStore, row.stock)));
+    const { error } = await apiAsViewer<{ live: number; drafts: number }>(
+      `/stores/${encodeURIComponent(store.id)}/stock/import`,
+      {
+        method: 'POST',
+        body: {
+          rows: coming.map(({ stock: row }) => ({
+            title: row.title,
+            category: row.category,
+            condition: row.condition,
+            price: row.price,
+            quantity: row.quantity,
+            specs: row.specs,
+          })),
+        },
+      },
+    );
+    if (error) {
+      setImporting(false);
+      toast.error(error);
+      return;
+    }
+    // The feed and the store's page show the new stock at once.
+    await refreshStorePass(store.slug);
     toast.success(
       `${coming.length} ${coming.length === 1 ? 'item' : 'items'} added to your stock.`,
     );
@@ -106,7 +136,7 @@ export default function BulkImportPage() {
 
   return (
     <ConsoleShell
-      store={currentStore}
+      store={store}
       title="Bulk import"
       meta="Bring in the list you already keep"
       newLeadCount={newLeadCount}
@@ -262,7 +292,7 @@ export default function BulkImportPage() {
               block
               disabled={coming.length === 0}
               loading={importing}
-              onClick={importRows}
+              onClick={() => void importRows()}
             >
               {coming.length === 0
                 ? 'Nothing to import'

@@ -8,7 +8,7 @@
  */
 
 import { currentStore, newLeadCount } from '@snt/core';
-import { Button, ConsoleShell } from '@snt/ui';
+import { Button, ConsoleShell, useConsoleTarget } from '@snt/ui';
 import {
   NotificationList,
   useMarkAllRead,
@@ -16,11 +16,13 @@ import {
 import styles from './page.module.css';
 
 export default function ConsoleNotificationsPage() {
-  const { unread, markAllRead } = useMarkAllRead('store');
+  // The store the console is open for: its own notifications only.
+  const store = useConsoleTarget() ?? currentStore;
+  const { unread, markAllRead } = useMarkAllRead('store', store.id);
 
   return (
     <ConsoleShell
-      store={currentStore}
+      store={store}
       title="Notifications"
       meta="Everything for your store, newest first"
       newLeadCount={newLeadCount}
@@ -38,7 +40,7 @@ export default function ConsoleNotificationsPage() {
       }
     >
       <div className={styles.column}>
-        <NotificationList audience="store" />
+        <NotificationList audience="store" storeId={store.id} />
       </div>
     </ConsoleShell>
   );

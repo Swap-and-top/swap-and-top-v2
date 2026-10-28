@@ -17,6 +17,7 @@ import { RequestDetail } from '@/components/listing/RequestDetail';
 import { SaleDetail } from '@/components/listing/SaleDetail';
 import { SwapDetail } from '@/components/listing/SwapDetail';
 import { slowDown } from '@/components/slowDown';
+import { ViewRecorder } from '@/components/ViewRecorder';
 import { feedListings, listingFor } from '@/lib/listings';
 
 /** Built ahead for every live listing, kept for a minute; a listing newer
@@ -67,13 +68,30 @@ export default async function ListingPage({
 
   if (!listing) notFound();
 
+  // Each opening counts as a view, for the owner's Stats.
+  const viewed = <ViewRecorder listingId={listing.id} />;
   switch (listing.type) {
     case 'sale':
-      return <SaleDetail listing={listing} />;
+      return (
+        <>
+          {viewed}
+          <SaleDetail listing={listing} />
+        </>
+      );
     case 'swap':
-      return <SwapDetail listing={listing} />;
+      return (
+        <>
+          {viewed}
+          <SwapDetail listing={listing} />
+        </>
+      );
     case 'request':
-      return <RequestDetail listing={listing} />;
+      return (
+        <>
+          {viewed}
+          <RequestDetail listing={listing} />
+        </>
+      );
     case 'auction':
       // Deferred — see docs/features/auctions.md.
       notFound();

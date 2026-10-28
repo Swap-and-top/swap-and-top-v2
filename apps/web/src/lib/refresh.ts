@@ -13,6 +13,13 @@ export async function refreshListing(slug: string) {
   revalidatePath(`/listing/${slug}`);
 }
 
+/** After a store pass is bought (listings its last lapse paused are live
+    again) or a list of stock is imported: the feed and the store's page. */
+export async function refreshStorePass(slug: string) {
+  revalidatePath('/');
+  revalidatePath(`/store/${slug}`);
+}
+
 /** After a store is opened: its page is built on its first visit. */
 export async function refreshStore(slug: string) {
   revalidatePath(`/store/${slug}`);

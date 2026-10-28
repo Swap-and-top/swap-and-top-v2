@@ -24,6 +24,8 @@ export type NotificationKind =
 export interface AppNotification {
   id: string;
   audience: NotificationAudience;
+  /** The store it is for, on a store's; each store's console shows its own. */
+  storeId?: string;
   kind: NotificationKind;
   /** One short line, in plain words. */
   text: string;

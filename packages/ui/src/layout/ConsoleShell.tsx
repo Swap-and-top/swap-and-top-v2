@@ -33,6 +33,7 @@ import { NotificationBell } from './NotificationBell';
 import { StoreMark } from '../primitives/Placeholder';
 import { Bone } from '../primitives/Skeleton';
 import { ScreenTitle } from '../primitives/Text';
+import { useConsoleTarget } from './ConsoleTarget';
 import styles from './ConsoleShell.module.css';
 
 interface ConsoleNavItem {
@@ -47,7 +48,7 @@ interface ConsoleNavItem {
 }
 
 export function ConsoleShell({
-  store,
+  store: fallback,
   title,
   meta,
   actions,
@@ -66,6 +67,9 @@ export function ConsoleShell({
   stockCount?: number;
   children: ReactNode;
 }) {
+  // The store the console's gate opened it for; the page's own (the mock
+  // store) only outside the gate, as on the reference pages.
+  const store = useConsoleTarget() ?? fallback;
   const pathname = usePathname();
   const collapsed = useConsoleStore((state) => state.sidebarCollapsed);
   const toggleSidebar = useConsoleStore((state) => state.toggleSidebar);
@@ -135,7 +139,7 @@ export function ConsoleShell({
       phone (it has five), but a bell in the header, and on a laptop a link
       at the top of the sidebar. */
   const notificationsHref = '/console/notifications';
-  const unread = useUnreadCount('store');
+  const unread = useUnreadCount('store', store.id);
   const onNotifications = isActive(notificationsHref);
   /** The section this page is in: its icon heads the page. */
   const section = onNotifications
@@ -252,7 +256,7 @@ export function ConsoleShell({
             laptop, the size of the marketplace's Post New Item. The store as
             buyers see it is under Store. */}
         {/* The store's notifications, a bell with its unread count. */}
-        <NotificationBell audience="store" href={notificationsHref} />
+        <NotificationBell audience="store" href={notificationsHref} storeId={store.id} />
         <Link href="/" className={styles.headerLink}>
           Back to marketplace
         </Link>

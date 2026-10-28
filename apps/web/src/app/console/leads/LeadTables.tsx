@@ -45,6 +45,14 @@ function dealHint(stage: DealStage, days: number): string {
   }
 }
 
+/** How each way reads in the table. */
+const WAY_LABEL: Record<NumberReveal['way'], string> = {
+  whatsapp: 'WhatsApp',
+  call: 'Call',
+  email: 'Email',
+  messenger: 'Messenger',
+};
+
 /** The stage, once the store has answered: yes confirms it (they said yes
     first), no closes it; not yet leaves it asked. */
 function stageOf(reveal: NumberReveal, answers: Record<string, string>): DealStage {
@@ -71,7 +79,10 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
       </div>
 
       {reveals.map((reveal) => {
-        const user = getUser(reveal.userId);
+        // Named by the API once they may be; the sample data by its id.
+        const user = reveal.name
+          ? { displayName: reveal.name, confirmedDeals: reveal.confirmedDeals ?? 0 }
+          : getUser(reveal.userId);
         const listing = getListing(reveal.listingId);
         const stage = stageOf(reveal, answers);
         /** Who it was, only once they say a deal went through: until then
@@ -79,21 +90,30 @@ export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
         const named = stage !== 'waiting';
         const name = named
           ? (user?.displayName ?? 'Someone')
-          : `Someone in ${reveal.area}`;
+          : reveal.guest
+            ? 'A guest'
+            : `Someone in ${reveal.area || 'Harare'}`;
         const item =
           listing && listing.type === 'sale' ? listing.item.name : listing?.title;
         const price =
           listing && listing.type === 'sale' && listing.price > 0
             ? listing.price
             : undefined;
-        const way = reveal.way === 'whatsapp' ? 'WhatsApp' : 'Call';
+        const way = WAY_LABEL[reveal.way];
         const deal = DEAL_BADGE[stage];
-        const hint = dealHint(stage, reveal.daysToAsk ?? 3);
-        const dealLabel =
-          stage === 'waiting'
+        // A guest is never asked: no deal check to wait for.
+        const hint = reveal.guest
+          ? 'They were not signed in, so nobody is asked whether a deal happened.'
+          : dealHint(stage, reveal.daysToAsk ?? 3);
+        const days = reveal.daysToAsk ?? 3;
+        const dealLabel = reveal.guest
+          ? 'No deal check'
+          : stage === 'waiting'
             ? // When we will ask them whether they bought it, worded as the
               // column and the store's own check are: a deal check.
-              `Deal check in ${reveal.daysToAsk ?? 3} days`
+              days === 0
+              ? 'Deal check today'
+              : `Deal check in ${days} ${days === 1 ? 'day' : 'days'}`
             : deal.label;
 
         return (
