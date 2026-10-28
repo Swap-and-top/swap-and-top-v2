@@ -1,10 +1,11 @@
 'use client';
 
 /**
- * Edit store details: what an owner changes freely (docs/product/
- * accounts-and-stores.md), the description, opening hours and area. The name
- * and web address are not here; changing them pauses the Verified store
- * badge, which comes later. Reached from Me and the console's Store profile.
+ * Edit store details (docs/product/accounts-and-stores.md): the name, the
+ * store's phone number, the description, opening hours and area. A new name
+ * shows "formerly …" under it on the store page for 30 days. The phone number
+ * is for calls and WhatsApp; empty, the owner's own is used. The web address
+ * does not change. Reached from Me and the console's Store profile.
  * Staff and others are told it is the owner's.
  *
  * At its foot, Close store, with a check first: its page and listings come
@@ -34,6 +35,7 @@ import {
 } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
 import { apiAsViewer, fetchViewer, supabase } from '@/lib/supabase';
+import { VerifyPanel } from './VerifyPanel';
 import styles from './page.module.css';
 
 const TOWN_OPTIONS = TOWNS.map((town) => ({ value: town, label: town }));
@@ -55,6 +57,20 @@ export default function EditStorePage({ slug }: { slug: string }) {
   const mine = useSessionStore((state) => state.viewer?.stores.find((store) => store.slug === slug));
   const [loaded, setLoaded] = useState(false);
   const [name, setName] = useState('');
+  /** As loaded, for the "formerly" note and the close sheet. */
+  const [savedName, setSavedName] = useState('');
+  /** The name shown as "formerly …" after a rename: the one already
+      showing from a rename this month, else the name now. */
+  const [formerName, setFormerName] = useState('');
+  /** Verified store: a new name pauses it. */
+  const [verified, setVerified] = useState(false);
+  const [phone, setPhone] = useState('');
+  // The store's own number, once who they are has loaded.
+  const storeId = mine?.id;
+  const storePhone = mine?.phone ?? '';
+  useEffect(() => {
+    if (storeId) setPhone(storePhone);
+  }, [storeId, storePhone]);
   const [description, setDescription] = useState('');
   const [hours, setHours] = useState('');
   const [area, setArea] = useState('');
@@ -67,10 +83,23 @@ export default function EditStorePage({ slug }: { slug: string }) {
     let gone = false;
     void fetch(`/api/stores/${encodeURIComponent(slug)}`)
       .then((response) => (response.ok ? response.json() : null))
-      .then((store: { name: string; description: string; openingHours: string; location: string } | null) => {
+      .then(
+        (
+          store: {
+            name: string;
+            formerName?: string;
+            verified: boolean;
+            description: string;
+            openingHours: string;
+            location: string;
+          } | null,
+        ) => {
         if (gone || !store) return;
         const place = splitPlace(store.location);
         setName(store.name);
+        setSavedName(store.name);
+        setFormerName(store.formerName ?? store.name);
+        setVerified(store.verified);
         setDescription(store.description);
         setHours(store.openingHours);
         setArea(place.area);
@@ -86,6 +115,10 @@ export default function EditStorePage({ slug }: { slug: string }) {
   async function save(event: FormEvent) {
     event.preventDefault();
     if (!mine) return;
+    if (name.trim().length < 2) {
+      toast.error('Enter the store’s name.');
+      return;
+    }
     if (!area.trim()) {
       toast.error('Enter the store’s neighbourhood.');
       return;
@@ -93,13 +126,23 @@ export default function EditStorePage({ slug }: { slug: string }) {
     setBusy(true);
     const { error } = await apiAsViewer(`/stores/${encodeURIComponent(mine.id)}`, {
       method: 'PATCH',
-      body: { description: description.trim(), openingHours: hours.trim(), location: `${area.trim()}, ${town}` },
+      body: {
+        name: name.trim(),
+        phone: phone.trim(),
+        description: description.trim(),
+        openingHours: hours.trim(),
+        location: `${area.trim()}, ${town}`,
+      },
     });
     if (error) {
       setBusy(false);
       toast.error(error);
       return;
     }
+    // A new name shows on Me and in the console at once.
+    const { data: session } = await supabase.auth.getSession();
+    const token = session.session?.access_token;
+    if (token) useSessionStore.setState({ viewer: await fetchViewer(token) });
     await refreshStore(slug);
     toast.success('Store details saved');
     startPageLoad();
@@ -120,12 +163,17 @@ export default function EditStorePage({ slug }: { slug: string }) {
     const token = session.session?.access_token;
     if (token) useSessionStore.setState({ viewer: await fetchViewer(token) });
     await refreshStore(slug);
-    toast.success(`${name} is closed`);
+    toast.success(`${savedName} is closed`);
     startPageLoad();
     router.push('/me');
   }
 
   const owner = mine?.role === 'owner';
+  /** The owner's own number, "077 123 4567", for "we will call you". */
+  const ownerPhone = useSessionStore((state) => {
+    const phone = state.viewer?.phone;
+    return phone ? `0${phone.slice(4, 6)} ${phone.slice(6, 9)} ${phone.slice(9)}` : undefined;
+  });
 
   return (
     <Screen>
@@ -142,7 +190,29 @@ export default function EditStorePage({ slug }: { slug: string }) {
               <Panel padded>
                 <form onSubmit={save}>
                   <Stack gap={5}>
-                    <p className={styles.lead}>{name}, as buyers see it on its page.</p>
+                    <p className={styles.lead}>{savedName}, as buyers see it on its page.</p>
+                    <Field
+                      label="Store name"
+                      placeholder="e.g. Kopje Computers"
+                      maxLength={60}
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      hint={
+                        name.trim() !== savedName && name.trim() !== formerName
+                          ? `Your store page will show “formerly ${formerName}” for 30 days.${
+                              verified ? ' Verified store pauses until we check again.' : ''
+                            }`
+                          : undefined
+                      }
+                    />
+                    <Field
+                      label="Store phone number"
+                      placeholder="e.g. 077 123 4567"
+                      inputMode="tel"
+                      value={phone}
+                      onChange={(event) => setPhone(event.target.value)}
+                      hint="For calls and WhatsApp. Leave it empty to use your own number."
+                    />
                     <label className={styles.field}>
                       <span className={styles.label}>About the store</span>
                       <textarea
@@ -182,16 +252,17 @@ export default function EditStorePage({ slug }: { slug: string }) {
                 </form>
               </Panel>
             ) : null}
+            {owner && loaded && mine ? <VerifyPanel storeId={mine.id} phone={ownerPhone} /> : null}
             {owner && loaded ? (
               <Button variant="secondary" block className={styles.close} onClick={() => setClosing(true)}>
                 Close store
               </Button>
             ) : null}
             {closing ? (
-              <Sheet narrow title={`Close ${name}`} onClose={() => setClosing(false)}>
+              <Sheet narrow title={`Close ${savedName}`} onClose={() => setClosing(false)}>
                 <Stack gap={4}>
                   <p className={styles.lead}>
-                    Are you sure you want to close {name}? Its page and its listings come down
+                    Are you sure you want to close {savedName}? Its page and its listings come down
                     for everyone, staff lose access, and any store pass time left is lost. It
                     can’t be opened again. Your own account and listings stay as they are.
                   </p>

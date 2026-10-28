@@ -247,6 +247,7 @@ export default function ConsoleLeadsPage() {
                   canReach(lead, offers, store.id) ? (
                     <RevealAction
                       listingId={lead.demand.id}
+                      channels={lead.demand.contactChannels}
                       ownerId={lead.requester.id}
                       size="md"
                     />
@@ -407,6 +408,7 @@ export default function ConsoleLeadsPage() {
                       canReach(active, offers, store.id) ? (
                         <RevealAction
                           listingId={active.demand.id}
+                          channels={active.demand.contactChannels}
                           ownerId={active.requester.id}
                           block={false}
                           size="sm"

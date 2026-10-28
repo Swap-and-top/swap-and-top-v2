@@ -111,6 +111,52 @@
 }
 
 /* The count line over the table, in the blue. */
+/* The invitation to ask for Verified store: one pale line, its button at
+   the end; on a phone the button goes under the words. */
+.nudge {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  margin-bottom: var(--snt-space-6);
+  padding: var(--snt-space-5) var(--snt-space-6);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-card);
+}
+
+.nudgeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.nudgeText {
+  flex-grow: 1;
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.45;
+  color: var(--snt-accent-bold);
+}
+
+@media (max-width: 599px) {
+  .nudge {
+    flex-wrap: wrap;
+  }
+
+  .nudgeText {
+    flex-basis: calc(100% - 44px);
+  }
+
+  .nudge > a {
+    width: 100%;
+  }
+}
+
 .summary {
   margin-bottom: var(--snt-space-5);
   font-size: var(--snt-text-sm);

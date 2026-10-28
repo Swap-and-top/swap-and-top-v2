@@ -5,6 +5,8 @@
 **Status:** Decided
 **Read this if:** you are building staff tools, reporting, or anything involving account standing.
 
+> **Updated 2026-10-28:** "moderator" here means a **Trust and safety member** and "admin" a **Trust and safety lead** (P40). Reports, appeals and the rest live in the Staff console's Trust and safety sections; see [../product/staff-console.md](../product/staff-console.md).
+
 ---
 
 ## Overview

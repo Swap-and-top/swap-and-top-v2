@@ -114,6 +114,10 @@ export function StorefrontBody({
           <StoreMark initials={store.initials} size={56} />
           <div className={styles.headBody}>
             <h1 className={styles.name}>{store.name}</h1>
+            {/* For 30 days after a rename, so its record cannot be shed. */}
+            {store.formerName ? (
+              <p className={styles.former}>formerly {store.formerName}</p>
+            ) : null}
             {store.verified ? (
               <div className={styles.badgeRow}>
                 <VerifiedStoreBadge size="md" label="Verified store" />
@@ -151,7 +155,13 @@ export function StorefrontBody({
 
         {/* Two actions, half each. */}
         <div className={styles.actions}>
-          <RevealAction listingId={`store-${store.id}`} ownerId="u-kopje" />
+          {/* The store's own number, else its owner's: calls and WhatsApp. */}
+          <RevealAction
+            listingId={`store-${store.id}`}
+            ownerId="u-kopje"
+            storeId={store.id}
+            channels={['call', 'whatsapp']}
+          />
           <Button variant="secondary" size="lg" block>
             Follow
           </Button>

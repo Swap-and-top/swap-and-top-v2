@@ -72,7 +72,7 @@ function Gate({ children }: { children: ReactNode }) {
             description: '',
             location: '',
             openingHours: '',
-            verified: false,
+            verified: mine.verified ?? false,
             stockCount: 0,
             confirmedDeals: 0,
             replyHours: 1,

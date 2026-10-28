@@ -29,6 +29,20 @@
       "when": 1793166204000,
       "tag": "0003_low_master_chief",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793183627850,
+      "tag": "0004_windy_luckman",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793184826336,
+      "tag": "0005_ancient_justice",
+      "breakpoints": true
     }
   ]
 }

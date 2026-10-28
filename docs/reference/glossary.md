@@ -83,8 +83,13 @@
 | **Dealer** | A user with a shop attached and access to the console. A scope, not a rank. |
 | **Shop** | A dealer's public identity and the scope of their console. |
 | **Shopfront** | A shop's public, indexable page. |
-| **Moderator** | Staff who work the report queue and issue discipline. |
-| **Role cascade** | Higher roles include everything below them. A check asks "at least this level", never "exactly this role". |
+| **Moderator** | Until Phase 5: staff who work the report queue. From Phase 5 a **Trust and safety member** (P40). |
+| **Admin** | Until Phase 5: senior staff. From Phase 5 a **Trust and safety lead** (P40). |
+| **Super admin** | The platform's owner (Hillary). One of only two roles from Phase 5, with **user**. |
+| **Staff console** | Where our own team works: each person sees the sections of the departments they are in ([staff-console.md](../product/staff-console.md)). |
+| **Department** | Trust and safety, Sales, Finance, Marketing, DevOps, Executives or Board. Decides which Staff console sections a person sees. A person can be in several. |
+| **Member, lead** | A person's level in one department. A lead also does its bigger actions and adds or removes its members. |
+| **Role cascade** | Higher roles include everything below them. A check asks "at least this level", never "exactly this role". From Phase 5 staff checks ask for a department instead. |
 
 ---
 
@@ -93,7 +98,7 @@
 | Term | Means |
 | --- | --- |
 | **Phone verified** | Control of a phone number proven by one-time code. Free, automatic, required to post, and **never displayed as a badge**. |
-| **Verified dealer** | Business registration checked by staff. Paid, bundled with the console, and the **only badge on the platform**. |
+| **Verified dealer** | Now **Verified store**: business registration or a licence checked by staff, the **only badge on the platform**. Any store can ask, free or paid; a store pass does not need it, and no payment grants it (P38). |
 | **Verify businesses, not people** | The governing rule. A business has a registration number and makes public claims; a private individual's occupation is not the platform's concern. |
 | **Confirmed deal** | A deal both parties confirmed went through. The public trust signal for private sellers, earnable by anyone. |
 | **Deal confirmation** | The prompt sent a few days after an accepted offer (to both) or a signed in reveal (to the revealer, then the owner if they say yes), asking whether the deal went through. Not a review, and not a complaint channel. |

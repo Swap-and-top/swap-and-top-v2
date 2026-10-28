@@ -12,6 +12,12 @@
  * seller is asked only once they say yes (decision P27). Guests are asked
  * nothing.
  *
+ * The answer carries the seller's contact details, only once the checks
+ * pass, so numbers never sit in the page and cannot be collected in bulk:
+ * the poster's verified phone, or for a store's listing its own number (its
+ * owner's when it has none). Calls
+ * and WhatsApp, as the listing offers them, both on that number.
+ *
  * A store sees its reveals in Leads, Number reveals: who, only once they say
  * a deal happened; until then the area they are in.
  */
@@ -24,6 +30,7 @@ import { db } from '../db/client';
 import * as t from '../db/schema';
 import { loadListings } from '../listings';
 import { paidUntil } from '../passes';
+import { ContactSchema, contactForListing, contactOf, storePhone } from '../contact';
 import { ErrorSchema, ListingSchema } from '../schemas';
 import { personFor } from './me';
 import { isMember } from './post';
@@ -57,7 +64,14 @@ const record = createRoute({
     body: { content: { 'application/json': { schema: z.object({ way }) } } },
   },
   responses: {
-    201: { description: 'Recorded', content: { 'application/json': { schema: z.object({ recorded: z.boolean() }) } } },
+    201: {
+      description: 'Recorded, with how to reach the seller',
+      content: {
+        'application/json': { schema: z.object({ recorded: z.boolean(), contact: ContactSchema.nullable() }) },
+      },
+    },
+    401: { description: 'The seller shows their details to signed in users only', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Shown only once an offer is accepted', content: { 'application/json': { schema: ErrorSchema } } },
     404: { description: 'No such live listing', content: { 'application/json': { schema: ErrorSchema } } },
     429: { description: 'Over the daily limit', content: { 'application/json': { schema: ErrorSchema } } },
   },
@@ -71,7 +85,25 @@ revealRoutes.openapi(record, async (c) => {
   const [listing] = await db.select().from(t.listings).where(eq(t.listings.id, id));
   if (!listing || listing.status !== 'live') return c.json({ error: 'That listing is not there any more.' }, 404);
   // Your own listing: nothing to record.
-  if (person && person.id === listing.ownerId) return c.json({ recorded: false }, 201);
+  if (person && person.id === listing.ownerId) {
+    return c.json({ recorded: false, contact: await contactForListing(listing) }, 201);
+  }
+  // The seller's own rules on who sees their details.
+  if (listing.contactSignedInOnly && !person) {
+    return c.json({ error: 'This seller shows their contact details to signed in users only.', code: 'signin' }, 401);
+  }
+  if (listing.contactShownTo === 'offers') {
+    const [accepted] = person
+      ? await db
+          .select({ id: t.offers.id })
+          .from(t.offers)
+          .where(and(eq(t.offers.listingId, id), eq(t.offers.fromPersonId, person.id), eq(t.offers.state, 'accepted')))
+      : [];
+    if (!accepted) return c.json({ error: 'Contact details are shared once your offer is accepted.' }, 403);
+  }
+  // No number to give: nothing is recorded or counted.
+  const contact = await contactForListing(listing);
+  if (!contact) return c.json({ recorded: false, contact: null }, 201);
 
   const deviceHash = deviceHashOf(c.req.header('X-Device'), c.req.header('x-forwarded-for')?.split(',')[0]);
   const since = new Date(Date.now() - DAY);
@@ -136,7 +168,59 @@ revealRoutes.openapi(record, async (c) => {
       })
       .onConflictDoNothing();
   }
-  return c.json({ recorded: true }, 201);
+  return c.json({ recorded: true, contact }, 201);
+});
+
+/* --- a store's own number, from its page ----------------------------------- */
+
+const storeContact = createRoute({
+  method: 'post',
+  path: '/stores/{id}/contact',
+  tags: ['Stores'],
+  summary: 'Show a store\'s contact',
+  description:
+    'The store\'s own number, else its owner\'s, for calls and WhatsApp: the Show contacts button on its page. No sign in needed. Held to the same daily limit as reveals on listings; not recorded as one, since it is on no listing.',
+  middleware: [optionalAuth] as const,
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: {
+      description: 'How to reach the store',
+      content: { 'application/json': { schema: z.object({ contact: ContactSchema.nullable() }) } },
+    },
+    404: { description: 'No such open store', content: { 'application/json': { schema: ErrorSchema } } },
+    429: { description: 'Over the daily limit', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+revealRoutes.openapi(storeContact, async (c) => {
+  const { id } = c.req.valid('param');
+  const authUser = c.get('authUser');
+  const person = authUser ? await personFor(authUser) : null;
+  const [store] = await db
+    .select({ id: t.stores.id })
+    .from(t.stores)
+    .where(and(eq(t.stores.id, id), isNull(t.stores.closedAt)));
+  if (!store) return c.json({ error: 'That store is not there any more.' }, 404);
+
+  const deviceHash = deviceHashOf(c.req.header('X-Device'), c.req.header('x-forwarded-for')?.split(',')[0]);
+  const who = person ? eq(t.reveals.viewerId, person.id) : eq(t.reveals.deviceHash, deviceHash);
+  const [today] = await db
+    .select({ n: countDistinct(t.reveals.listingId) })
+    .from(t.reveals)
+    .where(and(who, gt(t.reveals.createdAt, new Date(Date.now() - DAY))));
+  const limit = person ? MEMBER_DAILY : GUEST_DAILY;
+  if ((today?.n ?? 0) >= limit) {
+    return c.json(
+      {
+        error: person
+          ? `You have seen ${limit} sellers’ details today, which is the daily limit. Try again tomorrow.`
+          : `You have seen ${limit} sellers’ details today, which is the limit without an account. Sign in to see more.`,
+        code: 'limit',
+      },
+      429,
+    );
+  }
+  return c.json({ contact: contactOf(await storePhone(id), ['call', 'whatsapp']) }, 200);
 });
 
 /* --- a store's reveals, for Leads ------------------------------------------ */

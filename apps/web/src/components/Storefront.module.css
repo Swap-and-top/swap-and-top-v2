@@ -33,6 +33,11 @@
   color: var(--snt-accent-bold);
 }
 
+.former {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-text-secondary);
+}
+
 .badgeRow {
   margin-top: var(--snt-space-1);
 }

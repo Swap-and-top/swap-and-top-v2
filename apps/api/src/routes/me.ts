@@ -119,6 +119,8 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
       slug: t.stores.slug,
       name: t.stores.name,
       role: t.storeMembers.role,
+      phone: t.stores.phone,
+      verifiedAt: t.stores.verifiedAt,
     })
     .from(t.storeMembers)
     .innerJoin(t.stores, eq(t.stores.id, t.storeMembers.storeId))
@@ -137,9 +139,23 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
     role: person.role,
     standing: person.standing,
     stores: await Promise.all(
-      rows.map(async (store) => {
-        const until = await paidUntil(store.id);
-        return until ? { ...store, paidUntil: dayMonth(until) } : store;
+      rows.map(async ({ phone, verifiedAt, ...store }) => {
+        const [until, [waiting]] = await Promise.all([
+          paidUntil(store.id),
+          db
+            .select({ id: t.verificationRequests.id })
+            .from(t.verificationRequests)
+            .where(and(eq(t.verificationRequests.storeId, store.id), eq(t.verificationRequests.state, 'pending')))
+            .limit(1),
+        ]);
+        return {
+          ...store,
+          verified: verifiedAt !== null,
+          verifyPending: Boolean(waiting),
+          ...(until ? { paidUntil: dayMonth(until) } : {}),
+          // Only its owner sees it here; buyers get it through Show contact.
+          ...(phone && store.role === 'owner' ? { phone: `0${phone.slice(4, 6)} ${phone.slice(6, 9)} ${phone.slice(9)}` } : {}),
+        };
       }),
     ),
   };

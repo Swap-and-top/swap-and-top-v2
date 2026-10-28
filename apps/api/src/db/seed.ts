@@ -32,6 +32,21 @@ const TEST_ACCOUNTS: Record<
   'u-ray': { phone: '+263770000009', role: 'admin' },
 };
 
+/**
+ * The other sample sellers' numbers, so Show contact on their listings has
+ * one to give. Test numbers in the same range; they cannot sign in.
+ */
+export const SAMPLE_PHONES: Record<string, string> = {
+  'u-tendai': '+263770000101',
+  'u-chipo': '+263770000102',
+  'u-farai': '+263770000103',
+  'u-rudo': '+263770000104',
+  'u-blessing': '+263770000105',
+  'u-nyasha': '+263770000106',
+  'u-samora': '+263770000107',
+  'u-msasa': '+263770000108',
+};
+
 /** People the mock data does not have: store staff and platform staff. */
 const EXTRA_PEOPLE = [
   { id: 'u-kuda', displayName: 'Kuda S.', location: 'Harare CBD' },
@@ -73,7 +88,7 @@ async function seed() {
   await db.insert(t.people).values([
     ...mockUsers.map((user) => ({
       id: user.id,
-      phone: TEST_ACCOUNTS[user.id]?.phone ?? null,
+      phone: TEST_ACCOUNTS[user.id]?.phone ?? SAMPLE_PHONES[user.id] ?? null,
       displayName: STORE_OWNER_NAMES[user.id] ?? user.displayName,
       role: TEST_ACCOUNTS[user.id]?.role ?? ('user' as const),
       standing: user.standing,

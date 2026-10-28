@@ -17,6 +17,7 @@ import { db } from '../db/client';
 import * as t from '../db/schema';
 import { loadListings } from '../listings';
 import { paidUntil } from '../passes';
+import { ContactSchema, contactForListing, contactOf, personPhone, storePhone } from '../contact';
 import { ErrorSchema, ListingSchema } from '../schemas';
 import { personFor } from './me';
 import { isMember } from './post';
@@ -46,6 +47,10 @@ const OfferSchema = z
     sentLabel: z.string(),
     /** Already in its listing's offer count (every offer that stands). */
     counted: z.boolean(),
+    /** Once accepted: how to reach the other side. The sender gets the
+        listing's seller; the listing's side gets the sender, on the ways
+        they chose for the offer. */
+    contact: ContactSchema.optional(),
   })
   .openapi('Offer');
 
@@ -57,6 +62,28 @@ function sentLabel(at: Date): string {
   if (hours < 24) return `${hours}h ago`;
   if (hours < 48) return 'Yesterday';
   return `${Math.floor(hours / 24)} days ago`;
+}
+
+/**
+ * The offer, and once it is accepted how to reach the other side: for its
+ * sender (`sentSide`), the listing's seller; for the listing's side, the
+ * sender (as a store: the store's number, else its owner's).
+ */
+async function offerWithContact(
+  row: typeof t.offers.$inferSelect,
+  sentSide: boolean,
+): Promise<z.infer<typeof OfferSchema>> {
+  const out = offerOut(row);
+  if (row.state !== 'accepted') return out;
+  let contact = null;
+  if (sentSide) {
+    const [listing] = await db.select().from(t.listings).where(eq(t.listings.id, row.listingId));
+    contact = listing ? await contactForListing(listing) : null;
+  } else {
+    const phone = row.fromStoreId ? await storePhone(row.fromStoreId) : await personPhone(row.fromPersonId);
+    contact = contactOf(phone, row.reachOn.length ? row.reachOn : ['call', 'whatsapp']);
+  }
+  return contact ? { ...out, contact } : out;
 }
 
 function offerOut(row: typeof t.offers.$inferSelect): z.infer<typeof OfferSchema> {
@@ -114,7 +141,8 @@ offerRoutes.openapi(mine, async (c) => {
     .from(t.offers)
     .where(or(eq(t.offers.fromPersonId, person.id), inArray(t.offers.listingId, theirs)))
     .orderBy(desc(t.offers.createdAt));
-  return c.json({ offers: rows.map(offerOut) }, 200);
+  const offers = await Promise.all(rows.map((row) => offerWithContact(row, row.fromPersonId === person.id)));
+  return c.json({ offers }, 200);
 });
 
 /* --- sending one ---------------------------------------------------------- */
@@ -312,7 +340,7 @@ offerRoutes.openapi(change, async (c) => {
     if (offer.fromStoreId) await notifyStore(offer.fromStoreId, 'offer-reply', said, '/console/trade-ins');
     else await notify(offer.fromPersonId, 'offer-reply', said, '/me/offers');
   }
-  return c.json(offerOut(updated), 200);
+  return c.json(await offerWithContact(updated, sent), 200);
 });
 
 /* --- a store's offers, for the Store console ------------------------------- */
@@ -357,5 +385,6 @@ offerRoutes.openapi(storeOffers, async (c) => {
     .orderBy(desc(t.offers.createdAt));
   const ids = [...new Set(rows.map((row) => row.listingId))];
   const listings = ids.length ? await loadListings(inArray(t.listings.id, ids), 500) : [];
-  return c.json({ offers: rows.map(offerOut), listings }, 200);
+  const offers = await Promise.all(rows.map((row) => offerWithContact(row, row.fromStoreId === id)));
+  return c.json({ offers, listings }, 200);
 });

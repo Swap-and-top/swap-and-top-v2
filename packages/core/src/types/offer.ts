@@ -48,6 +48,8 @@ export interface Offer {
    * Missing on older offers, which then use every way they have.
    */
   reachOn?: ContactWay[];
+  /** Once accepted, from the server: how to reach the other side. */
+  contact?: { phone: string; call: boolean; whatsapp: boolean };
   state: OfferState;
   /** Pre-formatted age, as on listings — see `ListingBase.postedLabel`. */
   sentLabel: string;

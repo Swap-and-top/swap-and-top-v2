@@ -33,6 +33,11 @@ export interface Viewer {
     role: 'owner' | 'staff';
     /** "10 Nov", while a store pass runs; missing for a free store. */
     paidUntil?: string;
+    /** The store's own number, for its owner; missing when it uses theirs. */
+    phone?: string;
+    /** Verified store, and whether a request for it is waiting. */
+    verified?: boolean;
+    verifyPending?: boolean;
   }[];
 }
 

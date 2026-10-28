@@ -26,6 +26,7 @@ This folder describes what gets built and why, at the level of screens, flows an
 
 - **[accounts-and-stores.md](./accounts-and-stores.md)** — people, free and paid stores, store passes, verification, settings
 - **[store-console.md](./store-console.md)** — the surface stores pay for (the Store console)
+- **[staff-console.md](./staff-console.md)** — our own team's console: roles, departments, member and lead, what each department sees
 - **[trust-and-safety.md](./trust-and-safety.md)** — verification, stolen devices, safe meeting, discipline
 
 ---

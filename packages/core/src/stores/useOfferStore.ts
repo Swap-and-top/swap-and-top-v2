@@ -191,8 +191,9 @@ export const useOfferStore = create<OfferStore>((set) => ({
 export interface OfferApi {
   /** Sends a new offer; resolves with it as saved. Rejects if refused. */
   send: (draft: OfferDraft) => Promise<Offer>;
-  /** Accepts, declines or withdraws one. Rejects if refused. */
-  change: (offerId: string, state: OfferState) => Promise<void>;
+  /** Accepts, declines or withdraws one; resolves with it as saved (once
+      accepted, with how to reach the other side). Rejects if refused. */
+  change: (offerId: string, state: OfferState) => Promise<Offer | void>;
 }
 
 let api: OfferApi | null = null;
@@ -245,7 +246,15 @@ export async function setOfferStateOptimistically(
   if (!previous || previous === next) return;
   setState(offerId, next);
   try {
-    await api?.change(offerId, next);
+    const saved = await api?.change(offerId, next);
+    // The server's copy: once accepted, it carries the other side's number.
+    if (saved) {
+      useOfferStore.setState((state) => ({
+        offers: state.offers.map((offer) =>
+          offer.id === offerId ? { ...offer, contact: saved.contact } : offer,
+        ),
+      }));
+    }
   } catch (error) {
     setState(offerId, previous);
     throw error;

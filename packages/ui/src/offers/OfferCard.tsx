@@ -22,6 +22,7 @@ import {
   getStore,
   getUser,
   setOfferStateOptimistically,
+  type ContactWays,
   type OfferableListing,
   type Offer,
   type OfferState,
@@ -115,8 +116,11 @@ export function OfferCard({
   }
 
   // The other person's ways: the owner's, as on the listing; the offerer's,
-  // as they chose for this offer from the ways on their account.
-  const otherWays = contactWaysFor(otherId);
+  // as they chose for this offer. Real ones from the server once accepted;
+  // the sample ones only for offers not in the database.
+  const otherWays: ContactWays = offer.contact
+    ? { phone: offer.contact.phone, call: offer.contact.call, whatsapp: offer.contact.whatsapp }
+    : contactWaysFor(otherId);
   const given = waysOffered(otherWays);
   const reachable = readerIsOwner && offer.reachOn
     ? given.filter((way) => offer.reachOn!.includes(way))

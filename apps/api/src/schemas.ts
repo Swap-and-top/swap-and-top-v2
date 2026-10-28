@@ -113,6 +113,8 @@ export const StoreSchema = z
     description: z.string(),
     location: z.string(),
     openingHours: z.string(),
+    /** Its name before a rename, for 30 days after. */
+    formerName: z.string().optional(),
     verified: z.boolean(),
     /** Live listings for sale or swap. */
     stockCount: z.number().int(),
@@ -151,6 +153,12 @@ export const MeSchema = z
         /** When its paid time ends ("10 Nov"), counting passes bought
             ahead; missing while it is a free store. */
         paidUntil: z.string().optional().openapi({ example: '10 Nov' }),
+        /** The store's own number ("077 123 4567"), for its owner only;
+            missing when it uses the owner's. */
+        phone: z.string().optional(),
+        /** Verified store, and whether a request for it is waiting. */
+        verified: z.boolean(),
+        verifyPending: z.boolean(),
       }),
     ),
   })

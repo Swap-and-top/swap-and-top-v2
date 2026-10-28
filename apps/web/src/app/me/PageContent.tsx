@@ -226,6 +226,20 @@ export default function MePage() {
               />
             )}
 
+            {/* Admins: the stores waiting for Verified store. */}
+            {viewer?.role === 'admin' || viewer?.role === 'super_admin' ? (
+              <>
+                <h2 className={styles.section}>For our team</h2>
+                <ListGroup>
+                  <ListRow
+                    href="/admin/verify"
+                    icon={<ShieldCheckIcon size={19} />}
+                    label="Verify stores"
+                  />
+                </ListGroup>
+              </>
+            ) : null}
+
             <h2 className={styles.section}>Account</h2>
             <ListGroup>
               <ListRow

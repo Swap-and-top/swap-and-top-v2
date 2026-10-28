@@ -47,7 +47,12 @@ export function waysOffered(ways: ContactWays): ContactWay[] {
   });
 }
 
-const digitsOf = (phone: string) => phone.replace(/\D/g, '');
+/** The number as links need it, with the country code: "077 123 4567" and
+    "+263 77 123 4567" both become 263771234567. */
+const digitsOf = (phone: string) => {
+  const digits = phone.replace(/\D/g, '');
+  return digits.startsWith('0') ? `263${digits.slice(1)}` : digits;
+};
 
 /** Where a way goes. WhatsApp can carry a first message, ready to send. */
 function hrefFor(way: ContactWay, ways: ContactWays, message?: string): string {

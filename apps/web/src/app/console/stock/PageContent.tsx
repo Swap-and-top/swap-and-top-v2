@@ -57,6 +57,7 @@ import { BoostedTab } from './BoostedTab';
 import { filterStock, filtersInUse } from './filterStock';
 import { StockFiltersSheet } from './StockFiltersSheet';
 import { useConsoleStock } from './useConsoleStock';
+import { VerifyNudge } from './VerifyNudge';
 import styles from './page.module.css';
 
 export default function ConsoleStockPage() {
@@ -331,6 +332,7 @@ export default function ConsoleStockPage() {
         />
       ) : (
         <>
+          <VerifyNudge />
           {/* What there is, just above the table. */}
           <p className={styles.summary}>{loaded === null ? '\u00a0' : summary}</p>
           <div className={styles.list}>

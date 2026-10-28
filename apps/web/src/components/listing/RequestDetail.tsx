@@ -174,6 +174,7 @@ export function RequestDetail({
                 <RevealAction
                   listingId={listing.id}
                   ownerId={listing.ownerId}
+                  channels={listing.contactChannels}
                   signedInOnly={listing.contactSignedInOnly}
                   block={false}
                 />

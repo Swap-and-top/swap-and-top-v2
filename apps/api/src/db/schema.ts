@@ -84,12 +84,51 @@ export const stores = pgTable('stores', {
   description: text().notNull().default(''),
   location: text().notNull(),
   openingHours: text().notNull().default(''),
+  /** For calls and WhatsApp, in the +263 form. Empty: the owner's number. */
+  phone: text(),
+  /** The name before the last change, shown as "formerly …" for 30 days
+      after `renamedAt`, so a record cannot be shed by renaming. */
+  formerName: text(),
+  renamedAt: timestamp({ withTimezone: true }),
   /** Set when staff have checked the business. Verified store badge. */
   verifiedAt: timestamp({ withTimezone: true }),
   createdAt: createdAt(),
   /** Closed by its owner. Its listings close with it. */
   closedAt: timestamp({ withTimezone: true }),
 }).enableRLS();
+
+/** What stands behind a store asking to be verified. */
+export const verificationKind = pgEnum('verification_kind', ['registered', 'informal']);
+export const verificationState = pgEnum('verification_state', ['pending', 'approved', 'declined']);
+
+/**
+ * A store owner's request for the Verified store badge, and what an admin
+ * decided (docs/product/accounts-and-stores.md, "Verification"). Approving
+ * sets the store's `verifiedAt`; a rename clears it, and the owner asks
+ * again.
+ */
+export const verificationRequests = pgTable(
+  'verification_requests',
+  {
+    id: id(),
+    storeId: text()
+      .notNull()
+      .references(() => stores.id),
+    requestedById: text()
+      .notNull()
+      .references(() => people.id),
+    kind: verificationKind().notNull(),
+    /** The registration number, or the council or market licence number. */
+    reference: text().notNull(),
+    state: verificationState().notNull().default('pending'),
+    /** Why it was declined, for the owner. */
+    note: text(),
+    decidedById: text().references(() => people.id),
+    decidedAt: timestamp({ withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index().on(t.storeId, t.createdAt), index().on(t.state)],
+).enableRLS();
 
 export const storeMemberRole = pgEnum('store_member_role', ['owner', 'staff']);
 

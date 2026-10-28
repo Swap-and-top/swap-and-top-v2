@@ -4,7 +4,9 @@ Written on 2026-10-22 to carry the work to a new Claude account, and
 brought up to date on 2026-10-26, 2026-10-27 (the second account change),
 twice more later on 2026-10-27, at the end of the long 2026-10-27
 backend session (Phases 1 to 3 and Phase 4 slice 1), and on 2026-10-28
-(slices 2 and 3: store passes and the Store console on real data). The
+(slices 2 and 3: store passes and the Store console on real data), and
+again at the end of 2026-10-28 (the rest of Phase 4, and the Staff
+console plan). The
 rules for working on this repo are in `/CLAUDE.md`; read that first. This
 file is the state of the code and the recent work. **Start with "Where we
 stopped" just below**, then `docs/architecture/backend-plan.md` ("Where it
@@ -12,8 +14,11 @@ stands") for the backend in full.
 
 ## Where we stopped (2026-10-28)
 
-**Done and committed:** Phases 1 to 3, and Phase 4 slices 1, 2 and 3. All
-of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
+**In one line:** Phases 1 to 4 are built and committed on
+`redesign/pdf-style` (ask before pushing it to `main`, which is live). The
+only Phase 4 piece left is real payment through Paynow, which waits on
+Hillary's merchant account. **Next is Phase 5, the Staff console** (item 8
+below; the full design is `docs/product/staff-console.md`).
 
 - **Slice 2, store passes:** a day ($1), week ($5) or month ($15) pass,
   bought as a test payment from Me or the limit message
@@ -34,7 +39,7 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
   belong to whoever is signed in, and the profile's Offers page sorts by
   the signed in person too.
 
-**Next, in order:**
+**Phase 4 after slice 3, in the order it was built:**
 
 1. **Slice 4, owner and staff (built 2026-10-28, `325827e`):**
    `GET`, `POST` and `DELETE /api/stores/{id}/members` (in
@@ -79,66 +84,107 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
    listings come down, staff lose access, pass time left is lost, and it
    cannot be opened again. The owner's account and personal listings stay.
    Tested in the browser as Kuda with a test store, then deleted.
-6. **NEXT SLICE: real contact numbers, the store's phone number, and
-   renaming a store.** Planned 2026-10-28 and agreed with Hillary in
-   outline; nothing built yet. Keep each part as simple as written here.
-   - **The gap found:** Show contact still gives every buyer a made up
-     number. `RevealAction` (`apps/web/src/components/RevealAction.tsx`)
-     calls `contactWaysFor(ownerId)` in
-     `packages/core/src/stores/useRevealStore.ts`, which returns
-     `PLACEHOLDER_NUMBERS` / `FALLBACK_NUMBER` and the mock `SAMPLE_WAYS`.
-     No real phone ever reaches a buyer. `POST /api/listings/{id}/reveals`
-     (`apps/api/src/routes/reveals.ts`) only records the reveal and checks
-     the daily limit.
-   - **Part 1, real numbers.** The reveal endpoint returns the contact
-     details after its checks pass (limit, signed in only, shown only after
-     an accepted offer), so numbers never sit in the page HTML and cannot
-     be collected in bulk. For a personal listing: the poster's verified
-     phone (`people.phone`). For a store listing: the store's phone, or the
-     owner's when the store has none. Which ways show still comes from the
-     listing's `contactChannels` (whatsapp, call, email, messenger); email
-     and messenger have no stored values yet, so offer only call and
-     WhatsApp from real data for now. `RevealAction` shows what the API
-     returns instead of `contactWaysFor`; keep the mock only for listings
-     that are not in the database. Show the number in the 077 123 4567
-     style. Seeded sample people already have test phones.
-   - **Part 2, the store's phone number.** One new text box on Edit store
-     details (`apps/web/src/app/store/[slug]/edit/PageContent.tsx`):
-     "Store phone number", empty with a faded "e.g. 077 123 4567"
-     placeholder, used for calls and WhatsApp. Empty means the owner's
-     number is used. Saved through `PATCH /api/stores/{id}` (owner only,
-     in `apps/api/src/routes/stores.ts`), checked with the same `toPhone`
-     rule as members. No separate WhatsApp number, email or Messenger yet.
-   - **Part 3, renaming a store.** A "Store name" box at the top of the
-     same form. Saving a new name keeps the old one: the store page and
-     its cards show "formerly {old name}" under the name for 30 days
-     after the change (decision P36 in
-     `docs/reference/decisions-log.md`, and the store table in
-     `docs/product/accounts-and-stores.md`), so a record cannot be shed by
-     renaming. The web address (`slug`) stays the same. Initials follow
-     the new name. Renaming again within the 30 days keeps the first
-     former name. Pausing the Verified badge on a rename comes later, with
-     Verified store requests.
-   - **The database change:** three new nullable columns on `stores` in
-     `apps/api/src/db/schema.ts`: `phone` (text, +263 form like
-     `people.phone`), `formerName` (text) and `renamedAt` (timestamp with
-     time zone). `pnpm --filter @snt/api db:generate` writes migration
-     0004; **ask Hillary before `db:migrate`**, since it changes the live
-     database. Nothing existing changes; the columns start empty.
-   - **Also update:** `GET /api/stores/{slug}` and the store loaders
-     (`apps/api/src/routes/stores.ts`, `apps/web/src/lib/stores.ts`) to
-     return `formerName` while it is within 30 days; the Store type in
-     `@snt/core` if needed; `refreshStore(slug)` after saving.
-   - **Test:** as Kuda (077 000 0004) on a "Test …" store: set a store
-     number, check Show contact on a store listing shows it and a
-     personal listing shows the poster's phone; rename and check
-     "formerly …"; then delete the test store and listings. Then update
-     this list, the backend plan and CLAUDE.md's next job line.
-7. **After that, the rest of Phase 4:** Verified store requests (best
-   alongside Phase 5's staff screens).
-8. **Phase 5, the report queue for staff** (tables `reports`,
-   `moderation_actions`, `appeals` exist). See the backend plan,
-   section 2.
+6. **Real contact numbers, the store's phone number, renaming a store
+   (built 2026-10-28):**
+   - `POST /api/listings/{id}/reveals` (`apps/api/src/routes/reveals.ts`)
+     now answers with `contact` (`{ phone: "077 123 4567", call,
+     whatsapp }`) once its checks pass: the poster's phone, or for a
+     store's listing the store's own number, else its owner's. It also
+     enforces the seller's rules (signed in only: 401 `code: 'signin'`;
+     after an accepted offer only: 403). With no number to give it
+     records nothing. `RevealAction` takes the listing's `channels` and
+     shows what the API returns (kept in `useRevealStore.contacts`); the
+     mock `contactWaysFor` is only for listings not in the database.
+     Email and Messenger have no stored values, so only Call and WhatsApp
+     show for database listings.
+   - The eight sample sellers had no phone; they now have test numbers
+     077 000 0101 to 0108 (`SAMPLE_PHONES` in `seed.ts`, set in the
+     database too). They cannot sign in.
+   - Edit store details has "Store name" and "Store phone number" (empty
+     means the owner's). `PATCH /api/stores/{id}` takes `name` and `phone`.
+     A new name keeps the old one as `formerName` for 30 days
+     (`renamedAt`), shown as "formerly …" under the name on the store
+     page; renaming again within them keeps the first; going back to the
+     old name clears it; initials follow. The slug never changes. The
+     store's number reaches its owner only through `/api/me` (stores'
+     `phone`), never the public store page.
+   - Migration `0004_windy_luckman.sql` (stores `phone`, `former_name`,
+     `renamed_at`) applied 2026-10-28 with Hillary's yes.
+   - **Every number is real now.** Who gets which number lives in one
+     place, `apps/api/src/contact.ts` (`contactForListing`, `storePhone`,
+     `personPhone`, `contactOf`). The store page's Show contacts calls
+     `POST /api/stores/{id}/contact` (no sign in; the same daily limit,
+     not recorded since it is on no listing) for the store's number,
+     else its owner's. Accepted offers carry `contact` from the API: the
+     sender gets the listing's seller, the listing's side gets the sender
+     (as a store: the store's number) on the ways they chose; accepting
+     keeps the server's copy, so the number shows at once. Links turn
+     077 numbers into 263 (`digitsOf` in `ui/contact/ContactWays.tsx`).
+     The mock `contactWaysFor` is left only for sample data not in the
+     database. "formerly …" shows on the store page only, not on listing
+     cards (their store names still come from the mock).
+7. **Verified store requests (built 2026-10-28),**
+   the simple version agreed with Hillary (`apps/api/src/routes/
+   verification.ts`, table `verification_requests`, migration
+   `0005_ancient_justice.sql` applied with her yes):
+   - The owner asks on Edit store details (`store/[slug]/edit/
+     VerifyPanel.tsx`): Registered business or Informal trader, and the
+     registration or licence number. One request waits at a time. The
+     panel then says our team will call them on their number.
+   - Admins (role admin or super admin) see "Verify stores" on Me, under
+     "For our team", which opens `/admin/verify`: each waiting request
+     with the store, owner, phone, kind, number and area, and Verify or
+     Decline (a reason is required). Verifying sets `stores.verifiedAt`
+     (the badge shows at once); the owner is told either way in their
+     notifications.
+   - A rename pauses the badge (`verifiedAt` cleared in `PATCH
+     /api/stores/{id}`); the panel then asks them to ask again, and the
+     name hint warns first.
+   - Not built: document photos (no uploads yet), the yearly check,
+     and pausing after upheld reports (with Phase 5). A store pass does
+     not need the badge (decision P38, 2026-10-28): paying and being
+     verified are separate. An owner of a store with a pass and no badge
+     sees a nudge on the console's Stock page to ask.
+   - Admin test accounts: Patrick M. 077 000 0008 (Tafadzwa's 0006 did
+     not sign in by script on 2026-10-28, likely a Supabase rate limit).
+8. **NEXT: Phase 5, the Staff console** (decided with Hillary 2026-10-28,
+   decisions P39 to P41; read `docs/product/staff-console.md` first, then
+   the backend plan's Phase 5 and section 2 on reports). In order:
+   - **The roles change (one migration, ask Hillary before
+     `db:migrate`):** a `staff_departments` table (person, department,
+     lead, added by, added at); departments `trust_safety`, `sales`,
+     `finance`, `marketing`, `devops`, `executives`, `board`. Move
+     moderators to Trust and safety members and admins to Trust and
+     safety leads (test accounts: Rumbi 0005 member; Tafadzwa 0006,
+     Patrick 0008, Ray 0009 leads); narrow `people.role` to `user` or
+     `super_admin` (Hillary 0007). Change every staff check to ask for a
+     department (and lead where needed), the super admin passing all;
+     `/admin/verify` and `routes/verification.ts` check for a Trust and
+     safety lead instead of admin. Update the seed to match.
+   - **The Staff console frame,** built like the Store console (the same
+     shell, sidebar on a laptop, tabs on a phone), opened from "For our
+     team" on Me (which today links to `/admin/verify`), showing only the
+     sections of the person's departments; the server checks every
+     request.
+   - **Team** (super admin; a lead for their own department): each staff
+     member once, a toggle per department, a Lead switch beside each
+     toggle that is on, "Add a person" by name or phone; every change
+     logged.
+   - **Trust and safety:** Report on listings (the button today only says
+     reporting is not available yet, `packages/ui/src/cards/CardActions.tsx`)
+     and on people; the Reports queue (claim, approve, change the reason,
+     clear; phone first); People (find anyone, their record, warn,
+     suspend, leads ban; members act only on ordinary users); Appeals
+     (leads); Verify stores moved in; the Activity log. Tables `reports`,
+     `moderation_actions` and `appeals` already exist.
+   - **Check:** report a listing as one test account, approve it as a
+     Trust and safety member, see the warning arrive; toggle a department
+     for a person on Team and see their console change.
+9. **Phase 6:** Executives Overview, Board monthly summary, Finance,
+   Sales (owners' phone numbers allowed). Agree business definitions
+   (what counts as active, as value swapped) with Hillary first.
+10. **Phase 7:** Marketing and DevOps, after recording traffic sources,
+    searches and errors.
 
 **Waiting on the owner (Hillary):**
 
@@ -156,7 +202,7 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
 
 **Good to know before starting:**
 
-- Migrations `0001` to `0003` are applied to the shared database. A new
+- Migrations `0001` to `0005` are applied to the shared database. A new
   one is made with `db:generate`; running `db:migrate` changes the live
   database, so ask the owner first.
 - Real payment waits on a Paynow merchant account; every payment is a test

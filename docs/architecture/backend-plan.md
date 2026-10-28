@@ -9,10 +9,10 @@
 
 ## The short version
 
-1. **Roles and stores are two separate things.** A role says what someone may do *on the platform* (user, moderator, admin, super admin). Stores are something a person *runs*, with their own owner and staff. Person, free store and paid store are not roles.
+1. **Roles, departments and stores are separate things.** A role is only *user* or *super admin*. What our own staff may see and do comes from the **departments** they are in (Trust and safety, Sales, Finance, Marketing, DevOps, Executives, Board), each as member or lead (decided 2026-10-28, see [../product/staff-console.md](../product/staff-console.md)). Stores are something a person *runs*, with their own owner and staff. Person, free store and paid store are not roles.
 2. **Roles and reports go into the first database schema**, because adding them later means rewriting every permission check and every listing query. The screens staff use to work through reports come later.
 3. **The stack:** Postgres (on Supabase), Drizzle, a Hono API in a new `apps/api`, Zod schemas that also produce the API contract, and Supabase Auth with phone number and a one time code.
-4. **The order:** schema and seed data first, then sign in, then pages move from mock data to the API one at a time, then stores and passes, then the report queue.
+4. **The order:** schema and seed data first, then sign in, then pages move from mock data to the API one at a time, then stores and passes, then the Staff console in three phases: Trust and safety (5), the business side (6), Marketing and DevOps (7).
 
 ---
 
@@ -20,7 +20,9 @@
 
 Two questions get two separate answers. Mixing them is how v1 ended up with role checks that locked out its own super admin.
 
-### Question one: what may this person do on the platform? Their **role**
+### Question one: what may this person do on the platform? Their **role**, and for staff their **departments**
+
+> **Updated 2026-10-28 (P39, P40):** moderator and admin stop being roles. A role is only `user` or `super_admin`; staff are users placed in departments, each as member or lead, in a `staff_departments` table. Moderator becomes Trust and safety member, admin becomes Trust and safety lead. The full model, what each department sees, and the Team page are in [../product/staff-console.md](../product/staff-console.md). The table below is the model as first approved, kept for history; Phase 5 changes the code to the new one.
 
 Every signed in account is a person, and every person has exactly one role. Higher roles include everything below them.
 
@@ -59,7 +61,7 @@ Why it is shaped this way:
 
 So a permission check in the API asks one of three plain questions:
 
-1. *Is this person at least a moderator?* (role)
+1. *Is this person in this department, and a lead of it where the action needs one?* (departments; or the super admin, who passes every check. Until Phase 5 the code still asks "at least a moderator", by role.)
 2. *Is this person the owner, or staff, of this store?* (store membership)
 3. *Is this store paid today?* (a pass covering today)
 
@@ -172,11 +174,29 @@ Build [../product/accounts-and-stores.md](../product/accounts-and-stores.md): op
 
 - **Check:** a person hits 5 listings, opens a store, buys a day pass, and sees the Store console.
 
-### Phase 5: the report queue for staff
+### Phase 5: the Staff console, the team, and Trust and safety
 
-The screens: Report on a listing or person for users; a phone friendly queue for staff where a report is claimed, approved, given a new reason or cleared in a few taps; appeals for admins.
+Decided 2026-10-28; the whole design is in [../product/staff-console.md](../product/staff-console.md).
 
-- **Check:** report a listing as one test account, approve it as the moderator, and see the warning arrive.
+- **The roles change** (one migration): a `staff_departments` table (person, department, lead, who added them, when); moderators move to Trust and safety members and admins to Trust and safety leads; `people.role` narrows to `user` or `super_admin`. Every staff check in the API asks for a department (and lead where needed), the super admin passing all. Verify stores, which checks for admin today, checks for a Trust and safety lead.
+- **The Staff console frame**, built like the Store console, opened from "For our team" on Me, showing only the sections of the person's departments.
+- **Team** (super admin; leads for their own department): one row per staff member, a toggle per department, a Lead switch beside each toggle that is on. Every change is logged.
+- **Trust and safety:** Report on a listing or a person; the Reports queue (claim, approve, change the reason, clear, in a few taps on a phone); People (find anyone, their record, warn, suspend, and for leads ban); Appeals (leads); Verify stores (moved in from `/admin/verify`); the Activity log.
+- **Check:** report a listing as one test account, approve it as a Trust and safety member, and see the warning arrive; switch a department on for a person on Team and see their console change.
+
+### Phase 6: the business side of the Staff console
+
+- **Executives:** the Overview, the headline numbers of every department with charts over time.
+- **Board:** a short monthly summary, shorter than the Overview.
+- **Finance:** payments by day and month, revenue by product, failed payments, export for leads.
+- **Sales:** the stores list with owners' phone numbers, who to approach, export for leads.
+- Business definitions (what counts as active, what counts as value swapped) are agreed with Hillary before the numbers show.
+
+### Phase 7: Marketing and DevOps
+
+- **Recording first:** where visitors come from, what people search for, errors and slow requests.
+- **Marketing:** growth, sources, searches, categories, Wanted demand, boost performance; totals only.
+- **DevOps:** health, errors, slow pages, the last deploy, database connections, background work; no people's data.
 
 ---
 
@@ -190,8 +210,8 @@ Seeded in development only, each signing in with its phone number and the fixed 
 | A free store owner | User | One free store |
 | A paid store owner | User | One store with a month pass |
 | Store staff | User | Staff on the paid store |
-| A moderator | Moderator | Nothing |
-| An admin | Admin | Nothing |
+| A moderator | Moderator (Trust and safety member from Phase 5) | Nothing |
+| An admin | Admin (Trust and safety lead from Phase 5) | Nothing |
 | The super admin | Super admin | Nothing |
 
 ---
@@ -205,7 +225,7 @@ Seeded in development only, each signing in with its phone number and the fixed 
 
 ## Where it stands
 
-**In short (2026-10-28):** Phases 1 to 3 and Phase 4 slices 1 to 3 are built and committed. Next is slice 4 (owner and staff), then the rest of Phase 4, then Phase 5 (the report queue). The details of each follow.
+**In short (2026-10-28):** Phases 1 to 3 and Phase 4 slices 1 to 4 are built, with store settings, moving listings, switching and closing stores, and real contact numbers with the store's phone and renaming. Every contact number shown is real, and Verified store requests work. Next: Phase 5, the Staff console with the team and Trust and safety (the roles change to user or super admin, with staff in departments); then Phase 6 (Executives, Board, Finance, Sales) and Phase 7 (Marketing, DevOps). See [../product/staff-console.md](../product/staff-console.md). The details of each follow.
 
 **Phase 1 is built** (2026-10-27), in `apps/api`:
 
@@ -266,6 +286,10 @@ Seeded in development only, each signing in with its phone number and the fixed 
 
 - **Closing a store is built** (2026-10-28): `POST /api/stores/{id}/close` (owner only) sets `closed_at` and withdraws the store's listings; the Close store button is at the foot of `/store/[slug]/edit`.
 
+- **Real contact numbers, the store's phone and renaming are built** (2026-10-28): `POST /api/listings/{id}/reveals` answers with `contact` (`phone` as "077 123 4567", `call`, `whatsapp`) once its checks pass: the poster's phone, or for a store's listing the store's own number, else its owner's. It enforces the seller's rules (signed in only: 401 with `code: 'signin'`; after an accepted offer only: 403) and records nothing when there is no number. `PATCH /api/stores/{id}` also takes `name` and `phone` (empty: the owner's); a new name keeps the old one as `formerName` for 30 days (`renamedAt`), returned by `GET /api/stores/{slug}` and shown as "formerly …" on the store page. The store's number reaches its owner through `/api/me` only. Migration `0004_windy_luckman.sql` adds `stores.phone`, `former_name` and `renamed_at` (applied). The sample sellers got test numbers 077 000 0101 to 0108 (`SAMPLE_PHONES` in `seed.ts`). Who gets which number lives in `apps/api/src/contact.ts`. `POST /api/stores/{id}/contact` gives a store page's Show contacts the store's number (no sign in, the same daily limit, not recorded), and offers carry `contact` once accepted: the sender gets the listing's seller, the listing's side gets the sender on the ways they chose.
+
+- **Verified store requests are built** (2026-10-28, the simple version): `GET` and `POST /api/stores/{id}/verification` (owner only: where it stands; ask with `kind` registered or informal and the registration or licence `reference`, one waiting at a time); `GET /api/admin/verifications` and `POST /api/admin/verifications/{id}` (`decision` approve or decline, a `note` required to decline; admins and super admins only). Approving sets `stores.verifiedAt`; the owner is notified either way; a rename clears `verifiedAt`. Table `verification_requests` (migration `0005_ancient_justice.sql`, applied). Pages: the Verified store panel on Edit store details and `/admin/verify`, reached from Me. A store pass does not need the badge (decision P38): `/api/me` gives each store `verified` and `verifyPending`, and the owner of a store with a pass and no badge sees a nudge on the console's Stock page (`console/stock/VerifyNudge.tsx`), hidden while a request waits. Not yet: document photos, the yearly check, pausing after reports.
+
 ### Running it
 
 The settings live in the root `.env` (git ignores it): `DATABASE_URL` and the four `SUPABASE_` values. Then:
@@ -301,5 +325,6 @@ No server to rent. The web app serves the API at `/api` through one route (`apps
 - [data-model.md](./data-model.md): the entities this schema builds
 - [../features/moderation.md](../features/moderation.md): reports, outcomes, the violation matrix, appeals
 - [../product/accounts-and-stores.md](../product/accounts-and-stores.md): people, stores, passes, owner and staff
+- [../product/staff-console.md](../product/staff-console.md): roles, departments, member and lead, what each department sees, the Team page
 - [../api/endpoints.md](../api/endpoints.md): the API surface
 - [../reference/v1-lessons.md](../reference/v1-lessons.md): what went wrong last time

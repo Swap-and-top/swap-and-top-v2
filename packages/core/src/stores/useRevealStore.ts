@@ -124,6 +124,9 @@ interface RevealState {
    * many wanted their WhatsApp, their email, their Messenger.
    */
   events: ContactReveal[];
+  /** Listing id → the seller's details, as the API gave them on a reveal. */
+  contacts: Record<string, ContactWays>;
+  setContact: (listingId: string, ways: ContactWays) => void;
   reveal: (listingId: string, ownerId: string, way: ContactWay) => void;
   /** Whether anything on this listing has been revealed, or this one way. */
   isRevealed: (listingId: string, way?: ContactWay) => boolean;
@@ -144,6 +147,9 @@ export const useRevealStore = create<RevealState>((set, get) => ({
   revealed: {},
   usedToday: 0,
   events: [],
+  contacts: {},
+  setContact: (listingId, ways) =>
+    set((state) => ({ contacts: { ...state.contacts, [listingId]: ways } })),
   reveal: (listingId, ownerId, way) =>
     set((state) => {
       const shown = state.revealed[listingId] ?? [];

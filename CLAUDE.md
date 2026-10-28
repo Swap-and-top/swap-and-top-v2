@@ -5,7 +5,7 @@ laid out, the design patterns in use and what was done most recently; its
 "Where we stopped" says what comes next. The backend's phases, slices and
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
-As of 2026-10-28 Phase 4 slice 4 (owner and staff), store settings, moving listings into a store, switching between stores and closing a store are built. The next job is item 6 in the handoff's "Where we stopped": real contact numbers on Show contact (today every buyer sees a made up number), the store's own phone number, and renaming a store with "formerly …" for 30 days. It needs a migration, so ask Hillary before `db:migrate`. Then Verified store requests and Phase 5.
+As of 2026-10-28 Phase 4 slices 1 to 4, store settings, moving listings, switching and closing stores, and real contact numbers with the store's phone and renaming (item 6 in the handoff's "Where we stopped") are built. Every contact number shown is now real (`apps/api/src/contact.ts`), and Verified store requests work (owner asks, an admin verifies at `/admin/verify`). Phase 4 is done apart from real Paynow payment (waiting on Hillary). Next: Phase 5, the Staff console (item 8 in the handoff, designed in `docs/product/staff-console.md`): roles become only user and super admin, staff are put into departments (Trust and safety, Sales, Finance, Marketing, DevOps, Executives, Board) as member or lead, and each person's console shows only their departments' sections.
 
 ## Standing rules from the product owner (Hillary)
 

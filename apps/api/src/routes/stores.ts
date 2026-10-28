@@ -41,6 +41,10 @@ const bySlug = createRoute({
   },
 });
 
+/** How long a store's old name shows after a rename (decision P36). */
+const RENAME_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /** A store's page: who they are, their trust numbers and live listings.
     Undefined for a closed or unknown store. */
 export async function storeBySlug(slug: string) {
@@ -70,6 +74,11 @@ export async function storeBySlug(slug: string) {
     description: store.description,
     location: store.location,
     openingHours: store.openingHours,
+    // Shown as "formerly …" for 30 days after a rename.
+    formerName:
+      store.formerName && store.renamedAt && Date.now() - store.renamedAt.getTime() < RENAME_DAYS * DAY_MS
+        ? store.formerName
+        : undefined,
     verified: store.verifiedAt !== null,
     stockCount: listings.filter((l) => l.type === 'sale' || l.type === 'swap').length,
     confirmedDeals: deals?.n ?? 0,
@@ -476,7 +485,7 @@ const details = createRoute({
   tags: ['Stores'],
   summary: 'Change the store’s details',
   description:
-    'The owner only: the description, opening hours and area, which change freely (docs/product/accounts-and-stores.md). The name and web address are not changed here.',
+    'The owner only: the name, phone number, description, opening hours and area (docs/product/accounts-and-stores.md). A new name keeps the old one, shown as "formerly …" for 30 days; renaming again within them keeps the first. An empty phone number means the owner\'s is used. The web address does not change.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -485,6 +494,9 @@ const details = createRoute({
       content: {
         'application/json': {
           schema: z.object({
+            name: z.string().trim().min(2, 'Enter the store’s name').max(60).optional(),
+            /** "077 123 4567"; empty to use the owner's number. */
+            phone: z.string().trim().max(20).optional(),
             description: z.string().trim().max(300).optional(),
             openingHours: z.string().trim().max(80).optional(),
             location: z.string().trim().min(2, 'Say where the store is').max(100).optional(),
@@ -499,6 +511,7 @@ const details = createRoute({
       content: { 'application/json': { schema: z.object({ slug: z.string() }) } },
     },
     400: { description: 'Something is wrong with it', content: { 'application/json': { schema: ErrorSchema } } },
+    404: { description: 'No such store', content: { 'application/json': { schema: ErrorSchema } } },
     ...memberErrors,
   },
 });
@@ -510,9 +523,34 @@ storeRoutes.openapi(details, async (c) => {
   if ((await roleIn(person.id, id)) !== 'owner') {
     return c.json({ error: 'Only the store’s owner can change its details.' }, 403);
   }
+  let phone: string | null | undefined;
+  if (body.phone !== undefined) {
+    phone = body.phone ? toPhone(body.phone) : null;
+    if (phone === null && body.phone) {
+      return c.json({ error: 'Enter a Zimbabwe mobile number, like 077 123 4567.' }, 400);
+    }
+  }
+  const [store] = await db.select().from(t.stores).where(eq(t.stores.id, id));
+  if (!store) return c.json({ error: 'That store is not there any more.' }, 404);
+  // A new name: the old one is kept for 30 days, the first one while a
+  // rename is still showing. Back to that old name, nothing is shown.
+  let rename = {};
+  if (body.name && body.name !== store.name) {
+    const showing =
+      store.formerName && store.renamedAt && Date.now() - store.renamedAt.getTime() < RENAME_DAYS * DAY_MS;
+    const former = showing ? store.formerName! : store.name;
+    rename =
+      former === body.name
+        ? { name: body.name, initials: initialsOf(body.name), formerName: null, renamedAt: null }
+        : { name: body.name, initials: initialsOf(body.name), formerName: former, renamedAt: new Date() };
+    // A new name pauses Verified store until it is checked again (P36).
+    if (store.verifiedAt) rename = { ...rename, verifiedAt: null };
+  }
   const [saved] = await db
     .update(t.stores)
     .set({
+      ...rename,
+      ...(phone !== undefined ? { phone } : {}),
       ...(body.description !== undefined ? { description: body.description } : {}),
       ...(body.openingHours !== undefined ? { openingHours: body.openingHours } : {}),
       ...(body.location !== undefined ? { location: body.location } : {}),

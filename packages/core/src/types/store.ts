@@ -14,6 +14,8 @@ export interface Store {
   description: string;
   location: string;
   openingHours: string;
+  /** Its name before a rename, shown as "formerly …" for 30 days. */
+  formerName?: string;
   /** Business registration checked by staff. Paid, bundled with the console. */
   verified: boolean;
   stockCount: number;

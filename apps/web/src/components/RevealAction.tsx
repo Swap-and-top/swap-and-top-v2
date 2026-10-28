@@ -48,11 +48,13 @@ import {
   useSignInPromptStore,
   useOfferStore,
   useViewerId,
+  type ContactChannel,
   type ContactWay,
+  type ContactWays,
   type Listing,
 } from '@snt/core';
 import { Button, ContactWayList, Sheet, WAY_META, waysOffered } from '@snt/ui';
-import { recordReveal } from '@/lib/reveals';
+import { recordReveal, revealStoreContact } from '@/lib/reveals';
 import styles from './RevealAction.module.css';
 
 /**
@@ -80,24 +82,37 @@ export const KEPT_BACK_NOTE =
 export function RevealAction({
   listingId,
   ownerId,
+  channels,
+  storeId,
   signedInOnly = false,
   block = true,
   size = 'lg',
 }: {
   listingId: string;
   ownerId: string;
+  /** The ways the listing offers. Without them (a sample, not in the
+      database), the sample details are used. */
+  channels?: ContactChannel[];
+  /** On a store's own page: the store's number, not a listing's. */
+  storeId?: string;
   /** The seller shows their details to signed-in users only. */
   signedInOnly?: boolean;
   block?: boolean;
   /** Smaller where it sits beside a name, as on a lead in the console. */
   size?: 'sm' | 'md' | 'lg';
 }) {
-  const { reveal, revealed, usedToday } = useRevealStore();
+  const { reveal, revealed, usedToday, contacts, setContact } = useRevealStore();
   const signedIn = useSessionStore((state) => state.signedIn);
   const ask = useSignInPromptStore((state) => state.ask);
   const [open, setOpen] = useState(false);
 
-  const ways = contactWaysFor(ownerId);
+  // The real details once revealed; until then only which ways there are.
+  // Calls and WhatsApp are the ways the database holds a number for.
+  const ways: ContactWays =
+    contacts[listingId] ??
+    (channels
+      ? { phone: '', call: channels.includes('call'), whatsapp: channels.includes('whatsapp') }
+      : contactWaysFor(ownerId));
   const offered = waysOffered(ways);
   const shown = revealed[listingId] ?? [];
   /** Anything on this listing revealed already: the checks are passed. */
@@ -112,11 +127,25 @@ export function RevealAction({
     const go = async () => {
       const first = !useRevealStore.getState().isRevealed(listingId);
       // Recorded first: the API holds the daily limit.
-      const { limited } = await recordReveal(listingId, way);
+      const { limited, refused, contact } = storeId
+        ? { refused: undefined, ...(await revealStoreContact(storeId)) }
+        : await recordReveal(listingId, way);
       if (limited) {
         if (useSessionStore.getState().signedIn) toast.error(limited);
         else requireSignIn(limited, () => void go());
         return;
+      }
+      if (refused) {
+        toast.error(refused);
+        return;
+      }
+      if (contact === null) {
+        toast.error('This seller has not added a phone number yet.');
+        return;
+      }
+      // The number from the API; a sample listing keeps its sample details.
+      if (!useRevealStore.getState().contacts[listingId]) {
+        setContact(listingId, contact ?? contactWaysFor(ownerId));
       }
       reveal(listingId, ownerId, way);
       // After, not before: they have what they came for; now the reason to

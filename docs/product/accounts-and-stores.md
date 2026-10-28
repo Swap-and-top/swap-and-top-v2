@@ -43,7 +43,7 @@ never a login of its own.
 | Store page (`/store/<slug>`) | No | Yes | Yes |
 | Boosts | Yes, paid per boost | Yes, paid per boost | Yes, paid per boost |
 | Store console, lead alerts, stats | No | No | Yes |
-| Verified store badge | Never | Only once checked | Required |
+| Verified store badge | Never | Only once checked | Only once checked |
 
 **What counts toward a limit:** live listings for sale or swap only. Sold,
 paused, expired and deleted listings do not count, and neither do Wanted
@@ -181,10 +181,21 @@ member checks a request from the owner:
 - **Every store:** a verified phone, and an address with a photo of the
   shop front, or a short video call walking through the shop.
 
+> **Built so far (2026-10-28):** the owner asks on Edit store details with
+> the kind of business and its registration or licence number; our team
+> calls to see the documents; an admin verifies or declines (with a reason)
+> at `/admin/verify`; a rename pauses the badge. Document photos, the
+> yearly check, pausing after reports and a pass requiring the badge come
+> later.
+
 The badge is **checked again every year**, **paused** after serious upheld
 reports, and **paused while key details change** (name, address,
 registration, owner) until they are checked again. **The check is never
-sold:** paying for a pass requires the badge, but no payment grants it.
+sold, and never required to pay** (decision P38, 2026-10-28): any store,
+free or paid, can ask for it; a store pass does not need the badge, and no
+payment grants it. Paying buys room and tools; the badge is earned by being
+checked. A store with a pass and no badge sees a short line in the Store
+console inviting it to ask.
 
 ---
 

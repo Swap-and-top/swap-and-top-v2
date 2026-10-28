@@ -65,6 +65,8 @@ See [../product/trust-and-safety.md](../product/trust-and-safety.md).
 
 ## Decision 3 — roles cascade
 
+> **Updated 2026-10-28 (P39, P40):** from Phase 5 the roles are only `user` and `super_admin`; staff access comes from departments (Trust and safety, Sales, Finance, Marketing, DevOps, Executives, Board), each as member or lead. Moderator becomes Trust and safety member, admin becomes Trust and safety lead. See [../product/staff-console.md](../product/staff-console.md).
+
 ```ascii
 SUPER ADMIN  ⊃  ADMIN  ⊃  MODERATOR  ⊃  USER  ⊃  GUEST
 

@@ -5,6 +5,13 @@
   color: var(--snt-accent-bold);
 }
 
+.sectionTitle {
+  margin: 0;
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
 .lead {
   margin: 0;
   font-size: var(--snt-text-sm);

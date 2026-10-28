@@ -32,11 +32,12 @@ connectOfferApi({
     return data;
   },
   async change(offerId, state) {
-    const { error } = await apiAsViewer(`/offers/${encodeURIComponent(offerId)}`, {
+    const { data, error } = await apiAsViewer<Offer>(`/offers/${encodeURIComponent(offerId)}`, {
       method: 'PATCH',
       body: { state },
     });
     if (error) throw new Error(error);
+    return data ?? undefined;
   },
 });
 
