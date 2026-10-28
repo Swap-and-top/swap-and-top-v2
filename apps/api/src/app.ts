@@ -16,6 +16,7 @@ import { notificationRoutes } from './routes/notifications';
 import { leadRoutes } from './routes/leads';
 import { revealRoutes } from './routes/reveals';
 import { statsRoutes } from './routes/stats';
+import { teamRoutes } from './routes/team';
 import { verificationRoutes } from './routes/verification';
 import { boostRoutes } from './routes/boosts';
 import { offerRoutes } from './routes/offers';
@@ -50,6 +51,7 @@ app.route('/', dealRoutes);
 app.route('/', savedRoutes);
 app.route('/', notificationRoutes);
 app.route('/', verificationRoutes);
+app.route('/', teamRoutes);
 
 // Endpoints for an account take the Supabase sign in token.
 app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {

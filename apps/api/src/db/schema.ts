@@ -167,6 +167,29 @@ export const staffDepartments = pgTable(
   (t) => [primaryKey({ columns: [t.personId, t.department] })],
 ).enableRLS();
 
+/**
+ * Everything our team does in the Staff console, kept for checking (P43):
+ * who did it, what, to whom, and when. The console never edits or deletes a
+ * row. Team changes are the first kind; reports and other actions follow.
+ */
+export const staffLog = pgTable(
+  'staff_log',
+  {
+    id: id(),
+    actorId: text()
+      .notNull()
+      .references(() => people.id),
+    /** What was done, e.g. "team.add", "team.remove", "team.lead". */
+    action: text().notNull(),
+    /** The person it was done to, where there is one. */
+    targetPersonId: text().references(() => people.id),
+    /** The particulars, e.g. { department: 'sales', lead: true }. */
+    detail: jsonb().notNull().default({}),
+    createdAt: createdAt(),
+  },
+  (t) => [index().on(t.createdAt), index().on(t.targetPersonId, t.createdAt), index().on(t.actorId, t.createdAt)],
+).enableRLS();
+
 export const storeMemberRole = pgEnum('store_member_role', ['owner', 'staff']);
 
 /** Who runs a store: one owner, any number of staff, each a person. */

@@ -181,7 +181,23 @@ below; the full design is `docs/product/staff-console.md`).
      all). Each page wraps itself in `StaffPage`. Verify stores moved to
      `/staff/verify` (`/admin/verify` redirects). Built sections so far:
      Verify stores. Tested as Kuda (refused), Patrick (laptop and phone).
-   - **NEXT: Team,** then Reports, People, Appeals and the Activity log.
+   - **Done 2026-10-28: Team** (`/staff/team`, `apps/api/src/routes/team.ts`,
+     migration `0008_fuzzy_roughhouse.sql` for `staff_log`, applied with
+     Hillary's yes). `GET /api/staff/team`, `GET /api/staff/team/find?q=`
+     (name or phone), `PUT` and `DELETE /api/staff/team/{personId}/{department}`
+     (`{ lead }`), `DELETE /api/staff/team/{personId}` (off the team). Rules
+     in the API: the super admin manages every department, makes leads and
+     removes from the team; a lead adds and takes out members of the
+     departments they lead only, never a lead, never themselves. Every change
+     is a `staff_log` row (`team.add`, `team.remove`, `team.lead`,
+     `team.unlead`, `team.leave`). The page: a card per person with a tick
+     per department (the app's `TickTile`), "Leads it" beside a ticked one
+     (greyed for leads), "Remove from the team" for the super admin, "Add a
+     person" searching by name or number. Tested through the API (every
+     rule) and in the browser as Patrick.
+   - **NEXT: Reports** (the Report button on listings and people, and the
+     queue), then People, Appeals and the Activity log (which reads
+     `staff_log`).
      What was planned for the frame: built like the Store console (the same
      shell, sidebar on a laptop, tabs on a phone), opened from "For our
      team" on Me (which today links to `/admin/verify`), showing only the

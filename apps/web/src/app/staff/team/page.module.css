@@ -1,0 +1,76 @@
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+/* Each person: a white card, their departments under their name. */
+.members {
+  display: grid;
+  gap: var(--snt-space-6);
+}
+
+@media (min-width: 1024px) {
+  .members {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.who {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+}
+
+.name {
+  margin: 0;
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.phone {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+/* A department, and once it is ticked whether they lead it, side by side. */
+.department {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--snt-space-3);
+}
+
+.department.on {
+  grid-template-columns: 1.4fr 1fr;
+}
+
+.results {
+  display: grid;
+  gap: var(--snt-space-3);
+}
+
+/* A person found, to add: their name and number, one tap to open them. */
+.result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+  width: 100%;
+  padding: var(--snt-space-5) var(--snt-space-8);
+  border: 0;
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-inset);
+  color: var(--snt-accent-bold);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .result:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 10%, var(--snt-bg-inset));
+  }
+}
