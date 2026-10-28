@@ -2,7 +2,7 @@
 
 ## Where our own team runs the platform, each person seeing what their department needs
 
-**Status:** Decided 2026-10-28 with Hillary (decisions P39 to P43). Not built yet: it is Phases 5 to 7 of [../architecture/backend-plan.md](../architecture/backend-plan.md).
+**Status:** Decided 2026-10-28 with Hillary (decisions P39 to P43). Being built in Phases 5 to 7 of [../architecture/backend-plan.md](../architecture/backend-plan.md). Built so far: the roles change and `staff_departments` (2026-10-28), with every staff check in the API asking for a department (`apps/api/src/staff.ts`).
 **Read this if:** you are building anything staff use: reports, verifying stores, the team, business numbers, money, or system health.
 
 ---
@@ -35,7 +35,7 @@ Guests (not signed in) are not stored: a guest is simply "no session".
 | Admin | User, plus **Trust and safety lead** |
 | Super admin | Super admin, the same |
 
-The test accounts move the same way: Rumbi M. (077 000 0005) becomes a Trust and safety member; Tafadzwa A. (0006), Patrick M. (0008) and Ray L. (0009) become Trust and safety leads; Hillary M. (0007) stays super admin.
+The test accounts moved the same way: Rumbi M. (077 000 0005) became a Trust and safety member; Tafadzwa A. (0006), Patrick M. (0008) and Ray L. (0009) Trust and safety leads; Hillary M. (0007) stays super admin. Then, as Hillary set on 2026-10-28: Ray is also a member of Sales, Marketing and Finance; Patrick is in every department, lead of Trust and safety, Sales and Marketing (the seed's `TEST_STAFF`).
 
 ---
 

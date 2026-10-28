@@ -6,13 +6,41 @@
  * docs/product/trust-and-safety.md explains why that changed.
  */
 
-/** Higher roles include everything below them. Never compared with equality. */
-export type Role =
-  | 'guest'
-  | 'user'
-  | 'moderator'
-  | 'admin'
-  | 'super_admin';
+/**
+ * What kind of account. Higher includes everything below; never compared
+ * with equality. Only two are stored, user and super admin: our own staff
+ * are users placed in departments (`StaffMembership`), never a role
+ * (decisions P39, P40; docs/product/staff-console.md).
+ */
+export type Role = 'guest' | 'user' | 'super_admin';
+
+/** The company's departments: each decides which Staff console sections
+    its people see. */
+export type Department =
+  | 'trust_safety'
+  | 'sales'
+  | 'finance'
+  | 'marketing'
+  | 'devops'
+  | 'executives'
+  | 'board';
+
+/** How each department reads, in the order the Team page lists them. */
+export const DEPARTMENT_LABELS: Record<Department, string> = {
+  trust_safety: 'Trust and safety',
+  sales: 'Sales',
+  finance: 'Finance',
+  marketing: 'Marketing',
+  devops: 'DevOps',
+  executives: 'Executives',
+  board: 'Board',
+};
+
+/** One department a person is in, as a member or its lead. */
+export interface StaffMembership {
+  department: Department;
+  lead: boolean;
+}
 
 export type AccountStanding =
   | 'good'
@@ -44,9 +72,7 @@ export interface User {
 const ROLE_RANK: Record<Role, number> = {
   guest: 0,
   user: 1,
-  moderator: 2,
-  admin: 3,
-  super_admin: 4,
+  super_admin: 2,
 };
 
 /**

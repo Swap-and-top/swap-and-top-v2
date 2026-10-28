@@ -41,8 +41,13 @@ const currency = () => text().notNull().default('USD');
 
 /* ── People and roles ─────────────────────────────────────────────────── */
 
-/** What someone may do on the platform. Higher includes everything below. */
-export const role = pgEnum('role', ['user', 'moderator', 'admin', 'super_admin']);
+/**
+ * What kind of account: an ordinary user, or the super admin (Hillary), who
+ * sees and does everything. Our own staff are users placed in departments
+ * (`staffDepartments`), never a role (decisions P39, P40;
+ * docs/product/staff-console.md).
+ */
+export const role = pgEnum('role', ['user', 'super_admin']);
 
 export const standing = pgEnum('standing', [
   'good',
@@ -128,6 +133,38 @@ export const verificationRequests = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index().on(t.storeId, t.createdAt), index().on(t.state)],
+).enableRLS();
+
+/** The company's departments: each decides which Staff console sections
+    its people see. */
+export const staffDepartment = pgEnum('staff_department', [
+  'trust_safety',
+  'sales',
+  'finance',
+  'marketing',
+  'devops',
+  'executives',
+  'board',
+]);
+
+/**
+ * Our own team: one row for each department a person is in, as a member or
+ * its lead. A person in two departments has two rows; a person with none is
+ * an ordinary user. A lead also does the department's bigger actions and
+ * adds or removes its members; only the super admin makes leads.
+ */
+export const staffDepartments = pgTable(
+  'staff_departments',
+  {
+    personId: text()
+      .notNull()
+      .references(() => people.id),
+    department: staffDepartment().notNull(),
+    lead: boolean().notNull().default(false),
+    addedById: text().references(() => people.id),
+    addedAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.personId, t.department] })],
 ).enableRLS();
 
 export const storeMemberRole = pgEnum('store_member_role', ['owner', 'staff']);

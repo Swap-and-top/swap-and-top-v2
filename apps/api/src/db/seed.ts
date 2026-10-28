@@ -11,7 +11,7 @@
 
 import '../loadEnv';
 import { mockListings, mockStores, mockUsers } from '@snt/core';
-import type { Item, Listing } from '@snt/core';
+import type { Department, Item, Listing } from '@snt/core';
 import { db, sql } from './client';
 import * as t from './schema';
 import { seedActivity } from './seedActivity';
@@ -19,18 +19,41 @@ import { seedActivity } from './seedActivity';
 /** Each test account signs in with its number and the fixed test code. */
 const TEST_ACCOUNTS: Record<
   string,
-  { phone: string; role?: 'moderator' | 'admin' | 'super_admin' }
+  { phone: string; role?: 'super_admin' }
 > = {
   'u-tarisai': { phone: '+263770000001' },
   'u-avgames': { phone: '+263770000002' },
   'u-kopje': { phone: '+263770000003' },
   'u-kuda': { phone: '+263770000004' },
-  'u-rumbi': { phone: '+263770000005', role: 'moderator' },
-  'u-tafadzwa': { phone: '+263770000006', role: 'admin' },
+  'u-rumbi': { phone: '+263770000005' },
+  'u-tafadzwa': { phone: '+263770000006' },
   'u-hillary': { phone: '+263770000007', role: 'super_admin' },
-  'u-patrick': { phone: '+263770000008', role: 'admin' },
-  'u-ray': { phone: '+263770000009', role: 'admin' },
+  'u-patrick': { phone: '+263770000008' },
+  'u-ray': { phone: '+263770000009' },
 };
+
+/**
+ * Our own team among the test accounts (docs/product/staff-console.md), as
+ * Hillary set it on 2026-10-28: Rumbi a Trust and safety member; Tafadzwa
+ * its lead; Ray its lead and a member of Sales, Marketing and Finance;
+ * Patrick in every department, lead of Trust and safety, Sales and
+ * Marketing.
+ */
+const TEST_STAFF: { personId: string; department: Department; lead: boolean }[] = [
+  { personId: 'u-rumbi', department: 'trust_safety', lead: false },
+  { personId: 'u-tafadzwa', department: 'trust_safety', lead: true },
+  { personId: 'u-ray', department: 'trust_safety', lead: true },
+  { personId: 'u-ray', department: 'sales', lead: false },
+  { personId: 'u-ray', department: 'marketing', lead: false },
+  { personId: 'u-ray', department: 'finance', lead: false },
+  { personId: 'u-patrick', department: 'trust_safety', lead: true },
+  { personId: 'u-patrick', department: 'sales', lead: true },
+  { personId: 'u-patrick', department: 'marketing', lead: true },
+  { personId: 'u-patrick', department: 'finance', lead: false },
+  { personId: 'u-patrick', department: 'devops', lead: false },
+  { personId: 'u-patrick', department: 'executives', lead: false },
+  { personId: 'u-patrick', department: 'board', lead: false },
+];
 
 /**
  * The other sample sellers' numbers, so Show contact on their listings has
@@ -80,7 +103,7 @@ async function seed() {
     'notifications', 'deal_checks', 'offers', 'reveals', 'saved_listings',
     'auction_details', 'request_details', 'swap_details', 'sale_details',
     'listings', 'items', 'store_passes', 'payments', 'store_members',
-    'stores', 'people',
+    'staff_departments', 'stores', 'people',
   ];
   await sql.unsafe(`truncate ${tables.map((n) => `"${n}"`).join(', ')} cascade`);
 
@@ -103,6 +126,8 @@ async function seed() {
       phoneVerifiedAt: new Date(),
     })),
   ]);
+
+  await db.insert(t.staffDepartments).values(TEST_STAFF);
 
   /* Stores, their owners and staff, and passes */
   await db.insert(t.stores).values(

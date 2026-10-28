@@ -15,6 +15,7 @@ import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
 import { dayMonth, paidUntil, settlePasses } from '../passes';
+import { isLiveTestAccount, staffOf } from '../staff';
 import { ErrorSchema, MeSchema } from '../schemas';
 import { MOCK_CODE, supabaseAdmin } from '../supabaseAdmin';
 
@@ -59,22 +60,12 @@ function rememberPerson(authUserId: string, person: Person) {
   people.set(authUserId, { at: Date.now(), person: Promise.resolve(withLiveRole(person)) });
 }
 
-/**
- * Our test numbers, 077 000 0001 to 0999: they sign in with the fixed test
- * code, so anyone who knows one could use it. On the live site they never
- * carry staff powers; on localhost and previews they do, for testing. Until
- * the database is split (docs/HANDOFF.md, "Before launch") the same accounts
- * serve both.
- */
-const TEST_PHONE = /^\+263770000\d{3}$/;
-const LIVE = process.env.VERCEL_ENV === 'production';
-
-/** The person as the platform treats them: a test account on the live site
-    is an ordinary user, whatever its role in the database. */
+/** The person as the platform treats them: an account on our test numbers
+    (077 000 0001 to 0999), which sign in with the fixed test code, is an
+    ordinary user on the live site whatever its role in the database; on
+    localhost and previews it keeps its role, for testing. */
 export function withLiveRole(person: Person): Person {
-  return LIVE && person.role !== 'user' && person.phone && TEST_PHONE.test(person.phone)
-    ? { ...person, role: 'user' }
-    : person;
+  return person.role !== 'user' && isLiveTestAccount(person.phone) ? { ...person, role: 'user' } : person;
 }
 
 /** The person for this sign in, linking or adding them as needed. */
@@ -155,6 +146,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
     phone: person.phone ?? undefined,
     phoneVerified: person.phoneVerifiedAt !== null,
     role: person.role,
+    staff: await staffOf(person),
     standing: person.standing,
     stores: await Promise.all(
       rows.map(async ({ phone, verifiedAt, ...store }) => {

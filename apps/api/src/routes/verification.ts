@@ -3,8 +3,8 @@
  * "Verification"), in their simple first form: the store's owner asks, with
  * what stands behind the store (a registered business or an informal trader)
  * and its registration or licence number; our team calls to see the
- * documents and arrange a video call or visit; an admin then verifies or
- * declines it here. Verifying sets the store's `verifiedAt`, which shows the
+ * documents and arrange a video call or visit; a Trust and safety lead then
+ * verifies or declines it here. Verifying sets the store's `verifiedAt`, which shows the
  * Verified store badge; the owner is told either way. A rename pauses the
  * badge (routes/stores.ts), and the owner asks again.
  *
@@ -22,6 +22,7 @@ import { ErrorSchema } from '../schemas';
 import { personFor } from './me';
 import { notify } from './notifications';
 import { roleIn } from './post';
+import { inDepartment } from '../staff';
 
 export const verificationRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -156,7 +157,8 @@ verificationRoutes.openapi(ask, async (c) => {
 
 /* --- the admin's side -------------------------------------------------------- */
 
-const isAdmin = (role: string) => role === 'admin' || role === 'super_admin';
+/** Verifying stores is for Trust and safety leads (and the super admin). */
+const mayVerify = (person: Parameters<typeof inDepartment>[0]) => inDepartment(person, 'trust_safety', true);
 
 const PendingSchema = z
   .object({
@@ -178,7 +180,7 @@ const pending = createRoute({
   path: '/admin/verifications',
   tags: ['Admin'],
   summary: 'Stores waiting to be verified',
-  description: 'Admins only. Open stores whose request waits, oldest first.',
+  description: 'Trust and safety leads (and the super admin) only. Open stores whose request waits, oldest first.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   responses: {
@@ -193,7 +195,7 @@ const pending = createRoute({
 
 verificationRoutes.openapi(pending, async (c) => {
   const person = await personFor(c.get('authUser'));
-  if (!isAdmin(person.role)) return c.json({ error: 'Only admins can verify stores.' }, 403);
+  if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leads can verify stores.' }, 403);
   const rows = await db
     .select({
       request: t.verificationRequests,
@@ -231,7 +233,7 @@ const decide = createRoute({
   path: '/admin/verifications/{id}',
   tags: ['Admin'],
   summary: 'Verify or decline a store',
-  description: 'Admins only, and never on a store they own or work for. Verifying shows the badge at once; declining needs a reason, which the owner is told.',
+  description: 'Trust and safety leads (and the super admin) only, and never on a store they own or work for. Verifying shows the badge at once; declining needs a reason, which the owner is told.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -257,7 +259,7 @@ verificationRoutes.openapi(decide, async (c) => {
   const { id } = c.req.valid('param');
   const { decision, note } = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
-  if (!isAdmin(person.role)) return c.json({ error: 'Only admins can verify stores.' }, 403);
+  if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leads can verify stores.' }, 403);
   if (decision === 'decline' && !note) return c.json({ error: 'Say why, so the owner knows what to fix.' }, 400);
   const [request] = await db.select().from(t.verificationRequests).where(eq(t.verificationRequests.id, id));
   if (!request || request.state !== 'pending') return c.json({ error: 'That request has been decided already.' }, 404);

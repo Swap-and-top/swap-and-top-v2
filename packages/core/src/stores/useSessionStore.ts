@@ -13,7 +13,7 @@
  */
 
 import { create } from 'zustand';
-import type { Role } from '../types/user';
+import type { Role, StaffMembership } from '../types/user';
 
 /** The signed in person, as the API returns them. */
 export interface Viewer {
@@ -24,6 +24,8 @@ export interface Viewer {
   /** Needed to post, make offers and reach other people. */
   phoneVerified: boolean;
   role: Exclude<Role, 'guest'>;
+  /** The departments of our own team they are in; empty for everyone else. */
+  staff: StaffMembership[];
   standing: 'good' | 'warned' | 'limited' | 'suspended' | 'banned';
   /** The stores they own or work for. */
   stores: {

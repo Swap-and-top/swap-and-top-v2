@@ -152,8 +152,16 @@ below; the full design is `docs/product/staff-console.md`).
    the backend plan's Phase 5 and section 2 on reports). In order:
    - **Done first (2026-10-28): the four holes found in built code are
      closed** (see "Before launch" below, items 1 to 4).
-   - **The roles change (one migration, ask Hillary before
-     `db:migrate`):** a `staff_departments` table (person, department,
+   - **Done 2026-10-28: the roles change** (migration
+     `0007_illegal_kulan_gath.sql`, applied with Hillary's yes; it moves
+     moderators and admins into the team before narrowing the role). Built:
+     `staff_departments`, `apps/api/src/staff.ts` (`staffOf`,
+     `inDepartment`, the super admin passing all, test accounts in no
+     department on the live site), `/api/me` gives `staff`, Verify stores
+     asks for a Trust and safety lead, `apps/web/src/lib/staff.ts`
+     (`useInDepartment`, `useOnTeam`), the seed's `TEST_STAFF`. Tested:
+     Rumbi (member) refused Verify stores, Patrick (lead) and Hillary
+     (super admin) let in, Kuda refused. What was planned: a `staff_departments` table (person, department,
      lead, added by, added at); departments `trust_safety`, `sales`,
      `finance`, `marketing`, `devops`, `executives`, `board`. Move
      moderators to Trust and safety members and admins to Trust and
@@ -163,7 +171,7 @@ below; the full design is `docs/product/staff-console.md`).
      department (and lead where needed), the super admin passing all;
      `/admin/verify` and `routes/verification.ts` check for a Trust and
      safety lead instead of admin. Update the seed to match.
-   - **The Staff console frame,** built like the Store console (the same
+   - **NEXT: the Staff console frame,** built like the Store console (the same
      shell, sidebar on a laptop, tabs on a phone), opened from "For our
      team" on Me (which today links to `/admin/verify`), showing only the
      sections of the person's departments; the server checks every
@@ -327,11 +335,11 @@ Sign in with a phone (Continue with phone) and the code **123456**:
 | 077 000 0002 | Avondale Games owner (`u-avgames`) | A free store, `s-avondale-games`. |
 | 077 000 0003 | Tinashe K. (`u-kopje`) | Owner of Kopje Computers (`s-kopje`), a paid store with a month pass. |
 | 077 000 0004 | Kuda S. (`u-kuda`) | Staff at Kopje Computers. |
-| 077 000 0005 | Rumbi M. (`u-rumbi`) | Moderator. |
-| 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Admin. |
+| 077 000 0005 | Rumbi M. (`u-rumbi`) | Trust and safety member. |
+| 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Trust and safety lead. |
 | 077 000 0007 | Hillary M. (`u-hillary`) | Super admin. |
-| 077 000 0008 | Patrick M. (`u-patrick`) | Admin, no store. Also email `patrick.test@example.com`, password `testpass123`. |
-| 077 000 0009 | Ray L. (`u-ray`) | Admin, no store. Also email `ray.test@example.com`, password `testpass123`. |
+| 077 000 0008 | Patrick M. (`u-patrick`) | In every department: lead of Trust and safety, Sales and Marketing; member of Finance, DevOps, Executives and Board. No store. Also email `patrick.test@example.com`, password `testpass123`. |
+| 077 000 0009 | Ray L. (`u-ray`) | Trust and safety lead; member of Sales, Marketing and Finance. No store. Also email `ray.test@example.com`, password `testpass123`. |
 
 Only numbers listed as test numbers in Supabase can sign in by phone (1 to 7
 are; 8 and 9 need adding there: Authentication, Sign In / Providers, Phone,

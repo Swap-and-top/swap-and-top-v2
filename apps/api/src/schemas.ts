@@ -141,7 +141,14 @@ export const MeSchema = z
     phone: z.string().optional().openapi({ example: '+263770000001' }),
     /** Needed to post, make offers and reach other people. */
     phoneVerified: z.boolean(),
-    role: z.enum(['user', 'moderator', 'admin', 'super_admin']),
+    role: z.enum(['user', 'super_admin']),
+    /** The departments of our own team they are in, as member or lead. */
+    staff: z.array(
+      z.object({
+        department: z.enum(['trust_safety', 'sales', 'finance', 'marketing', 'devops', 'executives', 'board']),
+        lead: z.boolean(),
+      }),
+    ),
     standing: z.enum(['good', 'warned', 'limited', 'suspended', 'banned']),
     /** The stores they own or work for. */
     stores: z.array(

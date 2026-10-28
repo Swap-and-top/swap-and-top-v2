@@ -1,7 +1,8 @@
 'use client';
 
 /**
- * Verify stores, for admins: the stores asking for Verified store, oldest
+ * Verify stores, for Trust and safety leads (and the super admin): the
+ * stores asking for Verified store, oldest
  * first (GET /api/admin/verifications). Each shows what the owner gave and
  * their number, to call them, see the documents and arrange a video call or
  * visit. Then Verify, or Decline with a reason the owner is told
@@ -10,7 +11,6 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { useSessionStore } from '@snt/core';
 import {
   AppHeader,
   Button,
@@ -24,6 +24,7 @@ import {
   Stack,
 } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
+import { useInDepartment } from '@/lib/staff';
 import { apiAsViewer } from '@/lib/supabase';
 import styles from './page.module.css';
 
@@ -45,8 +46,9 @@ const KIND_LABEL = {
 } as const;
 
 export default function VerifyStoresPage() {
-  const role = useSessionStore((state) => state.viewer?.role);
-  const admin = role === 'admin' || role === 'super_admin';
+  /** Trust and safety leads verify stores (and the super admin). */
+  const allowed = useInDepartment('trust_safety', true);
+  const admin = allowed === true;
   const [requests, setRequests] = useState<Pending[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   /** The request being declined, while its reason is asked for. */
@@ -98,9 +100,9 @@ export default function VerifyStoresPage() {
         <SignInGate>
           <Stack gap={6}>
             <h1 className={styles.title}>Verify stores</h1>
-            {role === undefined ? null : !admin ? (
+            {allowed === undefined ? null : !admin ? (
               <Panel padded>
-                <p className={styles.lead}>Only admins can verify stores.</p>
+                <p className={styles.lead}>Only Trust and safety leads can verify stores.</p>
               </Panel>
             ) : requests === null ? null : requests.length === 0 ? (
               <Panel padded>

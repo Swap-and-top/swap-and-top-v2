@@ -53,6 +53,7 @@ import {
 } from '@snt/ui/icons';
 import { DevTools } from '@/components/DevTools';
 import { StorePassSheet, type PassStore } from '@/components/StorePassSheet';
+import { useInDepartment } from '@/lib/staff';
 import { apiAsViewer } from '@/lib/supabase';
 import styles from './page.module.css';
 
@@ -69,6 +70,7 @@ export default function MePage() {
   const viewer = useSessionStore((state) => state.viewer);
   const me = viewer?.id;
   const name = viewer ? viewerName(viewer) : '';
+  const mayVerify = useInDepartment('trust_safety', true) === true;
   const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? false);
   const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
   const offers = useOfferStore((store) => store.offers);
@@ -226,8 +228,9 @@ export default function MePage() {
               />
             )}
 
-            {/* Admins: the stores waiting for Verified store. */}
-            {viewer?.role === 'admin' || viewer?.role === 'super_admin' ? (
+            {/* Trust and safety leads: the stores waiting for Verified
+                store. The Staff console replaces this in Phase 5. */}
+            {mayVerify ? (
               <>
                 <h2 className={styles.section}>For our team</h2>
                 <ListGroup>
