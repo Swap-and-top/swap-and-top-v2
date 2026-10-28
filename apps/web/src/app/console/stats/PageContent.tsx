@@ -44,6 +44,7 @@ import {
 } from '@snt/ui';
 import { MegaphoneIcon, WhatsAppIcon } from '@snt/ui/icons';
 import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
+import { useConsoleRole } from '@/lib/consoleRole';
 import { apiAsViewer } from '@/lib/supabase';
 import styles from './page.module.css';
 
@@ -409,6 +410,7 @@ function SponsoredSlots() {
   const setStockTab = useConsoleStore((state) => state.setStockTab);
   /** The Sponsor sheet, to pick an item and sponsor it. */
   const [sheet, setSheet] = useState(false);
+  const owner = useConsoleRole() === 'owner';
   const perDay = sponsorships.reduce((sum, s) => sum + s.dailyBudget, 0);
 
   return (
@@ -429,9 +431,12 @@ function SponsoredSlots() {
         </p>
 
         <div className={styles.actions}>
-          <Button size="sm" onClick={() => setSheet(true)}>
-            Boost a listing
-          </Button>
+          {/* Boosting is a payment: the owner's, not staff's. */}
+          {owner ? (
+            <Button size="sm" onClick={() => setSheet(true)}>
+              Boost a listing
+            </Button>
+          ) : null}
           {sponsorships.length > 0 ? (
             <ButtonLink
               href="/console/stock"

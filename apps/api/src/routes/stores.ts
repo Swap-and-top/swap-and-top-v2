@@ -11,7 +11,8 @@ import { db } from '../db/client';
 import * as t from '../db/schema';
 import { loadListings } from '../listings';
 import { buyPass, dayMonth, paidUntil, PASSES, settlePasses } from '../passes';
-import { isMember } from './post';
+import { notify } from './notifications';
+import { isMember, roleIn } from './post';
 import { ErrorSchema, ListingSchema, StoreSchema } from '../schemas';
 import { personFor } from './me';
 
@@ -289,4 +290,180 @@ storeRoutes.openapi(stock, async (c) => {
     500,
   );
   return c.json({ paidUntil: dayMonth(until), listings }, 200);
+});
+
+/* --- owner and staff ------------------------------------------------------- */
+
+/*
+ * Two roles (docs/product/accounts-and-stores.md): the owner can do
+ * everything; staff do stock, offers and leads, not payments, verification,
+ * staff or settings. Staff sign in with their own person accounts: the owner
+ * adds them by phone number and removes them in one tap.
+ */
+
+const Member = z
+  .object({
+    personId: z.string(),
+    name: z.string(),
+    /** As written in Zimbabwe: 077 123 4567. */
+    phone: z.string().optional(),
+    role: z.enum(['owner', 'staff']),
+    /** "28 Oct": when they joined the store. */
+    since: z.string(),
+  })
+  .openapi('StoreMember');
+
+/** +263771234567 as people write it: 077 123 4567. */
+const shownPhone = (phone: string) => {
+  const local = phone.slice(4);
+  return `0${local.slice(0, 2)} ${local.slice(2, 5)} ${local.slice(5)}`;
+};
+
+/** A Zimbabwe mobile number as +263771234567, or null when it is not one. */
+function toPhone(typed: string): string | null {
+  const digits = typed.replace(/\D/g, '');
+  const local = digits.startsWith('263') ? digits.slice(3) : digits.startsWith('0') ? digits.slice(1) : digits;
+  return /^7\d{8}$/.test(local) ? `+263${local}` : null;
+}
+
+async function membersOf(storeId: string) {
+  const rows = await db
+    .select({
+      personId: t.people.id,
+      name: t.people.displayName,
+      phone: t.people.phone,
+      role: t.storeMembers.role,
+      addedAt: t.storeMembers.addedAt,
+    })
+    .from(t.storeMembers)
+    .innerJoin(t.people, eq(t.people.id, t.storeMembers.personId))
+    .where(and(eq(t.storeMembers.storeId, storeId), isNull(t.storeMembers.removedAt)))
+    .orderBy(t.storeMembers.addedAt);
+  // The owner first, then staff in the order they were added.
+  return rows
+    .sort((a, b) => (a.role === b.role ? 0 : a.role === 'owner' ? -1 : 1))
+    .map((row) => ({
+      personId: row.personId,
+      name: row.name || 'New member',
+      phone: row.phone ? shownPhone(row.phone) : undefined,
+      role: row.role,
+      since: dayMonth(row.addedAt),
+    }));
+}
+
+const memberErrors = {
+  401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+  403: { description: 'Not allowed', content: { 'application/json': { schema: ErrorSchema } } },
+};
+
+const team = createRoute({
+  method: 'get',
+  path: '/stores/{id}/members',
+  tags: ['Stores'],
+  summary: 'A store’s owner and staff',
+  description: 'For its owner and staff.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: { description: 'The owner and staff', content: { 'application/json': { schema: z.object({ members: z.array(Member) }) } } },
+    ...memberErrors,
+  },
+});
+
+storeRoutes.openapi(team, async (c) => {
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if (!(await isMember(person.id, id))) return c.json({ error: 'Only the store’s owner and staff can see this.' }, 403);
+  return c.json({ members: await membersOf(id) }, 200);
+});
+
+const addStaff = createRoute({
+  method: 'post',
+  path: '/stores/{id}/members',
+  tags: ['Stores'],
+  summary: 'Add staff by phone number',
+  description:
+    'The owner only. The number must belong to an account: staff sign in with their own. They are told in their notifications.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    params: z.object({ id: z.string() }),
+    body: { content: { 'application/json': { schema: z.object({ phone: z.string() }) } } },
+  },
+  responses: {
+    201: { description: 'Added', content: { 'application/json': { schema: z.object({ members: z.array(Member) }) } } },
+    400: { description: 'Not a number', content: { 'application/json': { schema: ErrorSchema } } },
+    ...memberErrors,
+    404: { description: 'No account with that number', content: { 'application/json': { schema: ErrorSchema } } },
+    409: { description: 'Already in the store', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+storeRoutes.openapi(addStaff, async (c) => {
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if ((await roleIn(person.id, id)) !== 'owner') return c.json({ error: 'Only the store’s owner can add staff.' }, 403);
+  const number = toPhone(c.req.valid('json').phone);
+  if (!number) return c.json({ error: 'Enter a Zimbabwe mobile number, like 077 123 4567.' }, 400);
+  const [them] = await db.select().from(t.people).where(eq(t.people.phone, number));
+  if (!them) {
+    return c.json({ error: 'No account has that number yet. Ask them to sign up first, then add them.' }, 404);
+  }
+  const [already] = await db
+    .select({ role: t.storeMembers.role, removedAt: t.storeMembers.removedAt })
+    .from(t.storeMembers)
+    .where(and(eq(t.storeMembers.storeId, id), eq(t.storeMembers.personId, them.id)));
+  if (already && already.removedAt === null) {
+    return c.json({ error: already.role === 'owner' ? 'That is you, the owner.' : 'They are already staff here.' }, 409);
+  }
+  if (already) {
+    await db
+      .update(t.storeMembers)
+      .set({ role: 'staff', addedAt: new Date(), removedAt: null })
+      .where(and(eq(t.storeMembers.storeId, id), eq(t.storeMembers.personId, them.id)));
+  } else {
+    await db.insert(t.storeMembers).values({ storeId: id, personId: them.id, role: 'staff' });
+  }
+  const [store] = await db.select({ name: t.stores.name }).from(t.stores).where(eq(t.stores.id, id));
+  await notify(
+    them.id,
+    'account',
+    `${person.displayName || 'The owner'} added you as staff at ${store?.name ?? 'their store'}. Open the Store console from Me.`,
+    '/me',
+  );
+  return c.json({ members: await membersOf(id) }, 201);
+});
+
+const removeStaff = createRoute({
+  method: 'delete',
+  path: '/stores/{id}/members/{personId}',
+  tags: ['Stores'],
+  summary: 'Remove staff',
+  description: 'The owner only. The owner cannot be removed. What they did stays recorded against their name.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { params: z.object({ id: z.string(), personId: z.string() }) },
+  responses: {
+    200: { description: 'Removed', content: { 'application/json': { schema: z.object({ members: z.array(Member) }) } } },
+    ...memberErrors,
+  },
+});
+
+storeRoutes.openapi(removeStaff, async (c) => {
+  const { id, personId } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if ((await roleIn(person.id, id)) !== 'owner') return c.json({ error: 'Only the store’s owner can remove staff.' }, 403);
+  await db
+    .update(t.storeMembers)
+    .set({ removedAt: new Date() })
+    .where(
+      and(
+        eq(t.storeMembers.storeId, id),
+        eq(t.storeMembers.personId, personId),
+        eq(t.storeMembers.role, 'staff'),
+        isNull(t.storeMembers.removedAt),
+      ),
+    );
+  return c.json({ members: await membersOf(id) }, 200);
 });

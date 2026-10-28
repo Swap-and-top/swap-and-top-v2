@@ -51,6 +51,7 @@ import {
   TrashIcon,
 } from '@snt/ui/icons';
 import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
+import { useConsoleRole } from '@/lib/consoleRole';
 import { saveStatus } from '@/lib/listingStatus';
 import { BoostedTab } from './BoostedTab';
 import { filterStock, filtersInUse } from './filterStock';
@@ -76,6 +77,8 @@ export default function ConsoleStockPage() {
   // What the store holds, from the API, for the store the console is open
   // for (the mock store only outside the console's gate).
   const target = useConsoleTarget() ?? currentStore;
+  /** Boosting is a payment: the owner's, not staff's. */
+  const owner = useConsoleRole() === 'owner';
   const loaded = useConsoleStock(target.id);
   const all = loaded ?? [];
   const stock = filterStock(all, stockFilters, stockQuery);
@@ -179,7 +182,7 @@ export default function ConsoleStockPage() {
           { label: 'Edit item', icon: <PencilIcon size={17} />, href: edit },
           // A live item for sale: boost it; while a boost runs, extend it
           // or stop it, all here, where the item is looked after.
-          ...(listing.type === 'sale'
+          ...(listing.type === 'sale' && owner
             ? [
                 {
                   label:

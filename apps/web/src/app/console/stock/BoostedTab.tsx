@@ -24,6 +24,7 @@ import {
   type MenuAction,
 } from '@snt/ui';
 import { CloseIcon, EyeIcon, MegaphoneIcon } from '@snt/ui/icons';
+import { useConsoleRole } from '@/lib/consoleRole';
 import styles from './BoostedTab.module.css';
 
 /** How many items "Worth boosting" suggests. */
@@ -38,6 +39,8 @@ export function BoostedTab({
   /** Opens the boost sheet: on one item, or to pick one. */
   onBoost: (listingId?: string) => void;
 }) {
+  /** Boosting is a payment: the owner's, not staff's. */
+  const owner = useConsoleRole() === 'owner';
   const sponsorships = useStoreSponsorships((useConsoleTarget() ?? currentStore).id);
   const stop = useSponsorStore((state) => state.stop);
   const restore = useSponsorStore((state) => state.restore);
@@ -62,11 +65,15 @@ export function BoostedTab({
     s: (typeof sponsorships)[number],
   ): MenuAction[] {
     return [
-      {
-        label: 'Extend boost',
-        icon: <MegaphoneIcon size={17} weight={1.9} />,
-        onSelect: () => onBoost(listing.id),
-      },
+      ...(owner
+        ? [
+            {
+              label: 'Extend boost',
+              icon: <MegaphoneIcon size={17} weight={1.9} />,
+              onSelect: () => onBoost(listing.id),
+            },
+          ]
+        : []),
       {
         label: 'View as a buyer',
         icon: <EyeIcon size={17} />,
@@ -100,14 +107,18 @@ export function BoostedTab({
           A boosted listing shows in a labelled Sponsored slot in the feed,
           from $1 a day. The more a day, the more people see it.
         </p>
-        <button
-          type="button"
-          className={styles.boostButton}
-          onClick={() => onBoost()}
-        >
-          <MegaphoneIcon size={17} weight={1.9} />
-          Boost a listing
-        </button>
+        {owner ? (
+          <button
+            type="button"
+            className={styles.boostButton}
+            onClick={() => onBoost()}
+          >
+            <MegaphoneIcon size={17} weight={1.9} />
+            Boost a listing
+          </button>
+        ) : (
+          <p className={styles.introText}>Only the store’s owner can pay to boost a listing.</p>
+        )}
       </div>
 
       {boosted.length > 0 ? (
@@ -173,13 +184,15 @@ export function BoostedTab({
                     {listing.viewCount === 1 ? 'view' : 'views'}
                   </span>
                 </span>
-                <button
-                  type="button"
-                  className={styles.boostSmall}
-                  onClick={() => onBoost(listing.id)}
-                >
-                  Boost
-                </button>
+                {owner ? (
+                  <button
+                    type="button"
+                    className={styles.boostSmall}
+                    onClick={() => onBoost(listing.id)}
+                  >
+                    Boost
+                  </button>
+                ) : null}
               </li>
             ))}
           </ul>

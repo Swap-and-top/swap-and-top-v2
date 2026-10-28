@@ -14,3 +14,52 @@
   --snt-column-inset: 0px;
   max-width: var(--snt-column-max);
 }
+
+/* --- the store's owner and staff, under the storefront --- */
+
+.staff {
+  margin-top: var(--snt-space-8);
+}
+
+.staffTitle {
+  margin: 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+}
+
+.staffLead {
+  margin: var(--snt-space-2) 0 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+.members {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-4) 0;
+  border-top: 1px solid var(--snt-line);
+}
+
+.memberText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.memberName {
+  font-weight: var(--snt-weight-semibold);
+}
+
+.memberLine {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}

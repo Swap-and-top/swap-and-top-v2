@@ -17,7 +17,7 @@ import * as t from '../db/schema';
 import { dayMonth } from '../passes';
 import { ErrorSchema } from '../schemas';
 import { personFor } from './me';
-import { isMember } from './post';
+import { roleIn } from './post';
 
 export const boostRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -77,12 +77,17 @@ async function runningOn(listingId: string): Promise<BoostRow | undefined> {
   return boost;
 }
 
-/** The listing, if this person may boost it: its poster or its store's. */
-async function boostable(personId: string, listingId: string) {
+/**
+ * The listing, if this person may boost it: its poster, or its store's owner
+ * and staff. Paying for a boost on a store's listing is the owner's alone
+ * (`paying`): staff look after stock, not payments.
+ */
+async function boostable(personId: string, listingId: string, paying = false) {
   const [listing] = await db.select().from(t.listings).where(eq(t.listings.id, listingId));
   if (!listing) return undefined;
-  const allowed =
-    listing.ownerId === personId || (listing.storeId !== null && (await isMember(personId, listing.storeId)));
+  if (listing.storeId === null) return listing.ownerId === personId ? listing : null;
+  const role = await roleIn(personId, listing.storeId);
+  const allowed = paying ? role === 'owner' : role !== null;
   return allowed ? listing : null;
 }
 
@@ -164,9 +169,11 @@ boostRoutes.openapi(buy, async (c) => {
   const { id } = c.req.valid('param');
   const { dailyBudget, days } = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
-  const listing = await boostable(person.id, id);
+  const listing = await boostable(person.id, id, true);
   if (listing === undefined) return c.json({ error: 'That listing is not there any more.' }, 404);
-  if (listing === null) return c.json({ error: 'Only its poster, or its store, can boost it.' }, 403);
+  if (listing === null) {
+    return c.json({ error: 'Only its poster, or its store’s owner, can pay to boost it.' }, 403);
+  }
   if (listing.status !== 'live') return c.json({ error: 'Only a live listing can be boosted.' }, 400);
 
   const now = new Date();

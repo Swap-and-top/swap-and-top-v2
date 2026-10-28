@@ -5,43 +5,63 @@
  *
  * The store as buyers find it, kept inside the console: the sidebar stays, so
  * the store can look and move straight on to Stock or Leads. Only what is
- * live shows, as on the public page, with the store's own edits. The public
- * page itself, under the marketplace's header, is one button away.
+ * live shows, as on the public page (read from GET /api/stores/{slug}). The
+ * public page itself, under the marketplace's header, is one button away.
+ *
+ * Under it, the store's owner and staff (StaffPanel): the owner adds and
+ * removes staff here.
  */
 
-import { currentStore, newLeadCount, useStoreStock } from '@snt/core';
-import { ButtonLink, ConsoleShell } from '@snt/ui';
+import { useEffect, useState } from 'react';
+import { currentStore, newLeadCount, type Listing, type Store } from '@snt/core';
+import { ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
 import { StorefrontBody } from '@/components/Storefront';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
+import { useConsoleStock } from '../stock/useConsoleStock';
+import { StaffPanel } from './StaffPanel';
 import styles from './page.module.css';
 
 export default function ConsoleStorePage() {
-  const stock = useStoreStock(currentStore.id);
-  const live = stock.filter((listing) => listing.status === 'live');
+  const target = useConsoleTarget() ?? currentStore;
+  const stock = useConsoleStock(target.id);
+  /** The store as its public page has it: details, and live listings. */
+  const [page, setPage] = useState<{ store: Store; listings: Listing[] } | null>(null);
+
+  useEffect(() => {
+    let gone = false;
+    void fetch(`/api/stores/${encodeURIComponent(target.slug)}`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body: (Store & { listings: Listing[] }) | null) => {
+        if (gone || !body) return;
+        const { listings, ...store } = body;
+        setPage({ store, listings });
+      })
+      .catch(() => undefined);
+    return () => {
+      gone = true;
+    };
+  }, [target.slug]);
 
   return (
     <ConsoleShell
-      store={currentStore}
+      store={target}
       title="Store profile"
-      meta="Your store as buyers find it"
+      meta="Your store as buyers find it, and who runs it"
       newLeadCount={newLeadCount}
-      stockCount={stock.length}
+      stockCount={stock?.length ?? 0}
       actions={
         <div className={styles.toolbar}>
           {/* Lead alerts are a store setting, so they can be found here too. */}
           <LeadAlertsChip />
-          <ButtonLink
-            href={`/store/${currentStore.slug}`}
-            variant="secondary"
-            size="sm"
-          >
+          <ButtonLink href={`/store/${target.slug}`} variant="secondary" size="sm">
             View as a buyer
           </ButtonLink>
         </div>
       }
     >
       <div className={styles.store}>
-        <StorefrontBody store={currentStore} listings={live} />
+        {page ? <StorefrontBody store={page.store} listings={page.listings} /> : null}
+        <StaffPanel storeId={target.id} />
       </div>
     </ConsoleShell>
   );

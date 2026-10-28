@@ -36,9 +36,18 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
 
 **Next, in order:**
 
-1. **Slice 4, owner and staff:** the owner adds staff by phone and removes
-   them; staff can do stock, offers and leads, not payments,
-   verification, staff or settings. Table `store_members` already exists.
+1. **Slice 4, owner and staff (built 2026-10-28, not yet committed):**
+   `GET`, `POST` and `DELETE /api/stores/{id}/members` (in
+   `apps/api/src/routes/stores.ts`): the owner adds staff by phone (the
+   number must have an account; they are told in their notifications)
+   and removes them (Undo puts them back); staff see the list. `roleIn`
+   in `routes/post.ts` gives a person's role; paying for a boost on a
+   store's listing is now the owner's alone (passes already were). The
+   console's Store profile reads the real store (it was still on the
+   mock) and has the Staff section (`console/store/StaffPanel.tsx`);
+   `useConsoleRole()` (`apps/web/src/lib/consoleRole.ts`) hides boost
+   buttons from staff in Stock, Boosted and Stats. Tested through the
+   API and in the browser as owner and as staff.
 2. **The rest of Phase 4:** moving existing listings into a new store, a
    store's own contact ways and settings, Verified store requests, closing
    a store, and a switch in the console between several stores (it opens
@@ -46,6 +55,20 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
 3. **Phase 5, the report queue for staff** (tables `reports`,
    `moderation_actions`, `appeals` exist). See the backend plan,
    section 2.
+
+**Waiting on the owner (Hillary):**
+
+- **A Paynow merchant account**, which Hillary will open later at
+  paynow.co.zw. Until then every payment (store passes, boosts) is a test
+  one. When it exists: Hillary puts the Integration ID and Integration Key
+  in the root `.env` and in Vercel (Production and Preview), they are
+  added to `turbo.json`'s `passThroughEnv`, and the payment step is built:
+  start a Paynow transaction (EcoCash express or the web checkout), take
+  Paynow's result call at an API endpoint, and only then mark the
+  `payments` row paid and switch the pass or boost on. Remind Hillary of
+  this when work reaches real payments or launch.
+- Real email (Supabase SMTP) and SMS (a provider in place of the Twilio
+  placeholders), to replace the mock codes before launch.
 
 **Good to know before starting:**
 
@@ -133,8 +156,7 @@ Sign in with a phone (Continue with phone) and the code **123456**:
 Only these seven numbers can sign in by phone (Supabase test numbers); any
 other number needs real SMS. Any Zimbabwe number can be *verified* in
 Settings or the verify phone sheet with 123456. Sign up with any email
-works (code 123456). A leftover test account, Nyasha C.
-(`signup.test@example.com`), is still in the database; ask before deleting.
+works (code 123456).
 
 The mock data in `packages/core/src/mock` is what the database was seeded
 from, and what the Store console and other people's details still read:
@@ -444,9 +466,11 @@ See `git log` for the full detail; each commit body explains its change.
   was offered, not built.
 - The deal check pills' explanations are browser tooltips: they show on a
   laptop only, not on a phone.
-- The desktop app sometimes starts its own preview server on port 3001
-  when a session reopens; stopping it from Claude was refused, so ask the
-  user to stop it if pages lose their styles.
+- The desktop app used to start its own preview server on port 3001 when
+  port 3000 was taken (`autoPort` in `.claude/launch.json`), which shares
+  `.next` with the user's server and breaks pages and the API. `autoPort`
+  is now off (2026-10-28), so the preview reuses 3000 or fails instead. If
+  a server on 3001 appears anyway, ask the user to stop it.
 - The budget slider runs $1 to $100, so each dollar is a tiny movement on a
   phone; a lower top or minus and plus buttons were offered, not built.
 - On sale and swap cards' bottom line, the place and age get trimmed first

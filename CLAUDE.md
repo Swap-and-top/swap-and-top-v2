@@ -5,7 +5,7 @@ laid out, the design patterns in use and what was done most recently; its
 "Where we stopped" says what comes next. The backend's phases, slices and
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
-As of 2026-10-28 the next job is Phase 4 slice 4 (owner and staff).
+As of 2026-10-28 Phase 4 slice 4 (owner and staff) is built; next is the rest of Phase 4, then Phase 5 (see the handoff).
 
 ## Standing rules from the product owner (Hillary)
 
@@ -72,6 +72,8 @@ These came from repeated feedback. Follow them without being asked.
   (live) database, so ask the owner before running it, every time.
 - **Payments are test ones** until a Paynow account is set up: store passes
   and boosts record a `payments` row with provider `test`, paid at once.
+  Hillary will open the Paynow merchant account later; what then needs
+  doing is under "Waiting on the owner" in the handoff.
 - **The Store console** opens for the store in `useConsoleTarget()`
   (`@snt/ui`), not the mock `currentStore`; its endpoints answer 402 with
   `code: 'pass'` when no pass covers now. Pages use the signed in person

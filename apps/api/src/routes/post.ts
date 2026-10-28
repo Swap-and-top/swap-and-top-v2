@@ -94,6 +94,23 @@ async function overLimit(personId: string, storeId: string | null): Promise<stri
     : null;
 }
 
+/** This person's role in this store, if they belong to it and it is open. */
+export async function roleIn(personId: string, storeId: string): Promise<'owner' | 'staff' | null> {
+  const [member] = await db
+    .select({ role: t.storeMembers.role })
+    .from(t.storeMembers)
+    .innerJoin(t.stores, eq(t.stores.id, t.storeMembers.storeId))
+    .where(
+      and(
+        eq(t.storeMembers.storeId, storeId),
+        eq(t.storeMembers.personId, personId),
+        isNull(t.storeMembers.removedAt),
+        isNull(t.stores.closedAt),
+      ),
+    );
+  return member?.role ?? null;
+}
+
 /** Whether this person may act for this store: its owner or staff. */
 export async function isMember(personId: string, storeId: string): Promise<boolean> {
   const [member] = await db
