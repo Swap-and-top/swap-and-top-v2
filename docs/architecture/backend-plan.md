@@ -227,7 +227,7 @@ Seeded in development only, each signing in with its phone number and the fixed 
 
 ## Where it stands
 
-**In short (2026-10-28):** Phases 1 to 3 and Phase 4 slices 1 to 4 are built, with store settings, moving listings, switching and closing stores, and real contact numbers with the store's phone and renaming. Every contact number shown is real, and Verified store requests work. Next: Phase 5, the Staff console with the team and Trust and safety (the roles change to user or super admin, with staff in departments); then Phase 6 (Executives, Board, Finance, Sales) and Phase 7 (Marketing, DevOps). See [../product/staff-console.md](../product/staff-console.md). The details of each follow.
+**In short (2026-10-28):** Phases 1 to 4 are built and live, apart from real Paynow payment (waiting on a merchant account). Phase 5, the Staff console, is under way: the roles change to departments, the console frame, Verify stores and Team are built; next are Reports, People, Appeals and the Activity log. Then Phase 6 (Executives, Board, Finance, Sales) and Phase 7 (Marketing, DevOps). See [../product/staff-console.md](../product/staff-console.md). The details of each follow.
 
 **Phase 1 is built** (2026-10-27), in `apps/api`:
 

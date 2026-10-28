@@ -5,7 +5,27 @@ laid out, the design patterns in use and what was done most recently; its
 "Where we stopped" says what comes next. The backend's phases, slices and
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
-As of 2026-10-28 Phase 4 slices 1 to 4, store settings, moving listings, switching and closing stores, and real contact numbers with the store's phone and renaming (item 6 in the handoff's "Where we stopped") are built. Every contact number shown is now real (`apps/api/src/contact.ts`), and Verified store requests work (owner asks, an admin verifies at `/admin/verify`). Phase 4 is done apart from real Paynow payment (waiting on Hillary). Next: Phase 5, the Staff console (item 8 in the handoff, designed in `docs/product/staff-console.md`): roles become only user and super admin, staff are put into departments (Trust and safety, Sales, Finance, Marketing, DevOps, Executives, Board) as member or lead, and each person's console shows only their departments' sections. The four holes found in built code are closed (the handoff's "Before launch", items 1 to 4); The roles change is done (role is user or super admin; staff are in `staff_departments`, checked with `inDepartment` in `apps/api/src/staff.ts` and `useInDepartment` in `apps/web/src/lib/staff.ts`). The Staff console frame is built at `/staff` (sections in `apps/web/src/app/staff/sections.tsx`; a section shows once its `built` flag is set). Team is built (`/staff/team`; changes logged in `staff_log`). Phase 5 carries on with Trust and safety's Reports, People, Appeals and Activity log. On the live site test accounts (077 000 0xxx) have no staff powers. Hillary (super admin), Patrick and Ray are on their real numbers since 2026-10-28 (never run `db:seed`, which would put them back); for scripted staff tests use Tafadzwa (0006, lead) and Rumbi (0005, member).
+
+## Where things stand (2026-10-28)
+
+- **Built and live on `main`:** Phases 1 to 4 (everything a person and a
+  store uses, on the database), apart from real Paynow payment, which
+  waits on Hillary's merchant account. Every contact number shown is real
+  (`apps/api/src/contact.ts`).
+- **Phase 5, the Staff console, is under way.** Built: roles are only
+  `user` or `super_admin`; staff are in `staff_departments` as member or
+  lead, checked with `inDepartment` (`apps/api/src/staff.ts`) and
+  `useInDepartment` (`apps/web/src/lib/staff.ts`); the console at `/staff`
+  (sections listed in `apps/web/src/app/staff/sections.tsx`, shown once
+  `built: true`); Verify stores; Team (changes logged in `staff_log`).
+- **Next: Reports**, then People, Appeals and the Activity log. The
+  handoff's item 8 has the plan; `docs/product/staff-console.md` has the
+  design, including the safeguards (section 9) to build with each section.
+- **Real accounts:** Hillary (super admin), Patrick and Ray are on their
+  real phone numbers. Never run `db:seed` (it would put them back on test
+  numbers). On the live site test numbers (077 000 0xxx) carry no staff
+  powers. For scripted staff tests use Tafadzwa (0006, Trust and safety
+  lead) and Rumbi (0005, member).
 
 ## Standing rules from the product owner (Hillary)
 
@@ -96,6 +116,11 @@ Hillary dictates by voice, so messages can be cut off or misheard
 ambiguous, pick the most likely reading, do it, and say how you read it.
 They review visually on a laptop and on a real phone, and will say when
 something should be undone.
+
+Show progress the way Hillary asked: a short one line status before each
+step, and a checklist of the steps (`- [x]` done, `- [ ]` to do) at the
+start of a job and in the final reply. Use a task list tool for it when
+the session has one.
 
 ## Commit flow (only when asked)
 

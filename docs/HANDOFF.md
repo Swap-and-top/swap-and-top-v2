@@ -5,20 +5,22 @@ brought up to date on 2026-10-26, 2026-10-27 (the second account change),
 twice more later on 2026-10-27, at the end of the long 2026-10-27
 backend session (Phases 1 to 3 and Phase 4 slice 1), and on 2026-10-28
 (slices 2 and 3: store passes and the Store console on real data), and
-again at the end of 2026-10-28 (the rest of Phase 4, and the Staff
-console plan). The
-rules for working on this repo are in `/CLAUDE.md`; read that first. This
+again at the end of 2026-10-28 (the rest of Phase 4, the Staff console
+plan, and Phase 5's first parts: the roles change, the console frame and
+Team). The rules for working on this repo are in `/CLAUDE.md`; read that first. This
 file is the state of the code and the recent work. **Start with "Where we
 stopped" just below**, then `docs/architecture/backend-plan.md` ("Where it
 stands") for the backend in full.
 
 ## Where we stopped (2026-10-28)
 
-**In one line:** Phases 1 to 4 are built and committed on
-`redesign/pdf-style` (ask before pushing it to `main`, which is live). The
-only Phase 4 piece left is real payment through Paynow, which waits on
-Hillary's merchant account. **Next is Phase 5, the Staff console** (item 8
-below; the full design is `docs/product/staff-console.md`).
+**In one line:** Phases 1 to 4 are built, and Phase 5 (the Staff console)
+is under way: the roles change, the console frame, Verify stores and Team
+are built. Everything is committed on `redesign/pdf-style` and **live on
+`main`** (last pushed 2026-10-28, `0059d3e`). The only Phase 4 piece left is
+real payment through Paynow, which waits on Hillary's merchant account.
+**Next: Reports** (item 8 below; the full design is
+`docs/product/staff-console.md`).
 
 - **Slice 2, store passes:** a day ($1), week ($5) or month ($15) pass,
   bought as a test payment from Me or the limit message
@@ -147,76 +149,66 @@ below; the full design is `docs/product/staff-console.md`).
      sees a nudge on the console's Stock page to ask.
    - Admin test accounts: Patrick M. 077 000 0008 (Tafadzwa's 0006 did
      not sign in by script on 2026-10-28, likely a Supabase rate limit).
-8. **NEXT: Phase 5, the Staff console** (decided with Hillary 2026-10-28,
-   decisions P39 to P41; read `docs/product/staff-console.md` first, then
-   the backend plan's Phase 5 and section 2 on reports). In order:
-   - **Done first (2026-10-28): the four holes found in built code are
-     closed** (see "Before launch" below, items 1 to 4).
-   - **Done 2026-10-28: the roles change** (migration
-     `0007_illegal_kulan_gath.sql`, applied with Hillary's yes; it moves
-     moderators and admins into the team before narrowing the role). Built:
-     `staff_departments`, `apps/api/src/staff.ts` (`staffOf`,
-     `inDepartment`, the super admin passing all, test accounts in no
-     department on the live site), `/api/me` gives `staff`, Verify stores
-     asks for a Trust and safety lead, `apps/web/src/lib/staff.ts`
-     (`useInDepartment`, `useOnTeam`), the seed's `TEST_STAFF`. Tested:
-     Rumbi (member) refused Verify stores, Patrick (lead) and Hillary
-     (super admin) let in, Kuda refused. What was planned: a `staff_departments` table (person, department,
-     lead, added by, added at); departments `trust_safety`, `sales`,
-     `finance`, `marketing`, `devops`, `executives`, `board`. Move
-     moderators to Trust and safety members and admins to Trust and
-     safety leads (test accounts: Rumbi 0005 member; Tafadzwa 0006,
-     Patrick 0008, Ray 0009 leads); narrow `people.role` to `user` or
-     `super_admin` (Hillary 0007). Change every staff check to ask for a
-     department (and lead where needed), the super admin passing all;
-     `/admin/verify` and `routes/verification.ts` check for a Trust and
-     safety lead instead of admin. Update the seed to match.
-   - **Done 2026-10-28: the Staff console frame.** `/staff`, gated in
-     `app/staff/layout.tsx` (signed in and on the team), opened from "Staff
-     console" under "For our team" on Me. `StaffShell` in `@snt/ui` shares
-     the Store console's styles (the bar at the foot scrolls sideways with
-     more than five sections). `app/staff/sections.tsx` lists every section
-     with its department, whether it needs a lead, and whether it is built;
-     each person sees the built ones of their departments (the super admin
-     all). Each page wraps itself in `StaffPage`. Verify stores moved to
-     `/staff/verify` (`/admin/verify` redirects). Built sections so far:
-     Verify stores. Tested as Kuda (refused), Patrick (laptop and phone).
-   - **Done 2026-10-28: Team** (`/staff/team`, `apps/api/src/routes/team.ts`,
-     migration `0008_fuzzy_roughhouse.sql` for `staff_log`, applied with
-     Hillary's yes). `GET /api/staff/team`, `GET /api/staff/team/find?q=`
-     (name or phone), `PUT` and `DELETE /api/staff/team/{personId}/{department}`
-     (`{ lead }`), `DELETE /api/staff/team/{personId}` (off the team). Rules
-     in the API: the super admin manages every department, makes leads and
-     removes from the team; a lead adds and takes out members of the
-     departments they lead only, never a lead, never themselves. Every change
-     is a `staff_log` row (`team.add`, `team.remove`, `team.lead`,
-     `team.unlead`, `team.leave`). The page: a card per person with a tick
-     per department (the app's `TickTile`), "Leads it" beside a ticked one
-     (greyed for leads), "Remove from the team" for the super admin, "Add a
-     person" searching by name or number. Tested through the API (every
-     rule) and in the browser as Patrick.
-   - **NEXT: Reports** (the Report button on listings and people, and the
-     queue), then People, Appeals and the Activity log (which reads
-     `staff_log`).
-     What was planned for the frame: built like the Store console (the same
-     shell, sidebar on a laptop, tabs on a phone), opened from "For our
-     team" on Me (which today links to `/admin/verify`), showing only the
-     sections of the person's departments; the server checks every
-     request.
-   - **Team** (super admin; a lead for their own department): each staff
-     member once, a toggle per department, a Lead switch beside each
-     toggle that is on, "Add a person" by name or phone; every change
-     logged.
-   - **Trust and safety:** Report on listings (the button today only says
-     reporting is not available yet, `packages/ui/src/cards/CardActions.tsx`)
-     and on people; the Reports queue (claim, approve, change the reason,
-     clear; phone first); People (find anyone, their record, warn,
-     suspend, leads ban; members act only on ordinary users); Appeals
-     (leads); Verify stores moved in; the Activity log. Tables `reports`,
-     `moderation_actions` and `appeals` already exist.
-   - **Check:** report a listing as one test account, approve it as a
-     Trust and safety member, see the warning arrive; toggle a department
-     for a person on Team and see their console change.
+8. **Phase 5, the Staff console** (decided with Hillary 2026-10-28,
+   decisions P39 to P43; read `docs/product/staff-console.md` first, then
+   the backend plan's Phase 5 and section 2 on reports).
+
+   **Built (2026-10-28), all live:**
+   - **The four holes** found in built code are closed ("Before launch"
+     below, items 1 to 4; migration `0006`).
+   - **Roles:** a role is only `user` or `super_admin`. Staff are in
+     `staff_departments` (person, department, lead), departments
+     `trust_safety`, `sales`, `finance`, `marketing`, `devops`,
+     `executives`, `board` (migration `0007`, which moved moderators and
+     admins into Trust and safety). Every staff check asks
+     `inDepartment(person, department, lead?)` in `apps/api/src/staff.ts`
+     (the super admin passes all; on the live site, test accounts are in no
+     department); the web app asks `useInDepartment` and `useOnTeam` in
+     `apps/web/src/lib/staff.ts`. `/api/me` returns `staff`.
+   - **The console frame** at `/staff`: gated in `app/staff/layout.tsx`,
+     opened from "Staff console" under "For our team" on Me, drawn by
+     `StaffShell` in `@snt/ui` (the Store console's styles; the bar at the
+     foot of a phone scrolls sideways past five sections). Every section is
+     listed in `app/staff/sections.tsx` with its department, whether it
+     needs a lead, and a `built` flag: a person sees the built sections of
+     their departments, the super admin all. Each page wraps itself in
+     `StaffPage`. **To add a section: build its page under `app/staff/`,
+     then set `built: true`.**
+   - **Verify stores** at `/staff/verify` (Trust and safety leads;
+     `/admin/verify` redirects).
+   - **Team** at `/staff/team` (`apps/api/src/routes/team.ts`): a card per
+     person, a tick per department, "Leads it" beside a ticked one, "Add a
+     person" by name or number, "Remove from the team" for the super
+     admin. The API enforces the rules: only the super admin makes leads
+     and removes from the team; a lead adds and takes out members of their
+     own departments only, never a lead, never themselves. Every change is
+     a row in `staff_log` (migration `0008`): `team.add`, `team.remove`,
+     `team.lead`, `team.unlead`, `team.leave`.
+
+   **NEXT, in order:**
+   1. **Reports.** The Report button on listings
+      (`packages/ui/src/cards/CardActions.tsx`, today a toast saying it is
+      not available) and on a person's profile: a sheet with the 8 reasons
+      (stolen, not as described, fake, duplicate, offensive, wrong
+      category, no show, other) and an optional note. `POST /api/reports`
+      (signed in; a daily limit per person; never your own listing). The
+      Reports section (`/staff/reports`, Trust and safety): open reports
+      oldest first, claim, then approve (an action: warning, removal,
+      suspension; ban for leads only), change the reason, or clear. Members
+      act only on ordinary users; reports about staff go to leads; nobody
+      handles a report about themselves or their own store; the reported
+      person never learns who reported. Each decision is a
+      `moderation_actions` row and a `staff_log` row, and the person is
+      told in their notifications. Tables `reports`, `moderation_actions`,
+      `appeals` already exist in `schema.ts` (check their columns against
+      section 2 of the backend plan before building).
+   2. **People** (`/staff/people`): find anyone, see their record
+      (listings, deals, reports, past actions), warn or suspend; leads ban.
+   3. **Appeals** (`/staff/appeals`, leads): a person appeals an action
+      once; a lead other than the one who acted upholds or overturns it.
+   4. **Activity log** (`/staff/activity`): reads `staff_log`.
+   - **Check for the phase:** report a listing as one account, approve it
+     as a Trust and safety member, see the warning arrive.
 9. **Phase 6:** Executives Overview, Board monthly summary, Finance,
    Sales (owners' phone numbers allowed). Agree business definitions
    (what counts as active, as value swapped) with Hillary first.
@@ -287,11 +279,17 @@ Before real users join:
   `payments` row paid and switch the pass or boost on. Remind Hillary of
   this when work reaches real payments or launch.
 - Real email (Supabase SMTP) and SMS (a provider in place of the Twilio
-  placeholders), to replace the mock codes before launch.
+  placeholders), to replace the mock codes before launch. Ray is in Brazil,
+  so the SMS provider must send there.
+- **Until real SMS:** Hillary adds her, Patrick's and Ray's real numbers to
+  Supabase (Authentication, Sign In / Providers, Phone, Test Phone Numbers
+  and OTPs), each with a private code (never 123456), with a "valid until"
+  date, and removes 263770000007, 0008 and 0009 from that list. Told to her
+  on 2026-10-28; check with her whether it is done before testing as them.
 
 **Good to know before starting:**
 
-- Migrations `0001` to `0005` are applied to the shared database. A new
+- Migrations `0001` to `0008` are applied to the shared database. A new
   one is made with `db:generate`; running `db:migrate` changes the live
   database, so ask the owner first.
 - Real payment waits on a Paynow merchant account; every payment is a test
@@ -493,6 +491,16 @@ Patterns the user has settled on:
 ## What was built recently (newest first)
 
 See `git log` for the full detail; each commit body explains its change.
+
+- **2026-10-28, the rest of Phase 4 and Phase 5's start** (`0d0c07a` to
+  `0059d3e`, all pushed to `main`): real contact numbers on Show contact,
+  the store page and accepted offers (`apps/api/src/contact.ts`); the
+  store's own phone and renaming with "formerly"; Verified store requests
+  and the nudge on Stock (P38: a pass does not need the badge); the Staff
+  console plan and the access review (P39 to P43); the four holes closed;
+  the roles change to departments; the Staff console frame with Verify
+  stores and Team; sign in taking numbers with a country code. Hillary,
+  Patrick and Ray moved onto their real numbers.
 
 - **2026-10-28, slices 2 and 3** (one commit): store passes, the Store
   console on real data, boosts and bulk import through the API, and the Me
