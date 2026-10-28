@@ -23,8 +23,10 @@ export const ContactSchema = z
 
 export type Contact = z.infer<typeof ContactSchema>;
 
-/** "+263771234567" → "077 123 4567". */
+/** "+263771234567" → "077 123 4567"; another country's stays whole, with
+    its code: "+558496530703". */
 export function localPhone(phone: string): string {
+  if (!phone.startsWith('+263')) return phone;
   const digits = phone.replace(/\D/g, '').replace(/^263/, '');
   const local = `0${digits}`;
   return `${local.slice(0, 3)} ${local.slice(3, 6)} ${local.slice(6)}`.trim();

@@ -35,7 +35,7 @@ Guests (not signed in) are not stored: a guest is simply "no session".
 | Admin | User, plus **Trust and safety lead** |
 | Super admin | Super admin, the same |
 
-The test accounts moved the same way: Rumbi M. (077 000 0005) became a Trust and safety member; Tafadzwa A. (0006), Patrick M. (0008) and Ray L. (0009) Trust and safety leads; Hillary M. (0007) stays super admin. Then, as Hillary set on 2026-10-28: Ray is also a member of Sales, Marketing and Finance; Patrick is in every department, lead of Trust and safety, Sales and Marketing (the seed's `TEST_STAFF`).
+The test accounts moved the same way: Rumbi M. (077 000 0005) became a Trust and safety member; Tafadzwa A. (0006), Patrick M. (0008) and Ray L. (0009) Trust and safety leads; Hillary M. (0007) stays super admin. Then, as Hillary set on 2026-10-28: Ray is also a member of Sales, Marketing and Finance; Patrick is in every department, lead of Trust and safety, Sales and Marketing (the seed's `TEST_STAFF`). The same day Hillary, Patrick and Ray were moved onto their real phone numbers, so on the live site they are the real super admin and staff.
 
 ---
 

@@ -250,11 +250,17 @@ Holes found in built code, **fixed 2026-10-28 at the start of Phase 5**
 
 Before real users join:
 
-5. **Hillary's real account as super admin, and real staff accounts:** on
-   the live site the test accounts carry no staff powers now, so set
-   `role = 'super_admin'` on Hillary's own (non test) account, with her
-   say so, and give real staff their own accounts. Check that Vercel
-   exposes `VERCEL_ENV` to the functions (it does by default).
+5. **Done 2026-10-28: real numbers for Hillary, Patrick and Ray.** The
+   accounts `u-hillary` (super admin), `u-patrick` and `u-ray` were moved
+   from the test numbers 0007, 0008 and 0009 to their real phone numbers,
+   in our database and in Supabase Auth (the same sign in, so their roles
+   and departments stayed). On the live site real numbers keep their
+   powers. Signing in by phone needs real SMS, or (meanwhile) each number
+   in Supabase's test numbers with a private code, never 123456. **Running
+   `db:seed` would put them back on the test numbers**; do not without
+   asking. Sign in now also takes a number with its country code (`+55 …`),
+   for Ray (`toPhone` in `apps/web/src/lib/supabase.ts`). For scripted
+   staff tests use Tafadzwa (0006, Trust and safety lead) and Rumbi (0005).
 6. **Split the database:** a development database with sample data for
    localhost and previews, the live one for production only (P42). Today
    they are one, which is why test data shows on the live site.
@@ -364,9 +370,9 @@ Sign in with a phone (Continue with phone) and the code **123456**:
 | 077 000 0004 | Kuda S. (`u-kuda`) | Staff at Kopje Computers. |
 | 077 000 0005 | Rumbi M. (`u-rumbi`) | Trust and safety member. |
 | 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Trust and safety lead. |
-| 077 000 0007 | Hillary M. (`u-hillary`) | Super admin. |
-| 077 000 0008 | Patrick M. (`u-patrick`) | In every department: lead of Trust and safety, Sales and Marketing; member of Finance, DevOps, Executives and Board. No store. Also email `patrick.test@example.com`, password `testpass123`. |
-| 077 000 0009 | Ray L. (`u-ray`) | Trust and safety lead; member of Sales, Marketing and Finance. No store. Also email `ray.test@example.com`, password `testpass123`. |
+| ~~077 000 0007~~ | Hillary M. (`u-hillary`) | Super admin. **Moved to Hillary's real number on 2026-10-28** (in the database and in Supabase Auth); 0007 is no longer this account. |
+| ~~077 000 0008~~ | Patrick M. (`u-patrick`) | In every department: lead of Trust and safety, Sales and Marketing; member of Finance, DevOps, Executives and Board. **Moved to Patrick's real number on 2026-10-28.** No store. |
+| ~~077 000 0009~~ | Ray L. (`u-ray`) | Trust and safety lead; member of Sales, Marketing and Finance. **Moved to Ray's real (Brazilian) number on 2026-10-28.** No store. |
 
 Only numbers listed as test numbers in Supabase can sign in by phone (1 to 7
 are; 8 and 9 need adding there: Authentication, Sign In / Providers, Phone,

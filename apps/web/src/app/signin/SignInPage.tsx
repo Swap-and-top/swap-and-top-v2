@@ -71,7 +71,7 @@ export function SignInPage({ next }: { next: string }) {
   async function sendCode() {
     const to = toPhone(typed);
     if (!to) {
-      toast.error('Enter a Zimbabwe mobile number, like 077 123 4567.');
+      toast.error('Enter your mobile number, like 077 123 4567, or with its country code, like +27 82 123 4567.');
       return;
     }
     setBusy(true);

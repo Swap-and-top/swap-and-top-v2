@@ -18,11 +18,19 @@ if (!url || !key) {
 export const supabase = createClient(url || 'https://missing.supabase.co', key || 'missing');
 
 /**
- * A Zimbabwe number in the form Supabase takes: 0771 234 567, 771234567 and
- * +263 77 123 4567 all become +263771234567. Undefined when it is not one.
+ * A number in the form Supabase takes. A Zimbabwe one as people write it:
+ * 0771 234 567, 771234567 and +263 77 123 4567 all become +263771234567.
+ * Another country's typed with its code, as someone helping from abroad
+ * would: +55 84 9653 0703 becomes +558496530703. Undefined when it is
+ * neither.
  */
 export function toPhone(typed: string): string | undefined {
   const digits = typed.replace(/\D/g, '');
+  const international = /^\s*(\+|00)/.test(typed);
+  if (international && !digits.replace(/^00/, '').startsWith('263')) {
+    const full = digits.replace(/^00/, '');
+    return /^[1-9]\d{7,14}$/.test(full) ? `+${full}` : undefined;
+  }
   const local = digits.startsWith('263')
     ? digits.slice(3)
     : digits.startsWith('0')
