@@ -186,11 +186,17 @@ export default function MePage() {
                             : 'A store you work for'
                       }
                     />
-                    {/* The owner buys its pass; staff cannot. */}
+                    {/* The owner buys its pass and edits its details; staff
+                        cannot. */}
                     {store.role === 'owner' ? (
-                      <Button variant="secondary" block onClick={() => setPassFor(store)}>
-                        {store.paidUntil ? 'Extend store pass' : 'Get a store pass'}
-                      </Button>
+                      <>
+                        <ButtonLink href={`/store/${store.slug}/edit`} variant="secondary" block>
+                          Edit store details
+                        </ButtonLink>
+                        <Button variant="secondary" block onClick={() => setPassFor(store)}>
+                          {store.paidUntil ? 'Extend store pass' : 'Get a store pass'}
+                        </Button>
+                      </>
                     ) : null}
                   </Stack>
                 ))}

@@ -5,7 +5,7 @@ laid out, the design patterns in use and what was done most recently; its
 "Where we stopped" says what comes next. The backend's phases, slices and
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
-As of 2026-10-28 Phase 4 slice 4 (owner and staff) is built; next is the rest of Phase 4, then Phase 5 (see the handoff).
+As of 2026-10-28 Phase 4 slice 4 (owner and staff) and store settings are built; next is the rest of Phase 4, then Phase 5 (see the handoff).
 
 ## Standing rules from the product owner (Hillary)
 

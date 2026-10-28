@@ -258,6 +258,8 @@ Seeded in development only, each signing in with its phone number and the fixed 
 
 - **Slice 4, owner and staff, is built** (2026-10-28): the store's team at `/api/stores/{id}/members` (list for owner and staff; add by phone and remove for the owner only; the owner cannot be removed), boosts on a store's listing paid for by the owner only, and the Staff section on the console's Store profile.
 
+- **Store settings are built** (2026-10-28): `PATCH /api/stores/{id}` lets the owner change the description, opening hours and area; the form is `/store/[slug]/edit`.
+
 ### Running it
 
 The settings live in the root `.env` (git ignores it): `DATABASE_URL` and the four `SUPABASE_` values. Then:

@@ -467,3 +467,57 @@ storeRoutes.openapi(removeStaff, async (c) => {
     );
   return c.json({ members: await membersOf(id) }, 200);
 });
+
+/* --- the store's details ---------------------------------------------------- */
+
+const details = createRoute({
+  method: 'patch',
+  path: '/stores/{id}',
+  tags: ['Stores'],
+  summary: 'Change the store’s details',
+  description:
+    'The owner only: the description, opening hours and area, which change freely (docs/product/accounts-and-stores.md). The name and web address are not changed here.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    params: z.object({ id: z.string() }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            description: z.string().trim().max(300).optional(),
+            openingHours: z.string().trim().max(80).optional(),
+            location: z.string().trim().min(2, 'Say where the store is').max(100).optional(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Saved',
+      content: { 'application/json': { schema: z.object({ slug: z.string() }) } },
+    },
+    400: { description: 'Something is wrong with it', content: { 'application/json': { schema: ErrorSchema } } },
+    ...memberErrors,
+  },
+});
+
+storeRoutes.openapi(details, async (c) => {
+  const { id } = c.req.valid('param');
+  const body = c.req.valid('json');
+  const person = await personFor(c.get('authUser'));
+  if ((await roleIn(person.id, id)) !== 'owner') {
+    return c.json({ error: 'Only the store’s owner can change its details.' }, 403);
+  }
+  const [saved] = await db
+    .update(t.stores)
+    .set({
+      ...(body.description !== undefined ? { description: body.description } : {}),
+      ...(body.openingHours !== undefined ? { openingHours: body.openingHours } : {}),
+      ...(body.location !== undefined ? { location: body.location } : {}),
+    })
+    .where(eq(t.stores.id, id))
+    .returning({ slug: t.stores.slug });
+  return c.json({ slug: saved!.slug }, 200);
+});

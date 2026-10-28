@@ -48,11 +48,18 @@ of it is on `redesign/pdf-style`; ask before pushing it to `main` (live).
    `useConsoleRole()` (`apps/web/src/lib/consoleRole.ts`) hides boost
    buttons from staff in Stock, Boosted and Stats. Tested through the
    API and in the browser as owner and as staff.
-2. **The rest of Phase 4:** moving existing listings into a new store, a
-   store's own contact ways and settings, Verified store requests, closing
-   a store, and a switch in the console between several stores (it opens
-   the first with a pass for now).
-3. **Phase 5, the report queue for staff** (tables `reports`,
+2. **Store settings (built 2026-10-28, not yet committed):** the owner
+   edits the store's description, opening hours and area at
+   `/store/[slug]/edit` (`PATCH /api/stores/{id}`, owner only), reached
+   from Me ("Edit store details" under the store) and the console's Store
+   profile. No database change was needed.
+3. **The rest of Phase 4:** moving existing listings into a new store,
+   switching between several stores in the console (it opens the first
+   with a pass for now), closing a store, the store's own contact ways and
+   the name change rule ("formerly …" for 30 days; these two need new
+   columns, so a migration, so ask first), and Verified store requests
+   (best alongside Phase 5's staff screens).
+4. **Phase 5, the report queue for staff** (tables `reports`,
    `moderation_actions`, `appeals` exist). See the backend plan,
    section 2.
 

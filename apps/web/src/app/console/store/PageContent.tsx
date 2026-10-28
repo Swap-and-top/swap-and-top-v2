@@ -17,6 +17,7 @@ import { currentStore, newLeadCount, type Listing, type Store } from '@snt/core'
 import { ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
 import { StorefrontBody } from '@/components/Storefront';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
+import { useConsoleRole } from '@/lib/consoleRole';
 import { useConsoleStock } from '../stock/useConsoleStock';
 import { StaffPanel } from './StaffPanel';
 import styles from './page.module.css';
@@ -24,6 +25,8 @@ import styles from './page.module.css';
 export default function ConsoleStorePage() {
   const target = useConsoleTarget() ?? currentStore;
   const stock = useConsoleStock(target.id);
+  /** Changing the store's details is the owner's. */
+  const owner = useConsoleRole() === 'owner';
   /** The store as its public page has it: details, and live listings. */
   const [page, setPage] = useState<{ store: Store; listings: Listing[] } | null>(null);
 
@@ -56,6 +59,11 @@ export default function ConsoleStorePage() {
           <ButtonLink href={`/store/${target.slug}`} variant="secondary" size="sm">
             View as a buyer
           </ButtonLink>
+          {owner ? (
+            <ButtonLink href={`/store/${target.slug}/edit`} variant="secondary" size="sm">
+              Edit store details
+            </ButtonLink>
+          ) : null}
         </div>
       }
     >
