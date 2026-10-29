@@ -119,7 +119,16 @@ const RecordSchema = z
     confirmedDeals: z.number(),
     liveListings: z.number(),
     listings: z.array(z.object({ title: z.string(), slug: z.string(), status: z.string(), dateLabel: z.string() })),
-    reports: z.array(z.object({ reason, state: z.string(), dateLabel: z.string(), listingTitle: z.string().optional() })),
+    reports: z.array(
+      z.object({
+        reason,
+        state: z.string(),
+        dateLabel: z.string(),
+        listingTitle: z.string().optional(),
+        /** Why it was decided so, once it was. */
+        note: z.string().optional(),
+      }),
+    ),
     actions: z.array(
       z.object({
         kind: z.string(),
@@ -179,9 +188,17 @@ peopleRoutes.openapi(record, async (c) => {
       .orderBy(desc(t.listings.createdAt))
       .limit(10),
     db
-      .select({ reason: t.reports.reason, state: t.reports.state, at: t.reports.createdAt, listingTitle: t.listings.title })
+      .select({
+        reason: t.reports.reason,
+        state: t.reports.state,
+        at: t.reports.createdAt,
+        listingTitle: t.listings.title,
+        note: t.moderationActions.note,
+      })
       .from(t.reports)
       .leftJoin(t.listings, eq(t.listings.id, t.reports.listingId))
+      // The decision on it, for its note.
+      .leftJoin(t.moderationActions, eq(t.moderationActions.reportId, t.reports.id))
       .where(eq(t.reports.personId, id))
       .orderBy(desc(t.reports.createdAt))
       .limit(10),
@@ -218,6 +235,7 @@ peopleRoutes.openapi(record, async (c) => {
         state: row.state,
         dateLabel: dayMonth(row.at),
         listingTitle: row.listingTitle ?? undefined,
+        note: row.note ?? undefined,
       })),
       actions: actions.map(({ action, byName }) => ({
         kind: action.kind,
@@ -243,7 +261,7 @@ const act = createRoute({
   tags: ['Staff'],
   summary: 'Warn, suspend or ban a person',
   description:
-    'Trust and safety, on someone they may act on. A warning, a 7 day suspension, or a ban (Trust and safety leads only), under a reason. They are told what was decided.',
+    'Trust and safety, on someone they may act on. A warning, a 7 day suspension, or a ban (Trust and safety leads only), under a reason and with a note saying why. They are told what was decided.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -254,7 +272,8 @@ const act = createRoute({
           schema: z.object({
             kind: z.enum(['warning', 'suspension', 'ban']),
             reason,
-            note: z.string().trim().max(500).optional(),
+            /** Why: required, so the record shows the thinking. */
+            note: z.string({ error: 'Write a short note saying why' }).trim().min(2, 'Write a short note saying why').max(500),
           }),
         },
       },
@@ -288,7 +307,7 @@ peopleRoutes.openapi(act, async (c) => {
         decidedById: viewer.id,
         kind: body.kind,
         reason: body.reason,
-        note: body.note || null,
+        note: body.note,
         until: ends,
       })
       .returning({ id: t.moderationActions.id });
@@ -296,7 +315,7 @@ peopleRoutes.openapi(act, async (c) => {
       actorId: viewer.id,
       action: `person.${body.kind}`,
       targetPersonId: id,
-      detail: { reason: body.reason },
+      detail: { reason: body.reason, note: body.note },
     });
     return { until: ends, actionId: made!.id };
   });

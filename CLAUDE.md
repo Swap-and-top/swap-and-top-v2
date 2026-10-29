@@ -27,12 +27,9 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   the rule is below under "Working with the backend").
 - **Every button action is a TanStack Query mutation** too (2026-10-29;
   shared store calls go through `runMutation` in `lib/query.tsx`).
-- **Not live yet (2026-10-29):** the last session's work is committed and
-  pushed to the `redesign/pdf-style` branch on GitHub only. `main` (the
-  live site) was deliberately **not** moved forward, at Hillary's request:
-  it is behind the branch by the button mutations (`bc4cadc`) and the
-  Reports redesign with the docs. Do not fast forward `main` until Hillary
-  says to push to production.
+- **Live (2026-10-30):** `main` is level with `redesign/pdf-style`
+  again: the button mutations, the Reports redesign and the notes on
+  every decision are live.
 - **Staff console review with Hillary, in progress:** Reports is done (one
   table of every report with a filter, compact rows on a phone, see the
   handoff). Three test reports (REP 2026 0014 to 0016) are left in on
@@ -46,14 +43,12 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   pass on the Store console; 4. ask about the open safeguards; 5. Phase 6
   (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
   has the console's design and safeguards (section 9).
-- **Decided, not built yet (Hillary, 2026-10-29): every decision needs a
-  note.** Whoever decides a report (Approve with any action, or Clear), acts
-  on a person (warn, suspend, ban), or decides an appeal (uphold,
-  overturn) must write a short note saying why; the button stays off until
-  there is one. The API refuses a decision without a note, and the note
-  shows in the report, the person's record and the Activity log. Hillary
-  asked for it to be noted for the next agent, not built in that session:
-  build it when she says (details in the handoff, "What comes next").
+- **Every decision carries a note** (built 2026-10-30): Approve and
+  Clear on a report, warn, suspend and ban on a person, and upholding or
+  overturning an appeal need a note saying why (at least two letters);
+  the button stays off until there is one and the API refuses without
+  it. The note shows in the report's sheet ("Why"), the person's record
+  and the Activity log (`note` in the `staff_log` detail).
 - **Real accounts:** Hillary (super admin), Patrick and Ray are on their
   real phone numbers. Never run `db:seed` (it would put them back on test
   numbers). On the live site test numbers (077 000 0xxx) carry no staff
@@ -108,10 +103,9 @@ These came from repeated feedback. Follow them without being asked.
   asking.
 - **Secrets stay put.** The root `.env` and `apps/web/.env.local` are git
   ignored; the owner fills them. Never print or paste their values. Vercel
-  has them for Production only: Preview has none, so the Preview deploy
-  of each branch push fails (it builds against no database). That is
-  expected; check the Production deploy of `main` (`npx vercel ls`), not
-  the commit's status on GitHub. `turbo.json` must list any new setting,
+  has them for Production only, and Preview builds are turned off
+  (Hillary, 2026-10-30), so only a push to `main` builds and deploys;
+  check it with `npx vercel ls`. `turbo.json` must list any new setting,
   or the build will not see it.
 - **Mock codes:** email and phone codes are 123456 until real email and SMS
   are set up (`MOCK_CODE` in `apps/api/src/supabaseAdmin.ts`). Test phone

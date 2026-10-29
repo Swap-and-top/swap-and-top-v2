@@ -14,42 +14,39 @@ stands") for the backend in full.
 
 ## Where we stopped (2026-10-29)
 
-**In one line (end of 2026-10-29):** Phases 1 to 4 are built and live
-(only real Paynow payment waits, on Hillary's merchant account). Phase 5,
-the Staff console, has everything planned for Trust and safety built, and
-the look of each page is being reviewed with Hillary: Reports is done. All
-of it is committed on `redesign/pdf-style` and **pushed to that branch on
-GitHub only**. `main`, which deploys live, is at `2e305c0` and was
-deliberately **not** moved forward: the button mutations (`bc4cadc`) and
-the Reports redesign with these docs are on the branch but not live. Move
-`main` forward only when Hillary says to push to production (Preview
-deploys of the branch fail as always: Vercel's Preview has no settings).
+**In one line (2026-10-30):** Phases 1 to 4 are built and live (only
+real Paynow payment waits, on Hillary's merchant account). Phase 5, the
+Staff console, has everything planned for Trust and safety built, every
+decision now carries a required note, and the look of each page is
+being reviewed with Hillary: Reports is done. All of it is committed on
+`redesign/pdf-style` and live on `main` (Vercel now builds only
+Production; Hillary turned Preview builds off).
 
 **Where the next agent starts:** carry on the Staff console review with
-Hillary at People and a person's record (item 2 below). Then the note on
-every decision when she says, then items 3 to 5.
+Hillary at People and a person's record (item 2 below), then items 3 to
+5. (The note on every decision is built, 2026-10-30.)
 
 **What comes next, in Hillary's order (do them in this order):**
 
-- **Decided 2026-10-29, not built: a note on every decision.** Hillary
-  wants every decision on reports and disciplinary actions to carry a
-  note from the staff member explaining their reasoning; nobody can act
-  without one. It covers: Approve (any action) and Clear on a report
-  (`POST /api/staff/reports/{id}/decide`, `apps/api/src/routes/reports.ts`;
-  the sheet in `app/staff/reports/PageContent.tsx`, whose Approve note is
-  optional today and whose Clear has no note); warn, suspend and ban on a
-  person (`apps/api/src/routes/people.ts`, `app/staff/people/[id]`); and
-  upholding or overturning an appeal (`apps/api/src/routes/appeals.ts`,
-  `app/staff/appeals`). Make `note` required in each API schema (refuse
-  without it), add a required note box to each sheet with the button off
-  until it is filled, store it (`moderation_actions.note`; check appeals
-  have a place for it, a migration needs Hillary's yes), and show it in
-  the report's sheet, the person's record and the Activity log (put it in
-  the `staff_log` detail). Declining a Verified store request already
-  requires a reason. Hillary asked only for it to be written down in the
-  session that decided it; build it when she says, before or with the
-  rest of the Staff console review.
-
+- **Done 2026-10-30: a note on every decision.** Approve (any action)
+  and Clear on a report (`POST /api/staff/reports/{id}/decide`), warn,
+  suspend and ban on a person (`POST /api/staff/people/{id}/action`) take
+  a required `note` (2 to 500 letters; "Write a short note saying why"
+  when missing), and upholding or overturning an appeal already took a
+  required `reason`. The Reports page has one decision sheet for both
+  (`DecideSheet` in `app/staff/reports/PageContent.tsx`): Approve with
+  its action and reason, Clear with only the note, the button off until
+  there is a note; Take action on a person's record the same. The note is
+  kept on the decision (`moderation_actions.note`, no migration) and in
+  the `staff_log` detail (`note`; for an appeal, its reason), and shows
+  in the report's sheet ("Why", from `outcome.note` in
+  `GET /api/staff/reports`), the person's record (beside each action and
+  each decided report) and the Activity log ("… Why: the note").
+  Tested through the API as Rumbi on REP 2026 0015 (cleared) and 0016
+  (warning) and a warning on Kuda, each refused without a note and taken
+  with one, and in the browser (Clear off until a note is typed); then
+  all of it put back: 0015 and 0016 are open again, no test decisions,
+  notifications or log rows left.
 1. **Done 2026-10-29: button actions on TanStack Query mutations.** No
    tap calls the API directly any more (the only `apiAsViewer` left is
    `loadAccountData`, which runs inside the account query). Each is a

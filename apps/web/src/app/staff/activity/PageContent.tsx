@@ -247,7 +247,9 @@ export default function ActivityPage() {
               </div>
             ) : (
               entries.map((entry) => {
-                const what = describe(entry);
+                // With the note saying why, for a decision that has one.
+                const note = typeof entry.detail.note === 'string' ? entry.detail.note : '';
+                const what = `${describe(entry)}${note ? `. Why: ${note}` : ''}`;
                 return (
                   <div
                     key={entry.id}

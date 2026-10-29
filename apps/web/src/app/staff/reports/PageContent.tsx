@@ -49,7 +49,7 @@ interface Row {
   claimedBy?: string;
   mine: boolean;
   suggested: ReportAction;
-  outcome?: { kind: 'none' | ReportAction; by: string; agoLabel: string; reversed: boolean };
+  outcome?: { kind: 'none' | ReportAction; by: string; agoLabel: string; reversed: boolean; note?: string };
 }
 
 /** The filter's choices, in its order. */
@@ -111,8 +111,8 @@ export default function ReportsPage() {
   const [show, setShow] = useState<Show>('all');
   /** The report open in its sheet, by id, so it follows the list. */
   const [openId, setOpenId] = useState<string | null>(null);
-  /** The report being approved, while its action is chosen. */
-  const [approving, setApproving] = useState<Row | null>(null);
+  /** The report being approved or cleared, while its note is written. */
+  const [deciding, setDeciding] = useState<{ report: Row; decision: 'approve' | 'clear' } | null>(null);
   const queryClient = useQueryClient();
 
   const list = useQuery({
@@ -164,13 +164,13 @@ export default function ReportsPage() {
       body,
     }: {
       report: Row;
-      body: { decision: 'approve' | 'clear'; action?: ReportAction; reason?: ReportReason; note?: string };
+      body: { decision: 'approve' | 'clear'; action?: ReportAction; reason?: ReportReason; note: string };
     }) => apiSend(`/staff/reports/${encodeURIComponent(report.id)}/decide`, 'POST', body),
     onSuccess: (_, { report, body }) => {
       // A removed listing comes down at once, not when its minute is up;
       // not waited for, as rebuilding the page can take a few seconds.
       if (report.listing && (body.action === 'removal' || body.action === 'ban')) void refreshListing(report.listing.slug);
-      setApproving(null);
+      setDeciding(null);
       setOpenId(null);
       refreshAround();
       toast.success(
@@ -337,25 +337,24 @@ export default function ReportsPage() {
         </>
       )}
 
-      {opened && !approving ? (
+      {opened && !deciding ? (
         <ReportDetail
           report={opened}
           busy={busy === opened.id}
           onClose={() => setOpenId(null)}
           onClaim={() => claim.mutate(opened)}
-          onClear={() => decide.mutate({ report: opened, body: { decision: 'clear' } })}
-          onApprove={() => setApproving(opened)}
+          onClear={() => setDeciding({ report: opened, decision: 'clear' })}
+          onApprove={() => setDeciding({ report: opened, decision: 'approve' })}
         />
       ) : null}
-      {approving ? (
-        <ApproveSheet
-          report={approving}
+      {deciding ? (
+        <DecideSheet
+          report={deciding.report}
+          decision={deciding.decision}
           lead={lead}
-          busy={busy === approving.id}
-          onClose={() => setApproving(null)}
-          onApprove={(action, reason, note) =>
-            decide.mutate({ report: approving, body: { decision: 'approve', action, reason, note } })
-          }
+          busy={busy === deciding.report.id}
+          onClose={() => setDeciding(null)}
+          onDecide={(body) => decide.mutate({ report: deciding.report, body })}
         />
       ) : null}
     </StaffPage>
@@ -412,6 +411,12 @@ function ReportDetail({
                 {outcome.label}
                 {report.outcome.reversed ? ', reversed' : ''}, by {report.outcome.by}, {report.outcome.agoLabel}
               </dd>
+              {report.outcome.note ? (
+                <>
+                  <dt>Why</dt>
+                  <dd>{report.outcome.note}</dd>
+                </>
+              ) : null}
             </>
           ) : report.claimedBy && !report.mine ? (
             <>
@@ -468,20 +473,24 @@ function ReportDetail({
   );
 }
 
-/** Approving: the action, starting on the suggested one, and the reason,
-    starting on the report's own, to correct it if it was filed wrong. */
-function ApproveSheet({
+/** Deciding a report, with a note saying why, which is required: the
+    button stays off until there is one. Approving also takes the action,
+    starting on the suggested one, and the reason, starting on the report's
+    own, to correct it if it was filed wrong. Clearing takes only the note. */
+function DecideSheet({
   report,
+  decision,
   lead,
   busy,
   onClose,
-  onApprove,
+  onDecide,
 }: {
   report: Row;
+  decision: 'approve' | 'clear';
   lead: boolean;
   busy: boolean;
   onClose: () => void;
-  onApprove: (action: ReportAction, reason: ReportReason, note?: string) => void;
+  onDecide: (body: { decision: 'approve' | 'clear'; action?: ReportAction; reason?: ReportReason; note: string }) => void;
 }) {
   const [action, setAction] = useState<ReportAction>(report.suggested);
   const [reason, setReason] = useState<ReportReason>(report.reason);
@@ -491,52 +500,78 @@ function ApproveSheet({
   const actions = (['warning', 'removal', 'suspension', 'ban'] as const).filter(
     (kind) => (kind !== 'removal' || report.listing) && (kind !== 'ban' || lead),
   );
+  const approving = decision === 'approve';
+  const ready = note.trim().length >= 2;
 
   return (
-    <Sheet narrow title={`Approve ${report.label}`} onClose={onClose}>
+    <Sheet narrow title={`${approving ? 'Approve' : 'Clear'} ${report.label}`} onClose={onClose}>
       <Stack gap={5}>
-        <div className={styles.field}>
-          <span id={actionLabel} className={styles.label}>
-            What to do
-          </span>
-          <Dropdown
-            value={action}
-            options={actions.map((value) => ({
-              value,
-              label: REPORT_ACTION_LABELS[value],
-              note: value === report.suggested ? 'Suggested' : undefined,
-            }))}
-            onChange={setAction}
-            labelledBy={actionLabel}
-          />
-        </div>
-        <div className={styles.field}>
-          <span id={reasonLabel} className={styles.label}>
-            Reason
-          </span>
-          <Dropdown
-            value={reason}
-            options={ALL_REASONS.map((value) => ({ value, label: REPORT_REASON_LABELS[value] }))}
-            onChange={setReason}
-            labelledBy={reasonLabel}
-          />
-        </div>
+        {approving ? (
+          <>
+            <div className={styles.field}>
+              <span id={actionLabel} className={styles.label}>
+                What to do
+              </span>
+              <Dropdown
+                value={action}
+                options={actions.map((value) => ({
+                  value,
+                  label: REPORT_ACTION_LABELS[value],
+                  note: value === report.suggested ? 'Suggested' : undefined,
+                }))}
+                onChange={setAction}
+                labelledBy={actionLabel}
+              />
+            </div>
+            <div className={styles.field}>
+              <span id={reasonLabel} className={styles.label}>
+                Reason
+              </span>
+              <Dropdown
+                value={reason}
+                options={ALL_REASONS.map((value) => ({ value, label: REPORT_REASON_LABELS[value] }))}
+                onChange={setReason}
+                labelledBy={reasonLabel}
+              />
+            </div>
+          </>
+        ) : (
+          <p className={styles.lead}>Nothing happens to {report.person.name.replace(/\.$/, '')}. Say why the report is cleared.</p>
+        )}
         <label className={styles.field}>
-          <span className={styles.label}>Note for the record (optional)</span>
+          <span className={styles.label}>Why you decided this</span>
           <textarea
             className={styles.textarea}
-            rows={2}
+            rows={3}
             maxLength={500}
-            placeholder="e.g. Same photos as another seller's listing."
+            placeholder={
+              approving
+                ? "e.g. Same photos as another seller's listing."
+                : 'e.g. The photos are the seller’s own; the listing is accurate.'
+            }
             value={note}
             onChange={(event) => setNote(event.target.value)}
           />
         </label>
-        <p className={styles.lead}>
-          {report.person.name} is told what was decided, never who reported them.
-        </p>
-        <Button size="lg" block loading={busy} onClick={() => onApprove(action, reason, note.trim() || undefined)}>
-          Approve
+        {approving ? (
+          <p className={styles.lead}>
+            {report.person.name} is told what was decided, never who reported them.
+          </p>
+        ) : null}
+        <Button
+          size="lg"
+          block
+          loading={busy}
+          disabled={!ready}
+          onClick={() =>
+            onDecide(
+              approving
+                ? { decision: 'approve', action, reason, note: note.trim() }
+                : { decision: 'clear', note: note.trim() },
+            )
+          }
+        >
+          {approving ? 'Approve' : 'Clear'}
         </Button>
         <Button variant="secondary" size="lg" block onClick={onClose}>
           Cancel

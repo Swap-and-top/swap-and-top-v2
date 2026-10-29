@@ -117,7 +117,7 @@ export default function AppealsPage() {
                   </dd>
                   {appeal.note ? (
                     <>
-                      <dt>Their note</dt>
+                      <dt>Why it was decided</dt>
                       <dd>{appeal.note}</dd>
                     </>
                   ) : null}

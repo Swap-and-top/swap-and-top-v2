@@ -273,7 +273,7 @@ const decide = createRoute({
         'application/json': {
           schema: z.object({
             outcome: z.enum(['upheld', 'overturned']),
-            reason: z.string().trim().min(2, 'Say why, so they understand').max(500),
+            reason: z.string({ error: 'Say why, so they understand' }).trim().min(2, 'Say why, so they understand').max(500),
           }),
         },
       },
@@ -324,7 +324,8 @@ appealRoutes.openapi(decide, async (c) => {
       actorId: viewer.id,
       action: body.outcome === 'overturned' ? 'appeal.overturn' : 'appeal.uphold',
       targetPersonId: row.appeal.personId,
-      detail: { kind: row.action.kind, actionId: row.action.id },
+      // The reason the lead gave is the decision's note, as on the others.
+      detail: { kind: row.action.kind, actionId: row.action.id, note: body.reason },
     });
     return true;
   });

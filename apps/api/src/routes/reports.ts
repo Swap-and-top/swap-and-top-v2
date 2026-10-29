@@ -231,6 +231,8 @@ const ReportRowSchema = z
         by: z.string(),
         agoLabel: z.string(),
         reversed: z.boolean(),
+        /** Why it was decided so, in the words of whoever decided. */
+        note: z.string().optional(),
       })
       .optional(),
   })
@@ -383,6 +385,7 @@ reportRoutes.openapi(queue, async (c) => {
             by: nameOf.get(decided.decidedById) || 'Someone',
             agoLabel: agoLabel(decided.createdAt),
             reversed: decided.reversedAt !== null,
+            note: decided.note ?? undefined,
           }
         : report.state === 'cleared' && report.closedAt
           ? { kind: 'none' as const, by: 'Trust and safety', agoLabel: agoLabel(report.closedAt), reversed: false }
@@ -464,7 +467,7 @@ const decide = createRoute({
   tags: ['Staff'],
   summary: 'Approve or clear a report',
   description:
-    'Trust and safety, on a report they have claimed. Approve with an action (a ban needs a Trust and safety lead), under the report’s reason or a corrected one; or clear it. The person reported is told what was decided, never who reported them.',
+    'Trust and safety, on a report they have claimed. Approve with an action (a ban needs a Trust and safety lead), under the report’s reason or a corrected one; or clear it. Either way with a note saying why, kept on the decision and in the Activity log. The person reported is told what was decided, never who reported them.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -476,7 +479,8 @@ const decide = createRoute({
             decision: z.enum(['approve', 'clear']),
             action: action.optional(),
             reason: reason.optional(),
-            note: z.string().trim().max(500).optional(),
+            /** Why: required, for every decision, so the record shows the thinking. */
+            note: z.string({ error: 'Write a short note saying why' }).trim().min(2, 'Write a short note saying why').max(500),
           }),
         },
       },
@@ -521,7 +525,7 @@ reportRoutes.openapi(decide, async (c) => {
       decidedById: viewer.id,
       kind,
       reason: decidedReason,
-      note: body.note || null,
+      note: body.note,
       until: ends,
     }).returning({ id: t.moderationActions.id });
     await tx.insert(t.staffLog).values({
@@ -536,6 +540,7 @@ reportRoutes.openapi(decide, async (c) => {
         reason: decidedReason,
         ...(decidedReason !== report.reason ? { filedAs: report.reason } : {}),
         ...(report.listingId ? { listingId: report.listingId } : {}),
+        note: body.note,
       },
     });
     return { until: ends, actionId: made!.id };

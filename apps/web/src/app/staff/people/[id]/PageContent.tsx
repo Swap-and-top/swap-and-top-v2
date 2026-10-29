@@ -40,7 +40,7 @@ interface PersonRecord {
   confirmedDeals: number;
   liveListings: number;
   listings: { title: string; slug: string; status: string; dateLabel: string }[];
-  reports: { reason: ReportReason; state: string; dateLabel: string; listingTitle?: string }[];
+  reports: { reason: ReportReason; state: string; dateLabel: string; listingTitle?: string; note?: string }[];
   actions: {
     kind: ReportAction;
     reason: ReportReason;
@@ -207,6 +207,7 @@ export default function PersonPage({ id }: { id: string }) {
                         </span>
                         <span className={styles.muted}>
                           {report.dateLabel}, {REPORT_STATE[report.state] ?? report.state}
+                          {report.note ? `. ${report.note}` : ''}
                         </span>
                       </li>
                     ))}
@@ -267,7 +268,7 @@ function ActionSheet({
       apiSend(`/staff/people/${encodeURIComponent(person.id)}/action`, 'POST', {
         kind,
         reason,
-        note: note.trim() || undefined,
+        note: note.trim(),
       }),
     onSuccess: () => {
       toast.success(`${person.name} has been told.`);
@@ -305,10 +306,10 @@ function ActionSheet({
           />
         </div>
         <label className={styles.field}>
-          <span className={styles.label}>Note for the record (optional)</span>
+          <span className={styles.label}>Why you decided this</span>
           <textarea
             className={styles.textarea}
-            rows={2}
+            rows={3}
             maxLength={500}
             placeholder="e.g. Several buyers said the same on the phone."
             value={note}
@@ -316,7 +317,14 @@ function ActionSheet({
           />
         </label>
         <p className={styles.lead}>{person.name} is told what was decided and why.</p>
-        <Button size="lg" block loading={save.isPending} onClick={() => save.mutate()}>
+        {/* A note saying why is required: off until there is one. */}
+        <Button
+          size="lg"
+          block
+          loading={save.isPending}
+          disabled={note.trim().length < 2}
+          onClick={() => save.mutate()}
+        >
           {REPORT_ACTION_LABELS[kind]}
         </Button>
         <Button variant="secondary" size="lg" block onClick={onClose}>
