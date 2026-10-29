@@ -14,18 +14,41 @@ stands") for the backend in full.
 
 ## Where we stopped (2026-10-29)
 
-**In one line:** Phases 1 to 4 are built and live (only real Paynow
-payment waits, on Hillary's merchant account). Phase 5, the Staff
-console, has everything planned for Trust and safety built: the roles as
-departments, the console, Verify stores, Team, Reports, People, Appeals
-and the Activity log, plus the banned account page, waiting counts and
-the move of all data loading to TanStack Query. All of it is committed on
-`redesign/pdf-style` and pushed to `main` on 2026-10-29 (`cb70469`),
-and the Production deploy is live (the Preview deploy for the branch
-fails, as it always does: Vercel's Preview has no settings; see
-CLAUDE.md, "Secrets stay put").
+**In one line (end of 2026-10-29):** Phases 1 to 4 are built and live
+(only real Paynow payment waits, on Hillary's merchant account). Phase 5,
+the Staff console, has everything planned for Trust and safety built, and
+the look of each page is being reviewed with Hillary: Reports is done. All
+of it is committed on `redesign/pdf-style` and **pushed to that branch on
+GitHub only**. `main`, which deploys live, is at `2e305c0` and was
+deliberately **not** moved forward: the button mutations (`bc4cadc`) and
+the Reports redesign with these docs are on the branch but not live. Move
+`main` forward only when Hillary says to push to production (Preview
+deploys of the branch fail as always: Vercel's Preview has no settings).
+
+**Where the next agent starts:** carry on the Staff console review with
+Hillary at People and a person's record (item 2 below). Then the note on
+every decision when she says, then items 3 to 5.
 
 **What comes next, in Hillary's order (do them in this order):**
+
+- **Decided 2026-10-29, not built: a note on every decision.** Hillary
+  wants every decision on reports and disciplinary actions to carry a
+  note from the staff member explaining their reasoning; nobody can act
+  without one. It covers: Approve (any action) and Clear on a report
+  (`POST /api/staff/reports/{id}/decide`, `apps/api/src/routes/reports.ts`;
+  the sheet in `app/staff/reports/PageContent.tsx`, whose Approve note is
+  optional today and whose Clear has no note); warn, suspend and ban on a
+  person (`apps/api/src/routes/people.ts`, `app/staff/people/[id]`); and
+  upholding or overturning an appeal (`apps/api/src/routes/appeals.ts`,
+  `app/staff/appeals`). Make `note` required in each API schema (refuse
+  without it), add a required note box to each sheet with the button off
+  until it is filled, store it (`moderation_actions.note`; check appeals
+  have a place for it, a migration needs Hillary's yes), and show it in
+  the report's sheet, the person's record and the Activity log (put it in
+  the `staff_log` detail). Declining a Verified store request already
+  requires a reason. Hillary asked only for it to be written down in the
+  session that decided it; build it when she says, before or with the
+  rest of the Staff console review.
 
 1. **Done 2026-10-29: button actions on TanStack Query mutations.** No
    tap calls the API directly any more (the only `apiAsViewer` left is
@@ -45,7 +68,38 @@ CLAUDE.md, "Secrets stay put").
    again. Boosts stopped here stay marked stopped across that refresh.
    Tested in the browser as Tarisai: post, pause, relist, delete, save and
    unsave (the account data read again after), report.
-2. **Hillary reviews how each Staff console page looks**, as was done
+2. **Reviewed with Hillary so far: Reports (2026-10-29).** Every report
+   stays in one table, decided or not (`GET /api/staff/reports?show=`
+   `all|open|claimed|warning|removal|suspension|ban|cleared`, with `counts`
+   for each): waiting ones first, oldest first, then decided ones, newest
+   first. The filter is one dropdown with counts ("All reports (4)"). On a
+   laptop a table set as the Activity log's (photo, reason pill, listing,
+   posted by with their record, reported by, when, status; short rows, a
+   small Claim the size of the Activity log's page buttons); below a laptop
+   each row is one compact line, as an email in Gmail: the photo, the
+   reason pill with the number, the listing cut to one line, and Claim or
+   the outcome at the end (who posted and who reported are only in the
+   report itself). The filter is a blue outlined pill, as the Activity
+   log's Filters is, its counts in small rounds as on the tabs (the shared
+   `Dropdown` now takes an option `count`; its list's scrollbar is thin,
+   pale blue and set in from the edge, in every dropdown: the rounded card
+   stays still and the options scroll inside its padding, so the corners
+   stay round in Firefox and Zen too). **Left in on purpose, at Hillary's request
+   (2026-10-29):** three test reports, REP 2026 0014 to 0016 (from Tarisai
+   and Kuda, their notes start "Test:"), so the page can be seen with
+   reports in it; delete them by id when Hillary says (with any decisions
+   and log rows they gain). Farai D.'s ban and removed listing are also
+   Hillary's test data: leave them. Open ones read as unread: bold, a blue dot in
+   the margin, a Claim button. Reason pills: red for stolen, amber (the new
+   `warning` Badge tone) for fake, not as described, offensive, no show,
+   grey for the rest. A row opens the full report in a sheet (Claim, then
+   Clear or Approve; buttons side by side). The Activity log shows a
+   report by its full number, "REP 2026 0014" (`reportLabel` in
+   `routes/reports.ts`, kept in the `staff_log` detail as `reportLabel`;
+   older entries get it looked up in `routes/activity.ts`). Next: People and a person's
+   record, Appeals, Verify stores, Team, the appeal page and the banned
+   page.
+   **Still to review: each other Staff console page**, as was done
    for the Activity log (which now matches the Store console's Stock
    page: toolbar, pale blue heading strip, small blue page buttons,
    skeletons that match). Go through Reports, People and a person's

@@ -1,3 +1,34 @@
+/**
+ * Reports, set as the Activity log and the Store console's Stock page are:
+ * the filter in the toolbar, the count line in the blue, and the table in
+ * one white card under a pale blue strip of headings, rows parted by thin
+ * lines set in from the card's edges. From a laptop up, one row a report;
+ * below, each row is a short card. Open reports (nobody has them) read as
+ * unread: bold, with a blue dot.
+ */
+
+.toolbar {
+  margin-top: var(--snt-space-6);
+  max-width: 280px;
+}
+
+/* The filter: a blue outlined pill, as the Activity log's and the Stock
+   page's Filters are, not the pale text box pill. The class is doubled to
+   win over the dropdown's own look. */
+.filter.filter {
+  height: 36px;
+  border: 1px solid var(--snt-control-idle);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-weight: var(--snt-weight-medium);
+}
+
+@media (hover: hover) {
+  .filter.filter:hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
 .lead {
   margin: 0;
   font-size: var(--snt-text-sm);
@@ -5,26 +36,297 @@
   color: var(--snt-card-ink-muted);
 }
 
-/* The reason, and the report's number and age under it. */
-.head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--snt-space-1);
+/* The count line over the table, in the blue. */
+.summary {
+  margin: 0 0 var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
 }
 
-.reason {
-  margin: 0;
-  font-size: var(--snt-text-lg);
+/* The table: one white card, no outline. */
+.list {
+  display: flex;
+  flex-direction: column;
+  background: var(--snt-bg-surface);
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+.loading {
+  opacity: 0.55;
+  transition: opacity var(--snt-transition);
+}
+
+.headerRow,
+.row {
+  display: grid;
+  grid-template-columns:
+    36px minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 0.9fr)
+    80px 150px;
+  grid-template-areas: 'photo head listing posted reporter when status';
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-3) var(--snt-space-8);
+}
+
+.headerRow {
+  padding-block: var(--snt-space-4);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+  font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
 }
 
-.meta {
+/* The line between rows: the page's pale blue, set in from both edges. */
+.row {
+  position: relative;
   font-size: var(--snt-text-sm);
-  color: var(--snt-card-ink-muted);
+  color: var(--snt-accent-bold);
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+  cursor: pointer;
 }
 
-/* What is known, one fact a line. */
+.headerRow + .row {
+  background-image: none;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.row:active {
+  background-color: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
+}
+
+.photo {
+  grid-area: photo;
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  overflow: hidden;
+  background: var(--snt-bg-inset);
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No photo (a Wanted listing, or a person): the image mark, faded. */
+.noPhoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--snt-ink-muted);
+}
+
+/* Open, nobody has it yet: a blue dot in the row's left margin, as an
+   unread notification has. */
+.dot {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--snt-control-active);
+}
+
+.head {
+  grid-area: head;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+/* Claim: small, the size and fill of the Activity log's page buttons. */
+.claim {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 var(--snt-space-6);
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font: inherit;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.claim:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .claim:not(:disabled):hover {
+    background: color-mix(in srgb, var(--snt-control-active) 88%, black);
+  }
+}
+
+.ref {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+.listing {
+  grid-area: listing;
+}
+
+.posted {
+  grid-area: posted;
+}
+
+.reporter {
+  grid-area: reporter;
+}
+
+.listing,
+.posted,
+.reporter {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Unread: the open ones, bold. */
+.unread .strong {
+  font-weight: var(--snt-weight-bold);
+}
+
+.small {
+  overflow: hidden;
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.when {
+  grid-area: when;
+  color: var(--snt-ink-muted);
+  white-space: nowrap;
+}
+
+.status {
+  grid-area: status;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.phoneOnly {
+  display: none;
+}
+
+/* A skeleton line, as tall as a row. */
+.boneRow {
+  cursor: default;
+  min-height: 52px;
+}
+
+/* Nothing matches: a quiet line and the way back. */
+.none {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-8);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+}
+
+.none p {
+  margin: 0;
+}
+
+/* Below a laptop: each report one short line, as an email in a mail app.
+   The photo; the reason and number, then the listing on a line of its own,
+   cut short; Claim or what became of it at the end. Who posted it and who
+   reported it are in the report, a tap away. */
+@media (max-width: 1023px) {
+  .headerRow,
+  .posted,
+  .reporter,
+  .when {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'photo head status'
+      'photo listing status';
+    align-items: center;
+    column-gap: var(--snt-space-5);
+    row-gap: var(--snt-space-1);
+    padding: var(--snt-space-4) var(--snt-space-6) var(--snt-space-4) var(--snt-space-7);
+    background-size: calc(100% - var(--snt-space-6) * 2) 1px;
+  }
+
+  .photo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .head {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--snt-space-3);
+  }
+
+  .ref {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .phoneOnly {
+    display: inline;
+  }
+
+  .listing .strong {
+    font-size: var(--snt-text-xs);
+    color: var(--snt-ink-muted);
+  }
+
+  .unread .listing .strong {
+    color: var(--snt-accent-bold);
+  }
+
+  .dot {
+    left: 4px;
+  }
+}
+
+/* The full report, in its sheet. */
 .facts {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -45,18 +347,17 @@
   overflow-wrap: anywhere;
 }
 
-/* Clear and Approve, half each. */
+/* Two buttons side by side, on a phone too. */
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--snt-space-6);
+  gap: var(--snt-space-4);
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: var(--snt-space-2);
-  min-width: 0;
 }
 
 .label {
@@ -66,7 +367,6 @@
   color: var(--snt-accent-bold);
 }
 
-/* The app's pale text box, taller, for the note. */
 .textarea {
   width: 100%;
   padding: var(--snt-space-5) var(--snt-space-8);

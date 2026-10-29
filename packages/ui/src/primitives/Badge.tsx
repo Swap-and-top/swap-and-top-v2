@@ -19,6 +19,8 @@ export type BadgeTone =
   /** The brand's blue to green, as the header: for what is new. */
   | 'brand'
   | 'danger'
+  /** Amber: needs a look, not urgent. */
+  | 'warning'
   | 'dark';
 
 export interface BadgeProps {

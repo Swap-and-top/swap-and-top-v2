@@ -27,13 +27,33 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   the rule is below under "Working with the backend").
 - **Every button action is a TanStack Query mutation** too (2026-10-29;
   shared store calls go through `runMutation` in `lib/query.tsx`).
+- **Not live yet (2026-10-29):** the last session's work is committed and
+  pushed to the `redesign/pdf-style` branch on GitHub only. `main` (the
+  live site) was deliberately **not** moved forward, at Hillary's request:
+  it is behind the branch by the button mutations (`bc4cadc`) and the
+  Reports redesign with the docs. Do not fast forward `main` until Hillary
+  says to push to production.
+- **Staff console review with Hillary, in progress:** Reports is done (one
+  table of every report with a filter, compact rows on a phone, see the
+  handoff). Three test reports (REP 2026 0014 to 0016) are left in on
+  purpose; Farai D.'s ban is Hillary's test data. Leave both.
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): 2. go through each Staff
-  console page with Hillary for how it looks, as was done for the
-  Activity log, keeping it cohesive with the Store console; 3. a design
+  stopped"): 2. carry on the review of each Staff console page with
+  Hillary, starting with People and a person's record, then Appeals,
+  Verify stores, Team, the appeal page and the banned page, as was done
+  for the Activity log and Reports, keeping it cohesive with the Store
+  console; 3. a design
   pass on the Store console; 4. ask about the open safeguards; 5. Phase 6
   (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
   has the console's design and safeguards (section 9).
+- **Decided, not built yet (Hillary, 2026-10-29): every decision needs a
+  note.** Whoever decides a report (Approve with any action, or Clear), acts
+  on a person (warn, suspend, ban), or decides an appeal (uphold,
+  overturn) must write a short note saying why; the button stays off until
+  there is one. The API refuses a decision without a note, and the note
+  shows in the report, the person's record and the Activity log. Hillary
+  asked for it to be noted for the next agent, not built in that session:
+  build it when she says (details in the handoff, "What comes next").
 - **Real accounts:** Hillary (super admin), Patrick and Ray are on their
   real phone numbers. Never run `db:seed` (it would put them back on test
   numbers). On the live site test numbers (077 000 0xxx) carry no staff

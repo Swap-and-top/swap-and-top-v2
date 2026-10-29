@@ -22,6 +22,8 @@ export interface DropdownOption<T extends string> {
   label: string;
   /** A second, quieter line, e.g. "Your listing · Good". */
   note?: string;
+  /** A count, after the label in a small round, as on the app's tabs. */
+  count?: number;
 }
 
 export function Dropdown<T extends string>({
@@ -140,15 +142,15 @@ export function Dropdown<T extends string>({
           className={chosen && chosen.value !== '' ? styles.value : styles.placeholder}
         >
           {chosen?.label ?? placeholder}
+          {chosen?.count !== undefined ? <span className={styles.count}>{chosen.count}</span> : null}
         </span>
         <ChevronRightIcon size={16} weight={2.2} className={styles.chevron} />
       </button>
 
       {open ? (
-        <ul
-          id={listId}
-          role="listbox"
-          aria-labelledby={labelledBy}
+        // The rounded card stays still; the list scrolls inside it, so its
+        // corners stay round and the scrollbar sits within them.
+        <div
           className={[styles.list, closing ? styles.listClosing : '']
             .filter(Boolean)
             .join(' ')}
@@ -156,38 +158,45 @@ export function Dropdown<T extends string>({
             if (closing && event.target === event.currentTarget) finishClose();
           }}
         >
-          {options.map((option, index) => {
-            const selected = option.value === value;
-            return (
-              <li
-                key={option.value}
-                role="option"
-                aria-selected={selected}
-                className={[
-                  styles.option,
-                  index === active ? styles.optionActive : '',
-                  selected ? styles.optionSelected : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                onPointerEnter={() => setActive(index)}
-                // Picks on press, before the trigger loses focus.
-                onPointerDown={(event) => {
-                  event.preventDefault();
-                  pick(index);
-                }}
-              >
-                <span className={styles.optionText}>
-                  <span>{option.label}</span>
-                  {option.note ? (
-                    <span className={styles.note}>{option.note}</span>
-                  ) : null}
-                </span>
-                {selected ? <CheckIcon size={14} weight={2.6} /> : null}
-              </li>
-            );
-          })}
-        </ul>
+          <ul id={listId} role="listbox" aria-labelledby={labelledBy} className={styles.scroll}>
+            {options.map((option, index) => {
+              const selected = option.value === value;
+              return (
+                <li
+                  key={option.value}
+                  role="option"
+                  aria-selected={selected}
+                  className={[
+                    styles.option,
+                    index === active ? styles.optionActive : '',
+                    selected ? styles.optionSelected : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onPointerEnter={() => setActive(index)}
+                  // Picks on press, before the trigger loses focus.
+                  onPointerDown={(event) => {
+                    event.preventDefault();
+                    pick(index);
+                  }}
+                >
+                  <span className={styles.optionText}>
+                    <span>
+                      {option.label}
+                      {option.count !== undefined ? (
+                        <span className={styles.count}>{option.count}</span>
+                      ) : null}
+                    </span>
+                    {option.note ? (
+                      <span className={styles.note}>{option.note}</span>
+                    ) : null}
+                  </span>
+                  {selected ? <CheckIcon size={14} weight={2.6} /> : null}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       ) : null}
     </div>
   );

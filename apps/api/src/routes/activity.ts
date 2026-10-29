@@ -8,7 +8,7 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, count, desc, eq, gte, ilike, lt, notInArray, notLike, or, sql } from 'drizzle-orm';
+import { and, count, desc, eq, gte, ilike, inArray, lt, notInArray, notLike, or, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
@@ -16,6 +16,7 @@ import * as t from '../db/schema';
 import { ErrorSchema } from '../schemas';
 import { inDepartment } from '../staff';
 import { personFor } from './me';
+import { reportLabel } from './reports';
 
 export const activityRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -176,18 +177,43 @@ activityRoutes.openapi(list, async (c) => {
       .where(where),
   ]);
 
+  // Entries about a report saved before its full label was kept: its label,
+  // "REP 2026 0014", looked up by its number.
+  const numbers = [
+    ...new Set(
+      rows.flatMap((row) => {
+        const detail = (row.log.detail ?? {}) as Record<string, unknown>;
+        return typeof detail.report === 'number' && !detail.reportLabel ? [detail.report] : [];
+      }),
+    ),
+  ];
+  const labels = numbers.length
+    ? new Map(
+        (
+          await db
+            .select({ number: t.reports.number, createdAt: t.reports.createdAt })
+            .from(t.reports)
+            .where(inArray(t.reports.number, numbers))
+        ).map((report) => [report.number, reportLabel(report)]),
+      )
+    : new Map<number, string>();
+
   return c.json(
     {
-      entries: rows.map((row) => ({
+      entries: rows.map((row) => {
+        const detail = (row.log.detail ?? {}) as Record<string, unknown>;
+        const label = typeof detail.report === 'number' ? labels.get(detail.report) : undefined;
+        return {
         id: row.log.id,
         action: row.log.action,
-        detail: (row.log.detail ?? {}) as Record<string, unknown>,
+        detail: label ? { ...detail, reportLabel: label } : detail,
         actor: { id: row.log.actorId, name: row.actorName || 'Someone' },
         target: row.log.targetPersonId
           ? { id: row.log.targetPersonId, name: row.targetName || 'No name yet' }
           : undefined,
         atLabel: atLabel(row.log.createdAt),
-      })),
+        };
+      }),
       total: all?.n ?? 0,
       pageSize: size,
     },

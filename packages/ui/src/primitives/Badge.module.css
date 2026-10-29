@@ -69,6 +69,12 @@
   color: #b42318;
 }
 
+/** Needs a look but is not urgent, as a report of a fake listing. */
+.warning {
+  background: #fef4e6;
+  color: #9a5b00;
+}
+
 /** New lead. Solid, because it is the one thing a store must not miss. */
 .accentSolid {
   background: var(--snt-accent);

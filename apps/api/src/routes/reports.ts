@@ -19,7 +19,7 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, asc, count, eq, gte, inArray, isNull, lt, ne, or } from 'drizzle-orm';
+import { and, count, desc, eq, gte, inArray, isNull, lt, ne, or } from 'drizzle-orm';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
@@ -144,6 +144,11 @@ reportRoutes.openapi(send, async (c) => {
   return c.json({ ok: true }, 201);
 });
 
+/** "REP 2026 0014": the year a report came in and its number. */
+export function reportLabel(report: { createdAt: Date; number: number }): string {
+  return `REP ${report.createdAt.getFullYear()} ${String(report.number).padStart(4, '0')}`;
+}
+
 /* --- who may handle what ------------------------------------------------------- */
 
 type Person = Awaited<ReturnType<typeof personFor>>;
@@ -183,9 +188,14 @@ function suggestedAction(report: Report, upheldBefore: number): Action {
   return 'warning';
 }
 
-/* --- the queue ----------------------------------------------------------------- */
+/* --- the list ------------------------------------------------------------------ */
 
-const QueueItemSchema = z
+/** What the list can be narrowed to: where a report stands, or for one
+    acted on, what was done. */
+const SHOW = ['all', 'open', 'claimed', 'warning', 'removal', 'suspension', 'ban', 'cleared'] as const;
+type Show = (typeof SHOW)[number];
+
+const ReportRowSchema = z
   .object({
     id: z.string(),
     /** "REP 2026 0001" */
@@ -194,8 +204,11 @@ const QueueItemSchema = z
     details: z.string().optional(),
     /** "3h ago" */
     agoLabel: z.string(),
+    /** Where it stands, for the filter: open (nobody has it), claimed, what
+        was done, or cleared. */
+    show: z.enum(SHOW).exclude(['all']),
     listing: z
-      .object({ title: z.string(), slug: z.string(), status: z.string() })
+      .object({ title: z.string(), slug: z.string(), status: z.string(), photo: z.string().optional() })
       .optional(),
     person: z.object({
       id: z.string(),
@@ -211,21 +224,39 @@ const QueueItemSchema = z
     claimedBy: z.string().optional(),
     mine: z.boolean(),
     suggested: action,
+    /** Once decided: what, by whom, when, and whether it was reversed. */
+    outcome: z
+      .object({
+        kind: z.enum(['none', 'warning', 'removal', 'suspension', 'ban']),
+        by: z.string(),
+        agoLabel: z.string(),
+        reversed: z.boolean(),
+      })
+      .optional(),
   })
-  .openapi('ReportQueueItem');
+  .openapi('ReportRow');
 
 const queue = createRoute({
   method: 'get',
   path: '/staff/reports',
   tags: ['Staff'],
-  summary: 'Reports waiting',
-  description: 'Trust and safety. Open and claimed reports this person may handle, oldest first.',
+  summary: 'Reports',
+  description:
+    'Trust and safety. Every report this person may handle, whatever became of it: open and claimed ones first, oldest first, then decided ones, newest first. `show` narrows it to open, claimed, one outcome (warning, removal, suspension, ban) or cleared; `counts` says how many each would show.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
+  request: { query: z.object({ show: z.enum(SHOW).default('all') }) },
   responses: {
     200: {
-      description: 'The queue',
-      content: { 'application/json': { schema: z.object({ reports: z.array(QueueItemSchema) }) } },
+      description: 'The reports',
+      content: {
+        'application/json': {
+          schema: z.object({
+            reports: z.array(ReportRowSchema),
+            counts: z.record(z.enum(SHOW), z.number()),
+          }),
+        },
+      },
     },
     401: errors[401],
     403: errors[403],
@@ -234,23 +265,39 @@ const queue = createRoute({
 
 const notTrustSafety = 'Only Trust and safety can handle reports.';
 
+/** The photo each listing is shown by: a sale's item, a swap's own side. */
+async function photosOf(listingIds: string[]): Promise<Map<string, string>> {
+  if (listingIds.length === 0) return new Map();
+  const [sales, swaps] = await Promise.all([
+    db
+      .select({ id: t.saleDetails.listingId, images: t.items.images })
+      .from(t.saleDetails)
+      .innerJoin(t.items, eq(t.items.id, t.saleDetails.itemId))
+      .where(inArray(t.saleDetails.listingId, listingIds)),
+    db
+      .select({ id: t.swapDetails.listingId, images: t.items.images })
+      .from(t.swapDetails)
+      .innerJoin(t.items, eq(t.items.id, t.swapDetails.hasItemId))
+      .where(inArray(t.swapDetails.listingId, listingIds)),
+  ]);
+  return new Map(
+    [...sales, ...swaps].flatMap((row) => (row.images[0] ? [[row.id, row.images[0]] as const] : [])),
+  );
+}
+
 reportRoutes.openapi(queue, async (c) => {
+  const { show } = c.req.valid('query');
   const viewer = await personFor(c.get('authUser'));
   if (!(await inDepartment(viewer, 'trust_safety'))) return c.json({ error: notTrustSafety }, 403);
-  const rows = await db
-    .select()
-    .from(t.reports)
-    .where(inArray(t.reports.state, ['open', 'claimed']))
-    .orderBy(asc(t.reports.createdAt))
-    .limit(200);
+  const rows = await db.select().from(t.reports).orderBy(desc(t.reports.createdAt)).limit(500);
   const ctx = await contextFor(viewer, rows);
   const mine = rows.filter((report) => mayHandle(viewer, report, ctx) === null);
-  if (mine.length === 0) return c.json({ reports: [] }, 200);
+  const empty = Object.fromEntries(SHOW.map((key) => [key, 0])) as Record<Show, number>;
+  if (mine.length === 0) return c.json({ reports: [], counts: empty }, 200);
 
   const personIds = [...new Set(mine.map((report) => report.personId))];
-  const reporterIds = [...new Set(mine.map((report) => report.reporterId))];
-  const claimerIds = [...new Set(mine.map((report) => report.claimedById).filter((id): id is string => Boolean(id)))];
-  const [upheld, open, names] = await Promise.all([
+  const reportIds = mine.map((report) => report.id);
+  const [upheld, open, actions, photos] = await Promise.all([
     db
       .select({ personId: t.moderationActions.personId, n: count() })
       .from(t.moderationActions)
@@ -268,46 +315,93 @@ reportRoutes.openapi(queue, async (c) => {
       .where(and(inArray(t.reports.personId, personIds), inArray(t.reports.state, ['open', 'claimed'])))
       .groupBy(t.reports.personId),
     db
-      .select({ id: t.people.id, name: t.people.displayName })
-      .from(t.people)
-      .where(inArray(t.people.id, [...new Set([...reporterIds, ...claimerIds])])),
+      .select()
+      .from(t.moderationActions)
+      .where(inArray(t.moderationActions.reportId, reportIds))
+      .orderBy(desc(t.moderationActions.createdAt)),
+    photosOf([...new Set(mine.map((report) => report.listingId).filter((id): id is string => Boolean(id)))]),
   ]);
+  // The latest decision on each report.
+  const actionOf = new Map<string, (typeof actions)[number]>();
+  for (const row of actions) if (row.reportId && !actionOf.has(row.reportId)) actionOf.set(row.reportId, row);
+  const nameIds = [
+    ...mine.map((report) => report.reporterId),
+    ...mine.map((report) => report.claimedById).filter((id): id is string => Boolean(id)),
+    ...actions.map((row) => row.decidedById),
+  ];
+  const names = await db
+    .select({ id: t.people.id, name: t.people.displayName })
+    .from(t.people)
+    .where(inArray(t.people.id, [...new Set(nameIds)]));
   const upheldOf = new Map(upheld.map((row) => [row.personId, row.n]));
   const openOf = new Map(open.map((row) => [row.personId, row.n]));
   const nameOf = new Map(names.map((row) => [row.id, row.name]));
   const now = Date.now();
 
-  return c.json(
-    {
-      reports: mine.map((report) => {
-        const target = ctx.people.get(report.personId);
-        const listing = report.listingId ? ctx.listings.get(report.listingId) : undefined;
-        const held =
-          report.state === 'claimed' && report.claimedById && report.claimedAt && now - report.claimedAt.getTime() < CLAIM_MS;
-        const before = upheldOf.get(report.personId) ?? 0;
-        return {
-          id: report.id,
-          label: `REP ${report.createdAt.getFullYear()} ${String(report.number).padStart(4, '0')}`,
-          reason: report.reason,
-          details: report.details ?? undefined,
-          agoLabel: agoLabel(report.createdAt),
-          listing: listing ? { title: listing.title, slug: listing.slug, status: listing.status } : undefined,
-          person: {
-            id: report.personId,
-            name: target?.name || 'No name yet',
-            standing: target?.standing ?? 'good',
-            upheldBefore: before,
-            otherOpen: Math.max(0, (openOf.get(report.personId) ?? 1) - 1),
-          },
-          reporterName: nameOf.get(report.reporterId) || 'No name yet',
-          claimedBy: held ? nameOf.get(report.claimedById!) || 'Someone' : undefined,
-          mine: Boolean(held && report.claimedById === viewer.id),
-          suggested: suggestedAction(report, before),
-        };
-      }),
-    },
-    200,
-  );
+  const all = mine.map((report) => {
+    const target = ctx.people.get(report.personId);
+    const listing = report.listingId ? ctx.listings.get(report.listingId) : undefined;
+    const held =
+      report.state === 'claimed' && report.claimedById && report.claimedAt && now - report.claimedAt.getTime() < CLAIM_MS;
+    const before = upheldOf.get(report.personId) ?? 0;
+    const decided = actionOf.get(report.id);
+    const where: Exclude<Show, 'all'> =
+      report.state === 'cleared'
+        ? 'cleared'
+        : report.state === 'approved'
+          ? decided && decided.kind !== 'none'
+            ? decided.kind
+            : 'cleared'
+          : held
+            ? 'claimed'
+            : 'open';
+    return {
+      id: report.id,
+      createdAt: report.createdAt.getTime(),
+      label: reportLabel(report),
+      reason: report.reason,
+      details: report.details ?? undefined,
+      agoLabel: agoLabel(report.createdAt),
+      show: where,
+      listing: listing
+        ? { title: listing.title, slug: listing.slug, status: listing.status, photo: photos.get(listing.id) }
+        : undefined,
+      person: {
+        id: report.personId,
+        name: target?.name || 'No name yet',
+        standing: target?.standing ?? 'good',
+        upheldBefore: before,
+        otherOpen: Math.max(0, (openOf.get(report.personId) ?? 0) - (where === 'open' || where === 'claimed' ? 1 : 0)),
+      },
+      reporterName: nameOf.get(report.reporterId) || 'No name yet',
+      claimedBy: held ? nameOf.get(report.claimedById!) || 'Someone' : undefined,
+      mine: Boolean(held && report.claimedById === viewer.id),
+      suggested: suggestedAction(report, before),
+      outcome: decided
+        ? {
+            kind: decided.kind,
+            by: nameOf.get(decided.decidedById) || 'Someone',
+            agoLabel: agoLabel(decided.createdAt),
+            reversed: decided.reversedAt !== null,
+          }
+        : report.state === 'cleared' && report.closedAt
+          ? { kind: 'none' as const, by: 'Trust and safety', agoLabel: agoLabel(report.closedAt), reversed: false }
+          : undefined,
+    };
+  });
+
+  const counts = { ...empty, all: all.length };
+  for (const row of all) counts[row.show] += 1;
+  // Waiting ones first, the oldest at the top; then what was decided, the
+  // newest first.
+  const waiting = (row: (typeof all)[number]) => row.show === 'open' || row.show === 'claimed';
+  const shown = all
+    .filter((row) => show === 'all' || row.show === show)
+    .sort((a, b) =>
+      waiting(a) !== waiting(b) ? (waiting(a) ? -1 : 1) : waiting(a) ? a.createdAt - b.createdAt : b.createdAt - a.createdAt,
+    )
+    .map(({ createdAt: _, ...row }) => row);
+  return c.json({ reports: shown, counts }, 200);
 });
 
 /** A report this viewer may handle, or the reason they may not. */
@@ -436,6 +530,8 @@ reportRoutes.openapi(decide, async (c) => {
       targetPersonId: report.personId,
       detail: {
         report: report.number,
+        /** "REP 2026 0014", as the report is shown everywhere. */
+        reportLabel: reportLabel(report),
         ...(kind !== 'none' ? { kind } : {}),
         reason: decidedReason,
         ...(decidedReason !== report.reason ? { filedAs: report.reason } : {}),

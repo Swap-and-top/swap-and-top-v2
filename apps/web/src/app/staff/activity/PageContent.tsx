@@ -50,6 +50,8 @@ function describe(entry: Entry): string {
   const detail = entry.detail;
   const dept = DEPARTMENT_LABELS[detail.department as Department] ?? String(detail.department ?? '');
   const reason = REPORT_REASON_LABELS[detail.reason as ReportReason]?.toLowerCase();
+  // "REP 2026 0014", as the report is shown everywhere.
+  const report = String(detail.reportLabel ?? `report ${String(detail.report ?? '')}`);
   switch (entry.action) {
     case 'team.add':
       return `added ${who} to ${dept}${detail.lead ? ' as its lead' : ''}`;
@@ -62,9 +64,9 @@ function describe(entry: Entry): string {
     case 'team.leave':
       return `removed ${who} from the team`;
     case 'report.approve':
-      return `upheld report ${detail.report} about ${who}, with ${KIND_DONE[String(detail.kind)] ?? 'an action'}${reason ? ` (${reason})` : ''}`;
+      return `upheld ${report} about ${who}, with ${KIND_DONE[String(detail.kind)] ?? 'an action'}${reason ? ` (${reason})` : ''}`;
     case 'report.clear':
-      return `cleared report ${detail.report} about ${who}`;
+      return `cleared ${report} about ${who}`;
     case 'person.view':
       return `looked at ${who}’s record`;
     case 'person.warning':
