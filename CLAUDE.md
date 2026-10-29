@@ -88,8 +88,11 @@ These came from repeated feedback. Follow them without being asked.
   asking.
 - **Secrets stay put.** The root `.env` and `apps/web/.env.local` are git
   ignored; the owner fills them. Never print or paste their values. Vercel
-  has the same settings for Production and Preview; `turbo.json` must list
-  any new one, or the build will not see it.
+  has them for Production only: Preview has none, so the Preview deploy
+  of each branch push fails (it builds against no database). That is
+  expected; check the Production deploy of `main` (`npx vercel ls`), not
+  the commit's status on GitHub. `turbo.json` must list any new setting,
+  or the build will not see it.
 - **Mock codes:** email and phone codes are 123456 until real email and SMS
   are set up (`MOCK_CODE` in `apps/api/src/supabaseAdmin.ts`). Test phone
   numbers 077 000 0001 to 0007 (see the handoff).

@@ -20,7 +20,10 @@ console, has everything planned for Trust and safety built: the roles as
 departments, the console, Verify stores, Team, Reports, People, Appeals
 and the Activity log, plus the banned account page, waiting counts and
 the move of all data loading to TanStack Query. All of it is committed on
-`redesign/pdf-style` and pushed to `main` on 2026-10-29.
+`redesign/pdf-style` and pushed to `main` on 2026-10-29 (`cb70469`),
+and the Production deploy is live (the Preview deploy for the branch
+fails, as it always does: Vercel's Preview has no settings; see
+CLAUDE.md, "Secrets stay put").
 
 **What comes next, in Hillary's order (do them in this order):**
 
