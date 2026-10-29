@@ -1,0 +1,7 @@
+/* What could not be loaded, in the muted words of a quiet note. */
+.message {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}

@@ -5,6 +5,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSessionStore } from '@snt/core';
 import { EmptyState } from '@snt/ui';
 import { StaffPage } from './StaffPage';
 import { useStaffSections } from './sections';
@@ -12,11 +13,13 @@ import { useStaffSections } from './sections';
 export default function StaffHome() {
   const router = useRouter();
   const sections = useStaffSections();
+  const known = useSessionStore((state) => state.viewer !== null);
   const first = sections[0]?.href;
   useEffect(() => {
     if (first) router.replace(first);
   }, [first, router]);
-  if (first) return null;
+  // The frame, with no title yet, until it is known where to go.
+  if (first || !known) return <StaffPage title="">{null}</StaffPage>;
   return (
     <StaffPage title="Staff console">
       <EmptyState

@@ -2,8 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { ToastOffset } from '@/components/ToastOffset';
 import { AskName } from '@/components/AskName';
+import { BannedGate } from '@/components/BannedGate';
+import { QueryProvider } from '@/lib/query';
 import { LiveListingsLoader } from '@/components/LiveListingsLoader';
 import { SessionRestore } from '@/components/SessionRestore';
+import { SignInToast } from '@/components/SignInToast';
 import { VerifyPhoneHost } from '@/components/VerifyPhone';
 import { AppToaster, SignInHost } from '@snt/ui';
 import { PageLoadBar } from '@/components/PageLoadBar';
@@ -77,6 +80,15 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+/**
+ * Before the first paint: marks <html> as signed in when Supabase has a
+ * session saved in this browser, and as banned when that account is the
+ * one this browser last saw banned, so the header draws the bell and the account circle (or their
+ * faded banned look) straight away. SessionRestore and BannedGate keep the
+ * marks in step afterwards.
+ */
+const MARK_SESSION = `try{var h=document.documentElement,k=Object.keys(localStorage).filter(function(x){return x.indexOf('sb-')===0&&/-auth-token$/.test(x)})[0];if(k){h.setAttribute('data-signed-in','');var u=(JSON.parse(localStorage.getItem(k))||{}).user;if(u&&u.id&&localStorage.getItem('snt-banned')===u.id)h.setAttribute('data-banned','')}}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: {
@@ -88,26 +100,33 @@ export default function RootLayout({
     // that the mark is expected.
     <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: MARK_SESSION }} />
         {/* Each new page opens at its top. */}
         <ScrollToTop />
         {/* A thin bar along the top while a page is on its way. */}
         <PageLoadBar />
-        {children}
-        {/* A remembered sign in, back before the first paint. */}
-        <SessionRestore />
-        {/* The live listings from the database, for the search panel and
-            anything else without a page to bring them. */}
-        <LiveListingsLoader />
-        {/* The one sign in sheet, shown whenever a guest tries something that
-            needs an account. */}
-        <SignInHost />
-        {/* The verify phone sheet, when someone without one tries to post or
-            make an offer; and a name for anyone who joined by phone. */}
-        <VerifyPhoneHost />
-        <AskName />
-        {/* Short confirmations, "Saved" and the like (see AppToaster). */}
-        <AppToaster />
-        <ToastOffset />
+        {/* Loading from the API: one cache for everything below (see
+            lib/query), the sign in and the live listings included. */}
+        <QueryProvider>
+          {/* A banned account sees only their ban, and can appeal it. */}
+          <BannedGate>{children}</BannedGate>
+          {/* A remembered sign in, back before the first paint. */}
+          <SessionRestore />
+          {/* The live listings from the database, for the search panel and
+              anything else without a page to bring them. */}
+          <LiveListingsLoader />
+          {/* The one sign in sheet, shown whenever a guest tries something
+              that needs an account. */}
+          <SignInHost />
+          {/* The verify phone sheet, when someone without one tries to post
+              or make an offer; and a name for anyone who joined by phone. */}
+          <VerifyPhoneHost />
+          <AskName />
+          {/* Short confirmations, "Saved" and the like (see AppToaster). */}
+          <AppToaster />
+          <SignInToast />
+          <ToastOffset />
+        </QueryProvider>
       </body>
     </html>
   );

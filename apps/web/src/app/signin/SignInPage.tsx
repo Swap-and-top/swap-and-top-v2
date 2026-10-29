@@ -27,6 +27,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
+import { useSessionStore } from '@snt/core';
 import {
   Button,
   FacebookMark,
@@ -36,6 +37,7 @@ import {
 } from '@snt/ui';
 import { MailIcon, PhoneIcon } from '@snt/ui/icons';
 import { supabase, toPhone } from '@/lib/supabase';
+import { toastOnArrival } from '@/components/SignInToast';
 import { AuthLayout } from './AuthLayout';
 import { VerifyEmailStep } from './VerifyEmail';
 import styles from './SignInPage.module.css';
@@ -62,10 +64,39 @@ export function SignInPage({ next }: { next: string }) {
   /** Signed in with an email not yet verified: the card asks for its code. */
   const [verifying, setVerifying] = useState(false);
 
+  /** Once the API has said who they are, so a banned account goes straight
+      to its ban, never the marketplace first. The button keeps spinning
+      meanwhile, however long that takes (the first time can be several
+      seconds, and it is tried again if the server cannot be reached). If
+      it still cannot say, or after a minute, they are signed out again,
+      cleanly, and told, and can simply try again. */
   function signedIn() {
-    toast.success('Sign in successful');
-    startPageLoad();
-    router.push(next);
+    const go = () => {
+      // Shown once the next page is up (SignInToast).
+      toastOnArrival();
+      startPageLoad();
+      router.push(next);
+    };
+    const fail = () => {
+      void supabase.auth.signOut();
+      setBusy(false);
+      // From the email code step too: back to the card, to sign in again.
+      setVerifying(false);
+      toast.error('We could not sign you in. Check your connection and try again.');
+    };
+    if (useSessionStore.getState().viewer) return go();
+    useSessionStore.setState({ viewerFailed: false });
+    const stop = window.setTimeout(() => {
+      unsubscribe();
+      fail();
+    }, 60_000);
+    const unsubscribe = useSessionStore.subscribe((state) => {
+      if (!state.viewer && !state.viewerFailed) return;
+      window.clearTimeout(stop);
+      unsubscribe();
+      if (state.viewer) go();
+      else fail();
+    });
   }
 
   async function sendCode() {

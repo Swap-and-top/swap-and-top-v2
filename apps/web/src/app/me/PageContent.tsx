@@ -10,7 +10,7 @@
  * Wireframe artboard: `Me`.
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   confirmationsAwaiting,
   useDealStore,
@@ -21,7 +21,6 @@ import {
   useListingStatusStore,
   useOfferStore,
   useSessionStore,
-  type Listing,
 } from '@snt/core';
 import {
   Button,
@@ -54,7 +53,7 @@ import {
 import { DevTools } from '@/components/DevTools';
 import { StorePassSheet, type PassStore } from '@/components/StorePassSheet';
 import { useOnTeam } from '@/lib/staff';
-import { apiAsViewer } from '@/lib/supabase';
+import { useMyListings } from '@/lib/myListings';
 import styles from './page.module.css';
 
 /** One empty list, so a guest's stores are the same each time they are read. */
@@ -83,19 +82,7 @@ export default function MePage() {
 
   /** What the user has posted and still has up, from the API. */
   const changes = useListingStatusStore((state) => state.changes);
-  const [posted, setPosted] = useState<Listing[]>([]);
-  useEffect(() => {
-    if (!me) return;
-    let current = true;
-    void apiAsViewer<{ listings: Listing[] }>('/me/listings', { method: 'GET' }).then(
-      ({ data }) => {
-        if (current) setPosted(data?.listings ?? []);
-      },
-    );
-    return () => {
-      current = false;
-    };
-  }, [me]);
+  const posted = useMyListings(me) ?? [];
   const myListings = posted.filter((listing) => {
     const status = statusOf(listing, changes);
     return status !== 'withdrawn' && status !== 'removed';

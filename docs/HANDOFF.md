@@ -12,15 +12,56 @@ file is the state of the code and the recent work. **Start with "Where we
 stopped" just below**, then `docs/architecture/backend-plan.md` ("Where it
 stands") for the backend in full.
 
-## Where we stopped (2026-10-28)
+## Where we stopped (2026-10-29)
 
-**In one line:** Phases 1 to 4 are built, and Phase 5 (the Staff console)
-is under way: the roles change, the console frame, Verify stores and Team
-are built. Everything is committed on `redesign/pdf-style` and **live on
-`main`** (last pushed 2026-10-28, `0059d3e`). The only Phase 4 piece left is
-real payment through Paynow, which waits on Hillary's merchant account.
-**Next: Reports** (item 8 below; the full design is
-`docs/product/staff-console.md`).
+**In one line:** Phases 1 to 4 are built and live (only real Paynow
+payment waits, on Hillary's merchant account). Phase 5, the Staff
+console, has everything planned for Trust and safety built: the roles as
+departments, the console, Verify stores, Team, Reports, People, Appeals
+and the Activity log, plus the banned account page, waiting counts and
+the move of all data loading to TanStack Query. All of it is committed on
+`redesign/pdf-style` and pushed to `main` on 2026-10-29.
+
+**What comes next, in Hillary's order (do them in this order):**
+
+1. **Button actions onto TanStack Query mutations.** Loading is all on
+   TanStack Query (see item 8, "TanStack Query for loading data"); these
+   still call `apiAsViewer` straight from a tap, and should become
+   `useMutation` with `apiSend` (`apps/web/src/lib/query.tsx`), with
+   their busy state from `isPending` and the cache updated or refreshed
+   after:
+   - posting a listing: `app/post/review/page.tsx`;
+   - the Store console's Add stock form and Bulk import:
+     `app/console/stock/StockForm.tsx`, `app/console/stock/import/page.tsx`
+     (refresh `stockKey(storeId)` after);
+   - your name: `components/AskName.tsx`;
+   - verify phone: `components/VerifyPhone.tsx`;
+   - the Report sheet: `components/ReportSheet.tsx`;
+   - owner tools on a listing: `components/listing/OwnerTools.tsx` and
+     `lib/listingStatus.ts` (refresh `myListingsKey` and `stockKey`);
+   - offers, deal checks, saving a listing, notifications read, boosts:
+     `lib/accountData.ts` (the `connect*Api` calls the Zustand stores in
+     `@snt/core` make). Most care here: the stores keep their optimistic
+     changes, so keep them as the source the screens read and make the
+     calls mutations under them, then refresh
+     `[...viewerKey(id), 'account']`.
+2. **Hillary reviews how each Staff console page looks**, as was done
+   for the Activity log (which now matches the Store console's Stock
+   page: toolbar, pale blue heading strip, small blue page buttons,
+   skeletons that match). Go through Reports, People and a person's
+   record, Appeals, Verify stores and Team with her (and the person's
+   appeal page and the banned account page), and change what she asks.
+   Keep each one cohesive with the Store console.
+3. **A design pass on the Store console** with Hillary.
+4. **Then ask Hillary about the open safeguards** (item 8, the end of
+   Trust and safety: staff password as well as the phone code, a sealed
+   second super admin, false reports counting on the reporter, data
+   requests, bulk actions) before or after Phase 6.
+5. **Phase 6** (Executives, Board, Finance, Sales), item 9 below and
+   `docs/architecture/backend-plan.md`. Agree the business definitions
+   with Hillary first.
+
+**Earlier, Phase 4 (kept for reference):**
 
 - **Slice 2, store passes:** a day ($1), week ($5) or month ($15) pass,
   bought as a test payment from Me or the limit message
@@ -185,30 +226,211 @@ real payment through Paynow, which waits on Hillary's merchant account.
      a row in `staff_log` (migration `0008`): `team.add`, `team.remove`,
      `team.lead`, `team.unlead`, `team.leave`.
 
-   **NEXT, in order:**
-   1. **Reports.** The Report button on listings
-      (`packages/ui/src/cards/CardActions.tsx`, today a toast saying it is
-      not available) and on a person's profile: a sheet with the 8 reasons
-      (stolen, not as described, fake, duplicate, offensive, wrong
-      category, no show, other) and an optional note. `POST /api/reports`
-      (signed in; a daily limit per person; never your own listing). The
-      Reports section (`/staff/reports`, Trust and safety): open reports
-      oldest first, claim, then approve (an action: warning, removal,
-      suspension; ban for leads only), change the reason, or clear. Members
-      act only on ordinary users; reports about staff go to leads; nobody
-      handles a report about themselves or their own store; the reported
-      person never learns who reported. Each decision is a
-      `moderation_actions` row and a `staff_log` row, and the person is
-      told in their notifications. Tables `reports`, `moderation_actions`,
-      `appeals` already exist in `schema.ts` (check their columns against
-      section 2 of the backend plan before building).
-   2. **People** (`/staff/people`): find anyone, see their record
-      (listings, deals, reports, past actions), warn or suspend; leads ban.
-   3. **Appeals** (`/staff/appeals`, leads): a person appeals an action
-      once; a lead other than the one who acted upholds or overturns it.
-   4. **Activity log** (`/staff/activity`): reads `staff_log`.
-   - **Check for the phase:** report a listing as one account, approve it
-     as a Trust and safety member, see the warning arrive.
+   - **Reports** (built 2026-10-29, `apps/api/src/routes/reports.ts`,
+     no migration: the `reports`, `moderation_actions` tables were there).
+     **Reporting:** the flag on an opened listing (`CardActions`'
+     `onReport`, wired by `useListingReport` in
+     `apps/web/src/components/ReportSheet.tsx`) and "Report this person" /
+     "Report this listing" on a deal check (`DealConfirm.tsx`) open one
+     sheet: a reason (`REPORT_REASON_LABELS` in
+     `packages/core/src/types/report.ts`, starting on the most common)
+     and an optional note. `POST /api/reports` (signed in; a listing,
+     whose poster is the person reported, or a person; never your own
+     listing or yourself; 10 a day; the same open report again changes
+     nothing). There is no person profile page yet, so a person is
+     reported only from a deal check.
+     **The queue** at `/staff/reports` (Trust and safety):
+     `GET /api/staff/reports` gives the open and claimed reports this
+     person may handle, oldest first, with the listing, the person's
+     standing, actions upheld before and other open reports, who
+     reported, and a suggested action (a simple violation matrix:
+     stolen or two upheld before suggests a suspension; fake, duplicate
+     or offensive on a listing suggests removal; else a warning).
+     `POST /api/staff/reports/{id}/claim` (one person at a time; a claim
+     left 30 minutes can be taken), then `/decide` with `approve` (an
+     action: warning, removal, a 7 day suspension, or a ban for leads
+     only; the reason can be corrected; an optional note for the record)
+     or `clear`. Each decision writes a `moderation_actions` row (`none`
+     for a clear) and a `staff_log` row (`report.approve`,
+     `report.clear`), and the person is told in their notifications,
+     never who reported them. Effects: a warning or removal makes them
+     `warned`; removal sets the listing `removed`; a suspension sets
+     `suspended` with `suspendedUntil` (ended by `liftEndedSuspensions`
+     in `apps/api/src/standing.ts`, run with `settlePasses`, back to
+     `warned`); a ban sets `banned` and removes all their listings.
+     **Who handles what** (`mayHandle`): never your own report, one about
+     you, or about a listing of a store you own or work for; reports
+     about our team go to Trust and safety leads, about a lead to the
+     super admin; nobody acts on the super admin. Such reports are simply
+     not in that person's queue.
+     Tested 2026-10-29 by script and in the browser (Kuda reported,
+     Rumbi claimed and approved a warning and a removal, a person report
+     cleared, every refusal checked), then all of it deleted. Not tested:
+     a ban by a lead (Tafadzwa's 0006 still does not sign in by script),
+     and "Report this person" on a deal check in the browser.
+     Not built: reporter notifications, false reports counting on the
+     reporter's record, bulk actions, a count on the console's Reports
+     tab, and automatic priority signals.
+
+   - **People** (built 2026-10-29, `apps/api/src/routes/people.ts`, pages
+     `app/staff/people/` and `app/staff/people/[id]/`, no migration):
+     Trust and safety find anyone by name or number
+     (`GET /api/staff/people?q=`), open their record
+     (`GET /api/staff/people/{id}`: phone, area, joined, last seen,
+     standing, place on our team, stores, confirmed deals, live
+     listings, their last 10 listings, reports about them and actions
+     taken; each look is a `person.view` row in `staff_log`), and "Take
+     action" without a report (`POST /api/staff/people/{id}/action`: a
+     warning, a 7 day suspension, or a ban for leads, under a reason,
+     with an optional note; logged as `person.warning` and so on, and
+     the person is told). Where the viewer may not act, the record says
+     why instead of the button.
+   - **The rules and effects are shared** in `apps/api/src/moderation.ts`
+     (`actorOf`, `targetsOf`, `mayActOn`, `mayBan`, `applyAction`,
+     `actionText`), used by Reports and People alike. Added with People:
+     nobody acts on someone they run a store with.
+     Tested 2026-10-29 by script and in the browser as Rumbi (search,
+     record, warning, suspension hiding the listings, every refusal),
+     then put back. Lifting a suspension or ban by hand is not built:
+     Appeals will overturn actions.
+
+   - **Appeals** (built 2026-10-29, `apps/api/src/routes/appeals.ts`,
+     no migration: `appeals` was there). Every action's notification now
+     links to `/appeal/{actionId}` (`app/appeal/[id]/`), where the person
+     sees what was decided and why, and appeals once in their own words
+     (`GET /api/me/actions/{id}`, `POST /api/me/actions/{id}/appeal`, at
+     least 10 characters). The Appeals section (`/staff/appeals`, Trust
+     and safety leads) lists waiting appeals oldest first, leaving out
+     decisions this lead made and people they may not act on; Uphold or
+     Overturn, with a reason the person is told
+     (`POST /api/staff/appeals/{id}`, decided once). Overturning sets
+     `reversedAt` and `reversedById` and runs `undoAction`
+     (`moderation.ts`): a removed listing goes live again, a ban gives
+     back the listings it removed (not ones another removal still keeps
+     down), and `resettleStanding` works the standing out from the
+     actions still in force. Logged as `appeal.uphold` and
+     `appeal.overturn`.
+     Tested 2026-10-29: the person's side by script and in the browser as
+     Tarisai (notification, page, appeal, once only, refusals); the
+     undoing by a script calling `undoAction` (a suspension and a ban
+     overturned, standing and listings back). **Not tested: a lead
+     deciding in the browser or through the API**, since no Trust and
+     safety lead signs in by script (Tafadzwa's 0006 fails, and making a
+     test account a lead was not allowed). Hillary can check it as super
+     admin: suspend a test account from People, appeal as them, then
+     overturn from Appeals. An action Hillary made herself will not show
+     in her own Appeals list (by design).
+
+   - **Activity log** (built 2026-10-29, `apps/api/src/routes/activity.ts`,
+     `app/staff/activity/`): `GET /api/staff/activity?page=&size=` gives
+     `staff_log` newest first, 10, 20, 30 or 40 a page (`size`, 10 by
+     default) with the total. The page is set as the Store console's
+     Stock page: the search box and a Filters pill (From and To days in a
+     sheet) in the toolbar, the count line in the blue, and the table in
+     one white card under the pale blue heading strip (When, Who, What
+     they did), one line a row (two on a phone). Under it "1 to 10 of N",
+     a gear (Page settings: 10, 20, 30 or 40 a page, remembered in the
+     browser as `snt-activity-size`) and the page buttons: small pills
+     the height of that line, the page on show filled in the blue,
+     Previous, nine numbers at a time (1 to 9, 10 to 18…) with chevrons
+     either side that jump nine pages once there are more than nine, and
+     Next. With one page they all show, disabled. On a phone the numbers
+     sit on one line and Previous and Next under them.
+     Search (`q`): every word must match a name, who did it or to whom,
+     or a kind of action through `ACTION_WORDS` ("kuda warning" is Kuda's
+     warnings). `from` and `to` are days in Harare's time, both included.
+     The page keeps only the newest answer when searches overlap. Trust and safety leads and the super admin see
+     everything; a member sees only what members did (no leads' or super
+     admin's actions, no `team.*`). Each entry is worded on the page
+     (`describe()`), e.g. "Rumbi M. warned Tarisai M. (offensive)", and
+     opens the person's record. Read only. Tested as Rumbi and Kuda,
+     then the test entries deleted (Hillary's two Team entries kept).
+   - **A banned account sees only its ban** (2026-10-29): `BannedGate`
+     (`apps/web/src/components/BannedGate.tsx`, in the root layout) shows
+     the appeal page for their ban (`banActionId` on `GET /api/me`) on
+     every address (bar /help, /terms and /privacy), with the usual
+     header and footer: Post New Item is faded and does nothing, and View
+     profile in the menu is disabled. The browser remembers a ban
+     (`snt-banned` in localStorage), so a reload shows the ban page at
+     once; sign in waits for `/api/me` before leaving the sign in page (as
+     long as it takes; it moves on only if the API cannot say, shown by
+     `viewerFailed` in the session store, or after a minute), so the
+     marketplace never flashes first. The first `/api/me` after a sign in
+     can take 8 seconds from the owner's laptop. The
+     API refuses a banned account everything but `GET /api/me` and
+     `/api/me/actions/{id}` (and its appeal), in a middleware in
+     `apps/api/src/app.ts` (`code: 'banned'`). A ban is lifted only by
+     overturning it on appeal.
+   - **The header from the first paint** (2026-10-29): a script at the
+     top of `<body>` (`MARK_SESSION` in `apps/web/src/app/layout.tsx`)
+     marks `<html>` with `data-signed-in` when Supabase has a session in
+     this browser and `data-banned` when it last saw a ban. The person's
+     bell is always in the page and shown by CSS only under
+     `data-signed-in`; the outlined person shows as the white circle; a
+     banned account's bell and Post New Item are faded and do nothing.
+     `SessionRestore` and `BannedGate` keep the marks in step, and sign out
+     clears both.
+   - **The Staff console never shows a blank page while loading**
+     (2026-10-29): the gate in `app/staff/layout.tsx` draws the console
+     while `/api/me` is on its way, and only turns away someone off the
+     team once it knows. Meanwhile `StaffShell` (`loading`) shows bones
+     for the name and three sections (sidebar, phone header and the bar at
+     the foot) and keeps the title icon's place, and each section's page
+     shows its own skeleton (they wait on `allowed === false`, not on
+     `undefined`). The API checks every request, so nothing is shown to
+     anyone off the team.
+   - **TanStack Query for loading data** (2026-10-29, the owner's rule:
+     no `useEffect` for loading data). `@tanstack/react-query` is in the
+     web app; `apps/web/src/lib/query.tsx` has the one `QueryProvider`
+     (in the root layout), `apiGet` and `apiSend` (throw `ApiError` with
+     the API's message and status), the retry rule (twice more, never
+     after a plain no under 500) and `QueryProblem` (the message and Try
+     again). `apiAsViewer` now also returns `status`. `useDebounced`
+     (`lib/useDebounced.ts`) waits for typing to pause. The whole Staff
+     console is on it: the menu counts (every minute and after each
+     change), Reports, People and a person's record, Appeals, Verify
+     stores, Team and the Activity log, with their keys in `staffKeys`
+     (`app/staff/sections.tsx`); a change updates its list in the cache
+     and refreshes what it touched (counts, the log, a record).
+     **The rest of the app moved too (2026-10-29):** the appeal page;
+     the Store console's Stock (`useConsoleStock`, one request shared by
+     its six screens, `stockKey`), Leads, Stats, Offers (trade ins), Store
+     profile and Store staff; Me and My listings (`lib/myListings.ts`);
+     Saved; Edit store (the form drawn once the store has loaded, from
+     it) and its Verify panel; Open a store and the store pass sheet
+     (mutations); the feed's live listings (`LiveListingsLoader`, read
+     again after five minutes); and sign in: `SessionRestore` keeps only
+     the Supabase listener as an effect, and runs who it is
+     (`/api/me`, `viewerKey` in `lib/viewer.ts`, read again each minute
+     at most) and then their things (`lib/accountData.ts`) as queries,
+     putting the answers in the same stores. `refreshViewer` reads who
+     they are again after a change (`fetchViewer` is gone). If who they
+     are cannot be loaded, `viewerFailed` is set (through `meta.onError`,
+     once the retries are done): the sign in page signs them out again
+     cleanly and says "We could not sign you in. Check your connection
+     and try again."; elsewhere a toast says so. Queries shared by
+     several screens report a failure with `meta: { toast: true }`.
+     Everything below the layout's `<QueryProvider>` (SessionRestore,
+     LiveListingsLoader and the sheets included). Effects left, none
+     loading data: the Supabase listener, the Activity log's page size
+     from the browser, the stock form's own one, the Staff console's
+     redirect to its first section, `useDebounced`, and `ViewRecorder`
+     (it only sends a view).
+   - **Counts in the console's menu** (2026-10-29): `GET
+     /api/staff/counts` gives reports nobody holds that this person may
+     handle, and appeals waiting for them (leads); shown beside Reports
+     and Appeals, through TanStack Query (`staffKeys.counts` in
+     `app/staff/sections.tsx`): every minute, and refreshed after each
+     claim or decision.
+   - **Check for the phase** (done 2026-10-29): a listing reported as
+     Kuda, approved as Rumbi (a member), the warning arrived.
+
+   **The Trust and safety part of Phase 5 is complete.** Still open from
+   section 9 of the staff console design, not built: staff signing in
+   with a password as well as the phone code, a sealed second super
+   admin account, false reports counting on the reporter, data requests
+   (export and delete), and bulk actions. (A count on Reports is built:
+   the menu counts.) Ask Hillary which of these come before launch.
 9. **Phase 6:** Executives Overview, Board monthly summary, Finance,
    Sales (owners' phone numbers allowed). Agree business definitions
    (what counts as active, as value swapped) with Hillary first.
@@ -491,6 +713,23 @@ Patterns the user has settled on:
 ## What was built recently (newest first)
 
 See `git log` for the full detail; each commit body explains its change.
+
+- **2026-10-29, Trust and safety and the app's loading** (one commit,
+  pushed to `main`): Reports, People, Appeals and the Activity log (item
+  8); the banned account page (only the ban and its appeal, the header
+  as usual with Post New Item, the bell and View profile faded; the API
+  refuses a banned account the rest; sign out goes home); waiting counts
+  on Reports and Appeals; the Activity log as a Stock page style table
+  (search, Filters sheet with days, 10 to 40 a page from the gear, nine
+  page numbers at a time with chevrons); the Staff console drawn with
+  skeletons straight away on a reload; the header's bell and account
+  circle right from the first paint (`MARK_SESSION` in the layout); sign
+  in waiting for who it is, with a real error when the server cannot say;
+  "Signed out successfully" and "Sign in successful" once the next page
+  shows; the account menu placed before it is drawn (no jump); selected
+  outlined buttons filled to the edge with no ring; the outlined person
+  in the header at a 4px outline; and every page's loading moved from
+  `useEffect` to TanStack Query (item 8).
 
 - **2026-10-28, the rest of Phase 4 and Phase 5's start** (`0d0c07a` to
   `0059d3e`, all pushed to `main`): real contact numbers on Show contact,

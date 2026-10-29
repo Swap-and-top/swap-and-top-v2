@@ -7,15 +7,20 @@
 import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { cors } from 'hono/cors';
+import { verify } from './auth';
 import { accountRoutes } from './routes/account';
 import { dealRoutes } from './routes/deals';
 import { healthRoutes } from './routes/health';
 import { listingRoutes } from './routes/listings';
-import { meRoutes } from './routes/me';
+import { meRoutes, personFor } from './routes/me';
 import { notificationRoutes } from './routes/notifications';
 import { leadRoutes } from './routes/leads';
 import { revealRoutes } from './routes/reveals';
 import { statsRoutes } from './routes/stats';
+import { activityRoutes } from './routes/activity';
+import { appealRoutes } from './routes/appeals';
+import { peopleRoutes } from './routes/people';
+import { reportRoutes } from './routes/reports';
 import { teamRoutes } from './routes/team';
 import { verificationRoutes } from './routes/verification';
 import { boostRoutes } from './routes/boosts';
@@ -36,6 +41,19 @@ export const app = new OpenAPIHono({
 // The web app runs on another port while testing.
 app.use('*', cors({ origin: ['http://localhost:3000'] }));
 
+// A banned account can do nothing but see who they are and see and appeal
+// the ban (the web app shows them only that page).
+const BANNED_MAY = [/^\/api\/me$/, /^\/api\/me\/actions\/[^/]+(\/appeal)?$/];
+app.use('*', async (c, next) => {
+  const header = c.req.header('Authorization') ?? '';
+  const user = header.startsWith('Bearer ') ? await verify(header.slice(7)) : null;
+  if (user && !BANNED_MAY.some((path) => path.test(c.req.path))) {
+    const person = await personFor(user);
+    if (person.standing === 'banned') return c.json({ error: 'Your account is banned.', code: 'banned' }, 403);
+  }
+  await next();
+});
+
 app.route('/', healthRoutes);
 app.route('/', listingRoutes);
 app.route('/', storeRoutes);
@@ -52,6 +70,10 @@ app.route('/', savedRoutes);
 app.route('/', notificationRoutes);
 app.route('/', verificationRoutes);
 app.route('/', teamRoutes);
+app.route('/', reportRoutes);
+app.route('/', peopleRoutes);
+app.route('/', appealRoutes);
+app.route('/', activityRoutes);
 
 // Endpoints for an account take the Supabase sign in token.
 app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {

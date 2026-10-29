@@ -115,6 +115,26 @@
   filter: brightness(0.96);
 }
 
+/* A banned account cannot post: the button stays, faded. */
+.postButton[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* Signed in, before the app has loaded: the account circle, not the
+   outlined person, from the first paint (the mark on <html>). */
+:global(html[data-signed-in]) .signIn:not(.menuOpen) {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
+}
+
+:global(html[data-signed-in]) .signInMark {
+  display: none;
+}
+
 /** The account circle: white, with their initials in the green the header's
     gradient ends in — until profile photos exist. */
 .account {
@@ -356,6 +376,20 @@
   .bell:hover {
     background-color: color-mix(in srgb, white 14%, transparent);
   }
+}
+
+/* The person's bell, only while signed in (the mark on <html>), and faded
+   for a banned account. */
+:global(html:not([data-signed-in])) .userBell {
+  display: none;
+}
+
+.bell[aria-disabled='true'],
+:global(html[data-banned]) .userBell,
+:global(html[data-banned]) .postButton {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .bellCount {

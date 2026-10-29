@@ -6,21 +6,34 @@ laid out, the design patterns in use and what was done most recently; its
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
 
-## Where things stand (2026-10-28)
+## Where things stand (2026-10-29)
 
 - **Built and live on `main`:** Phases 1 to 4 (everything a person and a
   store uses, on the database), apart from real Paynow payment, which
   waits on Hillary's merchant account. Every contact number shown is real
   (`apps/api/src/contact.ts`).
-- **Phase 5, the Staff console, is under way.** Built: roles are only
-  `user` or `super_admin`; staff are in `staff_departments` as member or
-  lead, checked with `inDepartment` (`apps/api/src/staff.ts`) and
-  `useInDepartment` (`apps/web/src/lib/staff.ts`); the console at `/staff`
-  (sections listed in `apps/web/src/app/staff/sections.tsx`, shown once
-  `built: true`); Verify stores; Team (changes logged in `staff_log`).
-- **Next: Reports**, then People, Appeals and the Activity log. The
-  handoff's item 8 has the plan; `docs/product/staff-console.md` has the
-  design, including the safeguards (section 9) to build with each section.
+- **Phase 5, the Staff console:** everything planned for Trust and
+  safety is built and live. Roles are only `user` or `super_admin`; staff
+  are in `staff_departments` as member or lead, checked with
+  `inDepartment` (`apps/api/src/staff.ts`) and `useInDepartment`
+  (`apps/web/src/lib/staff.ts`). The console at `/staff` (sections in
+  `apps/web/src/app/staff/sections.tsx`, shown once `built: true`): Verify
+  stores, Team, Reports, People, Appeals and the Activity log, with
+  waiting counts on Reports and Appeals. Who may act on whom, what an
+  action does and how it is undone are in `apps/api/src/moderation.ts`.
+  A banned account sees only its ban and appeal (`BannedGate`), and the
+  API refuses it everything else (`apps/api/src/app.ts`).
+- **All loading is on TanStack Query** (`apps/web/src/lib/query.tsx`;
+  the rule is below under "Working with the backend").
+- **Next, in Hillary's order** (details in the handoff's "Where we
+  stopped"): 1. move the button actions (posting, stock, owner tools,
+  report, verify phone, your name, offers, deals, saved, notifications,
+  boosts) onto TanStack Query mutations; 2. go through each Staff
+  console page with Hillary for how it looks, as was done for the
+  Activity log, keeping it cohesive with the Store console; 3. a design
+  pass on the Store console; 4. ask about the open safeguards; 5. Phase 6
+  (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
+  has the console's design and safeguards (section 9).
 - **Real accounts:** Hillary (super admin), Patrick and Ray are on their
   real phone numbers. Never run `db:seed` (it would put them back on test
   numbers). On the live site test numbers (077 000 0xxx) carry no staff
@@ -91,6 +104,14 @@ These came from repeated feedback. Follow them without being asked.
   are slower than live. Keep trips few and in parallel: the
   person for a sign in is kept for 15 seconds (`personFor`), "last seen"
   is not waited for, and `loadListings` reads everything in one batch.
+- **Load data with TanStack Query, never `useEffect`** (the owner's
+  rule, 2026-10-29). A page reads with `useQuery` and `apiGet` (or
+  `publicGet` for public data), changes with `useMutation` and `apiSend`
+  (`apps/web/src/lib/query.tsx`), and shows a failure with
+  `QueryProblem` (Try again) or, for a query shared by several screens,
+  `meta: { toast: true }`. After a change, update the cache or refresh
+  the queries it touched. Effects are only for things that are not
+  loading (a listener, a timer, the browser's storage).
 - **A new endpoint** goes in `apps/api/src/routes/<area>.ts` with a
   `createRoute` (so it shows in Swagger at `/api/docs`), is registered in
   `apps/api/src/app.ts`, and is called from the web app with `apiAsViewer`

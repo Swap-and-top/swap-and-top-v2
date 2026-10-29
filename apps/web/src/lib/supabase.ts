@@ -39,15 +39,6 @@ export function toPhone(typed: string): string | undefined {
   return /^7\d{8}$/.test(local) ? `+263${local}` : undefined;
 }
 
-/** Asks the API who is signed in. Null when it cannot say. */
-export async function fetchViewer(token: string) {
-  const response = await fetch('/api/me', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!response.ok) return null;
-  return response.json();
-}
-
 /**
  * A call to the API as the signed in person: their sign in token goes with
  * it. Returns the parsed body, or `error` with the API's message (and its
@@ -56,10 +47,10 @@ export async function fetchViewer(token: string) {
 export async function apiAsViewer<T>(
   path: string,
   init: { method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; body?: unknown },
-): Promise<{ data?: T; error?: string; code?: string }> {
+): Promise<{ data?: T; error?: string; code?: string; status?: number }> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
-  if (!token) return { error: 'Sign in again to carry on.' };
+  if (!token) return { error: 'Sign in again to carry on.', status: 401 };
   const response = await fetch(`/api${path}`, {
     method: init.method,
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -69,7 +60,12 @@ export async function apiAsViewer<T>(
     | { error?: string; code?: string }
     | undefined;
   if (!response?.ok) {
-    return { error: body?.error ?? 'Something went wrong. Try again in a minute.', code: body?.code };
+    return {
+      error: body?.error ?? 'Something went wrong. Try again in a minute.',
+      code: body?.code,
+      // None when the server could not be reached at all.
+      status: response?.status,
+    };
   }
   return { data: body as T };
 }

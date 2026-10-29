@@ -20,8 +20,8 @@
  * stretch is loaded once, as it is first chosen.
  */
 
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import {
   currentStore,
   dollars,
@@ -45,7 +45,7 @@ import {
 import { MegaphoneIcon, WhatsAppIcon } from '@snt/ui/icons';
 import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
 import { useConsoleRole } from '@/lib/consoleRole';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiGet } from '@/lib/query';
 import styles from './page.module.css';
 
 const RANGES: TabItem<StatsRange>[] = [
@@ -103,29 +103,12 @@ export default function ConsoleStatsPage() {
   /** The number the graph shows: the leads, to start. */
   const [metric, setMetric] = useState<StatsMetric>('reveals');
   const store = useConsoleTarget() ?? currentStore;
-  /** Each stretch's stats, once loaded. */
-  const [loaded, setLoaded] = useState<Partial<Record<StatsRange, Stats>>>({});
-
-  useEffect(() => {
-    if (loaded[range]) return;
-    let gone = false;
-    void apiAsViewer<Stats>(
-      `/stores/${encodeURIComponent(store.id)}/stats?range=${range}`,
-      { method: 'GET' },
-    ).then(({ data, error }) => {
-      if (gone) return;
-      if (error || !data) {
-        toast.error(error ?? 'We could not load the stats.');
-        return;
-      }
-      setLoaded((current) => ({ ...current, [range]: data }));
-    });
-    return () => {
-      gone = true;
-    };
-  }, [store.id, range, loaded]);
-
-  const stats = loaded[range];
+  // Each stretch kept once loaded, through TanStack Query.
+  const { data: stats } = useQuery({
+    queryKey: ['store', store.id, 'stats', range],
+    queryFn: () => apiGet<Stats>(`/stores/${encodeURIComponent(store.id)}/stats?range=${range}`),
+    meta: { toast: true },
+  });
   const shown = METRICS.find((m) => m.value === metric)!;
   const best = stats?.best ?? [];
 

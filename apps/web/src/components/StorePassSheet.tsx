@@ -10,12 +10,13 @@
  * A test payment until Paynow is set up: the API records it as paid at once.
  */
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useSessionStore } from '@snt/core';
 import { Button, Sheet, useCloseSheet } from '@snt/ui';
 import { refreshStorePass } from '@/lib/refresh';
-import { apiAsViewer, fetchViewer, supabase } from '@/lib/supabase';
+import { apiSend } from '@/lib/query';
+import { refreshViewer } from '@/lib/viewer';
 import styles from './sponsor/SponsorSheet.module.css';
 
 type Kind = 'day' | 'week' | 'month';
@@ -55,33 +56,30 @@ export function StorePassSheet({
 function PassForm({ store }: { store: PassStore }) {
   const close = useCloseSheet();
   const [kind, setKind] = useState<Kind>('day');
-  const [busy, setBusy] = useState(false);
+  const queryClient = useQueryClient();
   const price = PASSES.find((pass) => pass.kind === kind)!.price;
 
-  async function pay() {
-    setBusy(true);
-    const { data, error } = await apiAsViewer<{ endsLabel: string; restored: number }>(
-      `/stores/${store.id}/passes`,
-      { method: 'POST', body: { kind } },
-    );
-    if (error || !data) {
-      setBusy(false);
-      toast.error(error ?? 'We could not take the payment. Try again in a minute.');
-      return;
-    }
-    // Who they are now carries the new end date, for Me and posting.
-    const { data: session } = await supabase.auth.getSession();
-    const token = session.session?.access_token;
-    if (token) useSessionStore.setState({ viewer: await fetchViewer(token) });
-    // Listings the last lapse paused are live again: the feed shows them.
-    await refreshStorePass(store.slug);
-    toast.success(
-      data.restored > 0
-        ? `Paid until ${data.endsLabel}. ${data.restored} paused ${data.restored === 1 ? 'listing is' : 'listings are'} live again.`
-        : `Paid until ${data.endsLabel}.`,
-    );
-    close();
-  }
+  const pay = useMutation({
+    mutationFn: async () => {
+      const data = await apiSend<{ endsLabel: string; restored: number }>(`/stores/${store.id}/passes`, 'POST', {
+        kind,
+      });
+      // Who they are now carries the new end date, for Me and posting.
+      await refreshViewer(queryClient);
+      // Listings the last lapse paused are live again: the feed shows them.
+      await refreshStorePass(store.slug);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(
+        data.restored > 0
+          ? `Paid until ${data.endsLabel}. ${data.restored} paused ${data.restored === 1 ? 'listing is' : 'listings are'} live again.`
+          : `Paid until ${data.endsLabel}.`,
+      );
+      close();
+    },
+    onError: (error) => toast.error(error.message || 'We could not take the payment. Try again in a minute.'),
+  });
 
   return (
     <div className={styles.form}>
@@ -111,7 +109,7 @@ function PassForm({ store }: { store: PassStore }) {
         </div>
       </fieldset>
 
-      <Button size="lg" block loading={busy} onClick={pay}>
+      <Button size="lg" block loading={pay.isPending} onClick={() => pay.mutate()}>
         Pay ${price}
       </Button>
       <p className={styles.note}>

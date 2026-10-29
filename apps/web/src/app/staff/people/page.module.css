@@ -1,0 +1,140 @@
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+.muted {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-card-ink-muted);
+}
+
+.results {
+  display: grid;
+  gap: var(--snt-space-3);
+}
+
+/* A person found: their name and number, one tap to open their record. */
+.result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-5) var(--snt-space-8);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-inset);
+  color: var(--snt-accent-bold);
+  text-decoration: none;
+  transition: background var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .result:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 10%, var(--snt-bg-inset));
+  }
+}
+
+.name {
+  margin: 0;
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* What is known, one fact a line. */
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--snt-space-3) var(--snt-space-8);
+  margin: 0;
+  font-size: var(--snt-text-sm);
+}
+
+.facts dt {
+  color: var(--snt-card-ink-muted);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--snt-accent-bold);
+  font-weight: var(--snt-weight-bold);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* A list of listings, reports or actions: one line each. */
+.list {
+  display: grid;
+  gap: var(--snt-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+}
+
+.list li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+}
+
+.list a {
+  color: inherit;
+  font-weight: var(--snt-weight-bold);
+  text-decoration: none;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.label {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The app's pale text box, taller, for the note. */
+.textarea {
+  width: 100%;
+  padding: var(--snt-space-5) var(--snt-space-8);
+  border: 0;
+  border-radius: 22px;
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-md);
+  line-height: 1.45;
+  resize: vertical;
+  outline: none;
+}
+
+.textarea::placeholder {
+  color: var(--snt-placeholder);
+  opacity: 1;
+}
+
+.textarea:focus {
+  box-shadow: var(--snt-focus-ring);
+}
+
+/* Two choices, half each. */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--snt-space-6);
+}

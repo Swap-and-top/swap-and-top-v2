@@ -22,9 +22,10 @@ export default function StaffLayout({ children }: { children: ReactNode }) {
 function Gate({ children }: { children: ReactNode }) {
   const known = useSessionStore((state) => state.viewer !== null);
   const onTeam = useOnTeam();
-  // Who they are comes from the API a moment after sign in.
-  if (!known) return null;
-  if (!onTeam) {
+  // Who they are comes from the API a moment after sign in: until then
+  // the console's frame and skeletons show, not a blank page (the API
+  // shows nothing to anyone off the team).
+  if (known && !onTeam) {
     return (
       <Screen>
         <AppHeader />

@@ -8,7 +8,6 @@
  * click). The cards use a stretched link instead, and these sit above it.
  */
 
-import { toast } from 'sonner';
 import { getListing, useViewerId } from '@snt/core';
 import { ReportIcon, SaveStarIcon, ShareIcon } from '../icons';
 import { useWishlist } from './useWishlist';
@@ -19,7 +18,7 @@ export function CardActions({
   href,
   title,
   tone = 'owned',
-  report = false,
+  onReport,
   save = true,
 }: {
   listingId: string;
@@ -33,10 +32,11 @@ export function CardActions({
    */
   tone?: 'owned' | 'wanted';
   /**
-   * Adds a report button after share. For an opened listing, where there is
-   * something to read and so something to object to; not on feed cards.
+   * Adds a report button after share, which calls this. For an opened
+   * listing, where there is something to read and so something to object
+   * to; not on feed cards.
    */
-  report?: boolean;
+  onReport?: () => void;
   /** The save star. Never on your own listing, wherever it is shown:
       there is nothing to watch for, and it is under My listings already. */
   save?: boolean;
@@ -91,14 +91,12 @@ export function CardActions({
       >
         <ShareIcon size={18} />
       </button>
-      {report ? (
+      {onReport ? (
         <button
           type="button"
           className={styles.button}
           aria-label="Report listing"
-          // Reports have nowhere to go until there is a server to take
-          // them, so this says so rather than pretending one was sent.
-          onClick={() => toast('Reporting a listing is not available yet.')}
+          onClick={onReport}
         >
           <ReportIcon size={18} weight={1.9} />
         </button>

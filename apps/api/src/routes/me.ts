@@ -10,7 +10,7 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
@@ -140,6 +140,21 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
         isNull(t.stores.closedAt),
       ),
     );
+  const [ban] =
+    person.standing === 'banned'
+      ? await db
+          .select({ id: t.moderationActions.id })
+          .from(t.moderationActions)
+          .where(
+            and(
+              eq(t.moderationActions.personId, person.id),
+              eq(t.moderationActions.kind, 'ban'),
+              isNull(t.moderationActions.reversedAt),
+            ),
+          )
+          .orderBy(desc(t.moderationActions.createdAt))
+          .limit(1)
+      : [];
   return {
     id: person.id,
     displayName: person.displayName,
@@ -148,6 +163,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
     role: person.role,
     staff: await staffOf(person),
     standing: person.standing,
+    ...(ban ? { banActionId: ban.id } : {}),
     stores: await Promise.all(
       rows.map(async ({ phone, verifiedAt, ...store }) => {
         const [until, [waiting]] = await Promise.all([

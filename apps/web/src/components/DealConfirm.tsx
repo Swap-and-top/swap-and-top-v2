@@ -20,6 +20,7 @@
  * Wireframe artboard: `DealConfirm`.
  */
 
+import { useState } from 'react';
 import Link from 'next/link';
 import {
   getListing,
@@ -47,6 +48,7 @@ import {
   specSummary,
 } from '@snt/ui';
 import { CheckIcon, ChevronRightIcon, ShieldIcon } from '@snt/ui/icons';
+import { ReportSheet } from './ReportSheet';
 import styles from './DealConfirm.module.css';
 
 export function DealConfirm({
@@ -64,6 +66,9 @@ export function DealConfirm({
   const viewer = viewerOn(confirmation);
   const asStore = viewer !== viewerId();
   const otherName = otherNameOn(confirmation);
+  /** Reporting from here: the owner reports the person who reached out;
+      the one who reached out reports the listing. */
+  const [reporting, setReporting] = useState(false);
   /** A yes counts only once the other side has said yes too. */
   const counted = given === 'yes' && theirAnswerOn(confirmation) === 'yes';
   /** The record it adds to: the signed in user's, or the store's own. */
@@ -152,10 +157,25 @@ export function DealConfirm({
                 button under the note, not a fourth answer. */}
             <div className={styles.report}>
               <span className={styles.reportAsk}>Something go wrong?</span>
-              <ButtonLink href="/me" variant="secondary" size="sm">
+              <Button variant="secondary" size="sm" onClick={() => setReporting(true)}>
                 {owner ? 'Report this person' : 'Report this listing'}
-              </ButtonLink>
+              </Button>
             </div>
+            {reporting ? (
+              owner ? (
+                <ReportSheet
+                  personId={confirmation.askerId}
+                  name={otherName}
+                  onClose={() => setReporting(false)}
+                />
+              ) : (
+                <ReportSheet
+                  listingId={confirmation.listingId}
+                  name={listing?.title ?? 'This listing'}
+                  onClose={() => setReporting(false)}
+                />
+              )
+            ) : null}
           </>
         ) : (
           <div className={styles.answered}>

@@ -12,12 +12,15 @@
  * their own access here.
  */
 
-import { useEffect, useState } from 'react';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { DEPARTMENT_LABELS, type Department } from '@snt/core';
 import { Button, EmptyState, Field, Panel, Sheet, Stack, TickTile } from '@snt/ui';
 import { PlusIcon } from '@snt/ui/icons';
-import { apiAsViewer } from '@/lib/supabase';
+import { ApiError, apiGet, apiSend, QueryProblem } from '@/lib/query';
+import { useDebounced } from '@/lib/useDebounced';
+import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
 import styles from './page.module.css';
 
@@ -36,32 +39,22 @@ interface TeamData {
 }
 
 export default function TeamPage() {
-  const [team, setTeam] = useState<TeamData | null>(null);
-  const [problem, setProblem] = useState<string | null>(null);
-  /** The person whose departments are being saved, so their ticks wait. */
-  const [busy, setBusy] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   /** The person picked in Add a person, shown with their ticks. */
   const [picked, setPicked] = useState<Member | null>(null);
   /** Who is about to be removed from the team, while it is confirmed. */
   const [removing, setRemoving] = useState<Member | null>(null);
 
-  useEffect(() => {
-    let gone = false;
-    void apiAsViewer<TeamData>('/staff/team', { method: 'GET' }).then(({ data, error }) => {
-      if (gone) return;
-      if (error || !data) setProblem(error ?? 'The team could not be loaded.');
-      else setTeam(data);
-    });
-    return () => {
-      gone = true;
-    };
-  }, []);
+  const queryClient = useQueryClient();
+  const loaded = useQuery({ queryKey: staffKeys.team, queryFn: () => apiGet<TeamData>('/staff/team') });
+  const team = loaded.data;
+  /** Not open to them: a plain no, said as such, not as a fault. */
+  const closed = loaded.error instanceof ApiError && loaded.error.status === 403 ? loaded.error.message : null;
 
   /** Puts the saved person back in the list, or out of it with no
       departments left that this page shows. */
   function keep(member: Member) {
-    setTeam((now) => {
+    queryClient.setQueryData<TeamData>(staffKeys.team, (now) => {
       if (!now) return now;
       const others = now.members.filter((m) => m.personId !== member.personId);
       const members = member.departments.length
@@ -72,45 +65,52 @@ export default function TeamPage() {
     setPicked((now) => (now && now.personId === member.personId ? member : now));
   }
 
-  async function change(member: Member, department: Department, on: boolean, lead: boolean) {
-    setBusy(member.personId);
-    const path = `/staff/team/${encodeURIComponent(member.personId)}/${department}`;
-    const { data, error } = on
-      ? await apiAsViewer<Member>(path, { method: 'PUT', body: { lead } })
-      : await apiAsViewer<Member>(path, { method: 'DELETE' });
-    setBusy(null);
-    if (error || !data) {
-      toast.error(error ?? 'That did not save. Try again.');
-      return;
-    }
-    keep(data);
-    const label = DEPARTMENT_LABELS[department];
-    const was = member.departments.find((row) => row.department === department);
-    toast.success(
-      !on
-        ? `${member.name} is out of ${label}.`
-        : !was
-          ? `${member.name} is now in ${label}.`
-          : lead
-            ? `${member.name} now leads ${label}.`
-            : `${member.name} no longer leads ${label}.`,
-    );
-  }
+  /** A change to the team is in the log too. */
+  const logged = () => void queryClient.invalidateQueries({ queryKey: ['staff', 'activity'] });
 
-  async function removeFromTeam(member: Member) {
-    setBusy(member.personId);
-    const { error } = await apiAsViewer(`/staff/team/${encodeURIComponent(member.personId)}`, {
-      method: 'DELETE',
-    });
-    setBusy(null);
-    setRemoving(null);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    keep({ ...member, departments: [] });
-    toast.success(`${member.name} is off the team.`);
-  }
+  const change = useMutation({
+    mutationFn: ({ member, department, on, lead }: { member: Member; department: Department; on: boolean; lead: boolean }) => {
+      const path = `/staff/team/${encodeURIComponent(member.personId)}/${department}`;
+      return on ? apiSend<Member>(path, 'PUT', { lead }) : apiSend<Member>(path, 'DELETE');
+    },
+    onSuccess: (saved, { member, department, on, lead }) => {
+      keep(saved);
+      logged();
+      const label = DEPARTMENT_LABELS[department];
+      const was = member.departments.find((row) => row.department === department);
+      toast.success(
+        !on
+          ? `${member.name} is out of ${label}.`
+          : !was
+            ? `${member.name} is now in ${label}.`
+            : lead
+              ? `${member.name} now leads ${label}.`
+              : `${member.name} no longer leads ${label}.`,
+      );
+    },
+    onError: (error) => toast.error(error.message || 'That did not save. Try again.'),
+  });
+
+  const removeFromTeam = useMutation({
+    mutationFn: (member: Member) => apiSend(`/staff/team/${encodeURIComponent(member.personId)}`, 'DELETE'),
+    onSuccess: (_, member) => {
+      setRemoving(null);
+      keep({ ...member, departments: [] });
+      logged();
+      toast.success(`${member.name} is off the team.`);
+    },
+    onError: (error) => {
+      setRemoving(null);
+      toast.error(error.message);
+    },
+  });
+
+  /** The person whose departments are being saved, so their ticks wait. */
+  const busy = change.isPending
+    ? change.variables?.member.personId
+    : removeFromTeam.isPending
+      ? removeFromTeam.variables?.personId
+      : null;
 
   const card = (member: Member) =>
     team ? (
@@ -119,7 +119,7 @@ export default function TeamPage() {
         member={member}
         team={team}
         busy={busy === member.personId}
-        onChange={(department, on, lead) => void change(member, department, on, lead)}
+        onChange={(department, on, lead) => change.mutate({ member, department, on, lead })}
         onRemove={team.superAdmin && member.departments.length ? () => setRemoving(member) : undefined}
       />
     ) : null;
@@ -137,8 +137,10 @@ export default function TeamPage() {
         ) : null
       }
     >
-      {problem ? (
-        <EmptyState title="Team is not open to you" body={problem} />
+      {closed ? (
+        <EmptyState title="Team is not open to you" body={closed} />
+      ) : loaded.isError ? (
+        <QueryProblem error={loaded.error} onRetry={() => void loaded.refetch()} />
       ) : !team ? null : team.members.length === 0 ? (
         <EmptyState title="Nobody here yet" body="Add a person to put them in a department." />
       ) : (
@@ -167,7 +169,7 @@ export default function TeamPage() {
             <Button variant="secondary" size="lg" block onClick={() => setRemoving(null)}>
               Keep them
             </Button>
-            <Button size="lg" block loading={busy === removing.personId} onClick={() => void removeFromTeam(removing)}>
+            <Button size="lg" block loading={busy === removing.personId} onClick={() => removeFromTeam.mutate(removing)}>
               Remove from the team
             </Button>
           </Stack>
@@ -248,28 +250,15 @@ function AddPerson({
   onClose: () => void;
 }) {
   const [query, setQuery] = useState('');
-  const [found, setFound] = useState<Member[] | null>(null);
-
-  // Searched as they type, from two letters or digits.
-  useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setFound(null);
-      return;
-    }
-    let gone = false;
-    const timer = window.setTimeout(() => {
-      void apiAsViewer<{ people: Member[] }>(`/staff/team/find?q=${encodeURIComponent(q)}`, {
-        method: 'GET',
-      }).then(({ data }) => {
-        if (!gone) setFound(data?.people ?? []);
-      });
-    }, 250);
-    return () => {
-      gone = true;
-      window.clearTimeout(timer);
-    };
-  }, [query]);
+  // Searched as they type, from two letters or digits, once they pause.
+  const q = useDebounced(query.trim(), 250);
+  const search = useQuery({
+    queryKey: staffKeys.teamFind(q),
+    queryFn: () => apiGet<{ people: Member[] }>(`/staff/team/find?q=${encodeURIComponent(q)}`).then((data) => data.people),
+    enabled: q.length >= 2,
+    placeholderData: keepPreviousData,
+  });
+  const found = query.trim().length >= 2 ? search.data : undefined;
 
   return (
     <Sheet title="Add a person" onClose={onClose}>
@@ -290,7 +279,9 @@ function AddPerson({
               onChange={(event) => setQuery(event.target.value)}
               autoFocus
             />
-            {found === null ? null : found.length === 0 ? (
+            {search.isError && query.trim().length >= 2 ? (
+              <QueryProblem error={search.error} onRetry={() => void search.refetch()} />
+            ) : !found ? null : found.length === 0 ? (
               <p className={styles.lead}>Nobody matches. They need an account first.</p>
             ) : (
               <div className={styles.results}>

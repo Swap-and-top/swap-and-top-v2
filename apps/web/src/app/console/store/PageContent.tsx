@@ -9,15 +9,16 @@
  * public page itself, under the marketplace's header, is one button away.
  *
  * Under it, the store's owner and staff (StaffPanel): the owner adds and
- * removes staff here.
+ * removes staff here. Loaded through TanStack Query.
  */
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { currentStore, newLeadCount, type Listing, type Store } from '@snt/core';
 import { ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
 import { StorefrontBody } from '@/components/Storefront';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
 import { useConsoleRole } from '@/lib/consoleRole';
+import { publicGet } from '@/lib/query';
 import { useConsoleStock } from '../stock/useConsoleStock';
 import { StaffPanel } from './StaffPanel';
 import styles from './page.module.css';
@@ -28,22 +29,13 @@ export default function ConsoleStorePage() {
   /** Changing the store's details is the owner's. */
   const owner = useConsoleRole() === 'owner';
   /** The store as its public page has it: details, and live listings. */
-  const [page, setPage] = useState<{ store: Store; listings: Listing[] } | null>(null);
-
-  useEffect(() => {
-    let gone = false;
-    void fetch(`/api/stores/${encodeURIComponent(target.slug)}`)
-      .then((response) => (response.ok ? response.json() : null))
-      .then((body: (Store & { listings: Listing[] }) | null) => {
-        if (gone || !body) return;
-        const { listings, ...store } = body;
-        setPage({ store, listings });
-      })
-      .catch(() => undefined);
-    return () => {
-      gone = true;
-    };
-  }, [target.slug]);
+  const { data: page } = useQuery({
+    queryKey: ['store', target.slug, 'page'],
+    queryFn: () =>
+      publicGet<Store & { listings: Listing[] }>(`/stores/${encodeURIComponent(target.slug)}`).then(
+        ({ listings, ...store }) => ({ store: store as Store, listings }),
+      ),
+  });
 
   return (
     <ConsoleShell

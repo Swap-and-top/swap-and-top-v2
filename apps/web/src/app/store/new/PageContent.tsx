@@ -8,10 +8,11 @@
  * limit message and from Me.
  */
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useId, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { DEFAULT_TOWN, TOWNS, useSessionStore, type Town } from '@snt/core';
+import { DEFAULT_TOWN, TOWNS, type Town } from '@snt/core';
 import {
   AppHeader,
   Button,
@@ -28,7 +29,8 @@ import {
   startPageLoad,
 } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
-import { apiAsViewer, fetchViewer, supabase } from '@/lib/supabase';
+import { apiSend } from '@/lib/query';
+import { refreshViewer } from '@/lib/viewer';
 import styles from './page.module.css';
 
 const TOWN_OPTIONS = TOWNS.map((town) => ({ value: town, label: town }));
@@ -39,32 +41,34 @@ export default function OpenStorePage() {
   const [name, setName] = useState('');
   const [area, setArea] = useState('');
   const [town, setTown] = useState<Town>(DEFAULT_TOWN);
-  const [busy, setBusy] = useState(false);
+  const queryClient = useQueryClient();
 
-  async function open(event: FormEvent) {
+  const openStore = useMutation({
+    mutationFn: async () => {
+      const data = await apiSend<{ slug: string }>('/stores', 'POST', {
+        name: name.trim(),
+        location: `${area.trim()}, ${town}`,
+      });
+      // Who they are now includes the store, for Post as and Me.
+      await refreshViewer(queryClient);
+      await refreshStore(data.slug);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success('Your store is open');
+      startPageLoad();
+      router.push(`/store/${data.slug}`);
+    },
+    onError: (error) => toast.error(error.message || 'We could not open it. Try again in a minute.'),
+  });
+
+  function open(event: FormEvent) {
     event.preventDefault();
     if (!name.trim() || !area.trim()) {
       toast.error('Enter the store’s name and neighbourhood.');
       return;
     }
-    setBusy(true);
-    const { data, error } = await apiAsViewer<{ slug: string }>('/stores', {
-      method: 'POST',
-      body: { name: name.trim(), location: `${area.trim()}, ${town}` },
-    });
-    if (error || !data) {
-      setBusy(false);
-      toast.error(error ?? 'We could not open it. Try again in a minute.');
-      return;
-    }
-    // Who they are now includes the store, for Post as and Me.
-    const { data: session } = await supabase.auth.getSession();
-    const token = session.session?.access_token;
-    if (token) useSessionStore.setState({ viewer: await fetchViewer(token) });
-    await refreshStore(data.slug);
-    toast.success('Your store is open');
-    startPageLoad();
-    router.push(`/store/${data.slug}`);
+    openStore.mutate();
   }
 
   return (
@@ -106,7 +110,7 @@ export default function OpenStorePage() {
                       />
                     </div>
                   </FieldRow>
-                  <Button type="submit" size="lg" block loading={busy}>
+                  <Button type="submit" size="lg" block loading={openStore.isPending}>
                     Open store
                   </Button>
                 </Stack>

@@ -27,6 +27,8 @@ export interface Viewer {
   /** The departments of our own team they are in; empty for everyone else. */
   staff: StaffMembership[];
   standing: 'good' | 'warned' | 'limited' | 'suspended' | 'banned';
+  /** While banned: the ban, to see it and appeal. */
+  banActionId?: string;
   /** The stores they own or work for. */
   stores: {
     id: string;
@@ -47,6 +49,8 @@ interface SessionState {
   signedIn: boolean;
   /** Who is signed in, once the API has answered. */
   viewer: Viewer | null;
+  /** The API could not say who is signed in (the last time it was asked). */
+  viewerFailed: boolean;
   /**
    * When they last signed out, if they did. A page for account holders tells
    * a visitor who has just signed out (sent home) from one who arrived signed
@@ -62,6 +66,7 @@ interface SessionState {
 export const useSessionStore = create<SessionState>()((set) => ({
   signedIn: false,
   viewer: null,
+  viewerFailed: false,
   signedOutAt: null,
   restored: false,
   signOut: () => set({ signedIn: false, viewer: null, signedOutAt: Date.now() }),

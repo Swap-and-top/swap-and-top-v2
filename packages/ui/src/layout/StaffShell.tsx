@@ -38,9 +38,12 @@ export function StaffShell({
   title,
   meta,
   actions,
+  loading = false,
   children,
 }: {
   sections: StaffSection[];
+  /** Who they are is not known yet: skeletons for their name and sections. */
+  loading?: boolean;
   /** Who is signed in, at the head of the sidebar. */
   name: string;
   initials: string;
@@ -74,12 +77,22 @@ export function StaffShell({
             </button>
           </div>
           <span className={styles.sidebarStore}>
-            <span className={styles.storeName}>{name}</span>
+            <span className={styles.storeName}>{loading ? <Bone width={90} height={14} /> : name}</span>
             <span className={styles.storeKicker}>Staff console</span>
           </span>
         </div>
 
         <nav className={styles.sidebarNav} aria-label="Staff console">
+          {loading
+            ? Array.from({ length: 3 }, (_, n) => (
+                <span key={n} className={styles.sidebarItem} aria-hidden>
+                  <Bone width={20} height={20} shape="circle" />
+                  <span className={styles.sidebarLabel}>
+                    <Bone width={80} height={12} />
+                  </span>
+                </span>
+              ))
+            : null}
           {sections.map((item) => {
             const active = isActive(item.href);
             return (
@@ -111,7 +124,7 @@ export function StaffShell({
           <StoreMark initials={initials} size={36} />
         </span>
         <span className={styles.headerBody}>
-          <span className={styles.storeName}>{name}</span>
+          <span className={styles.storeName}>{loading ? <Bone width={90} height={14} /> : name}</span>
           <span className={styles.storeKicker}>Staff console</span>
         </span>
         <Link href="/" className={styles.headerLink}>
@@ -126,6 +139,9 @@ export function StaffShell({
               <span className={styles.titleIcon} aria-hidden>
                 {section.icon(24)}
               </span>
+            ) : loading ? (
+              // Its place kept, so the title does not move when it comes.
+              <span className={styles.titleIcon} aria-hidden />
             ) : null}
             <div className={styles.titleText}>
               {title ? <ScreenTitle>{title}</ScreenTitle> : <Bone width={120} height={22} />}
@@ -142,6 +158,16 @@ export function StaffShell({
         aria-label="Staff console"
         data-bottom-bar
       >
+        {loading
+          ? Array.from({ length: 3 }, (_, n) => (
+              <span key={n} className={styles.navItem} aria-hidden>
+                <span className={styles.navPill}>
+                  <Bone width={20} height={20} shape="circle" />
+                </span>
+                <Bone width={40} height={10} />
+              </span>
+            ))
+          : null}
         {sections.map((item) => {
           const active = isActive(item.href);
           return (

@@ -24,7 +24,7 @@ export interface AuthUser {
 
 let keys: ReturnType<typeof createRemoteJWKSet> | undefined;
 
-async function verify(token: string): Promise<AuthUser | null> {
+export async function verify(token: string): Promise<AuthUser | null> {
   const { SUPABASE_URL, SUPABASE_JWKS_URL } = process.env;
   if (!SUPABASE_URL || !SUPABASE_JWKS_URL) {
     console.warn('SUPABASE_URL and SUPABASE_JWKS_URL are needed to check sign in.');

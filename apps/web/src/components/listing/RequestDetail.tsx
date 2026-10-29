@@ -40,6 +40,7 @@ import {
   useContactKeptBack,
 } from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
+import { useListingReport } from '../ReportSheet';
 import card from './SaleDetail.module.css';
 import styles from './RequestDetail.module.css';
 import { PreviewBanner } from './PreviewBanner';
@@ -64,6 +65,7 @@ export function RequestDetail({
       buyer's actions. */
   const viewer = useViewerId();
   const mine = !preview && viewer === listing.ownerId;
+  const report = useListingReport(listing.id, listing.title, mine || preview);
   /** The poster shares their details only once they accept an offer. */
   const keptBack = useContactKeptBack(listing);
 
@@ -134,8 +136,9 @@ export function RequestDetail({
                 title={listing.title}
                 tone="wanted"
                 save={!mine}
-                report={!mine}
+                onReport={report.onReport}
               />
+              {report.sheet}
             </div>
 
             {/* Changing it, in the card, under all of it. */}

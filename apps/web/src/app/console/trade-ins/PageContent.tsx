@@ -14,11 +14,10 @@
  * From the API (GET /api/stores/{id}/offers), for the store the console is
  * open for. The offers join the app's offer store, so accepting, declining
  * and withdrawing work as they do on the profile's page, saved through the
- * API.
+ * API. Loaded through TanStack Query.
  */
 
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useQuery } from '@tanstack/react-query';
 import {
   currentStore,
   getListing,
@@ -35,7 +34,7 @@ import {
 } from '@snt/core';
 import { ConsoleShell, Tabs, useConsoleTarget, type TabItem } from '@snt/ui';
 import { OfferGroups, receivedGroups } from '@/components/offers/OfferGroups';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiGet } from '@/lib/query';
 import styles from './page.module.css';
 
 const TABS: TabItem<ConsoleOffersTab>[] = [
@@ -63,40 +62,23 @@ export default function ConsoleOffersPage() {
   const tab = useConsoleStore((state) => state.offersTab);
   const setTab = useConsoleStore((state) => state.setOffersTab);
   /** The store's own listings among those its offers are on. */
-  const [stock, setStock] = useState<OfferableListing[] | null>(null);
-
-  useEffect(() => {
-    let gone = false;
-    void apiAsViewer<{ offers: Offer[]; listings: Listing[] }>(
-      `/stores/${encodeURIComponent(store.id)}/offers`,
-      { method: 'GET' },
-    ).then(({ data, error }) => {
-      if (gone) return;
-      if (error || !data) {
-        toast.error(error ?? 'We could not load the offers.');
-        setStock([]);
-        return;
-      }
-      // Found by id wherever an offer card looks its listing up.
-      rememberListings(data.listings);
-      // Joined with the person's own, each offer once.
-      useOfferStore.setState((state) => ({
-        offers: [
-          ...data.offers,
-          ...state.offers.filter((offer) => !data.offers.some((o) => o.id === offer.id)),
-        ],
-      }));
-      setStock(
-        data.listings.filter(
-          (listing): listing is OfferableListing =>
-            listing.storeId === store.id && takesOffers(listing),
-        ),
-      );
-    });
-    return () => {
-      gone = true;
-    };
-  }, [store.id]);
+  const query = useQuery({
+    queryKey: ['store', store.id, 'offers'],
+    queryFn: () =>
+      apiGet<{ offers: Offer[]; listings: Listing[] }>(`/stores/${encodeURIComponent(store.id)}/offers`).then((data) => {
+        // Found by id wherever an offer card looks its listing up.
+        rememberListings(data.listings);
+        // Joined with the person's own, each offer once.
+        useOfferStore.setState((state) => ({
+          offers: [...data.offers, ...state.offers.filter((offer) => !data.offers.some((o) => o.id === offer.id))],
+        }));
+        return data.listings.filter(
+          (listing): listing is OfferableListing => listing.storeId === store.id && takesOffers(listing),
+        );
+      }),
+    meta: { toast: true },
+  });
+  const stock = query.data ?? (query.isError ? [] : null);
 
   const received = receivedGroups(offers, stock ?? []);
   const sent = sentGroups(offers, store.id);

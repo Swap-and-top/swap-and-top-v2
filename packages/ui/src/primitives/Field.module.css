@@ -157,7 +157,8 @@
 
 .segmentActive {
   background: var(--snt-accent);
-  border-color: var(--snt-accent);
+  /* No ring: the fill reaches the edge, over where the outline was. */
+  border-color: transparent;
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
 }

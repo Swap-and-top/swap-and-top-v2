@@ -51,7 +51,8 @@ export function AccountButton() {
               <span aria-hidden>{initialsOf(name)}</span>
             ) : null
           ) : (
-            <GuestMark size={36} className={styles.signInMark} />
+            // A 4px outline at 36px (2.67 of the mark's 24).
+            <GuestMark size={36} strokeWidth={2.67} className={styles.signInMark} />
           )}
         </span>
         {/* On a phone: three lines. */}

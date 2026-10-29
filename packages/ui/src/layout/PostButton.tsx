@@ -8,6 +8,7 @@
  * Posting needs an account. Someone signed in goes straight to the posting
  * flow; a guest is asked to sign in first, and is taken there once they have.
  * Still a real link, so it can be opened in a new tab or read by a crawler.
+ * A banned account sees it faded, and it does nothing.
  */
 
 import Link from 'next/link';
@@ -64,6 +65,14 @@ export function PostButton({
   children: ReactNode;
 }) {
   const gate = useSignInToPost(href);
+  const banned = useSessionStore((state) => state.viewer?.standing === 'banned');
+  if (banned) {
+    return (
+      <span className={className} aria-disabled="true">
+        {children}
+      </span>
+    );
+  }
   return (
     <Link href={href} className={className} {...gate}>
       {children}

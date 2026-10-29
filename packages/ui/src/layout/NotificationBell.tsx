@@ -6,6 +6,11 @@
  * are on the console's sections. In the marketplace's header it is a
  * person's list (signed in only: a guest has none); in the console's, the
  * store's.
+ *
+ * The person's bell is always in the page and shown by the mark on <html>
+ * (`data-signed-in`, set before the first paint by the web app's layout and
+ * kept in step with sign in), so it is there with the header, never a
+ * moment after. A banned account sees it faded, and it does nothing.
  */
 
 import Link from 'next/link';
@@ -29,13 +34,20 @@ export function NotificationBell({
   storeId?: string;
 }) {
   const unread = useUnreadCount(audience, storeId);
-  const signedIn = useSessionStore((state) => state.signedIn);
-  // A guest has no list of their own.
-  if (audience === 'user' && !signedIn) return null;
+  const banned = useSessionStore((state) => state.viewer?.standing === 'banned');
+  // A guest has no list of their own: hidden while signed out.
+  const className = [styles.bell, audience === 'user' ? styles.userBell : ''].filter(Boolean).join(' ');
+  if (audience === 'user' && banned) {
+    return (
+      <span className={className} aria-disabled="true" aria-label="Notifications">
+        <BellIcon size={22} />
+      </span>
+    );
+  }
   return (
     <Link
       href={href}
-      className={styles.bell}
+      className={className}
       aria-label={
         unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'
       }

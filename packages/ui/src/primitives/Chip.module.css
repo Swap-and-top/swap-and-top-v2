@@ -42,9 +42,9 @@
   /* The selected fill; a brand header swaps it for white. */
   --chip-fill: var(--snt-control-active);
   position: relative;
-  /* Keeps the fill, which sits behind the label, inside the chip. */
+  /* Keeps the fill, which sits behind the label, under the label. Not
+     clipped to the chip, so the fill covers the outline too. */
   isolation: isolate;
-  overflow: hidden;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -129,8 +129,9 @@
 .selectedAccent:hover,
 .selectedInk,
 .selectedInk:hover {
-  /* The fill itself is the layer above; see .chip::before. */
-  border-color: var(--snt-control-active);
+  /* The fill itself is the layer above; see .chip::before. No ring of
+     outline round it: the fill reaches the edge. */
+  border-color: transparent;
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
 }
@@ -178,7 +179,7 @@
 :global([data-surface='brand']) .selectedAccent:hover,
 :global([data-surface='brand']) .selectedInk,
 :global([data-surface='brand']) .selectedInk:hover {
-  border-color: var(--snt-bg-surface);
+  border-color: transparent;
   color: var(--snt-brand-teal);
   font-weight: var(--snt-weight-bold);
 }

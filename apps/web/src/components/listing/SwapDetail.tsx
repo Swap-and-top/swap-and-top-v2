@@ -50,6 +50,7 @@ import {
   useContactKeptBack,
 } from '../RevealAction';
 import { OwnerControls, StatusTag, contactsShown } from './OwnerTools';
+import { useListingReport } from '../ReportSheet';
 import styles from './SwapDetail.module.css';
 import { PreviewBanner } from './PreviewBanner';
 import { SponsorBanner } from '../sponsor/SponsorBanner';
@@ -73,6 +74,7 @@ export function SwapDetail({
       buyer's actions. */
   const viewer = useViewerId();
   const mine = !preview && viewer === listing.ownerId;
+  const report = useListingReport(listing.id, listing.title, mine || preview);
   /** The poster shares their details only once they accept an offer. */
   const keptBack = useContactKeptBack(listing);
 
@@ -142,8 +144,9 @@ export function SwapDetail({
               href={`/listing/${listing.slug}`}
               title={listing.title}
               save={!mine}
-              report={!mine}
+              onReport={report.onReport}
             />
+            {report.sheet}
             <ul className={styles.meta}>
               <li>{listing.location}</li>
               <li>{listing.postedLabel}</li>

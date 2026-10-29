@@ -6,3 +6,4 @@ export * from './lead';
 export * from './offer';
 export * from './leadAlerts';
 export * from './notification';
+export * from './report';

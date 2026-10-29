@@ -15,10 +15,11 @@
  * (POST /api/offers with its id), from the composer beside a lead on a
  * laptop, or from a lead card's sheet on a phone. Number reveals come from
  * the API too (GET /api/stores/{id}/reveals), recorded as people use Show
- * contact on the store's listings.
+ * contact on the store's listings. Loaded and sent through TanStack Query.
  */
 
-import { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
@@ -54,7 +55,7 @@ import {
 import { CheckIcon, InfoIcon } from '@snt/ui/icons';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
 import { RevealAction } from '@/components/RevealAction';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiGet, apiSend } from '@/lib/query';
 import { RevealsTable } from './LeadTables';
 import { LeadTabs } from './LeadTabs';
 import styles from './page.module.css';
@@ -93,59 +94,44 @@ export default function ConsoleLeadsPage() {
   } = useConsoleStore();
 
   const store = useConsoleTarget() ?? currentStore;
-  const [leads, setLeads] = useState<Lead[] | null>(null);
-  /** Leads the store has an offer standing on. */
-  const [offered, setOffered] = useState<Set<string>>(new Set());
+  /** Leads offered on here, before the list is next read. */
+  const [justOffered, setJustOffered] = useState<Set<string>>(new Set());
   /** On a phone: the lead whose offer sheet is open. */
   const [offering, setOffering] = useState<Lead | null>(null);
-  const [sending, setSending] = useState(false);
+
   /** Who saw how to reach the store, from the API. */
-  const [reveals, setReveals] = useState<NumberReveal[] | null>(null);
+  const revealsQuery = useQuery({
+    queryKey: ['store', store.id, 'reveals'],
+    queryFn: () =>
+      apiGet<{ reveals: NumberReveal[]; listings: Listing[] }>(`/stores/${encodeURIComponent(store.id)}/reveals`).then(
+        (data) => {
+          rememberListings(data.listings);
+          return data.reveals;
+        },
+      ),
+  });
+  const reveals = revealsQuery.data ?? (revealsQuery.isError ? [] : null);
 
-  useEffect(() => {
-    let gone = false;
-    void apiAsViewer<{ reveals: NumberReveal[]; listings: Listing[] }>(
-      `/stores/${encodeURIComponent(store.id)}/reveals`,
-      { method: 'GET' },
-    ).then(({ data, error }) => {
-      if (gone) return;
-      if (error || !data) {
-        setReveals([]);
-        return;
-      }
-      rememberListings(data.listings);
-      setReveals(data.reveals);
-    });
-    return () => {
-      gone = true;
-    };
-  }, [store.id]);
-
-  useEffect(() => {
-    let gone = false;
-    void apiAsViewer<{ leads: LeadIn[] }>(`/stores/${encodeURIComponent(store.id)}/leads`, {
-      method: 'GET',
-    }).then(({ data, error }) => {
-      if (gone) return;
-      if (error || !data) {
-        toast.error(error ?? 'We could not load the leads.');
-        setLeads([]);
-        return;
-      }
-      // Found by id wherever an offer card looks its listing up.
-      rememberListings(data.leads.map((lead) => lead.demand));
-      setOffered(new Set(data.leads.filter((lead) => lead.offered).map((lead) => lead.id)));
-      setLeads(
-        data.leads.map(({ offered: _, ...lead }) => ({
-          ...lead,
-          requester: personOf(lead.requester, lead.area),
-        })),
-      );
-    });
-    return () => {
-      gone = true;
-    };
-  }, [store.id]);
+  const leadsQuery = useQuery({
+    queryKey: ['store', store.id, 'leads'],
+    queryFn: () =>
+      apiGet<{ leads: LeadIn[] }>(`/stores/${encodeURIComponent(store.id)}/leads`).then((data) => {
+        // Found by id wherever an offer card looks its listing up.
+        rememberListings(data.leads.map((lead) => lead.demand));
+        return data.leads;
+      }),
+    meta: { toast: true },
+  });
+  const leads: Lead[] | null = leadsQuery.data
+    ? leadsQuery.data.map(({ offered: _, ...lead }) => ({ ...lead, requester: personOf(lead.requester, lead.area) }))
+    : leadsQuery.isError
+      ? []
+      : null;
+  /** Leads the store has an offer standing on. */
+  const offered = new Set([
+    ...(leadsQuery.data ?? []).filter((lead) => lead.offered).map((lead) => lead.id),
+    ...justOffered,
+  ]);
 
   const list = leads ?? [];
   const active = list.find((lead) => lead.id === activeLeadId) ?? list[0];
@@ -160,16 +146,9 @@ export default function ConsoleLeadsPage() {
 
   /** Sends an offer as the store, on a lead: its matching item, or one to
       source to order, for the price typed. Whether it went. */
-  async function sendOffer(lead: Lead, priceText: string, message: string): Promise<boolean> {
-    const amount = Number(priceText.replace(/[^\d]/g, ''));
-    if (!amount) {
-      toast.error('Enter your price.');
-      return false;
-    }
-    setSending(true);
-    const { data, error } = await apiAsViewer<Offer>('/offers', {
-      method: 'POST',
-      body: {
+  const send = useMutation({
+    mutationFn: ({ lead, amount, message }: { lead: Lead; amount: number; message: string }) =>
+      apiSend<Offer>('/offers', 'POST', {
         listingId: lead.demand.id,
         item: {
           listingId: lead.matchedStockId,
@@ -179,15 +158,25 @@ export default function ConsoleLeadsPage() {
         cashFrom: 'owner',
         message: message.trim() || undefined,
         storeId: store.id,
-      },
-    });
-    setSending(false);
-    if (error || !data) {
-      toast.error(error ?? 'We could not send it. Try again in a minute.');
+      }),
+  });
+  const sending = send.isPending;
+
+  async function sendOffer(lead: Lead, priceText: string, message: string): Promise<boolean> {
+    const amount = Number(priceText.replace(/[^\d]/g, ''));
+    if (!amount) {
+      toast.error('Enter your price.');
+      return false;
+    }
+    let data: Offer;
+    try {
+      data = await send.mutateAsync({ lead, amount, message });
+    } catch (error) {
+      toast.error(error instanceof Error && error.message ? error.message : 'We could not send it. Try again in a minute.');
       return false;
     }
     useOfferStore.setState((state) => ({ offers: [data, ...state.offers] }));
-    setOffered((current) => new Set(current).add(lead.id));
+    setJustOffered((current) => new Set(current).add(lead.id));
     // A name may end in its own full stop ("Tarisai M.").
     toast.success(
       `Offer sent to ${lead.requester.displayName.replace(/\.$/, '')}.`,

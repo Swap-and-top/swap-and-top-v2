@@ -6,13 +6,15 @@
  * do stock, offers and leads, not payments, verification, staff or
  * settings. Staff sign in with their own accounts: the owner adds them by
  * phone number and removes them in one tap, with Undo. Staff see the list.
+ * Loaded and changed through TanStack Query.
  */
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Button, Field, Panel, Stack } from '@snt/ui';
 import { useConsoleRole } from '@/lib/consoleRole';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiGet, apiSend } from '@/lib/query';
 import styles from './page.module.css';
 
 interface Member {
@@ -25,65 +27,47 @@ interface Member {
 
 export function StaffPanel({ storeId }: { storeId: string }) {
   const owner = useConsoleRole() === 'owner';
-  const [members, setMembers] = useState<Member[] | null>(null);
   const [phone, setPhone] = useState('');
-  const [busy, setBusy] = useState(false);
   const path = `/stores/${encodeURIComponent(storeId)}/members`;
+  const key = ['store', storeId, 'members'];
+  const queryClient = useQueryClient();
+  const { data: members } = useQuery({
+    queryKey: key,
+    queryFn: () => apiGet<{ members: Member[] }>(path).then((data) => data.members),
+  });
+  /** The list as the API now has it, after a change. */
+  const keep = (data: { members: Member[] }) => queryClient.setQueryData(key, data.members);
 
-  useEffect(() => {
-    let gone = false;
-    void apiAsViewer<{ members: Member[] }>(path, { method: 'GET' }).then(({ data }) => {
-      if (!gone && data) setMembers(data.members);
-    });
-    return () => {
-      gone = true;
-    };
-  }, [path]);
+  const addMember = useMutation({
+    mutationFn: (number: string) => apiSend<{ members: Member[] }>(path, 'POST', { phone: number }),
+    onSuccess: keep,
+    onError: (error) => toast.error(error.message || 'We could not add them. Try again in a minute.'),
+  });
 
-  /** Adds them as staff by their number; true when it worked. */
-  async function addBy(number: string): Promise<boolean> {
-    const { data, error } = await apiAsViewer<{ members: Member[] }>(path, {
-      method: 'POST',
-      body: { phone: number },
-    });
-    if (error || !data) {
-      toast.error(error ?? 'We could not add them. Try again in a minute.');
-      return false;
-    }
-    setMembers(data.members);
-    return true;
-  }
+  const removeMember = useMutation({
+    mutationFn: (member: Member) =>
+      apiSend<{ members: Member[] }>(`${path}/${encodeURIComponent(member.personId)}`, 'DELETE'),
+    onSuccess: (data, member) => {
+      keep(data);
+      toast.success(`${member.name} is no longer staff.`, {
+        action: member.phone ? { label: 'Undo', onClick: () => addMember.mutate(member.phone!) } : undefined,
+        duration: 4500,
+      });
+    },
+    onError: (error) => toast.error(error.message || 'We could not remove them. Try again in a minute.'),
+  });
 
-  async function add(event: FormEvent) {
+  function add(event: FormEvent) {
     event.preventDefault();
     if (!phone.trim()) {
       toast.error('Enter their phone number.');
       return;
     }
-    setBusy(true);
-    const added = await addBy(phone.trim());
-    setBusy(false);
-    if (added) {
-      setPhone('');
-      toast.success('Added as staff. They are told in their notifications.');
-    }
-  }
-
-  async function remove(member: Member) {
-    const { data, error } = await apiAsViewer<{ members: Member[] }>(
-      `${path}/${encodeURIComponent(member.personId)}`,
-      { method: 'DELETE' },
-    );
-    if (error || !data) {
-      toast.error(error ?? 'We could not remove them. Try again in a minute.');
-      return;
-    }
-    setMembers(data.members);
-    toast.success(`${member.name} is no longer staff.`, {
-      action: member.phone
-        ? { label: 'Undo', onClick: () => void addBy(member.phone!) }
-        : undefined,
-      duration: 4500,
+    addMember.mutate(phone.trim(), {
+      onSuccess: () => {
+        setPhone('');
+        toast.success('Added as staff. They are told in their notifications.');
+      },
     });
   }
 
@@ -111,7 +95,7 @@ export function StaffPanel({ storeId }: { storeId: string }) {
                   </span>
                 </span>
                 {owner && member.role === 'staff' ? (
-                  <Button variant="secondary" size="sm" onClick={() => void remove(member)}>
+                  <Button variant="secondary" size="sm" onClick={() => removeMember.mutate(member)}>
                     Remove
                   </Button>
                 ) : null}
@@ -132,7 +116,7 @@ export function StaffPanel({ storeId }: { storeId: string }) {
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
               />
-              <Button type="submit" block loading={busy}>
+              <Button type="submit" block loading={addMember.isPending}>
                 Add staff
               </Button>
             </Stack>

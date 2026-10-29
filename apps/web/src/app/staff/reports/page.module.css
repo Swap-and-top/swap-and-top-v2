@@ -1,0 +1,91 @@
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+/* The reason, and the report's number and age under it. */
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+}
+
+.reason {
+  margin: 0;
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.meta {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+/* What is known, one fact a line. */
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--snt-space-3) var(--snt-space-8);
+  margin: 0;
+  font-size: var(--snt-text-sm);
+}
+
+.facts dt {
+  color: var(--snt-card-ink-muted);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--snt-accent-bold);
+  font-weight: var(--snt-weight-bold);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Clear and Approve, half each. */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--snt-space-6);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.label {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The app's pale text box, taller, for the note. */
+.textarea {
+  width: 100%;
+  padding: var(--snt-space-5) var(--snt-space-8);
+  border: 0;
+  border-radius: 22px;
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-md);
+  line-height: 1.45;
+  resize: vertical;
+  outline: none;
+}
+
+.textarea::placeholder {
+  color: var(--snt-placeholder);
+  opacity: 1;
+}
+
+.textarea:focus {
+  box-shadow: var(--snt-focus-ring);
+}

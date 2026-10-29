@@ -13,7 +13,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import {
   COMPANY,
@@ -66,11 +66,15 @@ export function AppMenu({
 
   // Under the circle, right edges level, on a laptop; measured again as the
   // window is resized, so the menu moves with the circle it came from.
-  useEffect(() => {
+  // Measured before the menu is first drawn, so it never shows for a
+  // moment in its default place, further right, and then jumps.
+  useLayoutEffect(() => {
     if (!anchor) return;
     const measure = () => {
       const at = anchor.getBoundingClientRect();
-      setPlace({ top: at.bottom + 10, right: Math.max(12, window.innerWidth - at.right) });
+      // The page's width, not the window's: the window's counts the scroll
+      // bar too, which would leave the menu that much left of the circle.
+      setPlace({ top: at.bottom + 10, right: Math.max(12, document.documentElement.clientWidth - at.right) });
       setButton(at);
     };
     measure();
@@ -211,9 +215,16 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
               </div>
             </div>
             <div className={styles.pair}>
-              <ButtonLink href="/me" variant="secondary" size="md" onClick={onNavigate}>
-                View profile
-              </ButtonLink>
+              {/* A banned account has no profile to see. */}
+              {user.standing === 'banned' ? (
+                <Button variant="secondary" size="md" disabled>
+                  View profile
+                </Button>
+              ) : (
+                <ButtonLink href="/me" variant="secondary" size="md" onClick={onNavigate}>
+                  View profile
+                </ButtonLink>
+              )}
               <Button
                 variant="secondary"
                 size="md"

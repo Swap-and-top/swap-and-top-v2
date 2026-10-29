@@ -6,12 +6,14 @@
  * says what stands behind the store and gives its registration or licence
  * number; our team calls to see the documents, and an admin verifies it.
  * Changing the store's name pauses the badge, and the owner asks again.
+ * Loaded and sent through TanStack Query.
  */
 
-import { useEffect, useId, useState, type FormEvent } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useId, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Button, Dropdown, Field, Panel, Stack, VerifiedStoreBadge } from '@snt/ui';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiGet, apiSend } from '@/lib/query';
 import styles from './page.module.css';
 
 type Kind = 'registered' | 'informal';
@@ -34,41 +36,29 @@ const KINDS: { value: Kind; label: string }[] = [
 
 export function VerifyPanel({ storeId, phone }: { storeId: string; phone?: string }) {
   const kindLabel = useId();
-  const [standing, setStanding] = useState<Standing | null>(null);
   const [kind, setKind] = useState<Kind>('registered');
   const [reference, setReference] = useState('');
-  const [busy, setBusy] = useState(false);
+  const path = `/stores/${encodeURIComponent(storeId)}/verification`;
+  const key = ['store', storeId, 'verification'];
+  const queryClient = useQueryClient();
+  const { data: standing } = useQuery({ queryKey: key, queryFn: () => apiGet<Standing>(path) });
 
-  useEffect(() => {
-    let gone = false;
-    void apiAsViewer<Standing>(`/stores/${encodeURIComponent(storeId)}/verification`, {
-      method: 'GET',
-    }).then(({ data }) => {
-      if (!gone && data) setStanding(data);
-    });
-    return () => {
-      gone = true;
-    };
-  }, [storeId]);
+  const send = useMutation({
+    mutationFn: () => apiSend<Standing>(path, 'POST', { kind, reference: reference.trim() }),
+    onSuccess: (data) => {
+      queryClient.setQueryData(key, data);
+      toast.success('Request sent. Our team will call you.');
+    },
+    onError: (error) => toast.error(error.message || 'That did not go through. Try again.'),
+  });
 
-  async function ask(event: FormEvent) {
+  function ask(event: FormEvent) {
     event.preventDefault();
     if (reference.trim().length < 2) {
       toast.error('Enter the registration or licence number.');
       return;
     }
-    setBusy(true);
-    const { data, error } = await apiAsViewer<Standing>(
-      `/stores/${encodeURIComponent(storeId)}/verification`,
-      { method: 'POST', body: { kind, reference: reference.trim() } },
-    );
-    setBusy(false);
-    if (error || !data) {
-      toast.error(error ?? 'That did not go through. Try again.');
-      return;
-    }
-    setStanding(data);
-    toast.success('Request sent. Our team will call you.');
+    send.mutate();
   }
 
   if (!standing) return null;
@@ -115,7 +105,7 @@ export function VerifyPanel({ storeId, phone }: { storeId: string; phone?: strin
                 value={reference}
                 onChange={(event) => setReference(event.target.value)}
               />
-              <Button type="submit" size="lg" block loading={busy}>
+              <Button type="submit" size="lg" block loading={send.isPending}>
                 Ask to be verified
               </Button>
             </Stack>

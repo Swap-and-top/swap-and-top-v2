@@ -9,18 +9,14 @@
  * (POST /api/admin/verifications/{id}).
  */
 
-import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import {
-  Button,
-  ButtonLink,
-  Panel,
-  Sheet,
-  Stack,
-} from '@snt/ui';
+import { Bone, Button, ButtonLink, Panel, Sheet, Stack } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
+import { apiGet, apiSend, QueryProblem } from '@/lib/query';
 import { useInDepartment } from '@/lib/staff';
-import { apiAsViewer } from '@/lib/supabase';
+import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
 import styles from './page.module.css';
 
@@ -45,58 +41,58 @@ export default function VerifyStoresPage() {
   /** Trust and safety leads verify stores (and the super admin). */
   const allowed = useInDepartment('trust_safety', true);
   const admin = allowed === true;
-  const [requests, setRequests] = useState<Pending[] | null>(null);
-  const [busy, setBusy] = useState<string | null>(null);
   /** The request being declined, while its reason is asked for. */
   const [declining, setDeclining] = useState<Pending | null>(null);
   const [reason, setReason] = useState('');
+  const queryClient = useQueryClient();
+  const waiting = useQuery({
+    queryKey: staffKeys.verify,
+    queryFn: () => apiGet<{ requests: Pending[] }>('/admin/verifications').then((data) => data.requests),
+    enabled: admin,
+  });
+  const requests = waiting.data;
 
-  useEffect(() => {
-    if (!admin) return;
-    let gone = false;
-    void apiAsViewer<{ requests: Pending[] }>('/admin/verifications', { method: 'GET' }).then(
-      ({ data, error }) => {
-        if (gone) return;
-        if (error) toast.error(error);
-        setRequests(data?.requests ?? []);
-      },
-    );
-    return () => {
-      gone = true;
-    };
-  }, [admin]);
-
-  async function decide(request: Pending, decision: 'approve' | 'decline', note?: string) {
-    setBusy(request.id);
-    const { error } = await apiAsViewer(`/admin/verifications/${encodeURIComponent(request.id)}`, {
-      method: 'POST',
-      body: { decision, note },
-    });
-    setBusy(null);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    // The store's page shows the badge at once, not when its minute is up.
-    if (decision === 'approve') await refreshStore(request.storeSlug);
-    setRequests((list) => list?.filter((item) => item.id !== request.id) ?? null);
-    setDeclining(null);
-    setReason('');
-    toast.success(
-      decision === 'approve'
-        ? `${request.storeName} is now a Verified store.`
-        : `${request.storeName} was declined. The owner has been told why.`,
-    );
-  }
+  const decideMutation = useMutation({
+    mutationFn: async ({ request, decision, note }: { request: Pending; decision: 'approve' | 'decline'; note?: string }) => {
+      await apiSend(`/admin/verifications/${encodeURIComponent(request.id)}`, 'POST', { decision, note });
+      // The store's page shows the badge at once, not when its minute is up.
+      if (decision === 'approve') await refreshStore(request.storeSlug);
+    },
+    onSuccess: (_, { request, decision }) => {
+      queryClient.setQueryData<Pending[]>(staffKeys.verify, (list) => list?.filter((item) => item.id !== request.id));
+      setDeclining(null);
+      setReason('');
+      toast.success(
+        decision === 'approve'
+          ? `${request.storeName} is now a Verified store.`
+          : `${request.storeName} was declined. The owner has been told why.`,
+      );
+    },
+    onError: (error) => toast.error(error.message),
+  });
+  const decide = (request: Pending, decision: 'approve' | 'decline', note?: string) =>
+    decideMutation.mutate({ request, decision, note });
+  /** The request being decided, so its buttons wait. */
+  const busy = decideMutation.isPending ? decideMutation.variables?.request.id : null;
 
   return (
     <StaffPage title="Verify stores" meta="Stores asking for the Verified store badge">
           <Stack gap={6}>
-            {allowed === undefined ? null : !admin ? (
+            {allowed === false ? (
               <Panel padded>
                 <p className={styles.lead}>Only Trust and safety leads can verify stores.</p>
               </Panel>
-            ) : requests === null ? null : requests.length === 0 ? (
+            ) : waiting.isError ? (
+              <QueryProblem error={waiting.error} onRetry={() => void waiting.refetch()} />
+            ) : !requests ? (
+              <Panel padded>
+                <Stack gap={5}>
+                  <Bone width={180} height={22} />
+                  <Bone height={70} />
+                  <Bone shape="pill" height={44} />
+                </Stack>
+              </Panel>
+            ) : requests.length === 0 ? (
               <Panel padded>
                 <p className={styles.lead}>No stores are waiting to be verified.</p>
               </Panel>
@@ -146,7 +142,7 @@ export default function VerifyStoresPage() {
                         </Button>
                         <Button
                           loading={busy === request.id}
-                          onClick={() => void decide(request, 'approve')}
+                          onClick={() => decide(request, 'approve')}
                         >
                           Verify
                         </Button>
@@ -173,7 +169,7 @@ export default function VerifyStoresPage() {
                     block
                     disabled={!reason.trim()}
                     loading={busy === declining.id}
-                    onClick={() => void decide(declining, 'decline', reason.trim())}
+                    onClick={() => decide(declining, 'decline', reason.trim())}
                   >
                     Decline
                   </Button>

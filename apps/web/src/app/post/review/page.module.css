@@ -87,7 +87,8 @@
 }
 
 .pill.pillOn {
-  border-color: var(--snt-control-active);
+  /* No ring: the fill reaches the edge, over where the outline was. */
+  border-color: transparent;
   background: var(--snt-control-active);
   color: var(--snt-ink-on-dark);
 }

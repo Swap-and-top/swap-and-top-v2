@@ -17,6 +17,7 @@
 import { and, desc, eq, gt, inArray, isNull, lte } from 'drizzle-orm';
 import { db } from './db/client';
 import * as t from './db/schema';
+import { liftEndedSuspensions } from './standing';
 
 export type PassKind = 'day' | 'week' | 'month';
 
@@ -120,6 +121,9 @@ export async function settlePasses(now = new Date()): Promise<void> {
   if (now.getTime() - lastSettled < 60_000) return;
   lastSettled = now.getTime();
   try {
+    // Suspensions whose time is up end here too, on the same beat.
+    await liftEndedSuspensions(now);
+
     // The day before: passes ending within a day, with nothing after them.
     const ending = await db
       .select({ id: t.storePasses.id, storeId: t.storePasses.storeId, endsAt: t.storePasses.endsAt, name: t.stores.name })

@@ -30,7 +30,7 @@
     color var(--snt-transition);
 }
 
-.select:hover {
+.select:hover:not(.narrowed .select) {
   border-color: var(--snt-control-active);
 }
 
@@ -67,6 +67,7 @@
 
 .narrowed .select {
   background: var(--snt-control-active);
-  border-color: var(--snt-control-active);
+  /* No ring: the fill reaches the edge, over where the outline was. */
+  border-color: transparent;
   font-weight: var(--snt-weight-semibold);
 }

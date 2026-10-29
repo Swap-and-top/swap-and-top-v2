@@ -150,6 +150,8 @@ export const MeSchema = z
       }),
     ),
     standing: z.enum(['good', 'warned', 'limited', 'suspended', 'banned']),
+    /** While banned: the ban, to see it and appeal (/appeal/{id}). */
+    banActionId: z.string().optional(),
     /** The stores they own or work for. */
     stores: z.array(
       z.object({

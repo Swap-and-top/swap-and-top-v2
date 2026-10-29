@@ -11,7 +11,8 @@
  * Wireframe artboard: `Saved`.
  */
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import {
   useSavedStore,
   useSessionStore,
@@ -32,7 +33,7 @@ import {
   type TabItem,
   SignInGate,
 } from '@snt/ui';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiGet } from '@/lib/query';
 
 type SavedTab = 'all' | 'available' | 'gone';
 
@@ -47,18 +48,15 @@ export default function SavedPage() {
   /** The saved listings themselves, from the API (GET /api/me/saved); null
       until it answers, while the page shows its skeleton rather than
       "Nothing saved yet". */
-  const [listings, setListings] = useState<Listing[] | null>(null);
-
-  useEffect(() => {
-    if (!viewerId) return;
-    let current = true;
-    void apiAsViewer<{ listings: Listing[] }>('/me/saved', { method: 'GET' }).then(({ data }) => {
-      if (current) setListings(data?.listings ?? []);
-    });
-    return () => {
-      current = false;
-    };
-  }, [viewerId]);
+  // The saved listings in full, through TanStack Query; which are saved,
+  // and in what order, is the saved store's.
+  const query = useQuery({
+    queryKey: ['me', viewerId, 'saved'],
+    queryFn: () => apiGet<{ listings: Listing[] }>('/me/saved').then((data) => data.listings),
+    enabled: Boolean(viewerId),
+    meta: { toast: true },
+  });
+  const listings = query.data ?? (query.isError ? [] : null);
 
   // In the order saved, newest first; one unsaved here leaves at once.
   const saved = ids

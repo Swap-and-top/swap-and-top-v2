@@ -9,7 +9,7 @@
  * doing, and its offers, in place of a buyer's actions.
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   statusOf,
   useListingStatusStore,
@@ -29,7 +29,7 @@ import {
   WantedCardSkeleton,
   type TabItem,
 } from '@snt/ui';
-import { apiAsViewer } from '@/lib/supabase';
+import { useMyListings } from '@/lib/myListings';
 import { StatusTag } from '../../../components/listing/OwnerTools';
 import styles from './page.module.css';
 
@@ -48,20 +48,7 @@ export default function MyListingsPage() {
   const changes = useListingStatusStore((state) => state.changes);
   const viewerId = useSessionStore((state) => state.viewer?.id);
   /** Theirs, from the API; null until it answers. */
-  const [posted, setPosted] = useState<Listing[] | null>(null);
-
-  useEffect(() => {
-    if (!viewerId) return;
-    let current = true;
-    void apiAsViewer<{ listings: Listing[] }>('/me/listings', { method: 'GET' }).then(
-      ({ data }) => {
-        if (current) setPosted(data?.listings ?? []);
-      },
-    );
-    return () => {
-      current = false;
-    };
-  }, [viewerId]);
+  const posted = useMyListings(viewerId);
 
   // Deleted ones are gone for good, and staff removals are not listed here.
   const mine = (posted ?? []).filter((listing) => {

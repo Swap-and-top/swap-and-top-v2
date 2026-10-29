@@ -30,9 +30,18 @@ export function StaffPage({
   children: ReactNode;
 }) {
   const sections = useStaffSections();
+  const loading = useSessionStore((state) => state.viewer === null);
   const name = useSessionStore((state) => (state.viewer ? viewerName(state.viewer) : ''));
   return (
-    <StaffShell sections={sections} name={name} initials={initialsOf(name)} title={title} meta={meta} actions={actions}>
+    <StaffShell
+      sections={sections}
+      loading={loading}
+      name={name}
+      initials={loading ? '' : initialsOf(name)}
+      title={title}
+      meta={meta}
+      actions={actions}
+    >
       {children}
     </StaffShell>
   );
