@@ -181,7 +181,7 @@ export function Dropdown<T extends string>({
                   }}
                 >
                   <span className={styles.optionText}>
-                    <span>
+                    <span className={styles.optionLabel}>
                       {option.label}
                       {option.count !== undefined ? (
                         <span className={styles.count}>{option.count}</span>

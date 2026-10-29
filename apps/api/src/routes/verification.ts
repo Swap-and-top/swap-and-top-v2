@@ -180,7 +180,7 @@ const pending = createRoute({
   path: '/admin/verifications',
   tags: ['Admin'],
   summary: 'Stores waiting to be verified',
-  description: 'Trust and safety leads (and the super admin) only. Open stores whose request waits, oldest first.',
+  description: 'Trust and safety leaders (and the super admin) only. Open stores whose request waits, oldest first.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   responses: {
@@ -195,7 +195,7 @@ const pending = createRoute({
 
 verificationRoutes.openapi(pending, async (c) => {
   const person = await personFor(c.get('authUser'));
-  if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leads can verify stores.' }, 403);
+  if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leaders can verify stores.' }, 403);
   const rows = await db
     .select({
       request: t.verificationRequests,
@@ -233,7 +233,7 @@ const decide = createRoute({
   path: '/admin/verifications/{id}',
   tags: ['Admin'],
   summary: 'Verify or decline a store',
-  description: 'Trust and safety leads (and the super admin) only, and never on a store they own or work for. Verifying shows the badge at once; declining needs a reason, which the owner is told.',
+  description: 'Trust and safety leaders (and the super admin) only, and never on a store they own or work for. Verifying shows the badge at once; declining needs a reason, which the owner is told.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -259,7 +259,7 @@ verificationRoutes.openapi(decide, async (c) => {
   const { id } = c.req.valid('param');
   const { decision, note } = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
-  if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leads can verify stores.' }, 403);
+  if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leaders can verify stores.' }, 403);
   if (decision === 'decline' && !note) return c.json({ error: 'Say why, so the owner knows what to fix.' }, 400);
   const [request] = await db.select().from(t.verificationRequests).where(eq(t.verificationRequests.id, id));
   if (!request || request.state !== 'pending') return c.json({ error: 'That request has been decided already.' }, 404);

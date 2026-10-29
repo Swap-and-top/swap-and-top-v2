@@ -65,8 +65,8 @@ const send = createRoute({
   method: 'post',
   path: '/reports',
   tags: ['Reports'],
-  summary: 'Report a listing or a person',
-  description: `Signed in. A listing (its poster is the person reported) or a person. Never your own listing or yourself; ${DAILY_REPORTS} reports a day; reporting the same thing again while ours is open changes nothing.`,
+  summary: 'Report a listing or a user',
+  description: `Signed in. A listing (its poster is the user reported) or a user. Never your own listing or yourself; ${DAILY_REPORTS} reports a day; reporting the same thing again while ours is open changes nothing.`,
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -107,7 +107,7 @@ reportRoutes.openapi(send, async (c) => {
     personId = listing.ownerId;
   } else {
     const [other] = await db.select({ id: t.people.id }).from(t.people).where(eq(t.people.id, personId!));
-    if (!other) return c.json({ error: 'That person is not there any more.' }, 404);
+    if (!other) return c.json({ error: 'That user is not there any more.' }, 404);
   }
   if (personId === person.id) {
     return c.json({ error: listingId ? 'You cannot report your own listing.' : 'You cannot report yourself.' }, 400);
@@ -220,6 +220,8 @@ const ReportRowSchema = z
       otherOpen: z.number(),
     }),
     reporterName: z.string(),
+    /** To open the reporter's record. */
+    reporterId: z.string(),
     /** Who has it, when someone has claimed it. */
     claimedBy: z.string().optional(),
     mine: z.boolean(),
@@ -268,7 +270,7 @@ const queue = createRoute({
 const notTrustSafety = 'Only Trust and safety can handle reports.';
 
 /** The photo each listing is shown by: a sale's item, a swap's own side. */
-async function photosOf(listingIds: string[]): Promise<Map<string, string>> {
+export async function photosOf(listingIds: string[]): Promise<Map<string, string>> {
   if (listingIds.length === 0) return new Map();
   const [sales, swaps] = await Promise.all([
     db
@@ -376,6 +378,7 @@ reportRoutes.openapi(queue, async (c) => {
         otherOpen: Math.max(0, (openOf.get(report.personId) ?? 0) - (where === 'open' || where === 'claimed' ? 1 : 0)),
       },
       reporterName: nameOf.get(report.reporterId) || 'No name yet',
+      reporterId: report.reporterId,
       claimedBy: held ? nameOf.get(report.claimedById!) || 'Someone' : undefined,
       mine: Boolean(held && report.claimedById === viewer.id),
       suggested: suggestedAction(report, before),
@@ -467,7 +470,7 @@ const decide = createRoute({
   tags: ['Staff'],
   summary: 'Approve or clear a report',
   description:
-    'Trust and safety, on a report they have claimed. Approve with an action (a ban needs a Trust and safety lead), under the report’s reason or a corrected one; or clear it. Either way with a note saying why, kept on the decision and in the Activity log. The person reported is told what was decided, never who reported them.',
+    'Trust and safety, on a report they have claimed. Approve with an action (a ban needs a Trust and safety leader), under the report’s reason or a corrected one; or clear it. Either way with a note saying why, kept on the decision and in the Activity log. The user reported is told what was decided, never who reported them.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -505,10 +508,10 @@ reportRoutes.openapi(decide, async (c) => {
   const kind = body.decision === 'clear' ? 'none' : body.action;
   if (!kind) return c.json({ error: 'Choose what to do.' }, 400);
   if (kind === 'ban' && !mayBan(ctx.actor)) {
-    return c.json({ error: 'Only a Trust and safety lead can ban an account.' }, 403);
+    return c.json({ error: 'Only a Trust and safety leader can ban an account.' }, 403);
   }
   const listing = report.listingId ? ctx.listings.get(report.listingId) : undefined;
-  if (kind === 'removal' && !listing) return c.json({ error: 'This report is about a person, not a listing.' }, 400);
+  if (kind === 'removal' && !listing) return c.json({ error: 'This report is about a user, not a listing.' }, 400);
   const decidedReason = body.reason ?? report.reason;
   const now = new Date();
 
@@ -562,7 +565,7 @@ const counts = createRoute({
   tags: ['Staff'],
   summary: 'Work waiting',
   description:
-    'Trust and safety. Reports nobody holds that this person may handle, and, for leads, appeals waiting for them. For the counts beside Reports and Appeals.',
+    'Trust and safety. Reports nobody holds that this person may handle, and, for leaders, appeals waiting for them. For the counts beside Reports and Appeals.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   responses: {

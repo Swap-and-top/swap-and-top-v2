@@ -80,7 +80,7 @@ export default function VerifyStoresPage() {
           <Stack gap={6}>
             {allowed === false ? (
               <Panel padded>
-                <p className={styles.lead}>Only Trust and safety leads can verify stores.</p>
+                <p className={styles.lead}>Only Trust and safety leaders can verify stores.</p>
               </Panel>
             ) : waiting.isError ? (
               <QueryProblem error={waiting.error} onRetry={() => void waiting.refetch()} />

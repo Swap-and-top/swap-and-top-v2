@@ -1,0 +1,247 @@
+/**
+ * A person's record, set as the rest of the Staff console is: the standing
+ * pill under the name, small buttons in the toolbar, who they are in two
+ * columns, and small tables as the Activity log's (one white card under the
+ * pale blue strip of headings, rows parted by thin lines set in from the
+ * edges). On a phone the headings go and each row's cells run on.
+ */
+
+.meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-3);
+  margin-top: var(--snt-space-2);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+/* Why they cannot be acted on: a quiet line beside the buttons. */
+.why {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+/* Who they are: two columns of facts on a laptop, one on a phone. */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4) var(--snt-space-10);
+  margin: 0;
+  font-size: var(--snt-text-sm);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: var(--snt-space-4);
+}
+
+.fact dt {
+  color: var(--snt-card-ink-muted);
+}
+
+.fact dd {
+  margin: 0;
+  min-width: 0;
+  color: var(--snt-accent-bold);
+  font-weight: var(--snt-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.fact a,
+.link {
+  color: var(--snt-control-active);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The table: one white card, no outline. */
+.table {
+  display: flex;
+  flex-direction: column;
+  background: var(--snt-bg-surface);
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+.headerRow,
+.row {
+  display: grid;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-4) var(--snt-space-8);
+}
+
+/* When, what, a middle column, the outcome, and why. */
+.reportsTable .headerRow,
+.reportsTable .row {
+  grid-template-columns: 70px minmax(0, 1.2fr) minmax(0, 1.2fr) 150px minmax(0, 1.6fr);
+}
+
+/* The photo, the title, when, and how it stands. */
+.listingsTable .headerRow,
+.listingsTable .row {
+  grid-template-columns: 36px minmax(0, 1fr) 80px 110px;
+}
+
+.headerRow {
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The line between rows: the page's pale blue, set in from both edges. */
+.row {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+  text-decoration: none;
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.headerRow + .row {
+  background-image: none;
+}
+
+/* One line each, cut short with "…"; the whole shows on hover. */
+.cell {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.opens {
+  cursor: pointer;
+}
+
+.opens:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .opens:hover {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.opens:active {
+  background-color: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
+}
+
+.empty {
+  margin: 0;
+  padding: var(--snt-space-6) var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.photo {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  overflow: hidden;
+  background: var(--snt-bg-inset);
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noPhoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--snt-control-idle);
+  opacity: 0.7;
+}
+
+/* Below a laptop: one column of facts, and each table row its cells in a
+   wrapping line, the headings gone. */
+@media (max-width: 1023px) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .headerRow {
+    display: none;
+  }
+
+  .reportsTable .row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    row-gap: var(--snt-space-2);
+    padding: var(--snt-space-4) var(--snt-space-6);
+  }
+
+  /* When, what, and the outcome on the first line; the rest under it. */
+  .reportsTable .row > .cell:nth-child(1) {
+    color: var(--snt-card-ink-muted);
+  }
+
+  .reportsTable .row > .cell:nth-child(2) {
+    font-weight: var(--snt-weight-bold);
+  }
+
+  .reportsTable .row > .cell:nth-child(3),
+  .reportsTable .row > .cell:nth-child(5) {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    white-space: normal;
+    color: var(--snt-card-ink-muted);
+  }
+
+  .reportsTable .row > .cell:nth-child(4) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .reportsTable .row > .cell:empty {
+    display: none;
+  }
+
+  .listingsTable .row {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    padding: var(--snt-space-4) var(--snt-space-6);
+  }
+
+  .listingsTable .row > .cell:nth-child(3) {
+    display: none;
+  }
+
+  .row {
+    background-size: calc(100% - var(--snt-space-6) * 2) 1px;
+  }
+
+  .row:first-of-type {
+    background-image: none;
+  }
+}

@@ -18,7 +18,7 @@ import { apiGet, apiSend, QueryProblem } from '@/lib/query';
 import { useInDepartment } from '@/lib/staff';
 import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
-import styles from '../people/page.module.css';
+import styles from '../users/page.module.css';
 
 interface Waiting {
   id: string;
@@ -64,7 +64,7 @@ export default function AppealsPage() {
       // What it changed elsewhere: the counts, the log and their record.
       void queryClient.invalidateQueries({ queryKey: staffKeys.counts });
       void queryClient.invalidateQueries({ queryKey: ['staff', 'activity'] });
-      void queryClient.invalidateQueries({ queryKey: staffKeys.person(appeal.person.id) });
+      void queryClient.invalidateQueries({ queryKey: staffKeys.user(appeal.person.id) });
       setDeciding(null);
       setReason('');
       toast.success(
@@ -77,11 +77,11 @@ export default function AppealsPage() {
   });
 
   return (
-    <StaffPage title="Appeals" meta="People asking us to look again, oldest first">
+    <StaffPage title="Appeals" meta="Users asking us to look again, oldest first">
       <Stack gap={6}>
         {lead === false ? (
           <Panel padded>
-            <p className={styles.lead}>Only Trust and safety leads decide appeals.</p>
+            <p className={styles.lead}>Only Trust and safety leaders decide appeals.</p>
           </Panel>
         ) : waiting.isError ? (
           <QueryProblem error={waiting.error} onRetry={() => void waiting.refetch()} />
@@ -125,7 +125,7 @@ export default function AppealsPage() {
                   <dd>{appeal.agoLabel}</dd>
                 </dl>
                 <p className={styles.lead}>“{appeal.statement}”</p>
-                <ButtonLink href={`/staff/people/${encodeURIComponent(appeal.person.id)}`} variant="secondary" block>
+                <ButtonLink href={`/staff/users/${encodeURIComponent(appeal.person.id)}`} variant="secondary" block>
                   View their record
                 </ButtonLink>
                 <div className={styles.actions}>

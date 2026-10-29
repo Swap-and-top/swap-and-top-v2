@@ -1,0 +1,180 @@
+/**
+ * The page buttons under a Staff console table (the Activity log, People):
+ * "1 to 10 of 57" and the gear on the left, Previous, nine numbers at a
+ * time with chevrons, and Next on the right.
+ */
+
+/* "1 to 10 of 57" and the gear, then the page buttons. */
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+.pagerInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+}
+
+.gear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: none;
+  color: var(--snt-control-active);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .gear:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 10%, transparent);
+  }
+}
+
+.pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-2);
+}
+
+/* Page buttons: small, in the size of the words beside them, outlined in
+   the blue as the app's secondary buttons are; the page on show filled in
+   the blue. */
+.pageButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 var(--snt-space-4);
+  border: 1px solid rgb(47 117 153 / 0.4);
+  border-radius: var(--snt-radius-pill);
+  background: transparent;
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background var(--snt-transition),
+    border-color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .pageButton:not(:disabled):not(.pageCurrent):hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+.pageButton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.pageCurrent {
+  /* No ring: the fill reaches the edge, over where the outline was. */
+  border-color: transparent;
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}
+
+/* A page on its way: the tapped button's label stays, unseen, keeping its
+   size, with a small spinner over it, at full strength though the buttons
+   wait. */
+.pageButton {
+  position: relative;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+.pageButton[aria-busy='true'] {
+  opacity: 1;
+}
+
+/* On a phone: one compact line, under the table on the right, beside
+   "1 to 10 of 24" and the gear, never stacked. No outlines: Prev and Next
+   are words, the numbers small, the page on show in bold; each still big
+   enough to tap. Only the page on show and two either side. */
+@media (max-width: 767px) {
+  .pager {
+    flex-wrap: nowrap;
+    gap: var(--snt-space-3);
+  }
+
+  .pagerInfo {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .pages {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 0;
+  }
+
+  .pageButton,
+  .pageButton:disabled {
+    min-width: 20px;
+    height: 28px;
+    padding: 0 3px;
+    border-color: transparent;
+    background: none;
+    font-size: var(--snt-text-xs);
+    font-weight: var(--snt-weight-medium);
+  }
+
+  .pageButton:disabled {
+    opacity: 0.4;
+  }
+
+  /* The page on show: bold and darker, no round. */
+  .pageCurrent,
+  .pageCurrent:disabled {
+    border-color: transparent;
+    background: none;
+    color: var(--snt-accent-bold);
+    font-weight: var(--snt-weight-extrabold);
+    opacity: 1;
+  }
+
+  .far {
+    display: none;
+  }
+
+  /* No ring on hover either: only the pointer changes. */
+  .pageButton:not(:disabled):not(.pageCurrent):hover {
+    border-color: transparent;
+  }
+
+  .pageButton[aria-busy='true'] {
+    opacity: 1;
+  }
+}
+
+/* Page settings: the label over the choices, bold blue. */
+.label {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}

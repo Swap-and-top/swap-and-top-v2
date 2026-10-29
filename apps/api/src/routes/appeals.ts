@@ -129,7 +129,7 @@ const appeal = createRoute({
   path: '/me/actions/{id}/appeal',
   tags: ['Account'],
   summary: 'Appeal an action',
-  description: 'Once per action, in your own words. A lead other than the one who decided looks at it.',
+  description: 'Once per action, in your own words. A leader other than the one who decided looks at it.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -168,7 +168,7 @@ appealRoutes.openapi(appeal, async (c) => {
 
 /* --- the lead's side ------------------------------------------------------------- */
 
-const onlyLeads = 'Only Trust and safety leads decide appeals.';
+const onlyLeads = 'Only Trust and safety leaders decide appeals.';
 
 const WaitingSchema = z
   .object({
@@ -192,7 +192,7 @@ const waiting = createRoute({
   path: '/staff/appeals',
   tags: ['Staff'],
   summary: 'Appeals waiting',
-  description: 'Trust and safety leads. Appeals not yet decided, oldest first, leaving out actions this lead decided and people they may not act on.',
+  description: 'Trust and safety leaders. Appeals not yet decided, oldest first, leaving out actions this leader decided and users they may not act on.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   responses: {
@@ -263,7 +263,7 @@ const decide = createRoute({
   tags: ['Staff'],
   summary: 'Uphold or overturn an appeal',
   description:
-    'Trust and safety leads, never on an action they decided. A reason either way, which the person is told. Overturning undoes the action and keeps its record.',
+    'Trust and safety leaders, never on an action they decided. A reason either way, which the user is told. Overturning undoes the action and keeps its record.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -298,7 +298,7 @@ appealRoutes.openapi(decide, async (c) => {
     .where(eq(t.appeals.id, id));
   if (!row || row.appeal.reviewedAt) return c.json({ error: 'That appeal has been decided already.' }, 404);
   if (row.action.decidedById === viewer.id) {
-    return c.json({ error: 'You made this decision, so another lead has to look at the appeal.' }, 403);
+    return c.json({ error: 'You made this decision, so another leader has to look at the appeal.' }, 403);
   }
   const [actor, targets] = await Promise.all([actorOf(viewer), targetsOf([row.appeal.personId])]);
   const why = mayActOn(actor, targets.get(row.appeal.personId), row.listingStore);

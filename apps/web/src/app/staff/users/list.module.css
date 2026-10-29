@@ -1,0 +1,241 @@
+/**
+ * People, set as Reports and the Activity log are: the search box and the
+ * filter pill in the toolbar, the count line in the blue, the table in one
+ * white card under the pale blue strip of headings, rows parted by thin
+ * lines set in from the card's edges. On a phone, one compact line each.
+ */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+.search {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* The filter: a blue outlined pill, as on Reports. The class is doubled to
+   win over the dropdown's own look. */
+.filter.filter {
+  flex-shrink: 0;
+  height: 36px;
+  border: 1px solid var(--snt-control-idle);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-weight: var(--snt-weight-medium);
+}
+
+@media (hover: hover) {
+  .filter.filter:hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+/* The count line over the table, in the blue. */
+.summary {
+  margin: 0 0 var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+}
+
+/* The table: one white card, no outline. */
+.list {
+  display: flex;
+  flex-direction: column;
+  background: var(--snt-bg-surface);
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+.loading {
+  opacity: 0.55;
+  transition: opacity var(--snt-transition);
+}
+
+.headerRow,
+.row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1.6fr) 110px minmax(0, 1fr) 80px 64px 64px 130px;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-3) var(--snt-space-8);
+}
+
+.headerRow {
+  padding-block: var(--snt-space-4);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The line between rows: the page's pale blue, set in from both edges. */
+.row {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.headerRow + .row {
+  background-image: none;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.row:active {
+  background-color: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
+}
+
+/* A skeleton line, as tall as a row with its initials. */
+.boneRow {
+  min-height: calc(32px + var(--snt-space-3) * 2);
+  cursor: default;
+}
+
+/* Their initials in a round, as the account circle has them. */
+.initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-surface));
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  min-width: 0;
+}
+
+.strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--snt-weight-bold);
+}
+
+.phone,
+.area,
+.joined {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--snt-ink-muted);
+}
+
+.count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.headerRow > span:nth-child(6),
+.headerRow > span:nth-child(7) {
+  text-align: right;
+}
+
+.standing {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.headerRow > span:last-child {
+  text-align: right;
+}
+
+.phoneOnly {
+  display: none;
+}
+
+/* Nobody matches: a quiet line and the way back. */
+.none {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-8);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+}
+
+.none p {
+  margin: 0;
+}
+
+/* Below a laptop: no headings, and each person one compact line, their
+   initials, name with the number under it, and their standing. */
+@media (max-width: 1023px) {
+  .headerRow {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    gap: var(--snt-space-5);
+    padding: var(--snt-space-4) var(--snt-space-6);
+    background-size: calc(100% - var(--snt-space-6) * 2) 1px;
+  }
+
+  .row:first-child {
+    background-image: none;
+  }
+
+  .phone,
+  .area,
+  .joined,
+  .count {
+    display: none;
+  }
+
+  .name {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .phoneOnly {
+    display: block;
+    flex-basis: 100%;
+    font-size: var(--snt-text-xs);
+    color: var(--snt-ink-muted);
+  }
+}
+
+@media (max-width: 767px) {
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .search {
+    flex-basis: 100%;
+  }
+}

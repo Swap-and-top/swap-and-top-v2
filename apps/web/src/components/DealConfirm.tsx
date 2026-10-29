@@ -158,7 +158,7 @@ export function DealConfirm({
             <div className={styles.report}>
               <span className={styles.reportAsk}>Something go wrong?</span>
               <Button variant="secondary" size="sm" onClick={() => setReporting(true)}>
-                {owner ? 'Report this person' : 'Report this listing'}
+                {owner ? 'Report this user' : 'Report this listing'}
               </Button>
             </div>
             {reporting ? (

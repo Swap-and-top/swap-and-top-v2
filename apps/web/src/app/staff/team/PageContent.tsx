@@ -84,8 +84,8 @@ export default function TeamPage() {
           : !was
             ? `${member.name} is now in ${label}.`
             : lead
-              ? `${member.name} now leads ${label}.`
-              : `${member.name} no longer leads ${label}.`,
+              ? `${member.name} is now the leader of ${label}.`
+              : `${member.name} is no longer the leader of ${label}.`,
       );
     },
     onError: (error) => toast.error(error.message || 'That did not save. Try again.'),
@@ -127,12 +127,12 @@ export default function TeamPage() {
   return (
     <StaffPage
       title="Team"
-      meta={team ? (team.superAdmin ? 'Who is in each department' : 'The departments you lead') : undefined}
+      meta={team ? (team.superAdmin ? 'Who is in each department' : 'The departments you are leader of') : undefined}
       actions={
         team ? (
           <Button size="md" onClick={() => setAdding(true)}>
             <PlusIcon size={17} />
-            Add a person
+            Add a user
           </Button>
         ) : null
       }
@@ -142,7 +142,7 @@ export default function TeamPage() {
       ) : loaded.isError ? (
         <QueryProblem error={loaded.error} onRetry={() => void loaded.refetch()} />
       ) : !team ? null : team.members.length === 0 ? (
-        <EmptyState title="Nobody here yet" body="Add a person to put them in a department." />
+        <EmptyState title="Nobody here yet" body="Add a user to put them in a department." />
       ) : (
         <div className={styles.members}>{team.members.map(card)}</div>
       )}
@@ -221,7 +221,7 @@ function MemberCard({
                 <TickTile
                   checked={Boolean(row?.lead)}
                   disabled={rowLocked || leadLocked}
-                  label="Leads it"
+                  label="Leader"
                   onChange={(next) => onChange(department, true, next)}
                 />
               ) : null}
@@ -261,7 +261,7 @@ function AddPerson({
   const found = query.trim().length >= 2 ? search.data : undefined;
 
   return (
-    <Sheet title="Add a person" onClose={onClose}>
+    <Sheet title="Add a user" onClose={onClose}>
       <Stack gap={5}>
         {picked ? (
           <>

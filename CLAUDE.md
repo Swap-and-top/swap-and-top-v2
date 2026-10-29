@@ -6,54 +6,56 @@ laid out, the design patterns in use and what was done most recently; its
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
 
-## Where things stand (2026-10-29)
+## Where things stand (2026-10-30)
 
-- **Built and live on `main`:** Phases 1 to 4 (everything a person and a
+- **Built and live on `main`:** Phases 1 to 4 (everything a user and a
   store uses, on the database), apart from real Paynow payment, which
   waits on Hillary's merchant account. Every contact number shown is real
   (`apps/api/src/contact.ts`).
 - **Phase 5, the Staff console:** everything planned for Trust and
   safety is built and live. Roles are only `user` or `super_admin`; staff
-  are in `staff_departments` as member or lead, checked with
-  `inDepartment` (`apps/api/src/staff.ts`) and `useInDepartment`
-  (`apps/web/src/lib/staff.ts`). The console at `/staff` (sections in
-  `apps/web/src/app/staff/sections.tsx`, shown once `built: true`): Verify
-  stores, Team, Reports, People, Appeals and the Activity log, with
-  waiting counts on Reports and Appeals. Who may act on whom, what an
-  action does and how it is undone are in `apps/api/src/moderation.ts`.
-  A banned account sees only its ban and appeal (`BannedGate`), and the
-  API refuses it everything else (`apps/api/src/app.ts`).
-- **All loading is on TanStack Query** (`apps/web/src/lib/query.tsx`;
-  the rule is below under "Working with the backend").
-- **Every button action is a TanStack Query mutation** too (2026-10-29;
-  shared store calls go through `runMutation` in `lib/query.tsx`).
-- **Live (2026-10-30):** `main` is level with `redesign/pdf-style`
-  again: the button mutations, the Reports redesign and the notes on
-  every decision are live.
-- **Staff console review with Hillary, in progress:** Reports is done (one
-  table of every report with a filter, compact rows on a phone, see the
-  handoff). Three test reports (REP 2026 0014 to 0016) are left in on
-  purpose; Farai D.'s ban is Hillary's test data. Leave both.
+  are in `staff_departments` as member or leader (the column is `lead`),
+  checked with `inDepartment` (`apps/api/src/staff.ts`) and
+  `useInDepartment` (`apps/web/src/lib/staff.ts`). The console at
+  `/staff` (sections in `apps/web/src/app/staff/sections.tsx`, shown once
+  `built: true`): Reports, Users, Appeals, Verify stores, the Activity
+  log and Team, with waiting counts on Reports and Appeals. Who may act
+  on whom, what an action does and how it is undone are in
+  `apps/api/src/moderation.ts`. A banned account sees only its ban and
+  appeal (`BannedGate`), and the API refuses it everything else
+  (`apps/api/src/app.ts`).
+- **Every decision carries a note:** Approve and Clear on a report,
+  warn, suspend and ban on a user, and upholding or overturning an
+  appeal need a note saying why; the button stays off until there is one
+  and the API refuses without it. The note shows in the report's sheet
+  ("Why"), the user's record and the Activity log.
+- **All loading and every button action is on TanStack Query**
+  (`apps/web/src/lib/query.tsx`; the rule is under "Working with the
+  backend").
+- **Staff console review with Hillary, page by page:** done for the
+  Activity log, Reports and Users (2026-10-30). They share one look,
+  copied from the Store console's Stock page: a toolbar (search box and
+  a filter pill), a count line, one white table card under a pale blue
+  heading strip, pills for states, compact one line rows below a
+  laptop, and the shared page buttons (`app/staff/Pager.tsx`). Keep the
+  rest the same.
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): 2. carry on the review of each Staff console page with
-  Hillary, starting with People and a person's record, then Appeals,
-  Verify stores, Team, the appeal page and the banned page, as was done
-  for the Activity log and Reports, keeping it cohesive with the Store
-  console; 3. a design
-  pass on the Store console; 4. ask about the open safeguards; 5. Phase 6
+  stopped"): 1. carry on the review with Appeals, then Verify stores,
+  Team, the appeal page and the banned page; 2. a design pass on the
+  Store console; 3. ask about the open safeguards; 4. Phase 6
   (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
   has the console's design and safeguards (section 9).
-- **Every decision carries a note** (built 2026-10-30): Approve and
-  Clear on a report, warn, suspend and ban on a person, and upholding or
-  overturning an appeal need a note saying why (at least two letters);
-  the button stays off until there is one and the API refuses without
-  it. The note shows in the report's sheet ("Why"), the person's record
-  and the Activity log (`note` in the `staff_log` detail).
+- **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
+  and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
+  listing. Leave them until Hillary says.
 - **Real accounts:** Hillary (super admin), Patrick and Ray are on their
   real phone numbers. Never run `db:seed` (it would put them back on test
   numbers). On the live site test numbers (077 000 0xxx) carry no staff
   powers. For scripted staff tests use Tafadzwa (0006, Trust and safety
-  lead) and Rumbi (0005, member).
+  leader) and Rumbi (0005, member); Tafadzwa's code fails, so Rumbi is
+  the one that signs in. Opening a user's record as Rumbi logs a look in
+  the Activity log: delete the test rows after (`staff_log` with
+  `actor_id = 'u-rumbi'`).
 
 ## Standing rules from the product owner (Hillary)
 
@@ -92,6 +94,13 @@ These came from repeated feedback. Follow them without being asked.
     needed, offer the fewest options that work and start on the common one.
     If a request seems to need something complex, say so and suggest the
     simple version before building it.
+11. **Leaders, not leads; users, not people.** A department's head is a
+    "leader" or "departmental leader" on screen ("Leads" means the Store
+    console's customer leads). The accounts the console looks after are
+    "users" (a user account and a store account are different things),
+    never "people" or "person": the section is Users at `/staff/users`.
+    Code names stay (`lead` in `staff_departments`, the `people` table,
+    `person.view` in the log).
 
 ## Working with the backend
 
@@ -167,7 +176,8 @@ the session has one.
 3. Production build in a throwaway worktree in the scratchpad, so the
    running dev server's `.next` is untouched:
    `git worktree add --detach <dir> HEAD`, rsync the working tree in
-   (excluding `node_modules`, `.next`, `.git`, `.turbo`),
+   with `--delete` (so files moved or deleted since the last commit go
+   too), excluding `node_modules`, `.next`, `.git`, `.turbo`,
    `pnpm install --frozen-lockfile --prefer-offline`, `pnpm build`, then
    `git worktree remove --force <dir>`.
    The build reads the database (feed, listing and store pages are built

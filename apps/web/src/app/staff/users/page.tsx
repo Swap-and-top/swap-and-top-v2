@@ -2,7 +2,7 @@
 
 import PageContent from './PageContent';
 
-export const metadata = { title: 'People · Swap & Top' };
+export const metadata = { title: 'Users · Swap & Top' };
 
 export default function Page() {
   return <PageContent />;

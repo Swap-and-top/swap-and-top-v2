@@ -2,7 +2,7 @@
 
 import PageContent from './PageContent';
 
-export const metadata = { title: 'Person · Swap & Top' };
+export const metadata = { title: 'User · Swap & Top' };
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -180,93 +180,6 @@
   margin: 0;
 }
 
-/* "1 to 10 of 57" and the gear, then the page buttons. */
-.pager {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--snt-space-4);
-  margin-top: var(--snt-space-6);
-}
-
-.pagerInfo {
-  display: flex;
-  align-items: center;
-  gap: var(--snt-space-3);
-  font-size: var(--snt-text-sm);
-  color: var(--snt-accent-bold);
-}
-
-.gear {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--snt-radius-pill);
-  background: none;
-  color: var(--snt-control-active);
-  cursor: pointer;
-}
-
-@media (hover: hover) {
-  .gear:hover {
-    background: color-mix(in srgb, var(--snt-control-active) 10%, transparent);
-  }
-}
-
-.pages {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--snt-space-2);
-}
-
-/* Page buttons: small, in the size of the words beside them, outlined in
-   the blue as the app's secondary buttons are; the page on show filled in
-   the blue. */
-.pageButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 26px;
-  height: 26px;
-  padding: 0 var(--snt-space-4);
-  border: 1px solid rgb(47 117 153 / 0.4);
-  border-radius: var(--snt-radius-pill);
-  background: transparent;
-  color: var(--snt-control-active);
-  font: inherit;
-  font-size: var(--snt-text-sm);
-  font-weight: var(--snt-weight-semibold);
-  line-height: 1;
-  cursor: pointer;
-  transition:
-    background var(--snt-transition),
-    border-color var(--snt-transition);
-}
-
-@media (hover: hover) {
-  .pageButton:not(:disabled):not(.pageCurrent):hover {
-    border-color: var(--snt-control-active);
-  }
-}
-
-.pageButton:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.pageCurrent {
-  /* No ring: the fill reaches the edge, over where the outline was. */
-  border-color: transparent;
-  background: var(--snt-control-active);
-  color: var(--snt-ink-on-dark);
-}
-
 /* The sheets: labels bold blue, as the Stock filters are. */
 .form {
   display: flex;
@@ -307,26 +220,5 @@
 
   .what {
     white-space: normal;
-  }
-}
-
-/* On a phone: the chevrons and numbers on one line, centred, and Previous
-   and Next side by side under them. */
-@media (max-width: 767px) {
-  .pages {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .pageButton {
-    min-width: 24px;
-    height: 24px;
-    padding: 0 var(--snt-space-3);
-  }
-
-  .pageEnd {
-    order: 1;
-    flex: 1 1 40%;
-    height: 30px;
   }
 }

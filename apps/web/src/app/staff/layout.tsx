@@ -32,7 +32,7 @@ function Gate({ children }: { children: ReactNode }) {
         <ScreenBody>
           <EmptyState
             title="The Staff console is for our team"
-            body="It opens for people in one of Swap & Top's departments."
+            body="It opens for users in one of Swap & Top's departments."
             action={
               <ButtonLink href="/" variant="secondary" size="lg" block>
                 Back to marketplace

@@ -16,6 +16,7 @@
  * about you or your store, and reports about our team go to leads.
  */
 
+import Link from 'next/link';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useId, useState } from 'react';
 import { toast } from 'sonner';
@@ -46,6 +47,7 @@ interface Row {
   listing?: { title: string; slug: string; status: string; photo?: string };
   person: { id: string; name: string; standing: string; upheldBefore: number; otherOpen: number };
   reporterName: string;
+  reporterId: string;
   claimedBy?: string;
   mine: boolean;
   suggested: ReportAction;
@@ -104,13 +106,13 @@ function recordLine(person: Row['person']): string {
 const listingLine = (listing: NonNullable<Row['listing']>) =>
   listing.status !== 'live' ? `${listing.title} (${listing.status})` : listing.title;
 
-export default function ReportsPage() {
+export default function ReportsPage({ openFirst }: { openFirst?: string }) {
   const allowed = useInDepartment('trust_safety');
   const lead = useInDepartment('trust_safety', true) === true;
   const showLabel = useId();
   const [show, setShow] = useState<Show>('all');
   /** The report open in its sheet, by id, so it follows the list. */
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(openFirst ?? null);
   /** The report being approved or cleared, while its note is written. */
   const [deciding, setDeciding] = useState<{ report: Row; decision: 'approve' | 'clear' } | null>(null);
   const queryClient = useQueryClient();
@@ -318,7 +320,7 @@ export default function ReportsPage() {
                   </span>
                   <span className={styles.listing}>
                     <span className={styles.strong}>
-                      {report.listing ? listingLine(report.listing) : 'A person, not a listing'}
+                      {report.listing ? listingLine(report.listing) : 'A user, not a listing'}
                     </span>
                   </span>
                   <span className={styles.posted}>
@@ -390,12 +392,21 @@ function ReportDetail({
               <dd>{listingLine(report.listing)}</dd>
             </>
           ) : null}
-          <dt>{report.listing ? 'Posted by' : 'Person'}</dt>
-          <dd>{report.person.name}</dd>
+          {/* Both names open the person's record, as anyone in Users does. */}
+          <dt>{report.listing ? 'Posted by' : 'User'}</dt>
+          <dd>
+            <Link href={`/staff/users/${encodeURIComponent(report.person.id)}`} className={styles.personLink}>
+              {report.person.name}
+            </Link>
+          </dd>
           <dt>Record</dt>
           <dd>{recordLine(report.person)}</dd>
           <dt>Reported by</dt>
-          <dd>{report.reporterName}</dd>
+          <dd>
+            <Link href={`/staff/users/${encodeURIComponent(report.reporterId)}`} className={styles.personLink}>
+              {report.reporterName}
+            </Link>
+          </dd>
           <dt>When</dt>
           <dd>{report.agoLabel}</dd>
           {report.details ? (

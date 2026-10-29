@@ -12,25 +12,49 @@ file is the state of the code and the recent work. **Start with "Where we
 stopped" just below**, then `docs/architecture/backend-plan.md` ("Where it
 stands") for the backend in full.
 
-## Where we stopped (2026-10-29)
+## Where we stopped (2026-10-30)
 
-**In one line (2026-10-30):** Phases 1 to 4 are built and live (only
-real Paynow payment waits, on Hillary's merchant account). Phase 5, the
-Staff console, has everything planned for Trust and safety built, every
-decision now carries a required note, and the look of each page is
-being reviewed with Hillary: Reports is done. All of it is committed on
-`redesign/pdf-style` and live on `main` (Vercel now builds only
-Production; Hillary turned Preview builds off).
+**In one line:** Phases 1 to 4 are built and live (only real Paynow
+payment waits, on Hillary's merchant account). Phase 5, the Staff
+console, has everything planned for Trust and safety built and live,
+every decision carries a required note, and the look of each page is
+being reviewed with Hillary: the Activity log, Reports and Users are
+done. All of it is committed on `redesign/pdf-style` and live on `main`.
+Vercel builds only Production (Hillary turned Preview builds off).
 
 **Where the next agent starts:** carry on the Staff console review with
-Hillary at People and a person's record (item 2 below), then items 3 to
-5. (The note on every decision is built, 2026-10-30.)
+Hillary at **Appeals**, then Verify stores, Team, the person's appeal
+page and the banned page; then a design pass on the Store console, the
+open safeguards, and Phase 6. Look at each page in the browser first,
+offer how it should look (as was done for Users), and build what she
+picks.
+
+**What was done on 2026-10-30 (newest last):**
+
+- The note on every decision (item below, "Done 2026-10-30").
+- Reports: in a report's sheet, Posted by (or User) and Reported by open
+  that user's record.
+- Users (was People): a table of every user with search, a standing
+  filter with counts and pages; a user's record with pills, small
+  toolbar buttons, facts in two columns and small tables of actions,
+  reports about them, reports they sent and listings. Details in item 2.
+- Words, at Hillary's request (now CLAUDE.md rule 11): "leader" or
+  "departmental leader", never "lead"; "user", never "people" or
+  "person", on screen and in API messages. The section and its routes
+  are `/staff/users` and `GET /api/staff/users` (`routes/users.ts`).
+- The shared `Dropdown`'s open list grows to fit its longest option, so
+  an option and its count stay on one line.
+- The shared page buttons (`Pager`): "Prev" and "Next"; below 768px one
+  compact line beside "1 to 10 of N" (words, small numbers with no
+  outlines or hover ring, the page on show in bold, up to five numbers);
+  the button tapped spins until its page has come.
+- A look at a user's record is logged at most once in ten minutes.
 
 **What comes next, in Hillary's order (do them in this order):**
 
 - **Done 2026-10-30: a note on every decision.** Approve (any action)
   and Clear on a report (`POST /api/staff/reports/{id}/decide`), warn,
-  suspend and ban on a person (`POST /api/staff/people/{id}/action`) take
+  suspend and ban on a person (`POST /api/staff/users/{id}/action`) take
   a required `note` (2 to 500 letters; "Write a short note saying why"
   when missing), and upholding or overturning an appeal already took a
   required `reason`. The Reports page has one decision sheet for both
@@ -65,7 +89,7 @@ Hillary at People and a person's record (item 2 below), then items 3 to
    again. Boosts stopped here stay marked stopped across that refresh.
    Tested in the browser as Tarisai: post, pause, relist, delete, save and
    unsave (the account data read again after), report.
-2. **Reviewed with Hillary so far: Reports (2026-10-29).** Every report
+2. **Reviewed with Hillary so far: the Activity log, Reports (2026-10-29) and Users (2026-10-30).** Every report
    stays in one table, decided or not (`GET /api/staff/reports?show=`
    `all|open|claimed|warning|removal|suspension|ban|cleared`, with `counts`
    for each): waiting ones first, oldest first, then decided ones, newest
@@ -93,16 +117,45 @@ Hillary at People and a person's record (item 2 below), then items 3 to
    Clear or Approve; buttons side by side). The Activity log shows a
    report by its full number, "REP 2026 0014" (`reportLabel` in
    `routes/reports.ts`, kept in the `staff_log` detail as `reportLabel`;
-   older entries get it looked up in `routes/activity.ts`). Next: People and a person's
-   record, Appeals, Verify stores, Team, the appeal page and the banned
-   page.
+   older entries get it looked up in `routes/activity.ts`). In a
+   report's sheet, Posted by and Reported by open that person's record.
+   **Users and a user's record (2026-10-30), reviewed with Hillary** (was
+   People; renamed at her request, and "lead" is "leader" or
+   "departmental leader" on screen): `GET /api/staff/users` now lists everyone, newest first, 10 to 40 a
+   page with the total, `q` for a name or number and `show`
+   (`all|good|warned|suspended|banned|team`, with `counts`). The page is
+   set as Reports: the search box and one filter pill with counts, the
+   table (initials, name with a team pill, phone, area, joined, live
+   listings, reports, a standing pill: grey, amber, red, dark for banned),
+   one compact line a person below a laptop, and the shared `Pager`
+   (`app/staff/Pager.tsx`, used by the Activity log too, `usePageSize`
+   remembering the size per page). Below 768px the pager is one compact
+   line beside "1 to 10 of N" and the gear, never stacked: "Prev" and
+   "Next" as words, small numbers with no outlines, the page on show in
+   bold, and only it and two either side (Hillary, 2026-10-30), with no
+   ring on hover; a laptop keeps the outlined pills. "Prev" on both. The
+   button tapped shows a small spinner until its page has come (the
+   table's query is `isPlaceholderData` meanwhile). A record (`app/staff/users/[id]`):
+   the standing and team pills under the name, Take action and Back to
+   People as small buttons in the toolbar (no Take action on a banned
+   account, said beside them, and the API refuses it too), the facts in
+   two columns, and small tables of the actions taken, reports about
+   them, reports they sent (new, `reportsSent`) and their listings with
+   photos, each decision with its note and an overturned one marked so.
+   A report opens on Reports (`/staff/reports?open={id}`), a listing on
+   its page. A look at a record is logged once in ten minutes per staff
+   member (the record reads itself again when the page is come back to).
+   Next: Appeals, Verify stores, Team, the appeal page and the banned
+   page. The shared `Dropdown`'s open list now grows to fit its longest
+   option (from the pill's right edge, to the left), so an option and its
+   count stay on one line.
    **Still to review: each other Staff console page**, as was done
    for the Activity log (which now matches the Store console's Stock
    page: toolbar, pale blue heading strip, small blue page buttons,
-   skeletons that match). Go through Reports, People and a person's
-   record, Appeals, Verify stores and Team with her (and the person's
-   appeal page and the banned account page), and change what she asks.
-   Keep each one cohesive with the Store console.
+   skeletons that match). Reports and Users are done; go through
+   Appeals, Verify stores and Team with her (and the user's appeal page
+   and the banned account page), and change what she asks. Keep each one
+   cohesive with the Store console, Reports and Users.
 3. **A design pass on the Store console** with Hillary.
 4. **Then ask Hillary about the open safeguards** (item 8, the end of
    Trust and safety: staff password as well as the phone code, a sealed
@@ -323,15 +376,15 @@ Hillary at People and a person's record (item 2 below), then items 3 to
      reporter's record, bulk actions, a count on the console's Reports
      tab, and automatic priority signals.
 
-   - **People** (built 2026-10-29, `apps/api/src/routes/people.ts`, pages
-     `app/staff/people/` and `app/staff/people/[id]/`, no migration):
+   - **People** (built 2026-10-29, `apps/api/src/routes/users.ts`, pages
+     `app/staff/users/` and `app/staff/users/[id]/`, no migration):
      Trust and safety find anyone by name or number
-     (`GET /api/staff/people?q=`), open their record
-     (`GET /api/staff/people/{id}`: phone, area, joined, last seen,
+     (`GET /api/staff/users?q=`), open their record
+     (`GET /api/staff/users/{id}`: phone, area, joined, last seen,
      standing, place on our team, stores, confirmed deals, live
      listings, their last 10 listings, reports about them and actions
      taken; each look is a `person.view` row in `staff_log`), and "Take
-     action" without a report (`POST /api/staff/people/{id}/action`: a
+     action" without a report (`POST /api/staff/users/{id}/action`: a
      warning, a 7 day suspension, or a ban for leads, under a reason,
      with an optional note; logged as `person.warning` and so on, and
      the person is told). Where the viewer may not act, the record says

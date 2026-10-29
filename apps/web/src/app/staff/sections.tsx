@@ -39,7 +39,7 @@ interface SectionDef extends StaffSection {
 const SECTIONS: SectionDef[] = [
   // Trust and safety
   { href: '/staff/reports', label: 'Reports', shortLabel: 'Reports', icon: (s) => <ReportIcon size={s} />, department: 'trust_safety', built: true },
-  { href: '/staff/people', label: 'People', shortLabel: 'People', icon: (s) => <PersonIcon size={s} />, department: 'trust_safety', built: true },
+  { href: '/staff/users', label: 'Users', shortLabel: 'Users', icon: (s) => <PersonIcon size={s} />, department: 'trust_safety', built: true },
   { href: '/staff/appeals', label: 'Appeals', shortLabel: 'Appeals', icon: (s) => <MessageIcon size={s} />, department: 'trust_safety', lead: true, built: true },
   { href: '/staff/verify', label: 'Verify stores', shortLabel: 'Verify', icon: (s) => <ShieldCheckIcon size={s} />, department: 'trust_safety', lead: true, built: true },
   { href: '/staff/activity', label: 'Activity log', shortLabel: 'Log', icon: (s) => <ListIcon size={s} />, department: 'trust_safety', built: true },
@@ -69,8 +69,8 @@ export const staffKeys = {
   appeals: ['staff', 'appeals'] as const,
   verify: ['staff', 'verify'] as const,
   team: ['staff', 'team'] as const,
-  people: (q: string) => ['staff', 'people', q] as const,
-  person: (id: string) => ['staff', 'person', id] as const,
+  users: (q: string) => ['staff', 'users', q] as const,
+  user: (id: string) => ['staff', 'user', id] as const,
   activity: (filters: object) => ['staff', 'activity', filters] as const,
   teamFind: (q: string) => ['staff', 'team', 'find', q] as const,
 };

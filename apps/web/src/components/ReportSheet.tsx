@@ -55,7 +55,7 @@ export function ReportSheet({
     <Sheet narrow title={listingId ? 'Report this listing' : `Report ${name}`} onClose={onClose}>
       <Stack gap={5}>
         <p className={styles.lead}>
-          {listingId ? `${name}. ` : ''}Our team looks at every report. The person you report is never told who sent it.
+          {listingId ? `${name}. ` : ''}Our team looks at every report. The user you report is never told who sent it.
         </p>
         <div className={styles.field}>
           <span id={reasonLabel} className={styles.label}>

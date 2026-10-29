@@ -1,7 +1,7 @@
 /**
  * What Trust and safety may do to whom, and what an action does
  * (docs/product/staff-console.md section 9, docs/features/moderation.md).
- * Reports (routes/reports.ts) and People (routes/people.ts) both act
+ * Reports (routes/reports.ts) and People (routes/users.ts) both act
  * through here, so the rules and their effects are the same either way.
  *
  * Who may act on whom: a Trust and safety member on ordinary users; a lead
@@ -105,18 +105,18 @@ export interface Target {
 /** Whether this actor may act on this person (about a listing of this
     store, where there is one); why not, if not. */
 export function mayActOn(actor: Actor, target: Target | undefined, storeId?: string | null): string | null {
-  if (!target) return 'That person is not there any more.';
+  if (!target) return 'That user is not there any more.';
   if (target.id === actor.id) return 'This is about you, so someone else has to handle it.';
   if (storeId && actor.stores.has(storeId)) return 'You run this store, so someone else has to handle it.';
   if (target.stores.some((store) => actor.stores.has(store))) {
-    return 'You run a store with this person, so someone else has to handle it.';
+    return 'You run a store with this user, so someone else has to handle it.';
   }
   if (target.role === 'super_admin') return 'Nobody on the team acts on the super admin.';
   if (target.rank === 'lead' && !actor.superAdmin) {
-    return 'This person leads part of our team, so only the super admin can handle it.';
+    return 'This user is a departmental leader, so only the super admin can handle it.';
   }
   if (target.rank === 'member' && !actor.superAdmin && !actor.tsLead) {
-    return 'This person is on our team, so a Trust and safety lead has to handle it.';
+    return 'This user is on our team, so a Trust and safety leader has to handle it.';
   }
   return null;
 }

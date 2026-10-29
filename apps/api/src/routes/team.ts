@@ -92,7 +92,7 @@ const list = createRoute({
   tags: ['Staff'],
   summary: 'The team',
   description:
-    'The super admin and leads only. Everyone in the departments the asker manages (all for the super admin, else the ones they lead), with their places in those departments.',
+    'The super admin and leaders only. Everyone in the departments the asker manages (all for the super admin, else the ones they are leader of), with their places in those departments.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   responses: {
@@ -118,7 +118,7 @@ const list = createRoute({
 teamRoutes.openapi(list, async (c) => {
   const asker = await personFor(c.get('authUser'));
   const depts = await managed(asker);
-  if (depts.length === 0) return c.json({ error: 'Team is for the super admin and department leads.' }, 403);
+  if (depts.length === 0) return c.json({ error: 'Team is for the super admin and departmental leaders.' }, 403);
   const rows = await db
     .selectDistinct({ personId: t.staffDepartments.personId, name: t.people.displayName })
     .from(t.staffDepartments)
@@ -138,7 +138,7 @@ const find = createRoute({
   path: '/staff/team/find',
   tags: ['Staff'],
   summary: 'Find a person to add',
-  description: 'The super admin and leads only. Up to 10 people whose name or phone number matches.',
+  description: 'The super admin and leaders only. Up to 10 users whose name or phone number matches.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: { query: z.object({ q: z.string().trim().min(2) }) },
@@ -152,7 +152,7 @@ teamRoutes.openapi(find, async (c) => {
   const { q } = c.req.valid('query');
   const asker = await personFor(c.get('authUser'));
   const depts = await managed(asker);
-  if (depts.length === 0) return c.json({ error: 'Team is for the super admin and department leads.' }, 403);
+  if (depts.length === 0) return c.json({ error: 'Team is for the super admin and departmental leaders.' }, 403);
   // A number as people write it, "077 123", searched as stored, "+26377123".
   const digits = q.replace(/\D/g, '');
   const phone = digits.length >= 3 ? `%${digits.startsWith('0') ? `263${digits.slice(1)}` : digits}%` : null;
@@ -176,18 +176,18 @@ const params = z.object({ personId: z.string(), department });
     or null when they may. */
 async function refusal(asker: Asker, personId: string, dept: Department, lead?: boolean) {
   const superAdmin = asker.role === 'super_admin';
-  if (!(await managed(asker)).includes(dept)) return 'You can only change the departments you lead.';
+  if (!(await managed(asker)).includes(dept)) return 'You can only change the departments you are leader of.';
   if (personId === asker.id && !superAdmin) return 'You cannot change your own access. Ask the super admin.';
   const [target] = await db.select({ role: t.people.role }).from(t.people).where(eq(t.people.id, personId));
   if (!target) return 'That person is not there any more.';
   if (target.role === 'super_admin') return 'The super admin already sees everything.';
   if (!superAdmin) {
-    if (lead) return 'Only the super admin makes leads.';
+    if (lead) return 'Only the super admin makes leaders.';
     const [row] = await db
       .select({ lead: t.staffDepartments.lead })
       .from(t.staffDepartments)
       .where(and(eq(t.staffDepartments.personId, personId), eq(t.staffDepartments.department, dept)));
-    if (row?.lead) return 'Only the super admin changes a lead.';
+    if (row?.lead) return 'Only the super admin changes a leader.';
   }
   return null;
 }
@@ -198,7 +198,7 @@ const put = createRoute({
   tags: ['Staff'],
   summary: 'Put someone in a department',
   description:
-    'Adds them, or changes whether they lead it. The super admin, or a lead adding members to their own department (never a lead, never themselves).',
+    'Adds them, or changes whether they lead it. The super admin, or a leader adding members to their own department (never a leader, never themselves).',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -239,7 +239,7 @@ const remove = createRoute({
   path: '/staff/team/{personId}/{department}',
   tags: ['Staff'],
   summary: 'Take someone out of a department',
-  description: 'The super admin, or a lead taking a member (never a lead, never themselves) out of their own department.',
+  description: 'The super admin, or a leader taking a member (never a leader, never themselves) out of their own department.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: { params },

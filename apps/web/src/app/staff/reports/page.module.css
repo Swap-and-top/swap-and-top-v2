@@ -347,6 +347,19 @@
   overflow-wrap: anywhere;
 }
 
+/* A name that opens the person's record: the link blue, underlined. */
+.personLink {
+  color: var(--snt-control-active);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .personLink:hover {
+    color: var(--snt-accent-bold);
+  }
+}
+
 /* Two buttons side by side, on a phone too. */
 .actions {
   display: grid;

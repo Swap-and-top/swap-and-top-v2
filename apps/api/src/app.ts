@@ -19,7 +19,7 @@ import { revealRoutes } from './routes/reveals';
 import { statsRoutes } from './routes/stats';
 import { activityRoutes } from './routes/activity';
 import { appealRoutes } from './routes/appeals';
-import { peopleRoutes } from './routes/people';
+import { userRoutes } from './routes/users';
 import { reportRoutes } from './routes/reports';
 import { teamRoutes } from './routes/team';
 import { verificationRoutes } from './routes/verification';
@@ -71,7 +71,7 @@ app.route('/', notificationRoutes);
 app.route('/', verificationRoutes);
 app.route('/', teamRoutes);
 app.route('/', reportRoutes);
-app.route('/', peopleRoutes);
+app.route('/', userRoutes);
 app.route('/', appealRoutes);
 app.route('/', activityRoutes);
 
