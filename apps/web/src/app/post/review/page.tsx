@@ -24,6 +24,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   requireVerifiedPhone,
@@ -51,7 +52,8 @@ import {
   PhoneIcon,
   WhatsAppIcon,
 } from '@snt/ui/icons';
-import { apiAsViewer } from '@/lib/supabase';
+import { ApiError, apiSend } from '@/lib/query';
+import { stockKey } from '@/app/console/stock/useConsoleStock';
 import { LimitSheet } from '@/components/LimitSheet';
 import { usePostAs } from '@/components/PostAs';
 import { refreshListing } from '@/lib/refresh';
@@ -67,7 +69,6 @@ const CHANNELS: { value: ContactChannel; label: string; Icon: typeof PhoneIcon }
 
 export default function PostReviewPage() {
   /** Posting: the button shows the spinner until the feed opens. */
-  const [posting, setPosting] = useState(false);
   const router = useRouter();
   const draft = usePostDraftStore();
   const kind = draft.kind ?? 'swap';
@@ -82,14 +83,36 @@ export default function PostReviewPage() {
   /** At a listing limit: the API's message, shown in the limit sheet. */
   const [limit, setLimit] = useState<string | null>(null);
 
+  const queryClient = useQueryClient();
+
   /** Saves it (POST /api/listings), then opens it: it is live at once. */
-  async function post() {
+  const post = useMutation({
+    mutationFn: async () => {
+      const data = await apiSend<{ slug: string }>('/listings', 'POST', listingBody());
+      await refreshListing(data.slug);
+      return data;
+    },
+    onSuccess: (data) => {
+      // Theirs, and their store's stock when posted as it, read again.
+      void queryClient.invalidateQueries({ queryKey: ['me'] });
+      if (postAs) void queryClient.invalidateQueries({ queryKey: stockKey(postAs) });
+      draft.reset();
+      toast.success('Your listing is live');
+      startPageLoad();
+      router.push(`/listing/${data.slug}`);
+    },
+    onError: (error) => {
+      // At a limit, the limit sheet says why and what to do.
+      if (error instanceof ApiError && error.code === 'limit') setLimit(error.message);
+      else toast.error(error.message || 'We could not post it. Try again in a minute.');
+    },
+  });
+
+  /** What is sent: the draft, as the API takes a listing. */
+  function listingBody() {
     const amount = (typed: string) => Number(typed.replace(/[^0-9.]/g, '')) || undefined;
     const category = draft.category ?? 'other';
-    setPosting(true);
-    const { data, error, code } = await apiAsViewer<{ slug: string }>('/listings', {
-      method: 'POST',
-      body: {
+    return {
         kind,
         storeId: postAs ?? undefined,
         category,
@@ -114,19 +137,7 @@ export default function PostReviewPage() {
         contactSignedInOnly: draft.contactSignedInOnly,
         contactShownTo: draft.contactShownTo,
         contactToStores: draft.contactToStores,
-      },
-    });
-    if (error || !data) {
-      setPosting(false);
-      if (code === 'limit' && error) setLimit(error);
-      else toast.error(error ?? 'We could not post it. Try again in a minute.');
-      return;
-    }
-    await refreshListing(data.slug);
-    draft.reset();
-    toast.success('Your listing is live');
-    startPageLoad();
-    router.push(`/listing/${data.slug}`);
+    };
   }
 
   return (
@@ -279,14 +290,15 @@ export default function PostReviewPage() {
           <Button
             size="lg"
             block
-            loading={posting}
+            // Held on until the listing opens, so it cannot be posted twice.
+            loading={post.isPending || post.isSuccess}
             onClick={() =>
               requireVerifiedPhone(
                 {
                   signIn: 'Sign in to post a listing.',
                   phone: 'Verify your phone number to post listings.',
                 },
-                () => void post(),
+                () => post.mutate(),
               )
             }
           >

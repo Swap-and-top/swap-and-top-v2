@@ -36,6 +36,7 @@
  */
 
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   GUEST_DAILY_REVEALS,
@@ -118,6 +119,14 @@ export function RevealAction({
   /** Anything on this listing revealed already: the checks are passed. */
   const seenSeller = shown.length > 0;
 
+  /** Records the reveal and brings back the seller's details, as a
+      mutation. A daily limit or the seller's own rules come back as an
+      answer, not a failure. */
+  const record = useMutation({
+    mutationFn: async (way: ContactWay) =>
+      storeId ? { refused: undefined, ...(await revealStoreContact(storeId)) } : recordReveal(listingId, way),
+  });
+
   /**
    * Reveals the seller's details — through the sign-in sheet first when the
    * seller asks for that or the guest's daily limit is used. It only
@@ -127,9 +136,7 @@ export function RevealAction({
     const go = async () => {
       const first = !useRevealStore.getState().isRevealed(listingId);
       // Recorded first: the API holds the daily limit.
-      const { limited, refused, contact } = storeId
-        ? { refused: undefined, ...(await revealStoreContact(storeId)) }
-        : await recordReveal(listingId, way);
+      const { limited, refused, contact } = await record.mutateAsync(way);
       if (limited) {
         if (useSessionStore.getState().signedIn) toast.error(limited);
         else requireSignIn(limited, () => void go());

@@ -20,6 +20,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   CATEGORY_LABELS,
@@ -49,8 +50,8 @@ import {
 import { CloseIcon, PlusIcon } from '@snt/ui/icons';
 import { SponsorBanner } from '@/components/sponsor/SponsorBanner';
 import { refreshListing } from '@/lib/refresh';
-import { apiAsViewer } from '@/lib/supabase';
-import { useConsoleStock } from './useConsoleStock';
+import { apiSend } from '@/lib/query';
+import { stockKey, useConsoleStock } from './useConsoleStock';
 import styles from './StockForm.module.css';
 
 const CATEGORIES: Category[] = [
@@ -166,12 +167,11 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
     });
   }
 
-  /** Which button is saving, so it shows the spinner until Stock opens. */
-  const [saving, setSaving] = useState<'draft' | 'listed' | null>(null);
+  const queryClient = useQueryClient();
 
-  async function save(draft: boolean) {
-    setSaving(draft ? 'draft' : 'listed');
-    const fields = {
+  /** What the form holds, as the API takes it. */
+  function formItem() {
+    return {
       title: title.trim(),
       category,
       condition,
@@ -182,76 +182,78 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
       stockCount: dollars(quantity),
       acceptsSwaps,
     };
-    kept.current = true;
+  }
 
-    /** Says what went wrong and lets them try again. */
-    const fail = (error?: string) => {
-      setSaving(null);
-      toast.error(error ?? 'We could not save it. Try again in a minute.');
-    };
-
-    if (editing) {
-      // A draft with a price is listed when they choose to list it.
-      const publish = isDraft && !draft;
-      const { data, error } = await apiAsViewer<{ slug: string; status: string }>(
-        `/listings/${encodeURIComponent(editing.id)}`,
-        { method: 'PATCH', body: { ...fields, publish } },
-      );
-      if (error || !data) return fail(error);
-      // A new status chosen on the form, saved after the changes.
-      let status = data.status;
-      if (listedStatus && listedStatus !== editing.status && !isDraft) {
-        const changed = await apiAsViewer<{ status: string }>(
-          `/listings/${encodeURIComponent(editing.id)}/status`,
-          { method: 'PATCH', body: { status: listedStatus } },
+  /** Saves the item (as a draft, or listed), then opens Stock. Resolves with
+      what to say once it is saved. */
+  const saveItem = useMutation({
+    mutationFn: async (draft: boolean): Promise<string> => {
+      const item = formItem();
+      if (editing) {
+        // A draft with a price is listed when they choose to list it.
+        const publish = isDraft && !draft;
+        const data = await apiSend<{ slug: string; status: string }>(
+          `/listings/${encodeURIComponent(editing.id)}`,
+          'PATCH',
+          { ...item, publish },
         );
-        if (changed.error) return fail(changed.error);
-        status = listedStatus;
-      }
-      setStatus(editing.id, status as SaleListing['status']);
-      await refreshListing(data.slug);
-      toast.success(
-        isDraft && status === 'live'
-          ? `${fields.title} is live in your stock.`
+        // A new status chosen on the form, saved after the changes.
+        let status = data.status;
+        if (listedStatus && listedStatus !== editing.status && !isDraft) {
+          await apiSend(`/listings/${encodeURIComponent(editing.id)}/status`, 'PATCH', {
+            status: listedStatus,
+          });
+          status = listedStatus;
+        }
+        setStatus(editing.id, status as SaleListing['status']);
+        await refreshListing(data.slug);
+        return isDraft && status === 'live'
+          ? `${item.title} is live in your stock.`
           : status === 'draft'
-            ? `${fields.title} is saved as a draft.`
+            ? `${item.title} is saved as a draft.`
             : status !== editing.status
-              ? `Changes saved, ${fields.title} is ${STATUS_SAVED[status as ListedStatus]}.`
-              : 'Changes saved.',
-      );
-    } else {
-      const { data, error } = await apiAsViewer<{ slug: string }>('/listings', {
-        method: 'POST',
-        body: {
-          kind: 'sale',
-          storeId: store.id,
-          category: fields.category,
-          haveTitle: fields.title,
-          condition: fields.condition,
-          specs: fields.specs,
-          price: fields.price,
-          stockCount: fields.stockCount,
-          acceptsSwaps: fields.acceptsSwaps,
-          draft,
-          // A store's stock is reached as the store is; its own contact
-          // ways come later.
-          contactChannels: ['whatsapp', 'call'],
-          allowStoreOffers: true,
-          contactSignedInOnly: false,
-          contactShownTo: 'everyone',
-          contactToStores: false,
-        },
+              ? `Changes saved, ${item.title} is ${STATUS_SAVED[status as ListedStatus]}.`
+              : 'Changes saved.';
+      }
+      const data = await apiSend<{ slug: string }>('/listings', 'POST', {
+        kind: 'sale',
+        storeId: store.id,
+        category: item.category,
+        haveTitle: item.title,
+        condition: item.condition,
+        specs: item.specs,
+        price: item.price,
+        stockCount: item.stockCount,
+        acceptsSwaps: item.acceptsSwaps,
+        draft,
+        // A store's stock is reached as the store is; its own contact
+        // ways come later.
+        contactChannels: ['whatsapp', 'call'],
+        allowStoreOffers: true,
+        contactSignedInOnly: false,
+        contactShownTo: 'everyone',
+        contactToStores: false,
       });
-      if (error || !data) return fail(error);
       await refreshListing(data.slug);
-      toast.success(
-        draft
-          ? `${fields.title} is saved as a draft.`
-          : `${fields.title} is live in your stock.`,
-      );
-    }
-    startPageLoad();
-    router.push('/console/stock');
+      return draft ? `${item.title} is saved as a draft.` : `${item.title} is live in your stock.`;
+    },
+    onSuccess: (message) => {
+      // Stock shows it at once, read again rather than from before.
+      void queryClient.invalidateQueries({ queryKey: stockKey(store.id) });
+      toast.success(message);
+      startPageLoad();
+      router.push('/console/stock');
+    },
+    onError: (error) => toast.error(error.message || 'We could not save it. Try again in a minute.'),
+  });
+
+  /** Which button is saving, so it shows the spinner until Stock opens. */
+  const saving: 'draft' | 'listed' | null =
+    saveItem.isPending || saveItem.isSuccess ? (saveItem.variables ? 'draft' : 'listed') : null;
+
+  function save(draft: boolean) {
+    kept.current = true;
+    saveItem.mutate(draft);
   }
 
   const heading = !editing

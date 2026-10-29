@@ -9,6 +9,7 @@
  */
 
 import { useId, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   LISTING_REPORT_REASONS,
@@ -18,7 +19,7 @@ import {
   type ReportReason,
 } from '@snt/core';
 import { Button, Dropdown, Sheet, Stack } from '@snt/ui';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiSend } from '@/lib/query';
 import styles from './ReportSheet.module.css';
 
 export function ReportSheet({
@@ -38,23 +39,17 @@ export function ReportSheet({
   const reasons = listingId ? LISTING_REPORT_REASONS : PERSON_REPORT_REASONS;
   const [reason, setReason] = useState<ReportReason>(reasons[0]!);
   const [details, setDetails] = useState('');
-  const [busy, setBusy] = useState(false);
   const reasonLabel = useId();
 
-  async function send() {
-    setBusy(true);
-    const { error } = await apiAsViewer('/reports', {
-      method: 'POST',
-      body: { listingId, personId, reason, details: details.trim() || undefined },
-    });
-    setBusy(false);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    toast.success('Report sent. Our team will look at it.');
-    onClose();
-  }
+  const send = useMutation({
+    mutationFn: () =>
+      apiSend('/reports', 'POST', { listingId, personId, reason, details: details.trim() || undefined }),
+    onSuccess: () => {
+      toast.success('Report sent. Our team will look at it.');
+      onClose();
+    },
+    onError: (error) => toast.error(error.message || 'We could not send it. Try again in a minute.'),
+  });
 
   return (
     <Sheet narrow title={listingId ? 'Report this listing' : `Report ${name}`} onClose={onClose}>
@@ -84,7 +79,7 @@ export function ReportSheet({
             onChange={(event) => setDetails(event.target.value)}
           />
         </label>
-        <Button size="lg" block loading={busy} onClick={() => void send()}>
+        <Button size="lg" block loading={send.isPending} onClick={() => send.mutate()}>
           Send report
         </Button>
         <Button variant="secondary" size="lg" block onClick={onClose}>

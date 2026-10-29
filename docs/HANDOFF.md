@@ -27,27 +27,24 @@ CLAUDE.md, "Secrets stay put").
 
 **What comes next, in Hillary's order (do them in this order):**
 
-1. **Button actions onto TanStack Query mutations.** Loading is all on
-   TanStack Query (see item 8, "TanStack Query for loading data"); these
-   still call `apiAsViewer` straight from a tap, and should become
-   `useMutation` with `apiSend` (`apps/web/src/lib/query.tsx`), with
-   their busy state from `isPending` and the cache updated or refreshed
-   after:
-   - posting a listing: `app/post/review/page.tsx`;
-   - the Store console's Add stock form and Bulk import:
-     `app/console/stock/StockForm.tsx`, `app/console/stock/import/page.tsx`
-     (refresh `stockKey(storeId)` after);
-   - your name: `components/AskName.tsx`;
-   - verify phone: `components/VerifyPhone.tsx`;
-   - the Report sheet: `components/ReportSheet.tsx`;
-   - owner tools on a listing: `components/listing/OwnerTools.tsx` and
-     `lib/listingStatus.ts` (refresh `myListingsKey` and `stockKey`);
-   - offers, deal checks, saving a listing, notifications read, boosts:
-     `lib/accountData.ts` (the `connect*Api` calls the Zustand stores in
-     `@snt/core` make). Most care here: the stores keep their optimistic
-     changes, so keep them as the source the screens read and make the
-     calls mutations under them, then refresh
-     `[...viewerKey(id), 'account']`.
+1. **Done 2026-10-29: button actions on TanStack Query mutations.** No
+   tap calls the API directly any more (the only `apiAsViewer` left is
+   `loadAccountData`, which runs inside the account query). Each is a
+   `useMutation` with `apiSend` (or `publicSend` for sign up and the email
+   code), its busy state from `isPending` (held on with `isSuccess` where
+   the page moves on, so it cannot be sent twice), and the cache refreshed
+   after: posting (`['me']` and the store's `stockKey`), Add stock and Bulk
+   import (`stockKey`), your name and verify phone (`setViewerData` in
+   `lib/viewer.ts`), the Report sheet, Show contact (`RevealAction`),
+   owner tools (`useSaveStatus` in `lib/listingStatus.ts`, shared with
+   Stock: changes at once, put back if refused; moving to a store too).
+   Offers, deal checks, saving, notifications read and boosts stay in the
+   `@snt/core` stores (which show the change at once), and their calls in
+   `lib/accountData.ts` run through `runMutation` and then
+   `refreshAccount` (`lib/query.tsx`), which reads the account query
+   again. Boosts stopped here stay marked stopped across that refresh.
+   Tested in the browser as Tarisai: post, pause, relist, delete, save and
+   unsave (the account data read again after), report.
 2. **Hillary reviews how each Staff console page looks**, as was done
    for the Activity log (which now matches the Store console's Stock
    page: toolbar, pale blue heading strip, small blue page buttons,

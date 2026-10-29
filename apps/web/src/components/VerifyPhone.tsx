@@ -15,6 +15,7 @@
  */
 
 import { useState, type FormEvent } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   usePhonePromptStore,
@@ -22,7 +23,9 @@ import {
   type Viewer,
 } from '@snt/core';
 import { Button, Field, Sheet, Stack, useCloseSheet } from '@snt/ui';
-import { apiAsViewer, toPhone } from '@/lib/supabase';
+import { apiSend } from '@/lib/query';
+import { toPhone } from '@/lib/supabase';
+import { setViewerData } from '@/lib/viewer';
 import styles from './VerifyPhone.module.css';
 
 /** The mock code, until real SMS is set up. */
@@ -39,9 +42,20 @@ export function PhoneForm({ onDone }: { onDone?: () => void }) {
   /** The number a code went to; the code step shows once it is set. */
   const [phone, setPhone] = useState<string | null>(null);
   const [code, setCode] = useState('');
-  const [busy, setBusy] = useState(false);
+  const queryClient = useQueryClient();
 
-  async function submit(event: FormEvent) {
+  const verify = useMutation({
+    mutationFn: (to: string) => apiSend<Viewer>('/me/phone', 'POST', { phone: to, code: code.trim() }),
+    onSuccess: (viewer) => {
+      useSessionStore.setState({ viewer });
+      setViewerData(queryClient, viewer);
+      toast.success('Phone number verified');
+      onDone?.();
+    },
+    onError: (error) => toast.error(error.message || 'We could not verify it. Try again in a minute.'),
+  });
+
+  function submit(event: FormEvent) {
     event.preventDefault();
     if (!phone) {
       const to = toPhone(typed);
@@ -53,19 +67,7 @@ export function PhoneForm({ onDone }: { onDone?: () => void }) {
       setPhone(to);
       return;
     }
-    setBusy(true);
-    const { data, error } = await apiAsViewer<Viewer>('/me/phone', {
-      method: 'POST',
-      body: { phone, code: code.trim() },
-    });
-    setBusy(false);
-    if (error || !data) {
-      toast.error(error ?? 'We could not verify it. Try again in a minute.');
-      return;
-    }
-    useSessionStore.setState({ viewer: data });
-    toast.success('Phone number verified');
-    onDone?.();
+    verify.mutate(phone);
   }
 
   return (
@@ -90,7 +92,7 @@ export function PhoneForm({ onDone }: { onDone?: () => void }) {
             <p className={styles.note}>
               While SMS is being set up, no SMS is sent: the code is {TEST_CODE}.
             </p>
-            <Button type="submit" size="lg" block loading={busy} disabled={code.length < 6}>
+            <Button type="submit" size="lg" block loading={verify.isPending} disabled={code.length < 6}>
               Verify phone number
             </Button>
             <Button

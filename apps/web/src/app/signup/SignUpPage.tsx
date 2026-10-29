@@ -22,9 +22,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useState, type FormEvent } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { DEFAULT_TOWN, TOWNS, type Town } from '@snt/core';
 import { Button, Dropdown, Spinner, StepBar, startPageLoad, type Step } from '@snt/ui';
+import { publicSend } from '@/lib/query';
 import { AuthLayout } from '../signin/AuthLayout';
 import { VerifyEmailStep } from '../signin/VerifyEmail';
 import { EyeClosed, EyeOpen } from '../signin/SignInPage';
@@ -47,7 +49,20 @@ export function SignUpPage({ next }: { next: string }) {
   const [password, setPassword] = useState('');
   const [again, setAgain] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [busy, setBusy] = useState(false);
+  /** Makes the account (POST /api/auth/signup), then on to the code. */
+  const signUp = useMutation({
+    mutationFn: () =>
+      publicSend('/auth/signup', {
+        firstName: firstName.trim(),
+        surname: surname.trim(),
+        email: email.trim(),
+        password,
+        location: `${area.trim()}, ${town}`,
+      }),
+    onSuccess: () => setStep(3),
+    onError: (error) => toast.error(error.message || 'We could not make the account. Try again in a minute.'),
+  });
+  const busy = signUp.isPending;
 
   const detailsReady =
     firstName.trim() !== '' && surname.trim() !== '' && looksLikeEmail(email.trim());
@@ -64,7 +79,7 @@ export function SignUpPage({ next }: { next: string }) {
     setStep(2);
   }
 
-  async function createAccount() {
+  function createAccount() {
     if (!area.trim()) {
       toast.error('Enter your neighbourhood.');
       return;
@@ -77,25 +92,7 @@ export function SignUpPage({ next }: { next: string }) {
       toast.error('The two passwords do not match.');
       return;
     }
-    setBusy(true);
-    const response = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        firstName: firstName.trim(),
-        surname: surname.trim(),
-        email: email.trim(),
-        password,
-        location: `${area.trim()}, ${town}`,
-      }),
-    }).catch(() => null);
-    setBusy(false);
-    if (!response?.ok) {
-      const body = (await response?.json().catch(() => ({}))) as { error?: string } | undefined;
-      toast.error(body?.error ?? 'We could not make the account. Try again in a minute.');
-      return;
-    }
-    setStep(3);
+    signUp.mutate();
   }
 
   function finish() {
@@ -107,7 +104,7 @@ export function SignUpPage({ next }: { next: string }) {
   function submit(event: FormEvent) {
     event.preventDefault();
     if (step === 1) toStepTwo();
-    else if (step === 2) void createAccount();
+    else if (step === 2) createAccount();
   }
 
   return (

@@ -13,6 +13,7 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   CATEGORY_LABELS,
@@ -30,8 +31,8 @@ import {
 } from '@snt/ui';
 import { DownloadIcon, UploadIcon } from '@snt/ui/icons';
 import { refreshStorePass } from '@/lib/refresh';
-import { apiAsViewer } from '@/lib/supabase';
-import { useConsoleStock } from '../useConsoleStock';
+import { apiSend } from '@/lib/query';
+import { stockKey, useConsoleStock } from '../useConsoleStock';
 import { readStockList, TEMPLATE, type ImportRow } from './readStockList';
 import styles from './page.module.css';
 
@@ -100,15 +101,15 @@ export default function BulkImportPage() {
   const drafts = coming.length - live;
   const skipped = (rows?.length ?? 0) - coming.length;
 
-  const [importing, setImporting] = useState(false);
+  const queryClient = useQueryClient();
 
-  async function importRows() {
-    setImporting(true);
-    const { error } = await apiAsViewer<{ live: number; drafts: number }>(
-      `/stores/${encodeURIComponent(store.id)}/stock/import`,
-      {
-        method: 'POST',
-        body: {
+  /** Adds the whole list as the store, then opens Stock. */
+  const importList = useMutation({
+    mutationFn: async () => {
+      await apiSend<{ live: number; drafts: number }>(
+        `/stores/${encodeURIComponent(store.id)}/stock/import`,
+        'POST',
+        {
           rows: coming.map(({ stock: row }) => ({
             title: row.title,
             category: row.category,
@@ -118,21 +119,18 @@ export default function BulkImportPage() {
             specs: row.specs,
           })),
         },
-      },
-    );
-    if (error) {
-      setImporting(false);
-      toast.error(error);
-      return;
-    }
-    // The feed and the store's page show the new stock at once.
-    await refreshStorePass(store.slug);
-    toast.success(
-      `${coming.length} ${coming.length === 1 ? 'item' : 'items'} added to your stock.`,
-    );
-    startPageLoad();
-    router.push('/console/stock');
-  }
+      );
+      // The feed and the store's page show the new stock at once.
+      await refreshStorePass(store.slug);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: stockKey(store.id) });
+      toast.success(`${coming.length} ${coming.length === 1 ? 'item' : 'items'} added to your stock.`);
+      startPageLoad();
+      router.push('/console/stock');
+    },
+    onError: (error) => toast.error(error.message || 'We could not import it. Try again in a minute.'),
+  });
 
   return (
     <ConsoleShell
@@ -291,8 +289,9 @@ export default function BulkImportPage() {
               size="lg"
               block
               disabled={coming.length === 0}
-              loading={importing}
-              onClick={() => void importRows()}
+              // Held on until Stock opens, so it cannot be imported twice.
+              loading={importList.isPending || importList.isSuccess}
+              onClick={() => importList.mutate()}
             >
               {coming.length === 0
                 ? 'Nothing to import'

@@ -23,69 +23,61 @@ import {
   type Offer,
   type Sponsorship,
 } from '@snt/core';
+import { apiSend, refreshAccount, runMutation } from './query';
 import { apiAsViewer } from './supabase';
 
+/**
+ * The shared stores' server calls. Each store shows its change at once and
+ * puts it back if the call fails; the call itself is a TanStack Query
+ * mutation (`runMutation`), and once saved what is theirs is read again
+ * (`refreshAccount`), so every screen agrees with the server.
+ */
+const saved = <T>(call: () => Promise<T>): Promise<T> =>
+  runMutation(call).then((result) => {
+    refreshAccount();
+    return result;
+  });
+
 connectOfferApi({
-  async send(draft) {
-    const { data, error } = await apiAsViewer<Offer>('/offers', { method: 'POST', body: draft });
-    if (error || !data) throw new Error(error ?? 'We could not send it.');
-    return data;
-  },
-  async change(offerId, state) {
-    const { data, error } = await apiAsViewer<Offer>(`/offers/${encodeURIComponent(offerId)}`, {
-      method: 'PATCH',
-      body: { state },
-    });
-    if (error) throw new Error(error);
-    return data ?? undefined;
-  },
+  send: (draft) => saved(() => apiSend<Offer>('/offers', 'POST', draft)),
+  change: (offerId, state) =>
+    saved(() => apiSend<Offer>(`/offers/${encodeURIComponent(offerId)}`, 'PATCH', { state })),
 });
 
 connectDealApi({
-  async answer(dealId, answer) {
-    const { data, error } = await apiAsViewer<{ deal: DealConfirmation; confirmedDeals: number }>(
-      `/deals/${encodeURIComponent(dealId)}`,
-      { method: 'PATCH', body: { answer } },
-    );
-    if (error || !data) throw new Error(error ?? 'We could not save it.');
-    return data;
-  },
+  answer: (dealId, answer) =>
+    saved(() =>
+      apiSend<{ deal: DealConfirmation; confirmedDeals: number }>(
+        `/deals/${encodeURIComponent(dealId)}`,
+        'PATCH',
+        { answer },
+      ),
+    ),
 });
 
-connectSavedApi(async (listingId, saved) => {
-  const { error } = await apiAsViewer(`/me/saved/${encodeURIComponent(listingId)}`, {
-    method: saved ? 'PUT' : 'DELETE',
-  });
-  if (error) throw new Error(error);
-});
+connectSavedApi((listingId, keep) =>
+  saved(() => apiSend(`/me/saved/${encodeURIComponent(listingId)}`, keep ? 'PUT' : 'DELETE')).then(
+    () => undefined,
+  ),
+);
 
-connectNotificationApi(async (ids) => {
-  await apiAsViewer('/me/notifications/read', { method: 'POST', body: { ids } });
-});
+connectNotificationApi((ids) =>
+  saved(() => apiSend('/me/notifications/read', 'POST', { ids })).then(() => undefined),
+);
 
+// Boosts come back from the API as saved, so the store keeps them as they
+// are; their listings' Sponsored labels follow the store.
 connectSponsorApi({
-  async buy(listingId, dailyBudget, days) {
-    const { data, error } = await apiAsViewer<Sponsorship>(
-      `/listings/${encodeURIComponent(listingId)}/boosts`,
-      { method: 'POST', body: { dailyBudget, days } },
-    );
-    if (error || !data) throw new Error(error ?? 'We could not boost it.');
-    return data;
-  },
-  async stop(listingId) {
-    const { error } = await apiAsViewer(`/listings/${encodeURIComponent(listingId)}/boosts/stop`, {
-      method: 'POST',
-    });
-    if (error) throw new Error(error);
-  },
-  async restore(listingId) {
-    const { data, error } = await apiAsViewer<Sponsorship>(
-      `/listings/${encodeURIComponent(listingId)}/boosts/restore`,
-      { method: 'POST' },
-    );
-    if (error || !data) throw new Error(error ?? 'We could not put it back.');
-    return data;
-  },
+  buy: (listingId, dailyBudget, days) =>
+    saved(() =>
+      apiSend<Sponsorship>(`/listings/${encodeURIComponent(listingId)}/boosts`, 'POST', { dailyBudget, days }),
+    ),
+  stop: (listingId) =>
+    saved(() => apiSend(`/listings/${encodeURIComponent(listingId)}/boosts/stop`, 'POST')).then(
+      () => undefined,
+    ),
+  restore: (listingId) =>
+    saved(() => apiSend<Sponsorship>(`/listings/${encodeURIComponent(listingId)}/boosts/restore`, 'POST')),
 });
 
 export async function loadAccountData() {
@@ -98,7 +90,9 @@ export async function loadAccountData() {
     apiAsViewer<{ notifications: AppNotification[] }>('/me/notifications', { method: 'GET' }),
     apiAsViewer<{ boosts: Sponsorship[] }>('/me/boosts', { method: 'GET' }),
   ]);
-  if (boosts.data) useSponsorStore.setState({ sponsorships: boosts.data.boosts, stopped: [] });
+  // Boosts stopped here stay marked stopped (cleared on sign out), so their
+  // listings do not show Sponsored again from a page loaded before.
+  if (boosts.data) useSponsorStore.setState({ sponsorships: boosts.data.boosts });
   if (offers.data) useOfferStore.setState({ offers: offers.data.offers });
   if (saved.data) useSavedStore.setState({ ids: saved.data.ids });
   if (notifications.data) {

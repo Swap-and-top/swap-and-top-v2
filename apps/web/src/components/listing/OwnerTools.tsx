@@ -17,6 +17,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   contactAfterOffer,
@@ -27,9 +28,10 @@ import {
 } from '@snt/core';
 import { Button, Sheet, startPageLoad, useCloseSheet } from '@snt/ui';
 import { CheckIcon, PauseIcon, StoreIcon, TrashIcon } from '@snt/ui/icons';
-import { saveStatus } from '@/lib/listingStatus';
+import { useSaveStatus } from '@/lib/listingStatus';
 import { refreshListing, refreshStore } from '@/lib/refresh';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiSend } from '@/lib/query';
+import { stockKey } from '@/app/console/stock/useConsoleStock';
 import styles from './OwnerTools.module.css';
 
 /** One empty list, so a guest's stores are the same each time they are read. */
@@ -125,6 +127,7 @@ export function OwnerControls({ listing }: { listing: Listing }) {
   /** The sheet has moved on to the check before a delete. */
   const [deleting, setDeleting] = useState(false);
   const live = status === 'live';
+  const saveStatus = useSaveStatus();
 
   async function relist() {
     if (await saveStatus(listing, 'live')) toast.success('Live again, back in the feed.');
@@ -202,6 +205,8 @@ function ManageBody({
 }) {
   const router = useRouter();
   const close = useCloseSheet();
+  const saveStatus = useSaveStatus();
+  const queryClient = useQueryClient();
   const done = DONE[listing.type];
   /** The stores they own, which a personal listing can move into. */
   const ownStores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES).filter(
@@ -209,21 +214,23 @@ function ManageBody({
   );
 
   /** Into a store (or back, with null); it keeps its offers and history. */
-  async function moveTo(storeId: string | null): Promise<boolean> {
-    const { error } = await apiAsViewer(`/listings/${encodeURIComponent(listing.id)}/store`, {
-      method: 'PATCH',
-      body: { storeId },
-    });
-    if (error) {
-      toast.error(error);
-      return false;
-    }
-    await refreshListing(listing.slug);
-    const store = ownStores.find((one) => one.id === (storeId ?? listing.storeId));
-    if (store) await refreshStore(store.slug);
-    router.refresh();
-    return true;
-  }
+  const move = useMutation({
+    mutationFn: async (storeId: string | null) => {
+      await apiSend(`/listings/${encodeURIComponent(listing.id)}/store`, 'PATCH', { storeId });
+      await refreshListing(listing.slug);
+      const store = ownStores.find((one) => one.id === (storeId ?? listing.storeId));
+      if (store) await refreshStore(store.slug);
+    },
+    onSuccess: (_data, storeId) => {
+      // Their listings, and the stock of the store it left or joined.
+      void queryClient.invalidateQueries({ queryKey: ['me'] });
+      const store = storeId ?? listing.storeId;
+      if (store) void queryClient.invalidateQueries({ queryKey: stockKey(store) });
+      router.refresh();
+    },
+    onError: (error) => toast.error(error.message || 'We could not move it. Try again in a minute.'),
+  });
+  const moveTo = (storeId: string | null) => move.mutateAsync(storeId).then(() => true, () => false);
 
   async function moveInto(store: { id: string; name: string }) {
     close();

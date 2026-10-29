@@ -15,7 +15,7 @@
  * `meta: { onError }` is called once a query has given up.
  */
 
-import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MutationObserver, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { Button, Panel, Stack } from '@snt/ui';
@@ -49,6 +49,20 @@ export async function publicGet<T>(path: string): Promise<T> {
     throw new ApiError(body?.error ?? 'Something went wrong. Try again in a minute.', response?.status);
   }
   return body;
+}
+
+/** For a mutation needing no sign in (signing up, the email code). */
+export async function publicSend<T = unknown>(path: string, body: unknown): Promise<T> {
+  const response = await fetch(`/api${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }).catch(() => null);
+  const answer = (await response?.json().catch(() => undefined)) as (T & { error?: string }) | undefined;
+  if (!response?.ok) {
+    throw new ApiError(answer?.error ?? 'Something went wrong. Try again in a minute.', response?.status);
+  }
+  return answer as T;
 }
 
 /** For a mutation: the same, for a change. */
@@ -89,9 +103,14 @@ function newClient() {
   });
 }
 
+/** The app's one client, for changes made outside a page (`runMutation`). */
+let appClient: QueryClient | null = null;
+
 export function QueryProvider({ children }: { children: ReactNode }) {
-  // One client for the life of the page.
+  // One client for the life of the page. Kept for `runMutation` from the
+  // one React holds (in development it may make two and keep one).
   const [client] = useState(newClient);
+  appClient = client;
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
 
@@ -111,4 +130,23 @@ export function QueryProblem({ error, onRetry }: { error: unknown; onRetry: () =
       </Stack>
     </Panel>
   );
+}
+
+/**
+ * A change saved from outside a page, as a mutation of the app's client: the
+ * shared stores in `@snt/core` (offers, deal checks, saved listings,
+ * notifications, boosts) keep showing their change at once, and save it
+ * through here (lib/accountData.ts). Before the client exists it simply runs.
+ */
+export function runMutation<T>(mutationFn: () => Promise<T>): Promise<T> {
+  if (!appClient) return mutationFn();
+  return new MutationObserver<T, Error, void>(appClient, { mutationFn }).mutate();
+}
+
+/** Reads what is theirs again (the account query SessionRestore runs), once
+    a change to it is saved. */
+export function refreshAccount(): void {
+  void appClient?.invalidateQueries({
+    predicate: (query) => query.queryKey[0] === 'viewer' && query.queryKey[2] === 'account',
+  });
 }

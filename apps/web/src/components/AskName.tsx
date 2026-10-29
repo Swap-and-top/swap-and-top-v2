@@ -8,10 +8,12 @@
  */
 
 import { useState, type FormEvent } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useSessionStore, type Viewer } from '@snt/core';
 import { Button, Field, Sheet, Stack, useCloseSheet } from '@snt/ui';
-import { apiAsViewer } from '@/lib/supabase';
+import { apiSend } from '@/lib/query';
+import { setViewerData } from '@/lib/viewer';
 import styles from './VerifyPhone.module.css';
 
 export function AskName() {
@@ -29,27 +31,28 @@ function NameForm() {
   const closeSheet = useCloseSheet();
   const [firstName, setFirstName] = useState('');
   const [surname, setSurname] = useState('');
-  const [busy, setBusy] = useState(false);
+  const queryClient = useQueryClient();
 
-  async function save(event: FormEvent) {
+  const saveName = useMutation({
+    mutationFn: () =>
+      apiSend<Viewer>('/me', 'PATCH', { firstName: firstName.trim(), surname: surname.trim() }),
+    onSuccess: (viewer) => {
+      // Who they are, as just saved: the session and its query both.
+      useSessionStore.setState({ viewer });
+      setViewerData(queryClient, viewer);
+      toast.success('Name saved');
+      closeSheet();
+    },
+    onError: (error) => toast.error(error.message || 'We could not save it. Try again in a minute.'),
+  });
+
+  function save(event: FormEvent) {
     event.preventDefault();
     if (!firstName.trim() || !surname.trim()) {
       toast.error('Enter your first name and surname.');
       return;
     }
-    setBusy(true);
-    const { data, error } = await apiAsViewer<Viewer>('/me', {
-      method: 'PATCH',
-      body: { firstName: firstName.trim(), surname: surname.trim() },
-    });
-    setBusy(false);
-    if (error || !data) {
-      toast.error(error ?? 'We could not save it. Try again in a minute.');
-      return;
-    }
-    useSessionStore.setState({ viewer: data });
-    toast.success('Name saved');
-    closeSheet();
+    saveName.mutate();
   }
 
   return (
@@ -73,7 +76,7 @@ function NameForm() {
           value={surname}
           onChange={(event) => setSurname(event.target.value)}
         />
-        <Button type="submit" size="lg" block loading={busy}>
+        <Button type="submit" size="lg" block loading={saveName.isPending}>
           Save
         </Button>
         <Button type="button" variant="secondary" size="lg" block onClick={closeSheet}>

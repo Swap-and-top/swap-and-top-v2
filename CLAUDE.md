@@ -25,10 +25,10 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   API refuses it everything else (`apps/api/src/app.ts`).
 - **All loading is on TanStack Query** (`apps/web/src/lib/query.tsx`;
   the rule is below under "Working with the backend").
+- **Every button action is a TanStack Query mutation** too (2026-10-29;
+  shared store calls go through `runMutation` in `lib/query.tsx`).
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): 1. move the button actions (posting, stock, owner tools,
-  report, verify phone, your name, offers, deals, saved, notifications,
-  boosts) onto TanStack Query mutations; 2. go through each Staff
+  stopped"): 2. go through each Staff
   console page with Hillary for how it looks, as was done for the
   Activity log, keeping it cohesive with the Store console; 3. a design
   pass on the Store console; 4. ask about the open safeguards; 5. Phase 6

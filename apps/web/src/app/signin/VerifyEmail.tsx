@@ -11,24 +11,16 @@
  */
 
 import { useState, type FormEvent } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Spinner } from '@snt/ui';
+import { publicSend } from '@/lib/query';
 import { supabase } from '@/lib/supabase';
 import styles from './SignInPage.module.css';
 
 /** The mock code, until real email is set up. */
 export const TEST_CODE = '123456';
 
-export async function verifyEmailCode(email: string, code: string): Promise<string | null> {
-  const response = await fetch('/api/auth/verify-email', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, code }),
-  });
-  if (response.ok) return null;
-  const body = (await response.json().catch(() => ({}))) as { error?: string };
-  return body.error ?? 'We could not verify it. Try again in a minute.';
-}
 
 export function VerifyEmailStep({
   email,
@@ -41,24 +33,23 @@ export function VerifyEmailStep({
   onDone: () => void;
 }) {
   const [code, setCode] = useState('');
-  const [busy, setBusy] = useState(false);
+  /** Verifies the code, then signs them in with the password just typed. */
+  const verifyCode = useMutation({
+    mutationFn: async () => {
+      await publicSend('/auth/verify-email', { email, code: code.trim() });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      // Verified, but the sign in did not take: they sign in themselves.
+      if (error) throw new Error('Your email is verified. Sign in to carry on.');
+    },
+    onSuccess: onDone,
+    onError: (error) => toast.error(error.message || 'We could not verify it. Try again in a minute.'),
+  });
+  // Held on until onDone has moved them on.
+  const busy = verifyCode.isPending || verifyCode.isSuccess;
 
-  async function verify(event?: FormEvent) {
+  function verify(event?: FormEvent) {
     event?.preventDefault();
-    setBusy(true);
-    const problem = await verifyEmailCode(email, code.trim());
-    if (problem) {
-      setBusy(false);
-      toast.error(problem);
-      return;
-    }
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setBusy(false);
-      toast.error('Your email is verified. Sign in to carry on.');
-      return;
-    }
-    onDone();
+    verifyCode.mutate();
   }
 
   return (
@@ -82,7 +73,7 @@ export function VerifyEmailStep({
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 event.preventDefault();
-                if (code.length === 6 && !busy) void verify();
+                if (code.length === 6 && !busy) verify();
               }
             }}
           />
@@ -96,7 +87,7 @@ export function VerifyEmailStep({
         className={styles.signIn}
         disabled={busy || code.length < 6}
         aria-busy={busy || undefined}
-        onClick={() => void verify()}
+        onClick={() => verify()}
       >
         {busy ? <Spinner size={20} label="Verifying" /> : 'Verify email'}
       </button>

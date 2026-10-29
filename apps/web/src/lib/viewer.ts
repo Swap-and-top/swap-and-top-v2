@@ -16,3 +16,9 @@ export const viewerKey = (authUserId: string | undefined) => ['viewer', authUser
 export async function refreshViewer(queryClient: QueryClient): Promise<void> {
   await queryClient.refetchQueries({ queryKey: ['viewer'], type: 'active' });
 }
+
+/** Puts who they are, as a change just saved them, in place of what was
+    loaded: the viewer query only, not the account data under its key. */
+export function setViewerData(queryClient: QueryClient, viewer: unknown): void {
+  queryClient.setQueriesData({ queryKey: ['viewer'], predicate: (query) => query.queryKey.length === 2 }, viewer);
+}

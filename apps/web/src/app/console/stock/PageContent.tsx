@@ -52,7 +52,7 @@ import {
 } from '@snt/ui/icons';
 import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
 import { useConsoleRole } from '@/lib/consoleRole';
-import { saveStatus } from '@/lib/listingStatus';
+import { useSaveStatus } from '@/lib/listingStatus';
 import { BoostedTab } from './BoostedTab';
 import { filterStock, filtersInUse } from './filterStock';
 import { StockFiltersSheet } from './StockFiltersSheet';
@@ -104,6 +104,8 @@ export default function ConsoleStockPage() {
       (error: Error) => toast.error(error.message),
     );
   }
+
+  const saveStatus = useSaveStatus();
 
   /**
    * Changes an item's status at once, says so, and offers to put it back
