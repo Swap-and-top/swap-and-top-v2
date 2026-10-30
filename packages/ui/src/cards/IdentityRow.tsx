@@ -26,7 +26,8 @@ export function PosterRow({
 }) {
   const meta = [
     replyLabel(user.replyHours),
-    `joined ${monthYear(user.joinedAt)}`,
+    // Left out when the date is not known (a lead's requester).
+    user.joinedAt ? `joined ${monthYear(user.joinedAt)}` : undefined,
     user.hasUpheldReports ? undefined : 'no reports',
   ]
     .filter(Boolean)

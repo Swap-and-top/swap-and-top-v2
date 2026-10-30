@@ -34,17 +34,19 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   (`apps/web/src/lib/query.tsx`; the rule is under "Working with the
   backend").
 - **Staff console review with Hillary, page by page:** done for the
-  Activity log, Reports, Users, Appeals and Verify stores (2026-10-30). They share one look,
+  Activity log, Reports, Users, Appeals, Verify stores, Team members,
+  the user's appeal page and the banned page (2026-10-30), and a design
+  pass on the Store console is done too. The Staff pages share one look,
   copied from the Store console's Stock page: a toolbar (search box and
   a filter pill), a count line, one white table card under a pale blue
   heading strip, pills for states, compact one line rows below a
   laptop, and the shared page buttons (`app/staff/Pager.tsx`). Keep the
   rest the same.
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): 1. carry on the review with Team, then the appeal page
-  and the banned page; 2. a design pass on the
-  Store console; 3. ask about the open safeguards; 4. Phase 6
-  (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
+  stopped"): 1. the open safeguards, put to Hillary on 2026-10-30 and
+  waiting on her choice (suggested before launch: a staff password as
+  well as the phone code, a sealed second super admin, data requests);
+  2. Phase 6 (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
   has the console's design and safeguards (section 9).
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
@@ -176,6 +178,12 @@ Show progress the way Hillary asked: a short one line status before each
 step, and a checklist of the steps (`- [x]` done, `- [ ]` to do) at the
 start of a job and in the final reply. Use a task list tool for it when
 the session has one.
+
+## Formatting
+
+There is no Prettier config: never run `prettier --write` (its defaults
+rewrite whole files in double quotes). Match the file by hand: single
+quotes, two spaces.
 
 ## Commit flow (only when asked)
 

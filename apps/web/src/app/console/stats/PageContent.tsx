@@ -46,6 +46,7 @@ import { MegaphoneIcon, WhatsAppIcon } from '@snt/ui/icons';
 import { SponsorSheet } from '@/components/sponsor/SponsorSheet';
 import { useConsoleRole } from '@/lib/consoleRole';
 import { apiGet } from '@/lib/query';
+import { StatsBones } from './loading';
 import styles from './page.module.css';
 
 const RANGES: TabItem<StatsRange>[] = [
@@ -178,7 +179,7 @@ export default function ConsoleStatsPage() {
           </section>
 
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Your best items</h2>
+            <h2 className={styles.cardTitle}>Your best listings</h2>
             <p className={styles.cardMeta}>
               Most reveals first, {SPAN_PLAIN[range]}
             </p>
@@ -238,7 +239,9 @@ export default function ConsoleStatsPage() {
             </div>
           </section>
         </>
-      ) : null}
+      ) : (
+        <StatsBones />
+      )}
 
       {/* What Promote was: the way to grow the numbers above. */}
       <h2 className={styles.section}>Grow these numbers</h2>

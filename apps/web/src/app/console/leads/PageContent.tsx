@@ -58,6 +58,7 @@ import { RevealAction } from '@/components/RevealAction';
 import { apiGet, apiSend } from '@/lib/query';
 import { RevealsTable } from './LeadTables';
 import { LeadTabs } from './LeadTabs';
+import { LeadsBones } from './loading';
 import styles from './page.module.css';
 
 /** A lead as the API gives it: the requester in brief, and whether the
@@ -219,6 +220,8 @@ export default function ConsoleLeadsPage() {
           store's own offers are on the Offers page, under Sent. */}
       {leadTab === 'reveals' ? (
         <RevealsTable reveals={reveals ?? []} />
+      ) : leads === null ? (
+        <LeadsBones />
       ) : (
         <>
           {/* Phone: a feed. */}
@@ -363,20 +366,20 @@ export default function ConsoleLeadsPage() {
                     <Field
                       label="Your swap price"
                       strong
-                      className={styles.composerPrice}
                       placeholder="e.g. $255"
                       value={offerPrice}
                       onChange={(event) => setOfferPrice(event.target.value)}
                     />
                     <Field
                       label="Message"
-                      className={styles.composerMessage}
                       placeholder="e.g. I have one in the store. Come and see it."
                       value={offerMessage}
                       onChange={(event) => setOfferMessage(event.target.value)}
                     />
                     <Button
                       size="md"
+                      block
+                      className={styles.composerSend}
                       loading={sending}
                       onClick={async () => {
                         if (await sendOffer(active, offerPrice, offerMessage)) {

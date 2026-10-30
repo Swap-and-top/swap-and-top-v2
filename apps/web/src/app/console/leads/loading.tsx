@@ -32,29 +32,11 @@ function LeadCardBones({ swap }: { swap: boolean }) {
   );
 }
 
-export default function Loading() {
+/** The feed on a phone, the list beside the open request on a laptop, in
+    bones; also shown by the page while its leads load. */
+export function LeadsBones() {
   return (
-    <ConsoleShell
-      store={currentStore}
-      title="Leads"
-      meta="People asking for what you sell, newest first"
-      newLeadCount={newLeadCount}
-      actions={
-        <>
-          <div className={styles.alerts}>
-            <Bone shape="pill" width={200} height={30} />
-          </div>
-          {/* The tabs' switch: its pale strip, a bar for each tab. */}
-          <div className={[styles.tabs, skeleton.tabs].join(' ')} aria-hidden>
-            {[0, 1, 2].map((i) => (
-              <span key={i} className={skeleton.tabBone}>
-                <Bone width="70%" height={14} />
-              </span>
-            ))}
-          </div>
-        </>
-      }
-    >
+    <>
       {/* Phone: a feed of lead cards. */}
       <div className={styles.feed} aria-busy aria-label="Loading leads">
         {[true, false, false].map((swap, i) => (
@@ -99,18 +81,18 @@ export default function Loading() {
           </div>
 
           <div className={styles.composer}>
-            <div className={styles.composerPrice}>
-              <Bone width={110} height={12} style={{ marginLeft: 20, marginBottom: 8 }} />
-              <Bone shape="pill" height={48} />
-            </div>
-            <div className={styles.composerMessage}>
-              <Bone width={80} height={12} style={{ marginLeft: 20, marginBottom: 8 }} />
-              <Bone shape="pill" height={48} />
-            </div>
-            <Bone shape="pill" width={130} height={44} />
+          <div>
+            <Bone width={110} height={12} style={{ marginLeft: 20, marginBottom: 8 }} />
+            <Bone shape="pill" height={48} />
           </div>
+          <div>
+            <Bone width={80} height={12} style={{ marginLeft: 20, marginBottom: 8 }} />
+            <Bone shape="pill" height={48} />
+          </div>
+          <Bone shape="pill" height={44} className={styles.composerSend} />
+        </div>
 
-          <div className={[styles.requester, skeleton.requester].join(' ')}>
+        <div className={[styles.requester, skeleton.requester].join(' ')}>
             <Bone shape="circle" width={36} height={36} />
             <div className={skeleton.lines}>
               <Bone width={180} height={14} />
@@ -120,6 +102,34 @@ export default function Loading() {
           </div>
         </div>
       </div>
+    </>
+  );
+}
+
+export default function Loading() {
+  return (
+    <ConsoleShell
+      store={currentStore}
+      title="Leads"
+      meta="People asking for what you sell, newest first"
+      newLeadCount={newLeadCount}
+      actions={
+        <>
+          <div className={styles.alerts}>
+            <Bone shape="pill" width={200} height={30} />
+          </div>
+          {/* The tabs' switch: its pale strip, a bar for each tab. */}
+          <div className={[styles.tabs, skeleton.tabs].join(' ')} aria-hidden>
+            {[0, 1, 2].map((i) => (
+              <span key={i} className={skeleton.tabBone}>
+                <Bone width="70%" height={14} />
+              </span>
+            ))}
+          </div>
+        </>
+      }
+    >
+      <LeadsBones />
     </ConsoleShell>
   );
 }

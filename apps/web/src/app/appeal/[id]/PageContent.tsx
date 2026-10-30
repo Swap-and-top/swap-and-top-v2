@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { REPORT_REASON_LABELS, useSessionStore, type ReportReason } from '@snt/core';
 import {
   AppHeader,
+  Badge,
   Bone,
   Button,
   ButtonLink,
@@ -26,6 +27,7 @@ import {
   ScreenBody,
   SignInGate,
   Stack,
+  type BadgeTone,
 } from '@snt/ui';
 import { ApiError, apiGet, apiSend, QueryProblem } from '@/lib/query';
 import styles from './page.module.css';
@@ -52,6 +54,24 @@ function decided(action: MyAction): string {
       return 'Your account was banned';
   }
 }
+
+/** What was decided, as a pill, in the tones the staff's Appeals page uses. */
+const KIND: Record<MyAction['kind'], { label: string; tone: BadgeTone }> = {
+  warning: { label: 'Warning', tone: 'warning' },
+  removal: { label: 'Listing removed', tone: 'warning' },
+  suspension: { label: 'Suspended', tone: 'danger' },
+  ban: { label: 'Banned', tone: 'dark' },
+};
+
+/** Where their appeal stands, as a pill. */
+const STATE: Record<NonNullable<MyAction['appeal']>['state'], { label: string; tone: BadgeTone }> = {
+  waiting: { label: 'Waiting', tone: 'accent' },
+  upheld: { label: 'Stands', tone: 'neutral' },
+  overturned: { label: 'Overturned', tone: 'success' },
+};
+
+/** Fewest characters an appeal may have, as the API asks. */
+const SHORTEST = 10;
 
 export default function AppealPage({
   id,
@@ -123,9 +143,13 @@ export default function AppealPage({
               // nothing moves when they arrive.
               <>
                 <Panel padded>
-                  <Stack gap={4}>
+                  <Stack gap={5}>
                     <Bone width={220} height={20} />
-                    <Bone width="45%" height={17} />
+                    {/* Date and Reason. */}
+                    <div className={styles.boneLines}>
+                      <Bone width={120} height={12} />
+                      <Bone width={200} height={12} />
+                    </div>
                   </Stack>
                 </Panel>
                 <Panel padded>
@@ -148,32 +172,41 @@ export default function AppealPage({
             ) : (
               <>
                 <Panel padded>
-                  <Stack gap={4}>
-                    <h2 className={styles.heading}>{decided(action)}</h2>
-                    <p className={styles.lead}>
-                      On {action.dateLabel}, for: {REPORT_REASON_LABELS[action.reason].toLowerCase()}.
-                      {action.reversed ? ' It has since been overturned.' : ''}
-                    </p>
+                  <Stack gap={5}>
+                    <div className={styles.headingRow}>
+                      <h2 className={styles.heading}>{decided(action)}</h2>
+                      <Badge tone={action.reversed ? 'success' : KIND[action.kind].tone}>
+                        {action.reversed ? 'Overturned' : KIND[action.kind].label}
+                      </Badge>
+                    </div>
+                    <dl className={styles.facts}>
+                      <dt>Date</dt>
+                      <dd>{action.dateLabel}</dd>
+                      <dt>Reason</dt>
+                      <dd>{REPORT_REASON_LABELS[action.reason]}</dd>
+                    </dl>
                   </Stack>
                 </Panel>
 
                 {action.appeal ? (
                   <Panel padded>
                     <Stack gap={4}>
-                      <h2 className={styles.heading}>
-                        {action.appeal.state === 'waiting'
-                          ? 'Your appeal is with our team'
-                          : action.appeal.state === 'overturned'
-                            ? 'Your appeal was successful'
-                            : 'The decision stands'}
-                      </h2>
+                      <div className={styles.headingRow}>
+                        <h2 className={styles.heading}>
+                          {action.appeal.state === 'waiting'
+                            ? 'Your appeal is with our team'
+                            : action.appeal.state === 'overturned'
+                              ? 'Your appeal was successful'
+                              : 'The decision stands'}
+                        </h2>
+                        <Badge tone={STATE[action.appeal.state].tone}>{STATE[action.appeal.state].label}</Badge>
+                      </div>
                       {action.appeal.reason ? <p className={styles.lead}>{action.appeal.reason}</p> : null}
                       <p className={styles.quote}>{action.appeal.statement}</p>
                       {action.appeal.state === 'waiting' ? (
                         <p className={styles.lead}>
-                          We have received your appeal. Someone on our team who did not make this decision will
-                          check it within 24 to 48 hours. Whether the decision is overturned or stands, we will
-                          tell you here and by email, so check back here and in your email after that.
+                          Someone on our team who did not make this decision will check it within 24 to 48
+                          hours. We will tell you here and by email.
                         </p>
                       ) : null}
                     </Stack>
@@ -195,8 +228,18 @@ export default function AppealPage({
                           value={statement}
                           onChange={(event) => setStatement(event.target.value)}
                         />
+                        {/* Why Send appeal is still off, until it is not. */}
+                        {statement.trim().length < SHORTEST ? (
+                          <span className={styles.hint}>At least {SHORTEST} characters</span>
+                        ) : null}
                       </label>
-                      <Button size="lg" block loading={send.isPending} disabled={statement.trim().length < 10} onClick={() => send.mutate()}>
+                      <Button
+                        size="lg"
+                        block
+                        loading={send.isPending}
+                        disabled={statement.trim().length < SHORTEST}
+                        onClick={() => send.mutate()}
+                      >
                         Send appeal
                       </Button>
                     </Stack>

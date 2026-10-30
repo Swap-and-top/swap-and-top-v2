@@ -15,7 +15,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { currentStore, newLeadCount, type Listing, type Store } from '@snt/core';
 import { ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
-import { StorefrontBody } from '@/components/Storefront';
+import { StorefrontBody, StorefrontBodySkeleton } from '@/components/Storefront';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
 import { useConsoleRole } from '@/lib/consoleRole';
 import { publicGet } from '@/lib/query';
@@ -60,7 +60,11 @@ export default function ConsoleStorePage() {
       }
     >
       <div className={styles.store}>
-        {page ? <StorefrontBody store={page.store} listings={page.listings} /> : null}
+        {page ? (
+          <StorefrontBody own store={page.store} listings={page.listings} />
+        ) : (
+          <StorefrontBodySkeleton own />
+        )}
         <StaffPanel storeId={target.id} />
       </div>
     </ConsoleShell>

@@ -23,7 +23,7 @@ export default function Loading() {
       }
     >
       <div className={styles.store}>
-        <StorefrontBodySkeleton />
+        <StorefrontBodySkeleton own />
       </div>
     </ConsoleShell>
   );

@@ -35,6 +35,7 @@ import {
 import { ConsoleShell, Tabs, useConsoleTarget, type TabItem } from '@snt/ui';
 import { OfferGroups, receivedGroups } from '@/components/offers/OfferGroups';
 import { apiGet } from '@/lib/query';
+import { OffersBones } from './loading';
 import styles from './page.module.css';
 
 const TABS: TabItem<ConsoleOffersTab>[] = [
@@ -106,7 +107,9 @@ export default function ConsoleOffersPage() {
       }
     >
       <div className={styles.column}>
-        {stock === null ? null : tab === 'sent' ? (
+        {stock === null ? (
+          <OffersBones />
+        ) : tab === 'sent' ? (
           <OfferGroups
             groups={sent}
             view="made"

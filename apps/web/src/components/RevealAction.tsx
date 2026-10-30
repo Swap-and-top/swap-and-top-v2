@@ -136,14 +136,14 @@ export function RevealAction({
     const go = async () => {
       const first = !useRevealStore.getState().isRevealed(listingId);
       // Recorded first: the API holds the daily limit.
-      const { limited, refused, contact } = await record.mutateAsync(way);
+      const { limited, refused, failed, contact } = await record.mutateAsync(way);
       if (limited) {
         if (useSessionStore.getState().signedIn) toast.error(limited);
         else requireSignIn(limited, () => void go());
         return;
       }
-      if (refused) {
-        toast.error(refused);
+      if (refused || failed) {
+        toast.error(refused ?? failed);
         return;
       }
       if (contact === null) {

@@ -18,17 +18,21 @@ stands") for the backend in full.
 payment waits, on Hillary's merchant account). Phase 5, the Staff
 console, has everything planned for Trust and safety built and live,
 every decision carries a required note, and the look of each page is
-being reviewed with Hillary: the Activity log, Reports, Users, Appeals
-and Verify stores are done. All of it is committed on
-`redesign/pdf-style` and live on `main`.
+reviewed with Hillary page by page: the Activity log, Reports, Users,
+Appeals, Verify stores, Team members, the user's appeal page and the
+banned page are done, and so is a design pass on the Store console. All
+of it is committed on `redesign/pdf-style` and live on `main`.
 Vercel builds only Production (Hillary turned Preview builds off).
 
-**Where the next agent starts:** carry on the Staff console review with
-Hillary at **Team**, then the user's appeal page and the banned page;
-then a design pass on the Store console, the
-open safeguards, and Phase 6. Look at each page in the browser first,
-offer how it should look (as was done for Users), and build what she
-picks.
+**Where the next agent starts:** the **open safeguards** (item 4
+below). They were put to Hillary on 2026-10-30 with a suggestion: before
+launch, staff signing in with a password as well as the phone code, a
+sealed second super admin account, and data requests (a Trust and
+safety leader downloads or deletes a user's data from their record);
+later, false reports counting on the reporter and bulk actions. She has
+not chosen yet: ask which to build, or whether to go to Phase 6 first.
+Look at each page in the browser first, offer how it should look, and
+build what she picks.
 
 **What was done on 2026-10-30 (newest last):**
 
@@ -51,7 +55,7 @@ picks.
   the button tapped spins until its page has come.
 - A look at a user's record is logged at most once in ten minutes.
 
-**Also 2026-10-30, after that (not committed yet):** a user's page in
+**Also 2026-10-30, after that:** a user's page in
 Users, redone at Hillary's request. The page is titled "User"; one card
 holds their initials, their name with their place on our team beside it
 ("Dpt. leader", short for department leader so the pill stays small, in
@@ -66,7 +70,7 @@ Listings; each opens that list as a full table at
 pills and table are shared in `app/staff/users/[id]/shared.tsx`
 (`useUserRecord`), so a list opens at once from the page.
 
-**Also 2026-10-30 (not committed yet): Appeals reviewed with Hillary.**
+**Also 2026-10-30: Appeals reviewed with Hillary.**
 `GET /api/staff/appeals?show=all|waiting|upheld|overturned` (with
 `counts`) now lists every appeal about users the leader may act on: the
 waiting ones first, oldest first (never one against the leader's own
@@ -86,7 +90,7 @@ in bold and its value under it in the regular weight, both dark grey
 and room before the buttons under them. Tafadzwa (0006) signed in by
 phone again on 2026-10-30, in the browser and by script.
 
-**Also 2026-10-30 (not committed yet): Verify stores reviewed with
+**Also 2026-10-30: Verify stores reviewed with
 Hillary.** `GET /api/admin/verifications?show=all|waiting|verified|declined`
 (with `counts`) now lists every request from an open store: waiting ones
 first, oldest first, then decided ones, newest first, each with its
@@ -127,6 +131,58 @@ uploads photos of the documents (and the shop front) with the request,
 shown in the Verify stores sheet; the yearly check; pausing the badge
 after serious upheld reports. Hillary asked whether a tax clearance
 should count too; not decided.
+
+**Also 2026-10-30: Team reviewed with Hillary.** One table set as
+Users': the search box, a filter pill by department with counts ("Whole
+team", then each department the viewer manages) and a small Add a user
+in the toolbar; "N on the team"; a row per member (initials, name with
+"You" on your own, phone) and a column per department showing "Dpt.
+leader", "Member" or nothing; one compact line each below a laptop, their
+departments as small pills. Search and the filter run in the browser (the
+team is small; `GET /api/staff/team` is unchanged). A row opens a sheet:
+one line per department with Not in, Member and Leader, each saving at
+once (PUT or DELETE `/api/staff/team/{personId}/{department}`, as
+before); Leader faded for anyone but the super admin, a leader's row and
+your own locked, with a line saying who can; View their user record;
+Remove from the team (super admin); Done. The sheet stays open when
+someone is taken out of every department, so they can be put back. Add a
+user finds someone and opens the same sheet. Tested as Tafadzwa: Rumbi
+taken out and put back as a member (log rows removed after). The
+section is called "Team members" in the menu and the page title (its
+short label on a phone stays "Team").
+
+**Also 2026-10-30: the user's appeal page** (`app/appeal/[id]`), which
+is also the banned page. The decision card has a pill beside its heading
+("Warning", "Listing removed", "Suspended", "Banned", or "Overturned"),
+in the tones of the staff Appeals page, and Date and Reason as label
+lines; the appeal card has "Waiting", "Overturned" or "Stands". Under the
+box, "At least 10 characters" until there are, so a grey Send appeal is
+explained; no resize grip; a shorter waiting message. Hillary had already
+done the banned page; it was checked with the new look (a test ban on
+Kuda, removed after).
+
+**Also 2026-10-30: a design pass on the Store console.** Hillary thinks
+it looks fine; small things fixed: on Leads the offer form (price and
+message side by side, Send offer across under them; it was squashed in
+the narrow pane) and the requester's line no longer says "joined" with
+no date; `/console` opens Stock (`app/console/page.tsx`); Leads, Offers,
+Stats and Store profile show their skeletons while their data loads
+(each `loading.tsx` exports its bones: `LeadsBones`, `OffersBones`,
+`StatsBones`; `StorefrontBodySkeleton own`); Store profile shows no
+Show contacts or Follow on the store's own view and counts "N live"
+(`StorefrontBody own`); Stats says "Your best listings". Page widths
+stay as they are (Hillary): Stock and Leads full width, the rest in a
+column.
+
+**Also 2026-10-30: Show contacts never shows a made up number.** When
+the API cannot give the number (offline, an error, the listing gone or
+the store closed), `recordReveal` and `revealStoreContact`
+(`lib/reveals.ts`) answer `failed` and `RevealAction` says so in a toast
+("We could not get the number. Try again in a minute.", or the API's
+words), instead of the sample number it showed before. The store page's
+Show contacts no longer passes a fixed owner (`u-kopje`). Sample
+listings in a build without database settings no longer show a sample
+number.
 
 **Also 2026-10-30:** the sign in sheet (`packages/ui/src/auth/SignIn.tsx`)
 says "Continue with email or phone", not "Continue with email".
@@ -230,18 +286,14 @@ says "Continue with email or phone", not "Continue with email".
    page. The shared `Dropdown`'s open list now grows to fit its longest
    option (from the pill's right edge, to the left), so an option and its
    count stay on one line.
-   **Still to review: each other Staff console page**, as was done
-   for the Activity log (which now matches the Store console's Stock
-   page: toolbar, pale blue heading strip, small blue page buttons,
-   skeletons that match). Reports and Users are done; go through
-   Appeals, Verify stores and Team with her (and the user's appeal page
-   and the banned account page), and change what she asks. Keep each one
-   cohesive with the Store console, Reports and Users.
-3. **A design pass on the Store console** with Hillary.
-4. **Then ask Hillary about the open safeguards** (item 8, the end of
-   Trust and safety: staff password as well as the phone code, a sealed
-   second super admin, false reports counting on the reporter, data
-   requests, bulk actions) before or after Phase 6.
+   **The review of every Staff console page is done** (2026-10-30),
+   with the user's appeal page and the banned page.
+3. **A design pass on the Store console:** done (2026-10-30), see above.
+4. **The open safeguards** (item 8, the end of Trust and safety: staff
+   password as well as the phone code, a sealed second super admin,
+   false reports counting on the reporter, data requests, bulk actions):
+   put to Hillary on 2026-10-30, waiting on her choice (see "Where the
+   next agent starts").
 5. **Phase 6** (Executives, Board, Finance, Sales), item 9 below and
    `docs/architecture/backend-plan.md`. Agree the business definitions
    with Hillary first.

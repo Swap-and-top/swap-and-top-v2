@@ -12,6 +12,40 @@
   color: var(--snt-accent-bold);
 }
 
+/* A heading with its pill beside it, the pill under it when there is no room. */
+.headingRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-3) var(--snt-space-4);
+}
+
+/* Date and Reason: a label and its value a line each. */
+.facts {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--snt-space-3) var(--snt-space-6);
+  margin: 0;
+  font-size: var(--snt-text-sm);
+}
+
+.facts dt {
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--snt-card-ink-muted);
+}
+
+/* Under the box: why Send appeal is still off. */
+.hint {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
 .lead {
   margin: 0;
   font-size: var(--snt-text-sm);
@@ -56,7 +90,7 @@
   font: inherit;
   font-size: var(--snt-text-md);
   line-height: 1.45;
-  resize: vertical;
+  resize: none;
   outline: none;
 }
 

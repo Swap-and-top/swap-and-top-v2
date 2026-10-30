@@ -66,9 +66,13 @@ export function Storefront({
 export function StorefrontBody({
   store,
   listings,
+  own = false,
 }: {
   store: Store;
   listings: Listing[];
+  /** Seen by the store itself, in the console: no Show contacts or Follow,
+      and its live listings counted as live. */
+  own?: boolean;
 }) {
   const [tab, setTab] = useState<StoreTab>('all');
 
@@ -143,7 +147,7 @@ export function StorefrontBody({
 
         <StatStrip
           stats={[
-            { value: store.stockCount, label: 'in stock' },
+            { value: store.stockCount, label: own ? 'live' : 'in stock' },
             {
               value: store.confirmedDeals,
               label: 'deals confirmed',
@@ -153,19 +157,22 @@ export function StorefrontBody({
           ]}
         />
 
-        {/* Two actions, half each. */}
-        <div className={styles.actions}>
-          {/* The store's own number, else its owner's: calls and WhatsApp. */}
-          <RevealAction
-            listingId={`store-${store.id}`}
-            ownerId="u-kopje"
-            storeId={store.id}
-            channels={['call', 'whatsapp']}
-          />
-          <Button variant="secondary" size="lg" block>
-            Follow
-          </Button>
-        </div>
+        {/* Two actions, half each; a buyer's, so not on the store's own view. */}
+        {own ? null : (
+          <div className={styles.actions}>
+            {/* The store's own number, else its owner's, from the API: calls
+                and WhatsApp. Whose it is is the store itself. */}
+            <RevealAction
+              listingId={`store-${store.id}`}
+              ownerId={store.id}
+              storeId={store.id}
+              channels={['call', 'whatsapp']}
+            />
+            <Button variant="secondary" size="lg" block>
+              Follow
+            </Button>
+          </div>
+        )}
       </section>
 
       <div className={styles.tabs}>
@@ -185,7 +192,7 @@ export function StorefrontBody({
  * buttons, then the tabs and the stock grid. For the public page and the
  * console's Store profile alike.
  */
-export function StorefrontBodySkeleton() {
+export function StorefrontBodySkeleton({ own = false }: { own?: boolean }) {
   return (
     <div aria-busy aria-label="Loading the store">
       <section className={styles.card}>
@@ -201,13 +208,15 @@ export function StorefrontBodySkeleton() {
           <Bone width="80%" height={14} />
           <Bone width="55%" height={14} style={{ marginTop: 9 }} />
         </div>
-        <StatStripSkeleton labels={['in stock', 'deals confirmed', 'replies in']} />
+        <StatStripSkeleton labels={[own ? 'live' : 'in stock', 'deals confirmed', 'replies in']} />
         {/* As the real pair: one over the other on a phone, since the
             contact button carries its icons. */}
-        <div className={styles.actions}>
-          <Bone shape="pill" height={48} data-stack-on-phone="" />
-          <Bone shape="pill" height={48} />
-        </div>
+        {own ? null : (
+          <div className={styles.actions}>
+            <Bone shape="pill" height={48} data-stack-on-phone="" />
+            <Bone shape="pill" height={48} />
+          </div>
+        )}
       </section>
 
       <div className={[styles.tabs, styles.tabsLoading].join(' ')} aria-hidden>

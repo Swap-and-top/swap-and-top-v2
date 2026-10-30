@@ -51,7 +51,7 @@ const SECTIONS: SectionDef[] = [
   { href: '/staff/growth', label: 'Growth', shortLabel: 'Growth', icon: (s) => <TrendIcon size={s} />, department: 'marketing', built: false },
   { href: '/staff/health', label: 'Health', shortLabel: 'Health', icon: (s) => <DesktopIcon size={s} />, department: 'devops', built: false },
   // The team: the super admin, and leads for their own department
-  { href: '/staff/team', label: 'Team', shortLabel: 'Team', icon: (s) => <PersonIcon size={s} />, built: true },
+  { href: '/staff/team', label: 'Team members', shortLabel: 'Team', icon: (s) => <PersonIcon size={s} />, built: true },
 ];
 
 function allowed(section: SectionDef, superAdmin: boolean, staff: StaffMembership[]): boolean {

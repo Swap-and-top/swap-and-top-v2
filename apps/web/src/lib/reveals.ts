@@ -35,16 +35,19 @@ export interface RevealedContact {
   whatsapp: boolean;
 }
 
+/** Said when the details could not be fetched, rather than a made up number. */
+const FAILED = 'We could not get the number. Try again in a minute.';
+
 /**
  * Records it, and brings back how to reach the seller. `limited` carries the
  * API's words when over the daily limit, `refused` when the seller's own
- * rules keep their details back. `contact` is undefined for a listing the
- * database does not have (a sample one), null when no number was given.
+ * rules keep their details back, `failed` when the API could not answer or
+ * the listing is gone. `contact` is null when no number was given.
  */
 export async function recordReveal(
   listingId: string,
   way: ContactWay,
-): Promise<{ limited?: string; refused?: string; contact?: RevealedContact | null }> {
+): Promise<{ limited?: string; refused?: string; failed?: string; contact?: RevealedContact | null }> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
   const response = await fetch(`/api/listings/${encodeURIComponent(listingId)}/reveals`, {
@@ -56,7 +59,7 @@ export async function recordReveal(
     },
     body: JSON.stringify({ way }),
   }).catch(() => null);
-  if (!response) return {};
+  if (!response) return { failed: FAILED };
   const body = (await response.json().catch(() => ({}))) as {
     error?: string;
     contact?: RevealedContact | null;
@@ -66,16 +69,15 @@ export async function recordReveal(
     return { refused: body.error ?? 'This seller keeps their details back.' };
   }
   if (response.ok) return { contact: body.contact ?? null };
-  // Anything else (a sample listing not in the database, the API away):
-  // the sample details show; only the record is missed.
-  return {};
+  // Anything else: the listing is gone, or the API is away.
+  return { failed: body.error ?? FAILED };
 }
 
 /** A store's own number, from its page (POST /api/stores/{id}/contact):
     held to the same daily limit, answered as `recordReveal` is. */
 export async function revealStoreContact(
   storeId: string,
-): Promise<{ limited?: string; contact?: RevealedContact | null }> {
+): Promise<{ limited?: string; failed?: string; contact?: RevealedContact | null }> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
   const response = await fetch(`/api/stores/${encodeURIComponent(storeId)}/contact`, {
@@ -85,13 +87,13 @@ export async function revealStoreContact(
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   }).catch(() => null);
-  if (!response) return {};
+  if (!response) return { failed: FAILED };
   const body = (await response.json().catch(() => ({}))) as {
     error?: string;
     contact?: RevealedContact | null;
   };
   if (response.status === 429) return { limited: body.error ?? 'That is the daily limit.' };
   if (response.ok) return { contact: body.contact ?? null };
-  // A sample store not in the database: its sample details show.
-  return {};
+  // Anything else: the store is closed, or the API is away.
+  return { failed: body.error ?? FAILED };
 }

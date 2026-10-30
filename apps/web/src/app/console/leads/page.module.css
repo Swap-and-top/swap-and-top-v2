@@ -220,20 +220,15 @@
   /* --- offer composer --- */
 
   .composer {
-    display: flex;
-    gap: var(--snt-space-7);
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--snt-space-6) var(--snt-space-5);
     margin-top: var(--snt-space-9);
   }
 
-  .composerPrice {
-    width: 178px;
-    flex-shrink: 0;
-  }
-
-  .composerMessage {
-    flex-grow: 1;
-    min-width: 0;
+  /* The price and the message side by side, Send offer across under them. */
+  .composerSend {
+    grid-column: 1 / -1;
   }
 
   /* The person asking, under a pale line, as the listing pages set the

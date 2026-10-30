@@ -1,3 +1,40 @@
+/**
+ * Team, set as Users and Reports are: the search box, the filter pill and
+ * Add a user in the toolbar, the count line in the blue, the table in one
+ * white card under the pale blue strip of headings (a column per
+ * department), rows parted by thin lines set in from the card's edges. On
+ * a phone, one compact line each, their departments as small pills.
+ */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+.search {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* The filter: a blue outlined pill, as on Users. The class is doubled to
+   win over the dropdown's own look. */
+.filter.filter {
+  flex-shrink: 0;
+  height: 36px;
+  border: 1px solid var(--snt-control-idle);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-weight: var(--snt-weight-medium);
+}
+
+@media (hover: hover) {
+  .filter.filter:hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
 .lead {
   margin: 0;
   font-size: var(--snt-text-sm);
@@ -5,72 +42,301 @@
   color: var(--snt-card-ink-muted);
 }
 
-/* Each person: a white card, their departments under their name. */
-.members {
-  display: grid;
-  gap: var(--snt-space-6);
-}
-
-@media (min-width: 1024px) {
-  .members {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
-}
-
-.who {
-  display: flex;
-  flex-direction: column;
-  gap: var(--snt-space-1);
-}
-
-.name {
+/* Why some choices cannot be made: a quiet line. */
+.note {
   margin: 0;
-  font-size: var(--snt-text-lg);
-  font-weight: var(--snt-weight-bold);
-  color: var(--snt-accent-bold);
-}
-
-.phone {
   font-size: var(--snt-text-sm);
   color: var(--snt-card-ink-muted);
 }
 
-/* A department, and once it is ticked whether they lead it, side by side. */
-.department {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--snt-space-3);
+/* The count line over the table, in the blue. */
+.summary {
+  margin: 0 0 var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
 }
 
-.department.on {
-  grid-template-columns: 1.4fr 1fr;
-}
-
-.results {
-  display: grid;
-  gap: var(--snt-space-3);
-}
-
-/* A person found, to add: their name and number, one tap to open them. */
-.result {
+/* The table: one white card, no outline. */
+.list {
   display: flex;
+  flex-direction: column;
+  background: var(--snt-bg-surface);
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+/* Initials, name, phone, then a column per department. */
+.headerRow,
+.row {
+  display: grid;
+  grid-template-columns: 32px minmax(140px, 1.4fr) 120px repeat(var(--departments), minmax(0, 1fr));
   align-items: center;
-  justify-content: space-between;
   gap: var(--snt-space-6);
-  width: 100%;
-  padding: var(--snt-space-5) var(--snt-space-8);
+  padding: var(--snt-space-3) var(--snt-space-8);
+}
+
+.headerRow {
+  padding-block: var(--snt-space-4);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.deptHead {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The line between rows: the page's pale blue, set in from both edges. */
+.row {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.headerRow + .row {
+  background-image: none;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.row:active {
+  background-color: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
+}
+
+/* A skeleton line, as tall as a row with its initials. */
+.boneRow {
+  min-height: calc(32px + var(--snt-space-3) * 2);
+  cursor: default;
+}
+
+/* Their initials in a round, as on Users. */
+.initials {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-surface));
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px var(--snt-space-3);
+  min-width: 0;
+}
+
+.strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--snt-weight-bold);
+}
+
+/* "You", beside your own name. */
+.you {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.phone {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--snt-ink-muted);
+}
+
+.dept {
+  display: flex;
+  min-width: 0;
+}
+
+.small {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.phoneOnly {
+  display: none;
+}
+
+/* Nobody matches: a quiet line and the way back. */
+.none {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-8);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+}
+
+.none p {
+  margin: 0;
+}
+
+/* The sheet: a line per department, its name over three choices. */
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+}
+
+.choiceLabel {
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* Not in, Member, Leader: one row of pills, the one chosen filled. */
+.segments {
+  display: flex;
+  gap: var(--snt-space-3);
+}
+
+.segment {
+  flex: 1 1 0;
+  height: 34px;
+  border: 1px solid rgb(47 117 153 / 0.4);
+  border-radius: var(--snt-radius-pill);
+  background: none;
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-sm);
+  cursor: pointer;
+  transition:
+    background var(--snt-transition),
+    border-color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .segment:not(.segmentOn):not(:disabled):hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+/* The one chosen: filled to the edge, no ring. */
+.segmentOn {
+  border-color: transparent;
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/* A choice that cannot be made by this person: faded. */
+.segmentLocked:not(.segmentOn) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.segmentLocked.segmentOn {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.segments[aria-busy='true'] {
+  opacity: 0.6;
+}
+
+/* Add a user: what was found, a line each. */
+.found {
+  display: flex;
+  flex-direction: column;
+}
+
+.foundRow {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-4) var(--snt-space-6);
   border: 0;
-  border-radius: var(--snt-radius-lg);
-  background: var(--snt-bg-inset);
+  background: none;
   color: var(--snt-accent-bold);
   font: inherit;
+  font-size: var(--snt-text-sm);
   text-align: left;
   cursor: pointer;
 }
 
+.foundRow + .foundRow {
+  border-top: 1px solid var(--snt-bg-app);
+}
+
 @media (hover: hover) {
-  .result:hover {
-    background: color-mix(in srgb, var(--snt-control-active) 10%, var(--snt-bg-inset));
+  .foundRow:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+/* Below a laptop: no headings, and each member one compact line: their
+   initials, name with their departments as pills under it. */
+@media (max-width: 1023px) {
+  .headerRow {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: var(--snt-space-5);
+    padding: var(--snt-space-4) var(--snt-space-6);
+    background-size: calc(100% - var(--snt-space-6) * 2) 1px;
+  }
+
+  .row:first-child {
+    background-image: none;
+  }
+
+  .phone,
+  .dept {
+    display: none;
+  }
+
+  .phoneOnly {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--snt-space-2);
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .search {
+    flex-basis: 100%;
   }
 }
