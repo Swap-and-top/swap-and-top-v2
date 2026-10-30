@@ -96,6 +96,9 @@ const ACTION_WORDS: [string, string][] = [
   ['overturn', 'appeal.overturn'],
   ['uphe', 'uphold'],
   ['uphold', 'uphold'],
+  ['verif', 'store.'],
+  ['declin', 'store.decline'],
+  ['store', 'store.'],
   ['team', 'team.'],
   ['lead', 'lead'],
 ];

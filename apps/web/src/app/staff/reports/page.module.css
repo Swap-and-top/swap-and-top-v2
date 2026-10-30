@@ -328,21 +328,33 @@
 
 /* The full report, in its sheet. */
 .facts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--snt-space-3) var(--snt-space-8);
-  margin: 0;
+  /* Each label on top and its value under it, pair after pair down the
+     sheet, so it is plain which value belongs to which label. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  /* Room before the buttons under it, so the facts read apart from them. */
+  margin: 0 0 var(--snt-space-4);
   font-size: var(--snt-text-sm);
+  line-height: 1.4;
 }
 
+/* The labels bold, each a little apart from the pair before it. */
 .facts dt {
-  color: var(--snt-card-ink-muted);
+  color: var(--snt-card-ink);
+  font-weight: var(--snt-weight-bold);
 }
 
+.facts dd + dt {
+  margin-top: var(--snt-space-4);
+}
+
+/* The values: information, so grey, not the blue that marks a link. Only
+   a name that opens a record (personLink) stays blue and underlined. */
 .facts dd {
   margin: 0;
-  color: var(--snt-accent-bold);
-  font-weight: var(--snt-weight-bold);
+  color: var(--snt-card-ink);
+  font-weight: var(--snt-weight-normal);
   min-width: 0;
   overflow-wrap: anywhere;
 }

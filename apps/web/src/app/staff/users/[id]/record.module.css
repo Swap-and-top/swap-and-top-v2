@@ -6,11 +6,145 @@
  * edges). On a phone the headings go and each row's cells run on.
  */
 
+/* The card's head: their initials in a round, their name, and the pills
+   beside it (under it on a narrow phone). */
+.who {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+}
+
+.avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-surface));
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+}
+
+.whoText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+/* The name, and their place on our team beside it. */
+.nameRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-2) var(--snt-space-4);
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+  overflow-wrap: anywhere;
+}
+
 .meta {
   display: inline-flex;
   flex-wrap: wrap;
   gap: var(--snt-space-3);
-  margin-top: var(--snt-space-2);
+}
+
+/* Their standing, under the name: small and in the regular weight, so it
+   does not compete with the team pill beside the name. The class is
+   doubled to win over the pill's own size. */
+.standing.standing {
+  height: 18px;
+  padding: 0 var(--snt-space-3);
+  font-size: 11px;
+  font-weight: var(--snt-weight-normal);
+}
+
+/* Their record as four counts, each a white tile that opens its list:
+   four across on a laptop, two on a phone. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--snt-space-6);
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  padding: var(--snt-space-7) var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-surface);
+  color: var(--snt-accent-bold);
+  text-decoration: none;
+  transition: background var(--snt-transition);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.tile:active {
+  background: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
+}
+
+/* A tile while the page loads: the same white tile, standing still. */
+.tileBone {
+  gap: var(--snt-space-4);
+  pointer-events: none;
+}
+
+.tileLabel {
+  padding-right: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.tileCount {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.tileChevron {
+  position: absolute;
+  top: var(--snt-space-7);
+  right: var(--snt-space-7);
+  color: var(--snt-control-active);
+}
+
+@media (max-width: 767px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--snt-space-4);
+  }
+
+  .tile {
+    padding: var(--snt-space-6);
+  }
+
+  .tileChevron {
+    top: var(--snt-space-6);
+    right: var(--snt-space-5);
+  }
 }
 
 .toolbar {
@@ -188,10 +322,6 @@
 /* Below a laptop: one column of facts, and each table row its cells in a
    wrapping line, the headings gone. */
 @media (max-width: 1023px) {
-  .facts {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .headerRow {
     display: none;
   }
@@ -243,5 +373,13 @@
 
   .row:first-of-type {
     background-image: none;
+  }
+}
+
+/* Below 768 pixels, where the tiles go two by two: the facts in one
+   column. Last in the file, so it wins over the two columns above. */
+@media (max-width: 767px) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

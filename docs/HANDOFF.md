@@ -18,13 +18,14 @@ stands") for the backend in full.
 payment waits, on Hillary's merchant account). Phase 5, the Staff
 console, has everything planned for Trust and safety built and live,
 every decision carries a required note, and the look of each page is
-being reviewed with Hillary: the Activity log, Reports and Users are
-done. All of it is committed on `redesign/pdf-style` and live on `main`.
+being reviewed with Hillary: the Activity log, Reports, Users, Appeals
+and Verify stores are done. All of it is committed on
+`redesign/pdf-style` and live on `main`.
 Vercel builds only Production (Hillary turned Preview builds off).
 
 **Where the next agent starts:** carry on the Staff console review with
-Hillary at **Appeals**, then Verify stores, Team, the person's appeal
-page and the banned page; then a design pass on the Store console, the
+Hillary at **Team**, then the user's appeal page and the banned page;
+then a design pass on the Store console, the
 open safeguards, and Phase 6. Look at each page in the browser first,
 offer how it should look (as was done for Users), and build what she
 picks.
@@ -49,6 +50,86 @@ picks.
   outlines or hover ring, the page on show in bold, up to five numbers);
   the button tapped spins until its page has come.
 - A look at a user's record is logged at most once in ten minutes.
+
+**Also 2026-10-30, after that (not committed yet):** a user's page in
+Users, redone at Hillary's request. The page is titled "User"; one card
+holds their initials, their name with their place on our team beside it
+("Dpt. leader", short for department leader so the pill stays small, in
+the Users list too; "Member" or "Super admin"), their standing under the name as a small pill in the regular
+weight (so it does not compete with the team pill), then their details in
+two columns, one column below 768 pixels (where the tiles go two by
+two). Under it, four white tiles
+with counts: Actions taken, Reports about them, Reports they sent,
+Listings; each opens that list as a full table at
+`/staff/users/{id}/{list}` (`actions`, `reports`, `sent`, `listings`,
+`app/staff/users/[id]/[list]`) with "Back to <name>". The record's data,
+pills and table are shared in `app/staff/users/[id]/shared.tsx`
+(`useUserRecord`), so a list opens at once from the page.
+
+**Also 2026-10-30 (not committed yet): Appeals reviewed with Hillary.**
+`GET /api/staff/appeals?show=all|waiting|upheld|overturned` (with
+`counts`) now lists every appeal about users the leader may act on: the
+waiting ones first, oldest first (never one against the leader's own
+decision), then the decided ones, newest first, each with its outcome (by
+whom, when, the note). The page (`app/staff/appeals`, its own
+`page.module.css` started from Reports') is a table set as Reports' (the
+user's initials and name, the decision as a pill, reason, decided by,
+appealed, then a small Decide or an Upheld or Overturned pill), one compact
+line each below a laptop (the name and decision, then the appeal's opening
+words), waiting ones unread (bold, a blue dot). One filter pill with
+counts. A row opens the full appeal in a sheet (their record a tap away;
+Uphold or Overturn, each asking the required note; once decided, the
+outcome and its note). The skeleton matches. In both the Appeals and the
+Reports sheets the facts are information, not links: each label on top
+in bold and its value under it in the regular weight, both dark grey
+(`--snt-card-ink`), pair after pair with a little room between, only names that open a record blue and underlined (`personLink`),
+and room before the buttons under them. Tafadzwa (0006) signed in by
+phone again on 2026-10-30, in the browser and by script.
+
+**Also 2026-10-30 (not committed yet): Verify stores reviewed with
+Hillary.** `GET /api/admin/verifications?show=all|waiting|verified|declined`
+(with `counts`) now lists every request from an open store: waiting ones
+first, oldest first, then decided ones, newest first, each with its
+owner's id and, once decided, by whom, when and the note. **Verify now
+needs a note too**, as Decline did (`note`, 2 to 300 letters, "Say why you
+decided this"): kept on the request for either decision; only a decline's
+note is shown to the owner (their store's verification standing), a
+verify's is for the record. Both decisions are now in the Activity log
+(`store.verify`, `store.decline`, with the store's name and the note;
+searchable by "verify", "declined" or "store"). The page
+(`app/staff/verify`, `page.module.css` started from Appeals') is the same
+table: the store's initials and name, owner, the kind of business as a
+pill, the registration or licence number, asked, then a small Decide or a
+Verified or Declined pill; one compact line each below a laptop (the
+store's name, then the owner and kind); waiting ones unread; one filter
+pill with counts; a matching skeleton. A row opens a sheet: what to check
+(while waiting), then Store, Owner (their record) and Phone (tap to
+call) as blue links, Business, the number, Area, Asked, and once decided
+Outcome and Why; View the store; Decline and Verify, each asking for the
+note. **Test data left in on purpose (Hillary asked):** three test stores
+and their requests: Test Mbare Phones (Tarisai, 0001) and Test Borrowdale
+Gadgets (Kuda, 0004) waiting, Test Chitungwiza Electronics (Tinashe,
+0003) declined by Tafadzwa. Ids `test-s-mbare`, `test-s-borrowdale`,
+`test-s-chitungwiza` (with their `store_members` owner row) and
+`test-vr-mbare`, `test-vr-borrowdale`, `test-vr-chitungwiza`. To remove
+them, delete the requests, the members, any notifications and
+`staff_log` rows about them, then the stores.
+
+**Verification, to add later (Hillary, 2026-10-30: noted, not now).**
+What a store must show is in `docs/product/accounts-and-stores.md`
+("Verification"): a registered business, its certificate of
+incorporation and the owner's national ID matching a director; an
+informal trader, a council vendor or market licence and the owner's ID;
+every store, a verified phone and an address with a photo of the shop
+front or a short video call. Today the owner only types the kind and the
+number, and our team calls to see the documents. Later: the owner
+uploads photos of the documents (and the shop front) with the request,
+shown in the Verify stores sheet; the yearly check; pausing the badge
+after serious upheld reports. Hillary asked whether a tax clearance
+should count too; not decided.
+
+**Also 2026-10-30:** the sign in sheet (`packages/ui/src/auth/SignIn.tsx`)
+says "Continue with email or phone", not "Continue with email".
 
 **What comes next, in Hillary's order (do them in this order):**
 
@@ -319,8 +400,9 @@ picks.
      their departments, the super admin all. Each page wraps itself in
      `StaffPage`. **To add a section: build its page under `app/staff/`,
      then set `built: true`.**
-   - **Verify stores** at `/staff/verify` (Trust and safety leads;
-     `/admin/verify` redirects).
+   - **Verify stores** at `/staff/verify` (Trust and safety leaders;
+     `/admin/verify` redirects): every request as a table with a filter,
+     Verify and Decline each with a required note (2026-10-30).
    - **Team** at `/staff/team` (`apps/api/src/routes/team.ts`): a card per
      person, a tick per department, "Leads it" beside a ticked one, "Add a
      person" by name or number, "Remove from the team" for the super

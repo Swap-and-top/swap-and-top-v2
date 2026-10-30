@@ -13,7 +13,8 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, asc, desc, eq, isNull } from 'drizzle-orm';
+import { desc, eq, isNull } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { requireAuth, type AuthUser } from '../auth';
 import { localPhone } from '../contact';
 import { db } from '../db/client';
@@ -74,7 +75,9 @@ async function standingOf(storeId: string) {
           state: latest.state,
           kind: latest.kind,
           reference: latest.reference,
-          note: latest.note ?? undefined,
+          // A decline's reason is the owner's to read; a verify's note is
+          // for the record only.
+          note: latest.state === 'declined' ? (latest.note ?? undefined) : undefined,
           askedLabel: dayMonth(latest.createdAt),
         }
       : null,
@@ -160,40 +163,58 @@ verificationRoutes.openapi(ask, async (c) => {
 /** Verifying stores is for Trust and safety leads (and the super admin). */
 const mayVerify = (person: Parameters<typeof inDepartment>[0]) => inDepartment(person, 'trust_safety', true);
 
-const PendingSchema = z
+/** What the list can be narrowed to: waiting, or how it was decided. */
+const SHOW = ['all', 'waiting', 'verified', 'declined'] as const;
+type Show = (typeof SHOW)[number];
+
+const RequestRowSchema = z
   .object({
     id: z.string(),
     storeName: z.string(),
     storeSlug: z.string(),
     location: z.string(),
+    ownerId: z.string(),
     ownerName: z.string(),
     /** "077 123 4567": to call them. */
     ownerPhone: z.string().optional(),
     kind,
     reference: z.string(),
     askedLabel: z.string(),
+    /** Waiting for a leader, or how it was decided. */
+    state: z.enum(['waiting', 'verified', 'declined']),
+    /** Once decided: by whom, when ("29 Oct") and why. */
+    decided: z.object({ by: z.string(), dateLabel: z.string(), note: z.string().optional() }).optional(),
   })
-  .openapi('PendingVerification');
+  .openapi('VerificationRow');
 
 const pending = createRoute({
   method: 'get',
   path: '/admin/verifications',
   tags: ['Admin'],
-  summary: 'Stores waiting to be verified',
-  description: 'Trust and safety leaders (and the super admin) only. Open stores whose request waits, oldest first.',
+  summary: 'Requests to be verified',
+  description:
+    'Trust and safety leaders (and the super admin) only. Every request from an open store: the waiting ones first, oldest first, then the decided ones, newest first. `show` narrows it to waiting, verified or declined; `counts` says how many each would show.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
+  request: { query: z.object({ show: z.enum(SHOW).default('all') }) },
   responses: {
     200: {
       description: 'The requests',
-      content: { 'application/json': { schema: z.object({ requests: z.array(PendingSchema) }) } },
+      content: {
+        'application/json': {
+          schema: z.object({ requests: z.array(RequestRowSchema), counts: z.record(z.enum(SHOW), z.number()) }),
+        },
+      },
     },
     401: errors[401],
     403: errors[403],
   },
 });
 
+const decider = alias(t.people, 'decider');
+
 verificationRoutes.openapi(pending, async (c) => {
+  const { show } = c.req.valid('query');
   const person = await personFor(c.get('authUser'));
   if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leaders can verify stores.' }, 403);
   const rows = await db
@@ -204,28 +225,54 @@ verificationRoutes.openapi(pending, async (c) => {
       location: t.stores.location,
       ownerName: t.people.displayName,
       ownerPhone: t.people.phone,
+      deciderName: decider.displayName,
     })
     .from(t.verificationRequests)
     .innerJoin(t.stores, eq(t.stores.id, t.verificationRequests.storeId))
     .innerJoin(t.people, eq(t.people.id, t.verificationRequests.requestedById))
-    .where(and(eq(t.verificationRequests.state, 'pending'), isNull(t.stores.closedAt)))
-    .orderBy(asc(t.verificationRequests.createdAt));
-  return c.json(
-    {
-      requests: rows.map((row) => ({
-        id: row.request.id,
-        storeName: row.storeName,
-        storeSlug: row.storeSlug,
-        location: row.location,
-        ownerName: row.ownerName,
-        ownerPhone: row.ownerPhone ? localPhone(row.ownerPhone) : undefined,
-        kind: row.request.kind,
-        reference: row.request.reference,
-        askedLabel: dayMonth(row.request.createdAt),
-      })),
-    },
-    200,
-  );
+    .leftJoin(decider, eq(decider.id, t.verificationRequests.decidedById))
+    .where(isNull(t.stores.closedAt))
+    .orderBy(desc(t.verificationRequests.createdAt))
+    .limit(300);
+  const all = rows.map((row) => {
+    const state: Exclude<Show, 'all'> =
+      row.request.state === 'pending' ? 'waiting' : row.request.state === 'approved' ? 'verified' : 'declined';
+    return {
+      at: (row.request.decidedAt ?? row.request.createdAt).getTime(),
+      created: row.request.createdAt.getTime(),
+      id: row.request.id,
+      storeName: row.storeName,
+      storeSlug: row.storeSlug,
+      location: row.location,
+      ownerId: row.request.requestedById,
+      ownerName: row.ownerName || 'No name yet',
+      ownerPhone: row.ownerPhone ? localPhone(row.ownerPhone) : undefined,
+      kind: row.request.kind,
+      reference: row.request.reference,
+      askedLabel: dayMonth(row.request.createdAt),
+      state,
+      decided: row.request.decidedAt
+        ? { by: row.deciderName || 'Someone', dateLabel: dayMonth(row.request.decidedAt), note: row.request.note ?? undefined }
+        : undefined,
+    };
+  });
+  const counts = Object.fromEntries(SHOW.map((key) => [key, 0])) as Record<Show, number>;
+  counts.all = all.length;
+  for (const row of all) counts[row.state] += 1;
+  // Waiting first, the oldest at the top; then decided, the newest first.
+  const requests = all
+    .filter((row) => show === 'all' || row.state === show)
+    .sort((a, b) =>
+      (a.state === 'waiting') !== (b.state === 'waiting')
+        ? a.state === 'waiting'
+          ? -1
+          : 1
+        : a.state === 'waiting'
+          ? a.created - b.created
+          : b.at - a.at,
+    )
+    .map(({ at: _at, created: _created, ...row }) => row);
+  return c.json({ requests, counts }, 200);
 });
 
 const decide = createRoute({
@@ -233,7 +280,7 @@ const decide = createRoute({
   path: '/admin/verifications/{id}',
   tags: ['Admin'],
   summary: 'Verify or decline a store',
-  description: 'Trust and safety leaders (and the super admin) only, and never on a store they own or work for. Verifying shows the badge at once; declining needs a reason, which the owner is told.',
+  description: 'Trust and safety leaders (and the super admin) only, and never on a store they own or work for. Either way a note saying why is required: verifying shows the badge at once and keeps the note on the record; declining tells the owner the note.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -243,7 +290,7 @@ const decide = createRoute({
         'application/json': {
           schema: z.object({
             decision: z.enum(['approve', 'decline']),
-            note: z.string().trim().max(300).optional(),
+            note: z.string({ error: 'Say why you decided this' }).trim().min(2, 'Say why you decided this').max(300),
           }),
         },
       },
@@ -260,7 +307,6 @@ verificationRoutes.openapi(decide, async (c) => {
   const { decision, note } = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
   if (!(await mayVerify(person))) return c.json({ error: 'Only Trust and safety leaders can verify stores.' }, 403);
-  if (decision === 'decline' && !note) return c.json({ error: 'Say why, so the owner knows what to fix.' }, 400);
   const [request] = await db.select().from(t.verificationRequests).where(eq(t.verificationRequests.id, id));
   if (!request || request.state !== 'pending') return c.json({ error: 'That request has been decided already.' }, 404);
   // Nobody decides on a store they own or work for: someone else checks it.
@@ -278,7 +324,9 @@ verificationRoutes.openapi(decide, async (c) => {
       .update(t.verificationRequests)
       .set({
         state: decision === 'approve' ? 'approved' : 'declined',
-        note: decision === 'decline' ? note : null,
+        // Why, either way: a decline's is told to the owner, a verify's is
+        // kept for the record.
+        note,
         decidedById: person.id,
         decidedAt: now,
       })
@@ -286,6 +334,13 @@ verificationRoutes.openapi(decide, async (c) => {
     if (decision === 'approve') {
       await tx.update(t.stores).set({ verifiedAt: now }).where(eq(t.stores.id, request.storeId));
     }
+    // In the Activity log, as every Trust and safety decision is.
+    await tx.insert(t.staffLog).values({
+      actorId: person.id,
+      action: decision === 'approve' ? 'store.verify' : 'store.decline',
+      targetPersonId: request.requestedById,
+      detail: { store: store?.name ?? '', storeId: request.storeId, note },
+    });
   });
   await notify(
     request.requestedById,

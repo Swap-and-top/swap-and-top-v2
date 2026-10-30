@@ -80,6 +80,10 @@ function describe(entry: Entry): string {
       return `upheld the decision on ${who}’s appeal`;
     case 'appeal.overturn':
       return `overturned the decision on ${who}’s appeal`;
+    case 'store.verify':
+      return `verified ${String(detail.store ?? 'the store')}, run by ${who}`;
+    case 'store.decline':
+      return `declined verifying ${String(detail.store ?? 'the store')}, run by ${who}`;
     default:
       return `${entry.action} on ${who}`;
   }
@@ -218,7 +222,9 @@ export default function ActivityPage() {
               entries.map((entry) => {
                 // With the note saying why, for a decision that has one.
                 const note = typeof entry.detail.note === 'string' ? entry.detail.note : '';
-                const what = `${describe(entry)}${note ? `. Why: ${note}` : ''}`;
+                const said = describe(entry);
+                // One full stop, even after a name such as "Tarisai M.".
+                const what = `${said}${note ? `${said.endsWith('.') ? '' : '.'} Why: ${note}` : ''}`;
                 return (
                   <div
                     key={entry.id}

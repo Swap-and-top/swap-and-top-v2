@@ -61,7 +61,7 @@ const FoundSchema = z
     liveListings: z.number(),
     /** Reports about them, ever. */
     reports: z.number(),
-    /** "Departmental leader" or "Member" on our team; "Super admin". */
+    /** "Dpt. leader" (department leader, kept short for the pill) or "Member" on our team; "Super admin". */
     teamLabel: z.string().optional(),
   })
   .openapi('FoundPerson');
@@ -190,7 +190,7 @@ userRoutes.openapi(find, async (c) => {
             target?.role === 'super_admin'
               ? 'Super admin'
               : target?.rank === 'lead'
-                ? 'Departmental leader'
+                ? 'Dpt. leader'
                 : target?.rank === 'member'
                   ? 'Member'
                   : undefined,
@@ -237,7 +237,7 @@ const RecordSchema = z
     standing: z.string(),
     /** "4 Nov", while suspended. */
     suspendedUntilLabel: z.string().optional(),
-    /** "Departmental leader" or "Member" on our team; "Super admin". */
+    /** "Dpt. leader" (department leader, kept short for the pill) or "Member" on our team; "Super admin". */
     teamLabel: z.string().optional(),
     stores: z.array(z.object({ name: z.string(), slug: z.string(), role: z.string() })),
     confirmedDeals: z.number(),
@@ -390,7 +390,7 @@ userRoutes.openapi(record, async (c) => {
       suspendedUntilLabel:
         person.standing === 'suspended' && person.suspendedUntil ? dayMonth(person.suspendedUntil) : undefined,
       teamLabel:
-        person.role === 'super_admin' ? 'Super admin' : target?.rank === 'lead' ? 'Departmental leader' : target?.rank === 'member' ? 'Member' : undefined,
+        person.role === 'super_admin' ? 'Super admin' : target?.rank === 'lead' ? 'Dpt. leader' : target?.rank === 'member' ? 'Member' : undefined,
       stores,
       confirmedDeals: deals,
       liveListings: live[0]?.n ?? 0,

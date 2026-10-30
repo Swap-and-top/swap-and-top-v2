@@ -186,7 +186,9 @@ member checks a request from the owner:
 > calls to see the documents; an admin verifies or declines (with a reason)
 > at `/admin/verify`; a rename pauses the badge. Document photos, the
 > yearly check, pausing after reports and a pass requiring the badge come
-> later.
+> later. Uploading the documents with the request is next in line for
+> this, when Hillary asks (2026-10-30); whether a tax clearance counts
+> is not decided.
 
 The badge is **checked again every year**, **paused** after serious upheld
 reports, and **paused while key details change** (name, address,

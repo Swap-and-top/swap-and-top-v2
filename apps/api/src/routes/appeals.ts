@@ -11,7 +11,7 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, asc, eq, isNull, ne } from 'drizzle-orm';
+import { and, asc, desc, eq, isNull, ne } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
@@ -170,35 +170,50 @@ appealRoutes.openapi(appeal, async (c) => {
 
 const onlyLeads = 'Only Trust and safety leaders decide appeals.';
 
-const WaitingSchema = z
+/** What the list can be narrowed to: waiting, or how it was decided. */
+const SHOW = ['all', 'waiting', 'upheld', 'overturned'] as const;
+type Show = (typeof SHOW)[number];
+
+const AppealRowSchema = z
   .object({
     id: z.string(),
     person: z.object({ id: z.string(), name: z.string() }),
     kind,
     reason,
     listingTitle: z.string().optional(),
-    /** The note left for the record when it was decided. */
+    /** The note left for the record when the action was decided. */
     note: z.string().optional(),
     decidedBy: z.string(),
     decidedLabel: z.string(),
     fromReport: z.boolean(),
     statement: z.string(),
+    /** "3h ago" */
     agoLabel: z.string(),
+    /** Waiting for a leader, or how it was decided. */
+    state: z.enum(['waiting', 'upheld', 'overturned']),
+    /** Once decided: by whom, when ("29 Oct") and why. */
+    outcome: z.object({ by: z.string(), dateLabel: z.string(), reason: z.string().optional() }).optional(),
   })
-  .openapi('WaitingAppeal');
+  .openapi('AppealRow');
 
 const waiting = createRoute({
   method: 'get',
   path: '/staff/appeals',
   tags: ['Staff'],
-  summary: 'Appeals waiting',
-  description: 'Trust and safety leaders. Appeals not yet decided, oldest first, leaving out actions this leader decided and users they may not act on.',
+  summary: 'Appeals',
+  description:
+    'Trust and safety leaders. Every appeal about users this leader may act on: the waiting ones first, oldest first (leaving out appeals against their own decisions), then the decided ones, newest first. `show` narrows it to waiting, upheld or overturned; `counts` says how many each would show.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
+  request: { query: z.object({ show: z.enum(SHOW).default('all') }) },
   responses: {
     200: {
       description: 'The appeals',
-      content: { 'application/json': { schema: z.object({ appeals: z.array(WaitingSchema) }) } },
+      content: {
+        'application/json': {
+          schema: z.object({ appeals: z.array(AppealRowSchema), counts: z.record(z.enum(SHOW), z.number()) }),
+        },
+      },
     },
     401: errors[401],
     403: errors[403],
@@ -206,6 +221,7 @@ const waiting = createRoute({
 });
 
 const decider = alias(t.people, 'decider');
+const reviewer = alias(t.people, 'reviewer');
 
 /** The appeals waiting for this lead: not their own decisions, and only
     about people they may act on. */
@@ -234,27 +250,72 @@ export async function appealsWaitingFor(viewer: Person) {
 }
 
 appealRoutes.openapi(waiting, async (c) => {
+  const { show } = c.req.valid('query');
   const viewer = await personFor(c.get('authUser'));
   if (!(await inDepartment(viewer, 'trust_safety', true))) return c.json({ error: onlyLeads }, 403);
-  const { theirs, targets } = await appealsWaitingFor(viewer);
-  return c.json(
-    {
-      appeals: theirs.map((row) => ({
-        id: row.appeal.id,
-        person: { id: row.appeal.personId, name: targets.get(row.appeal.personId)?.name || 'No name yet' },
-        kind: row.action.kind as z.infer<typeof kind>,
-        reason: row.action.reason,
-        listingTitle: row.listingTitle ?? undefined,
-        note: row.action.note ?? undefined,
-        decidedBy: row.decidedBy || 'Someone',
-        decidedLabel: dayMonth(row.action.createdAt),
-        fromReport: row.action.reportId !== null,
-        statement: row.appeal.statement,
-        agoLabel: agoLabel(row.appeal.createdAt),
-      })),
-    },
-    200,
+  const rows = await db
+    .select({
+      appeal: t.appeals,
+      action: t.moderationActions,
+      listingTitle: t.listings.title,
+      listingStore: t.listings.storeId,
+      decidedBy: decider.displayName,
+      reviewedBy: reviewer.displayName,
+    })
+    .from(t.appeals)
+    .innerJoin(t.moderationActions, eq(t.moderationActions.id, t.appeals.actionId))
+    .innerJoin(decider, eq(decider.id, t.moderationActions.decidedById))
+    .leftJoin(reviewer, eq(reviewer.id, t.appeals.reviewedById))
+    .leftJoin(t.listings, eq(t.listings.id, t.moderationActions.listingId))
+    .orderBy(desc(t.appeals.createdAt))
+    .limit(300);
+  const [actor, targets] = await Promise.all([actorOf(viewer), targetsOf([...new Set(rows.map((row) => row.appeal.personId))])]);
+  // About users this leader may act on; a waiting one never against their
+  // own decision (another leader decides it).
+  const theirs = rows.filter(
+    (row) =>
+      mayActOn(actor, targets.get(row.appeal.personId), row.listingStore) === null &&
+      (row.appeal.reviewedAt !== null || row.action.decidedById !== viewer.id),
   );
+  const all = theirs.map((row) => {
+    const state: Exclude<Show, 'all'> = row.appeal.reviewedAt ? (row.appeal.outcome ?? 'upheld') : 'waiting';
+    return {
+      at: (row.appeal.reviewedAt ?? row.appeal.createdAt).getTime(),
+      created: row.appeal.createdAt.getTime(),
+      id: row.appeal.id,
+      person: { id: row.appeal.personId, name: targets.get(row.appeal.personId)?.name || 'No name yet' },
+      kind: row.action.kind as z.infer<typeof kind>,
+      reason: row.action.reason,
+      listingTitle: row.listingTitle ?? undefined,
+      note: row.action.note ?? undefined,
+      decidedBy: row.decidedBy || 'Someone',
+      decidedLabel: dayMonth(row.action.createdAt),
+      fromReport: row.action.reportId !== null,
+      statement: row.appeal.statement,
+      agoLabel: agoLabel(row.appeal.createdAt),
+      state,
+      outcome: row.appeal.reviewedAt
+        ? { by: row.reviewedBy || 'Someone', dateLabel: dayMonth(row.appeal.reviewedAt), reason: row.appeal.reason ?? undefined }
+        : undefined,
+    };
+  });
+  const counts = Object.fromEntries(SHOW.map((key) => [key, 0])) as Record<Show, number>;
+  counts.all = all.length;
+  for (const row of all) counts[row.state] += 1;
+  // Waiting first, the oldest at the top; then decided, the newest first.
+  const shown = all
+    .filter((row) => show === 'all' || row.state === show)
+    .sort((a, b) =>
+      (a.state === 'waiting') !== (b.state === 'waiting')
+        ? a.state === 'waiting'
+          ? -1
+          : 1
+        : a.state === 'waiting'
+          ? a.created - b.created
+          : b.at - a.at,
+    )
+    .map(({ at: _at, created: _created, ...row }) => row);
+  return c.json({ appeals: shown, counts }, 200);
 });
 
 const decide = createRoute({

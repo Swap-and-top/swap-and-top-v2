@@ -1,8 +1,32 @@
-.title {
-  margin: 0;
-  font-size: var(--snt-text-xl);
-  font-weight: var(--snt-weight-bold);
-  color: var(--snt-accent-bold);
+/**
+ * Verify stores, set as Reports and Appeals are: the filter in the
+ * toolbar, the count line in the blue, and the table in one white card
+ * under a pale blue strip of headings, rows parted by thin lines set in
+ * from the card's edges. From a laptop up, one row a request; below, one
+ * compact line, as an email in a mail app. Waiting ones read as unread:
+ * bold, with a blue dot. (Started from appeals/page.module.css; keep the
+ * three alike.)
+ */
+.toolbar {
+  margin-top: var(--snt-space-6);
+  max-width: 280px;
+}
+
+/* The filter: a blue outlined pill, as the Activity log's and the Stock
+   page's Filters are, not the pale text box pill. The class is doubled to
+   win over the dropdown's own look. */
+.filter.filter {
+  height: 36px;
+  border: 1px solid var(--snt-control-idle);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-weight: var(--snt-weight-medium);
+}
+
+@media (hover: hover) {
+  .filter.filter:hover {
+    border-color: var(--snt-control-active);
+  }
 }
 
 .lead {
@@ -12,42 +36,318 @@
   color: var(--snt-card-ink-muted);
 }
 
-.store {
-  margin: 0;
-  font-size: var(--snt-text-lg);
+/* The count line over the table, in the blue. */
+.summary {
+  margin: 0 0 var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+}
+
+/* The table: one white card, no outline. */
+.list {
+  display: flex;
+  flex-direction: column;
+  background: var(--snt-bg-surface);
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+.loading {
+  opacity: 0.55;
+  transition: opacity var(--snt-transition);
+}
+
+
+.headerRow,
+.row {
+  display: grid;
+  grid-template-columns:
+    32px minmax(0, 1.3fr) minmax(0, 1fr) 170px minmax(0, 1fr) 70px 120px;
+  grid-template-areas: 'photo head owner kind reference when status';
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-3) var(--snt-space-8);
+}
+
+.headerRow {
+  padding-block: var(--snt-space-4);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+  font-size: var(--snt-text-sm);
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
 }
 
-/* What they gave, one fact a line. */
-.facts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--snt-space-3) var(--snt-space-8);
-  margin: 0;
+/* The line between rows: the page's pale blue, set in from both edges. */
+.row {
+  position: relative;
   font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+  cursor: pointer;
 }
 
+.headerRow + .row {
+  background-image: none;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-surface));
+  }
+}
+
+.row:active {
+  background-color: color-mix(in srgb, var(--snt-control-active) 8%, var(--snt-bg-surface));
+}
+
+/* The store's initials in a round, as a user's are on Users. */
+.initials {
+  grid-area: photo;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-surface));
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+}
+
+/* Waiting for a leader: a blue dot in the row's left margin, as an unread
+   notification has. */
+.dot {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--snt-control-active);
+}
+
+.head {
+  grid-area: head;
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  min-width: 0;
+}
+
+.owner {
+  grid-area: owner;
+}
+
+.kind {
+  grid-area: kind;
+}
+
+.reference {
+  grid-area: reference;
+  font-variant-numeric: tabular-nums;
+}
+
+.strong,
+.owner,
+.reference {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unread .strong {
+  font-weight: var(--snt-weight-bold);
+}
+
+/* The owner and the kind of business, under the store's name: on a phone
+   only. */
+.sub {
+  display: none;
+}
+
+.when {
+  grid-area: when;
+  color: var(--snt-ink-muted);
+  white-space: nowrap;
+}
+
+.status {
+  grid-area: status;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Decide: small, the size and fill of the page buttons. */
+.claim {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 var(--snt-space-6);
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font: inherit;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .claim:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 88%, black);
+  }
+}
+
+/* A skeleton line, as tall as a row. */
+.boneRow {
+  cursor: default;
+  min-height: 48px;
+}
+
+/* Nothing matches: a quiet line and the way back. */
+.none {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-8);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+}
+
+.none p {
+  margin: 0;
+}
+
+/* Below a laptop: each request one short line, as an email in a mail app.
+   The store's initials; its name, then its owner and kind of business;
+   Decide or the outcome at the end. */
+@media (max-width: 1023px) {
+  .headerRow,
+  .owner,
+  .kind,
+  .reference,
+  .when {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'photo head status'
+      'photo sub status';
+    column-gap: var(--snt-space-5);
+    row-gap: var(--snt-space-1);
+    padding: var(--snt-space-4) var(--snt-space-6) var(--snt-space-4) var(--snt-space-7);
+    background-size: calc(100% - var(--snt-space-6) * 2) 1px;
+  }
+
+  .initials {
+    width: 36px;
+    height: 36px;
+  }
+
+  .sub {
+    grid-area: sub;
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    font-size: var(--snt-text-xs);
+    color: var(--snt-ink-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .unread .sub {
+    color: var(--snt-accent-bold);
+  }
+
+  .dot {
+    left: 4px;
+  }
+}
+
+/* The full request, in its sheet. */
+.facts {
+  /* Each label on top and its value under it, pair after pair down the
+     sheet, so it is plain which value belongs to which label. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  /* Room before the buttons under it, so the facts read apart from them. */
+  margin: 0 0 var(--snt-space-4);
+  font-size: var(--snt-text-sm);
+  line-height: 1.4;
+}
+
+/* The labels bold, each a little apart from the pair before it. */
 .facts dt {
-  color: var(--snt-card-ink-muted);
+  color: var(--snt-card-ink);
+  font-weight: var(--snt-weight-bold);
 }
 
+.facts dd + dt {
+  margin-top: var(--snt-space-4);
+}
+
+/* The values: information, so grey, not the blue that marks a link. Only
+   a name that opens a record (personLink) stays blue and underlined. */
 .facts dd {
   margin: 0;
-  color: var(--snt-accent-bold);
-  font-weight: var(--snt-weight-bold);
+  color: var(--snt-card-ink);
+  font-weight: var(--snt-weight-normal);
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-/* Verify and Decline, half each. */
+/* A name that opens the store or the owner's record, or a number that
+   calls them: the link blue, underlined. */
+.personLink {
+  color: var(--snt-control-active);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .personLink:hover {
+    color: var(--snt-accent-bold);
+  }
+}
+
+/* Two buttons side by side, on a phone too. */
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--snt-space-6);
+  gap: var(--snt-space-4);
 }
 
-/* The app's pale text box, taller, for the reason. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+}
+
+.label {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
 .textarea {
   width: 100%;
   padding: var(--snt-space-5) var(--snt-space-8);

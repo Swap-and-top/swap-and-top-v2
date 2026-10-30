@@ -26,36 +26,43 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   (`apps/api/src/app.ts`).
 - **Every decision carries a note:** Approve and Clear on a report,
   warn, suspend and ban on a user, and upholding or overturning an
-  appeal need a note saying why; the button stays off until there is one
+  appeal, and Verify and Decline on a store asking to be verified, need
+  a note saying why; the button stays off until there is one
   and the API refuses without it. The note shows in the report's sheet
   ("Why"), the user's record and the Activity log.
 - **All loading and every button action is on TanStack Query**
   (`apps/web/src/lib/query.tsx`; the rule is under "Working with the
   backend").
 - **Staff console review with Hillary, page by page:** done for the
-  Activity log, Reports and Users (2026-10-30). They share one look,
+  Activity log, Reports, Users, Appeals and Verify stores (2026-10-30). They share one look,
   copied from the Store console's Stock page: a toolbar (search box and
   a filter pill), a count line, one white table card under a pale blue
   heading strip, pills for states, compact one line rows below a
   laptop, and the shared page buttons (`app/staff/Pager.tsx`). Keep the
   rest the same.
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): 1. carry on the review with Appeals, then Verify stores,
-  Team, the appeal page and the banned page; 2. a design pass on the
+  stopped"): 1. carry on the review with Team, then the appeal page
+  and the banned page; 2. a design pass on the
   Store console; 3. ask about the open safeguards; 4. Phase 6
   (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
   has the console's design and safeguards (section 9).
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
-  listing. Leave them until Hillary says.
+  listing, and three test stores asking to be verified (Test Mbare
+  Phones and Test Borrowdale Gadgets waiting, Test Chitungwiza
+  Electronics declined; ids in the handoff). Leave them until Hillary
+  says.
 - **Real accounts:** Hillary (super admin), Patrick and Ray are on their
   real phone numbers. Never run `db:seed` (it would put them back on test
   numbers). On the live site test numbers (077 000 0xxx) carry no staff
   powers. For scripted staff tests use Tafadzwa (0006, Trust and safety
-  leader) and Rumbi (0005, member); Tafadzwa's code fails, so Rumbi is
-  the one that signs in. Opening a user's record as Rumbi logs a look in
-  the Activity log: delete the test rows after (`staff_log` with
-  `actor_id = 'u-rumbi'`).
+  leader) and Rumbi (0005, member); both sign in (Tafadzwa again since
+  2026-10-30). Opening a user's record as either logs a look in the
+  Activity log: delete the test rows after (`staff_log` with `actor_id`
+  `'u-rumbi'` or `'u-tafadzwa'`).
+- **Verification documents come later** (Hillary, 2026-10-30): owners
+  will upload photos of their certificate or licence and ID with the
+  request; today our team calls to see them. Details in the handoff.
 
 ## Standing rules from the product owner (Hillary)
 
@@ -95,7 +102,8 @@ These came from repeated feedback. Follow them without being asked.
     If a request seems to need something complex, say so and suggest the
     simple version before building it.
 11. **Leaders, not leads; users, not people.** A department's head is a
-    "leader" or "departmental leader" on screen ("Leads" means the Store
+    "leader" or "departmental leader" on screen (in a pill, shortened to
+    "Dpt. leader") ("Leads" means the Store
     console's customer leads). The accounts the console looks after are
     "users" (a user account and a store account are different things),
     never "people" or "person": the section is Users at `/staff/users`.
