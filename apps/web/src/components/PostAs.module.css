@@ -11,3 +11,16 @@
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
 }
+
+/* Outlined in the blue even before it is opened, so it reads as a choice
+   (Hillary, 2026-10-30). The class is doubled to win over the dropdown's
+   own look, as the Staff console's filter pills do. */
+.choice.choice {
+  border: 1px solid var(--snt-control-idle);
+}
+
+@media (hover: hover) {
+  .choice.choice:hover {
+    border-color: var(--snt-control-active);
+  }
+}

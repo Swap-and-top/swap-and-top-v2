@@ -3,7 +3,7 @@
  * store itself in bones (see StorefrontBodySkeleton).
  */
 
-import { currentStore, newLeadCount } from '@snt/core';
+import { currentStore } from '@snt/core';
 import { Bone, ConsoleShell } from '@snt/ui';
 import { StorefrontBodySkeleton } from '@/components/Storefront';
 import styles from './page.module.css';
@@ -14,7 +14,6 @@ export default function Loading() {
       store={currentStore}
       title="Store profile"
       meta="Your store as buyers find it"
-      newLeadCount={newLeadCount}
       actions={
         <div className={styles.toolbar}>
           <Bone shape="pill" width={200} height={30} />

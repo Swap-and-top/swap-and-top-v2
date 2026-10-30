@@ -77,3 +77,10 @@
   background: var(--snt-alert);
   color: var(--snt-ink-on-dark);
 }
+
+/* A line of text while the page loads (Skeleton.tsx): the bar centred in
+   the line's own height. */
+.textBone {
+  display: flex;
+  align-items: center;
+}

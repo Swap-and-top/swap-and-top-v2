@@ -1,0 +1,45 @@
+/** The Staff console's password screen: one small card in the middle. */
+
+.frame {
+  max-width: 440px;
+  margin: var(--snt-space-10) auto 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+}
+
+/* The console's shield, on the app's pale tile. */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+/* Set a password and Back to my profile, side by side. */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--snt-space-4);
+}

@@ -10,6 +10,11 @@
  * auth-and-identity.md); the app asks for the phone first, and this checks it
  * again. Someone with a store can post as the store (`storeId`).
  *
+ * A listing posted as a store is the store's: only its current owner and
+ * staff change it (`mayManage`), not whoever posted it once they leave, and
+ * it is not in the poster's My listings. A free store's listings are listed
+ * for its members with `GET /me/listings?store=<id>`.
+ *
  * The limits (docs/product/accounts-and-stores.md): live listings for sale or
  * swap, 5 for a person and 15 for a free store; a store with a pass that
  * covers today has none. Wanted listings never count. At a limit the answer
@@ -112,6 +117,15 @@ export async function roleIn(personId: string, storeId: string): Promise<'owner'
 }
 
 /** Whether this person may act for this store: its owner or staff. */
+/** Whether this person may change this listing: a personal one, its
+    poster; a store's, the store's current owner and staff. */
+export async function mayManage(
+  personId: string,
+  listing: { ownerId: string; storeId: string | null },
+): Promise<boolean> {
+  return listing.storeId === null ? listing.ownerId === personId : isMember(personId, listing.storeId);
+}
+
 export async function isMember(personId: string, storeId: string): Promise<boolean> {
   const [member] = await db
     .select({ role: t.storeMembers.role })
@@ -381,22 +395,32 @@ const mine = createRoute({
   path: '/me/listings',
   tags: ['Listings'],
   summary: 'Your listings',
-  description: 'Everything you have posted and not deleted, newest first: live, paused, sold and expired.',
+  description:
+    'Your personal listings, not deleted, newest first: live, paused, sold and expired. Listings posted as a store are the store\'s and not here; with `store`, that store\'s listings instead, for its owner and staff.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
+  request: { query: z.object({ store: z.string().optional() }) },
   responses: {
     200: {
       description: 'Your listings',
       content: { 'application/json': { schema: z.object({ listings: z.array(ListingSchema) }) } },
     },
     401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not their store', content: { 'application/json': { schema: ErrorSchema } } },
   },
 });
 
 postRoutes.openapi(mine, async (c) => {
+  const { store } = c.req.valid('query');
   const person = await personFor(c.get('authUser'));
+  if (store && !(await isMember(person.id, store))) {
+    return c.json({ error: 'Only the store’s owner and staff can see this.' }, 403);
+  }
   const listings = await loadListings(
-    and(eq(t.listings.ownerId, person.id), notInArray(t.listings.status, ['withdrawn', 'removed'])),
+    and(
+      store ? eq(t.listings.storeId, store) : and(eq(t.listings.ownerId, person.id), isNull(t.listings.storeId)),
+      notInArray(t.listings.status, ['withdrawn', 'removed']),
+    ),
     200,
   );
   return c.json({ listings }, 200);
@@ -410,7 +434,7 @@ const editSale = createRoute({
   tags: ['Listings'],
   summary: 'Edit a listing for sale',
   description:
-    'Changes a sale\'s item and terms in place: name, category, condition, details, price, how many are held and whether it accepts swaps. Its address stays the same. With `publish`, a draft with a price is listed (the listing limits apply). Its poster, or the owner or staff of the store it was posted as.',
+    'Changes a sale\'s item and terms in place: name, category, condition, details, price, how many are held and whether it accepts swaps. Its address stays the same. With `publish`, a draft with a price is listed (the listing limits apply). Its poster; or, posted as a store, the store\'s current owner and staff.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -453,10 +477,7 @@ postRoutes.openapi(editSale, async (c) => {
   if (!listing || listing.type !== 'sale' || listing.status === 'withdrawn' || listing.status === 'removed') {
     return c.json({ error: 'That listing is not there any more.' }, 404);
   }
-  const allowed =
-    listing.ownerId === person.id ||
-    (listing.storeId !== null && (await isMember(person.id, listing.storeId)));
-  if (!allowed) return c.json({ error: 'That listing is not yours.' }, 403);
+  if (!(await mayManage(person.id, listing))) return c.json({ error: 'That listing is not yours.' }, 403);
 
   const publish = listing.status === 'draft' && (body.publish ?? false);
   // Listed, it needs a price; a draft may wait for one.
@@ -550,11 +571,8 @@ postRoutes.openapi(status, async (c) => {
   if (!listing || listing.status === 'withdrawn' || listing.status === 'removed') {
     return c.json({ error: 'That listing is not there any more.' }, 404);
   }
-  // Its poster, or anyone running the store it was posted as.
-  const allowed =
-    listing.ownerId === person.id ||
-    (listing.storeId !== null && (await isMember(person.id, listing.storeId)));
-  if (!allowed) return c.json({ error: 'That listing is not yours.' }, 403);
+  // Its poster; or, posted as a store, anyone running the store now.
+  if (!(await mayManage(person.id, listing))) return c.json({ error: 'That listing is not yours.' }, 403);
   // Relisting puts it back among the live ones, so the limit applies.
   if (next === 'live' && listing.status !== 'live' && listing.type !== 'request') {
     const problem = await overLimit(person.id, listing.storeId);

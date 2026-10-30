@@ -25,7 +25,6 @@ import { toast } from 'sonner';
 import {
   contactOpenToStores,
   currentStore,
-  newLeadCount,
   rememberListings,
   useConsoleStore,
   useOfferStore,
@@ -40,6 +39,7 @@ import {
   Badge,
   Button,
   ConsoleShell,
+  EmptyState,
   Field,
   LeadCard,
   LeadLabel,
@@ -53,20 +53,15 @@ import {
   useConsoleTarget,
 } from '@snt/ui';
 import { CheckIcon, InfoIcon } from '@snt/ui/icons';
-import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
+import { LeadAlertsChip, useLeadSettings } from '@/components/leadAlerts/LeadAlerts';
 import { RevealAction } from '@/components/RevealAction';
 import { apiGet, apiSend } from '@/lib/query';
+import { storeLeadsQuery, type LeadIn } from '@/lib/storeLeads';
 import { RevealsTable } from './LeadTables';
 import { LeadTabs } from './LeadTabs';
-import { LeadsBones } from './loading';
+import Loading from './loading';
 import styles from './page.module.css';
 
-/** A lead as the API gives it: the requester in brief, and whether the
-    store has an offer standing on it. */
-type LeadIn = Omit<Lead, 'requester'> & {
-  requester: { id: string; displayName: string; confirmedDeals: number };
-  offered: boolean;
-};
 
 /** The requester as the cards read a person. */
 function personOf(requester: LeadIn['requester'], area: string): User {
@@ -113,16 +108,9 @@ export default function ConsoleLeadsPage() {
   });
   const reveals = revealsQuery.data ?? (revealsQuery.isError ? [] : null);
 
-  const leadsQuery = useQuery({
-    queryKey: ['store', store.id, 'leads'],
-    queryFn: () =>
-      apiGet<{ leads: LeadIn[] }>(`/stores/${encodeURIComponent(store.id)}/leads`).then((data) => {
-        // Found by id wherever an offer card looks its listing up.
-        rememberListings(data.leads.map((lead) => lead.demand));
-        return data.leads;
-      }),
-    meta: { toast: true },
-  });
+  const leadsQuery = useQuery({ ...storeLeadsQuery(store.id), meta: { toast: true } });
+  /** The lead settings, for the pill and Lead settings at the top. */
+  const leadSettings = useLeadSettings().settings;
   const leads: Lead[] | null = leadsQuery.data
     ? leadsQuery.data.map(({ offered: _, ...lead }) => ({ ...lead, requester: personOf(lead.requester, lead.area) }))
     : leadsQuery.isError
@@ -195,12 +183,16 @@ export default function ConsoleLeadsPage() {
     return true;
   }
 
+  // Until its main parts have come (the leads, the number reveals and the
+  // lead settings), the page's whole skeleton, so it changes to the real
+  // page at once rather than in parts.
+  if (leads === null || reveals === null || !leadSettings) return <Loading />;
+
   return (
     <ConsoleShell
       store={store}
       title="Leads"
       meta="People asking for what you sell, newest first"
-      newLeadCount={newLeadCount}
       actions={
         <>
           {/* How lead alerts stand; opens their settings. */}
@@ -219,9 +211,20 @@ export default function ConsoleLeadsPage() {
           check on each. Matching requests: the feed and review queue. The
           store's own offers are on the Offers page, under Sent. */}
       {leadTab === 'reveals' ? (
-        <RevealsTable reveals={reveals ?? []} />
-      ) : leads === null ? (
-        <LeadsBones />
+        reveals?.length === 0 ? (
+          // None yet: said plainly, not an empty table.
+          <EmptyState
+            title="No number reveals yet"
+            body="When someone taps Show contact on one of your listings, it shows here."
+          />
+        ) : (
+          <RevealsTable reveals={reveals ?? []} />
+        )
+      ) : list.length === 0 ? (
+        <EmptyState
+          title="No matching requests yet"
+          body="When someone posts a Wanted listing for something you sell, it shows here."
+        />
       ) : (
         <>
           {/* Phone: a feed. */}

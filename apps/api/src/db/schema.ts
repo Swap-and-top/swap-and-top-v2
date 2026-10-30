@@ -76,6 +76,11 @@ export const people = pgTable(
     phoneVerifiedAt: timestamp({ withTimezone: true }),
     joinedAt: createdAt(),
     lastSeenAt: timestamp({ withTimezone: true }),
+    /** The sealed super admin (docs/product/staff-console.md, section 9):
+        a second super admin kept for emergencies, its password offline.
+        Each time it opens the Staff console it is logged and every other
+        super admin is told at once (routes/staffUnlock.ts). */
+    sealed: boolean().notNull().default(false),
   },
 ).enableRLS();
 
@@ -785,3 +790,33 @@ export const appeals = pgTable('appeals', {
   createdAt: createdAt(),
   reviewedAt: timestamp({ withTimezone: true }),
 }).enableRLS();
+
+/** What a store's leads are: requests for items like its live stock, or
+    any request in the categories it chooses (to source to order). */
+export const leadMatch = pgEnum('lead_match', ['stock', 'categories']);
+
+/**
+ * A store's lead settings (docs/features/wanted-and-leads.md): `match` and
+ * `categories` decide both what its Leads list shows and what it is alerted
+ * about; `alerts` holds the rest of the alert settings (whether on, the
+ * WhatsApp number, quiet hours, swaps, a least budget), as the app's
+ * LeadAlertSettings has them. No row: the defaults, Items in my stock.
+ */
+export const storeLeadSettings = pgTable('store_lead_settings', {
+  storeId: text()
+    .primaryKey()
+    .references(() => stores.id),
+  match: leadMatch().notNull().default('stock'),
+  categories: category().array().notNull().default([]),
+  alerts: jsonb().$type<StoreLeadAlerts>().notNull(),
+  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+}).enableRLS();
+
+/** The alert part of a store's lead settings. */
+export interface StoreLeadAlerts {
+  enabled: boolean;
+  whatsapp: { on: boolean; number: string; confirmed: boolean };
+  includeSwaps: boolean;
+  minBudget: number | null;
+  quietHours: { on: boolean; from: string; to: string };
+}

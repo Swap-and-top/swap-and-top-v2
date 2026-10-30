@@ -4,6 +4,8 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { useSessionStore } from '@snt/core';
+import { isStaffPath, staffKeyFor, useStaffPassStore } from './staffPass';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -51,15 +53,23 @@ export async function apiAsViewer<T>(
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
   if (!token) return { error: 'Sign in again to carry on.', status: 401 };
+  // A staff request carries this device's staff pass (lib/staffPass.ts).
+  const staffKey = isStaffPath(path) ? staffKeyFor(useSessionStore.getState().viewer?.id) : undefined;
   const response = await fetch(`/api${path}`, {
     method: init.method,
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...(staffKey ? { 'X-Staff-Key': staffKey } : {}),
+    },
     body: init.body === undefined ? undefined : JSON.stringify(init.body),
   }).catch(() => null);
   const body = (await response?.json().catch(() => ({}))) as
     | { error?: string; code?: string }
     | undefined;
   if (!response?.ok) {
+    // The pass has ended or was turned down: the password screen again.
+    if (body?.code === 'staff-key') useStaffPassStore.getState().drop();
     return {
       error: body?.error ?? 'Something went wrong. Try again in a minute.',
       code: body?.code,

@@ -26,7 +26,6 @@ import {
   CATEGORY_LABELS,
   CONDITION_LABELS,
   currentStore,
-  newLeadCount,
   useListingStatusStore,
   type Category,
   type Condition,
@@ -270,7 +269,6 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
       store={store}
       title={heading.title}
       meta={heading.meta}
-      newLeadCount={newLeadCount}
       stockCount={stock.length}
     >
       {/* Boost this listing, on top of the edit card: a live item not

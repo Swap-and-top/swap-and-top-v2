@@ -10,7 +10,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import { useContext, type ReactNode } from 'react';
 import {
   getStoreListings,
   useConsoleStore,
@@ -33,7 +33,7 @@ import { NotificationBell } from './NotificationBell';
 import { StoreMark } from '../primitives/Placeholder';
 import { Bone } from '../primitives/Skeleton';
 import { ScreenTitle } from '../primitives/Text';
-import { useConsoleTarget } from './ConsoleTarget';
+import { ConsoleLeadCountContext, useConsoleTarget } from './ConsoleTarget';
 import styles from './ConsoleShell.module.css';
 
 interface ConsoleNavItem {
@@ -70,6 +70,7 @@ export function ConsoleShell({
   // The store the console's gate opened it for; the page's own (the mock
   // store) only outside the gate, as on the reference pages.
   const store = useConsoleTarget() ?? fallback;
+  const leadCount = useContext(ConsoleLeadCountContext);
   const pathname = usePathname();
   const collapsed = useConsoleStore((state) => state.sidebarCollapsed);
   const toggleSidebar = useConsoleStore((state) => state.toggleSidebar);
@@ -97,7 +98,8 @@ export function ConsoleShell({
       shortLabel: 'Leads',
       icon: (active) => <ChartIcon size={20} weight={active ? 1.9 : 1.7} />,
       titleIcon: <ChartIcon size={24} />,
-      count: newLeadCount,
+      // The store's real new leads, from the gate; nothing when none.
+      count: leadCount ?? newLeadCount,
     },
     {
       // Offers on the store's stock, cash or a swap, to accept or decline;
@@ -174,7 +176,7 @@ export function ConsoleShell({
             </button>
           </div>
           <span className={styles.sidebarStore}>
-            <span className={styles.storeName}>{store.name}</span>
+            <span className={styles.storeName}>{store.name || <Bone width={110} height={14} />}</span>
             <span className={styles.storeKicker}>Store console</span>
           </span>
         </div>
@@ -231,12 +233,12 @@ export function ConsoleShell({
 
         <div className={styles.sidebarFoot}>
           <Link
-            href="/"
+            href="/me"
             className={styles.sidebarBack}
-            title={collapsed ? 'Back to marketplace' : undefined}
+            title={collapsed ? 'Back to my profile' : undefined}
           >
             <ChevronLeftIcon size={16} />
-            <span className={styles.sidebarLabel}>Back to marketplace</span>
+            <span className={styles.sidebarLabel}>Back to my profile</span>
           </Link>
         </div>
       </aside>
@@ -244,21 +246,21 @@ export function ConsoleShell({
       {/* Dark header — phone only. */}
       <header className={styles.header}>
         {/* Left out on a narrow phone, so the store's name fits beside the
-            bell and Back to marketplace. */}
+            bell and Back to my profile. */}
         <span className={styles.headerMark}>
           <StoreMark initials={store.initials} size={36} />
         </span>
         <span className={styles.headerBody}>
-          <span className={styles.storeName}>{store.name}</span>
+          <span className={styles.storeName}>{store.name || <Bone width={110} height={14} />}</span>
           <span className={styles.storeKicker}>Store console</span>
         </span>
         {/* The way out of the console, as the sidebar's foot is on a
-            laptop, the size of the marketplace's Post New Item. The store as
+            laptop, the size of the marketplace's Post New Item; it goes to their profile. The store as
             buyers see it is under Store. */}
         {/* The store's notifications, a bell with its unread count. */}
         <NotificationBell audience="store" href={notificationsHref} storeId={store.id} />
-        <Link href="/" className={styles.headerLink}>
-          Back to marketplace
+        <Link href="/me" className={styles.headerLink}>
+          Back to my profile
         </Link>
       </header>
 

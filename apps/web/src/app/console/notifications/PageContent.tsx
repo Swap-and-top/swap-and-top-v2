@@ -7,7 +7,7 @@
  * the bell in the console's header, or Notifications in its sidebar.
  */
 
-import { currentStore, newLeadCount } from '@snt/core';
+import { currentStore } from '@snt/core';
 import { Button, ConsoleShell, useConsoleTarget } from '@snt/ui';
 import {
   NotificationList,
@@ -25,7 +25,6 @@ export default function ConsoleNotificationsPage() {
       store={store}
       title="Notifications"
       meta="Everything for your store, newest first"
-      newLeadCount={newLeadCount}
       actions={
         <div className={styles.actions}>
           <Button

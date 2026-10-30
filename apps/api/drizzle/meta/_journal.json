@@ -64,6 +64,20 @@
       "when": 1793194615597,
       "tag": "0008_fuzzy_roughhouse",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793350234622,
+      "tag": "0009_icy_gressill",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793355144056,
+      "tag": "0010_nervous_madame_masque",
+      "breakpoints": true
     }
   ]
 }

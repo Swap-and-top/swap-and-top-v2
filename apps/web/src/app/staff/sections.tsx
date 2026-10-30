@@ -76,6 +76,15 @@ export const staffKeys = {
 };
 
 /** The sections this person sees, in the console's order. */
+/** Where the Staff console opens for this person: their first section,
+    straight there (no stop at /staff), read without asking the API. */
+export function useStaffHome(): string {
+  const viewer = useSessionStore((state) => state.viewer);
+  if (!viewer) return '/staff';
+  const first = SECTIONS.find((section) => allowed(section, viewer.role === 'super_admin', viewer.staff ?? []));
+  return first?.href ?? '/staff';
+}
+
 export function useStaffSections(): StaffSection[] {
   const viewer = useSessionStore((state) => state.viewer);
   const trustSafety = viewer

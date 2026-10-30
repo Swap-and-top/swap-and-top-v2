@@ -9,6 +9,7 @@ import { SessionRestore } from '@/components/SessionRestore';
 import { SignInToast } from '@/components/SignInToast';
 import { VerifyPhoneHost } from '@/components/VerifyPhone';
 import { AppToaster, SignInHost } from '@snt/ui';
+import { BoneContinuity } from '@/components/BoneContinuity';
 import { PageLoadBar } from '@/components/PageLoadBar';
 import { ScrollToTop } from '@/components/ScrollToTop';
 
@@ -105,6 +106,7 @@ export default function RootLayout({
         <ScrollToTop />
         {/* A thin bar along the top while a page is on its way. */}
         <PageLoadBar />
+        <BoneContinuity />
         {/* Loading from the API: one cache for everything below (see
             lib/query), the sign in and the live listings included. */}
         <QueryProvider>

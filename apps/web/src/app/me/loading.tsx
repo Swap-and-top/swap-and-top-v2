@@ -10,7 +10,6 @@ import {
   AppHeader,
   Footer,
   Bone,
-  ConsoleEntryRow,
   ListGroup,
   ListRow,
   Panel,
@@ -64,12 +63,9 @@ export default function Loading() {
             </ListGroup>
 
             <h2 className={styles.section}>For stores</h2>
-            <ConsoleEntryRow
-              href="/console/stock"
-              icon={<BoxIcon size={20} />}
-              title="Switch to Store console"
-              subtitle="Stock, leads and promotion"
-            />
+            <ListGroup>
+              <ListRow href="/me/stores" icon={<BoxIcon size={19} />} label="My stores" />
+            </ListGroup>
 
             <h2 className={styles.section}>Account</h2>
             <ListGroup>

@@ -1,0 +1,1 @@
+ALTER TABLE "people" ADD COLUMN "sealed" boolean DEFAULT false NOT NULL;

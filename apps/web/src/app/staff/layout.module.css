@@ -1,0 +1,11 @@
+/* The sealed super admin account in use: a plain warning strip across the
+   top of the console, in the alert colour, the whole time. */
+.sealed {
+  margin: 0;
+  padding: var(--snt-space-3) var(--snt-gutter);
+  background: var(--snt-alert);
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  text-align: center;
+}

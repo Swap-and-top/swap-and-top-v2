@@ -28,6 +28,8 @@ import { offerRoutes } from './routes/offers';
 import { postRoutes } from './routes/post';
 import { savedRoutes } from './routes/saved';
 import { storeRoutes } from './routes/stores';
+import { staffUnlockRoutes } from './routes/staffUnlock';
+import { staffPassValid } from './staffPass';
 
 export const app = new OpenAPIHono({
   // A request that fails its checks gets one plain message back.
@@ -54,7 +56,24 @@ app.use('*', async (c, next) => {
   await next();
 });
 
+// The Staff console needs the staff pass as well as a sign in
+// (staffPass.ts): every staff request but the one that gives it.
+const STAFF_PATH = /^\/api\/(staff|admin)\//;
+app.use('*', async (c, next) => {
+  if (!STAFF_PATH.test(c.req.path) || c.req.path === '/api/staff/unlock') return next();
+  const header = c.req.header('Authorization') ?? '';
+  const user = header.startsWith('Bearer ') ? await verify(header.slice(7)) : null;
+  // No sign in: the route itself says so.
+  if (!user) return next();
+  const person = await personFor(user);
+  if (!staffPassValid(c.req.header('X-Staff-Key'), person.id)) {
+    return c.json({ error: 'Enter your password to open the Staff console.', code: 'staff-key' }, 401);
+  }
+  await next();
+});
+
 app.route('/', healthRoutes);
+app.route('/', staffUnlockRoutes);
 app.route('/', listingRoutes);
 app.route('/', storeRoutes);
 app.route('/', meRoutes);

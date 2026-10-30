@@ -10,7 +10,6 @@
  * Wireframe artboard: `Me`.
  */
 
-import { useState } from 'react';
 import {
   confirmationsAwaiting,
   useDealStore,
@@ -29,7 +28,6 @@ import {
   Footer,
   Avatar,
   ConfirmedDealsBadge,
-  ConsoleEntryRow,
   CountBadge,
   ListGroup,
   ListRow,
@@ -51,17 +49,15 @@ import {
   SwapIcon,
 } from '@snt/ui/icons';
 import { DevTools } from '@/components/DevTools';
-import { StorePassSheet, type PassStore } from '@/components/StorePassSheet';
 import { useOnTeam } from '@/lib/staff';
 import { useMyListings } from '@/lib/myListings';
+import { useStaffHome } from '../staff/sections';
 import styles from './page.module.css';
 
 /** One empty list, so a guest's stores are the same each time they are read. */
 const NO_STORES: never[] = [];
 
 export default function MePage() {
-  /** The store whose pass sheet is open, if any. */
-  const [passFor, setPassFor] = useState<PassStore | null>(null);
   const { ids } = useSavedStore();
   const { answers, confirmedDeals, deals } = useDealStore();
   const signOut = useSessionStore((state) => state.signOut);
@@ -70,6 +66,8 @@ export default function MePage() {
   const me = viewer?.id;
   const name = viewer ? viewerName(viewer) : '';
   const onTeam = useOnTeam();
+  /** The console's first section for them, linked straight to. */
+  const staffHome = useStaffHome();
   const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? false);
   const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
   const offers = useOfferStore((store) => store.offers);
@@ -156,64 +154,22 @@ export default function MePage() {
               />
             </ListGroup>
 
-            {/* Their stores, and the console; or, without one, the way to
-                open one. */}
+            {/* Their stores as one row with the count, opening the list of
+                them, each into its Store console (where its details and pass
+                are); or, without one, the way to open one. */}
             <h2 className={styles.section}>For stores</h2>
-            {stores.length ? (
-              <Stack gap={4}>
-                {stores.map((store) => (
-                  <Stack key={store.id} gap={4}>
-                    <ConsoleEntryRow
-                      href={`/store/${store.slug}`}
-                      icon={<BoxIcon size={20} />}
-                      title={store.name}
-                      subtitle={
-                        store.paidUntil
-                          ? `Paid until ${store.paidUntil}`
-                          : store.role === 'owner'
-                            ? 'Free store, up to 15 listings'
-                            : 'A store you work for'
-                      }
-                    />
-                    {/* With more than one store: the console for this one. */}
-                    {stores.length > 1 ? (
-                      <ButtonLink href={`/console/stock?store=${store.id}`} block>
-                        Open Store console
-                      </ButtonLink>
-                    ) : null}
-                    {/* The owner buys its pass and edits its details; staff
-                        cannot. */}
-                    {store.role === 'owner' ? (
-                      <>
-                        <ButtonLink href={`/store/${store.slug}/edit`} variant="secondary" block>
-                          Edit store details
-                        </ButtonLink>
-                        <Button variant="secondary" block onClick={() => setPassFor(store)}>
-                          {store.paidUntil ? 'Extend store pass' : 'Get a store pass'}
-                        </Button>
-                      </>
-                    ) : null}
-                  </Stack>
-                ))}
-                {/* One store: one way into its console. More than one: each
-                    has its own button above. */}
-                {stores.length === 1 ? (
-                  <ConsoleEntryRow
-                    href={`/console/stock?store=${stores[0]!.id}`}
-                    icon={<BoxIcon size={20} />}
-                    title="Switch to Store console"
-                    subtitle="Stock, leads and promotion"
-                  />
-                ) : null}
-              </Stack>
-            ) : (
-              <ConsoleEntryRow
-                href="/store/new"
-                icon={<BoxIcon size={20} />}
-                title="Open a store"
-                subtitle="Your own page and up to 15 listings, free"
-              />
-            )}
+            <ListGroup>
+              {stores.length ? (
+                <ListRow
+                  href="/me/stores"
+                  icon={<BoxIcon size={19} />}
+                  label="My stores"
+                  value={String(stores.length)}
+                />
+              ) : (
+                <ListRow href="/store/new" icon={<BoxIcon size={19} />} label="Open a store" value="Free" />
+              )}
+            </ListGroup>
 
             {/* Our own team: the Staff console, showing the sections of
                 their departments. */}
@@ -222,7 +178,7 @@ export default function MePage() {
                 <h2 className={styles.section}>For our team</h2>
                 <ListGroup>
                   <ListRow
-                    href="/staff"
+                    href={staffHome}
                     icon={<ShieldCheckIcon size={19} />}
                     label="Staff console"
                   />
@@ -266,7 +222,6 @@ export default function MePage() {
           </Stack>
         </SignInGate>
       </ScreenBody>
-      {passFor ? <StorePassSheet store={passFor} onClose={() => setPassFor(null)} /> : null}
       <Footer />
     </Screen>
   );

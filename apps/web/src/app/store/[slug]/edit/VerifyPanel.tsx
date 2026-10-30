@@ -14,6 +14,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Button, Dropdown, Field, Panel, Stack, VerifiedStoreBadge } from '@snt/ui';
 import { apiGet, apiSend } from '@/lib/query';
+import { VerifyPanelSkeleton } from './Skeleton';
 import styles from './page.module.css';
 
 type Kind = 'registered' | 'informal';
@@ -61,7 +62,7 @@ export function VerifyPanel({ storeId, phone }: { storeId: string; phone?: strin
     send.mutate();
   }
 
-  if (!standing) return null;
+  if (!standing) return <VerifyPanelSkeleton />;
   const { verified, request } = standing;
 
   return (

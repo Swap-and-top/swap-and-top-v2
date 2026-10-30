@@ -150,13 +150,29 @@ When a developer truly needs real data, they use their own logged access: a deli
 
 ---
 
+## Making or removing a super admin (database only)
+
+Decided by Hillary, 2026-10-30: there are only two super admins and they rarely change, so the role is **never given in the app**. A stolen account cannot make itself or anyone else a super admin; only someone with access to the database can. Protect that access: two step sign in on the Supabase and Vercel accounts, and only Hillary and the developers on them.
+
+To make someone a super admin:
+
+1. They have an account (signed up in the app) and a password (set in Settings, or in Supabase Auth). The Staff console asks for it.
+2. In Supabase, Table Editor, table `people`: find their row (by name or phone) and set `role` to `super_admin`. For the emergency account only, also set `sealed` to `true`. Save.
+3. They reload the app (or sign out and in). The server sees the change within about 15 seconds.
+4. They open the Staff console from their profile, enter their password, and see every section, Team included.
+5. Write down who and when (in the handoff): a change made in the database is not in the Activity log. The sealed account's use is logged and notified by the app itself.
+
+To remove one: set `role` back to `user` and `sealed` back to `false`. On the live site an account on a test number (077 000 0xxx) never has staff powers, whatever the database says, so use a real number.
+
+**Sealed** marks the emergency account, kept unused: each time it opens the Staff console it is logged as such, every other super admin is notified at once, and the console shows a red warning strip. A second super admin who works in the console day to day should not be sealed, or every visit would raise the alarm.
+
 ## 9. Loopholes, and the rules that close them
 
 Found in a review on 2026-10-28, going through each kind of account. Each rule is part of the design; Phase 5 to 7 build them with the sections they belong to. Holes found in what is **already built** are listed in the handoff ("Before launch") to fix first.
 
 ### Everyone on the team
 
-- **Staff sign in more strongly.** A code by SMS can be stolen by swapping someone's SIM card. Staff accounts need a password as well as the phone code (or an authenticator app) before the console opens.
+- **Staff sign in more strongly.** A code by SMS can be stolen by swapping someone's SIM card. Staff accounts need a password as well as the phone code (or an authenticator app) before the console opens. *Built 2026-10-30:* the account's password, once a day on each device, gives a 12 hour staff pass that every staff request must carry.
 - **Checked on every request.** Departments are read from the database each time (no copy kept in the sign in), so removing someone takes effect at once.
 - **Nobody acts on themselves**, on a report they filed, a report about them, or anything about a store they own or work for. Those go to someone else.
 - **Every action and every look at a person's record is logged**, including exports and phone numbers shown, and the log cannot be edited or deleted from the console.
@@ -165,7 +181,7 @@ Found in a review on 2026-10-28, going through each kind of account. Each rule i
 
 ### Super admin (Hillary)
 
-- **Not a single point of failure.** If Hillary's phone is lost or her account is taken, nobody could manage the team. A second, sealed super admin account (or a written recovery step with the developers) is kept for emergencies, and its use is logged and noticed.
+- **Not a single point of failure.** If Hillary's phone is lost or her account is taken, nobody could manage the team. A second, sealed super admin account (or a written recovery step with the developers) is kept for emergencies, and its use is logged and noticed. *Built 2026-10-30:* an account marked sealed; each time it opens the Staff console it is logged as such, every other super admin is notified at once, and the console shows a warning strip the whole time.
 - **Only the super admin makes leads**, and only the super admin can add someone to more than one department at once. A lead adds and removes members of their own department only.
 
 ### Trust and safety

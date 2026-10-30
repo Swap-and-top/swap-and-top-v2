@@ -112,9 +112,9 @@ export function StaffShell({
         </nav>
 
         <div className={styles.sidebarFoot}>
-          <Link href="/" className={styles.sidebarBack} title={collapsed ? 'Back to marketplace' : undefined}>
+          <Link href="/me" className={styles.sidebarBack} title={collapsed ? 'Back to my profile' : undefined}>
             <ChevronLeftIcon size={16} />
-            <span className={styles.sidebarLabel}>Back to marketplace</span>
+            <span className={styles.sidebarLabel}>Back to my profile</span>
           </Link>
         </div>
       </aside>
@@ -127,8 +127,8 @@ export function StaffShell({
           <span className={styles.storeName}>{loading ? <Bone width={90} height={14} /> : name}</span>
           <span className={styles.storeKicker}>Staff console</span>
         </span>
-        <Link href="/" className={styles.headerLink}>
-          Back to marketplace
+        <Link href="/me" className={styles.headerLink}>
+          Back to my profile
         </Link>
       </header>
 

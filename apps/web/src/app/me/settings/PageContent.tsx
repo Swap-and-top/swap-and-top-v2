@@ -17,7 +17,6 @@ import {
   ButtonLink,
   Field,
   FieldRow,
-  Footer,
   Panel,
   Screen,
   ScreenBody,
@@ -148,12 +147,11 @@ export default function SettingsPage() {
             </Panel>
 
             <ButtonLink href="/me" variant="secondary" block>
-              Back to Me
+              Back to my profile
             </ButtonLink>
           </Stack>
         </SignInGate>
       </ScreenBody>
-      <Footer />
     </Screen>
   );
 }

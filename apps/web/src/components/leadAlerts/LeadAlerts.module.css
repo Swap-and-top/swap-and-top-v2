@@ -184,3 +184,12 @@
   gap: var(--snt-space-4);
   margin-top: var(--snt-space-2);
 }
+
+/* The heading of Lead alerts, the part of the settings under the choice of
+   leads: a little larger than a field's label. */
+.sectionTitle {
+  margin: 0;
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}

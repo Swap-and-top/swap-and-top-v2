@@ -2,13 +2,17 @@
 
 /**
  * Lead alerts: the chip that says how they stand, and the sheet it opens to
- * change them (see LeadAlertSettings in @snt/core for the shape the backend
- * stores). On the Leads page, under the title; and on Store profile.
+ * change them (see LeadAlertSettings in @snt/core). On the Leads page, under
+ * the title; and on Store profile. Saved for the store the console is open
+ * for (GET and PUT /api/stores/{id}/lead-settings), through TanStack Query.
+ * "Show me leads for" decides the Leads list as well as the alerts: items
+ * like the store's stock, or whole categories it chooses.
  *
  * The chip: on (green, with where alerts go), paused (grey), or needing
  * setting up (amber: a WhatsApp number to confirm, or no category chosen).
  */
 
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -16,7 +20,6 @@ import {
   activeAlertChannels,
   leadAlertStatus,
   mockPromotionProducts,
-  useLeadAlertStore,
   type AlertMatch,
   type Category,
   type LeadAlertSettings,
@@ -31,6 +34,7 @@ import {
   Sheet,
   TickTile,
   useCloseSheet,
+  useConsoleTarget,
 } from '@snt/ui';
 import {
   BellIcon,
@@ -38,7 +42,30 @@ import {
   PauseIcon,
   SettingsIcon,
 } from '@snt/ui/icons';
+import { apiGet, apiSend } from '@/lib/query';
 import styles from './LeadAlerts.module.css';
+
+/** The store's settings, as the API keeps them; when the last alert went
+    is not kept yet, as none are sent. */
+type Saved = Omit<LeadAlertSettings, 'lastSentLabel'>;
+
+const settingsKey = (storeId: string) => ['store', storeId, 'leadSettings'] as const;
+
+/** The lead settings of the store the console is open for. */
+export function useLeadSettings() {
+  const store = useConsoleTarget();
+  const storeId = store?.id ?? '';
+  const query = useQuery({
+    queryKey: settingsKey(storeId),
+    queryFn: () =>
+      apiGet<Saved>(`/stores/${encodeURIComponent(storeId)}/lead-settings`).then(
+        (saved): LeadAlertSettings => ({ ...saved, lastSentLabel: null }),
+      ),
+    enabled: Boolean(store),
+    meta: { toast: true },
+  });
+  return { storeId, settings: query.data };
+}
 
 /** The lead alerts subscription: its price and renewal. */
 const alertsPlan = mockPromotionProducts.find((p) => p.id === 'lead-alerts');
@@ -61,14 +88,15 @@ const MATCHES: { value: AlertMatch; label: string }[] = [
 /** The status chip, and beside it a plain button to the settings: the
     chip only says how alerts stand; the button opens the settings sheet. */
 export function LeadAlertsChip() {
-  const settings = useLeadAlertStore((state) => state.settings);
+  const { settings } = useLeadSettings();
   const [open, setOpen] = useState(false);
-  const status = leadAlertStatus(settings);
-  const whatsapp = activeAlertChannels(settings).includes('whatsapp');
+  const status = settings ? leadAlertStatus(settings) : 'on';
+  const whatsapp = settings ? activeAlertChannels(settings).includes('whatsapp') : false;
 
   return (
     <span className={styles.chipRow}>
-      <span className={[styles.chip, styles[status]].join(' ')}>
+      {/* Hidden until the settings come, so it never says the wrong thing. */}
+      <span className={[styles.chip, styles[status]].join(' ')} style={settings ? undefined : { visibility: 'hidden' }}>
         {status === 'on' ? (
           <BellIcon size={14} />
         ) : status === 'paused' ? (
@@ -91,9 +119,9 @@ export function LeadAlertsChip() {
         aria-haspopup="dialog"
       >
         <SettingsIcon size={16} />
-        Lead alert settings
+        Lead settings
       </Button>
-      {open ? <LeadAlertsSheet onClose={() => setOpen(false)} /> : null}
+      {open && settings ? <LeadAlertsSheet onClose={() => setOpen(false)} /> : null}
     </span>
   );
 }
@@ -101,27 +129,19 @@ export function LeadAlertsChip() {
 export function LeadAlertsSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet
-      title="Lead alerts"
+      title="Lead settings"
       wide
       heading={
         // The title after its icon, on the app's pale tile.
         <span className={styles.heading}>
           <span className={styles.headingIcon}>
-            <BellIcon size={18} />
+            <SettingsIcon size={18} />
           </span>
           <span className={styles.headingText}>
-            <span className={styles.headingTitle}>Lead alerts</span>
+            <span className={styles.headingTitle}>Lead settings</span>
             <span className={styles.headingNote}>
-              Get an alert the moment someone wants something you are selling.
+              Which requests show in your Leads, and how we alert you about them.
             </span>
-            {/* The subscription, here with its settings rather than on
-                Stats: what it costs and when it renews. */}
-            {alertsPlan ? (
-              <span className={styles.headingPlan}>
-                {alertsPlan.priceLabel}
-                {alertsPlan.detail ? ` · ${alertsPlan.detail}` : ''}
-              </span>
-            ) : null}
           </span>
         </span>
       }
@@ -133,10 +153,33 @@ export function LeadAlertsSheet({ onClose }: { onClose: () => void }) {
 }
 
 function SettingsForm() {
+  const { storeId, settings } = useLeadSettings();
+  return settings ? <SettingsFormFor storeId={storeId} saved={settings} /> : null;
+}
+
+function SettingsFormFor({ storeId, saved }: { storeId: string; saved: LeadAlertSettings }) {
   const close = useCloseSheet();
-  const saved = useLeadAlertStore((state) => state.settings);
-  const save = useLeadAlertStore((state) => state.save);
+  const queryClient = useQueryClient();
   const [draft, setDraft] = useState<LeadAlertSettings>(saved);
+  const save = useMutation({
+    mutationFn: ({ lastSentLabel: _, ...settings }: LeadAlertSettings) =>
+      apiSend<Saved>(`/stores/${encodeURIComponent(storeId)}/lead-settings`, 'PUT', settings),
+    onSuccess: (next) => {
+      queryClient.setQueryData(settingsKey(storeId), { ...next, lastSentLabel: null });
+      // What counts as a lead may have changed: the list, and its badge.
+      void queryClient.invalidateQueries({ queryKey: ['store', storeId, 'leads'] });
+      const status = leadAlertStatus({ ...next, lastSentLabel: null });
+      toast.success(
+        status === 'paused'
+          ? 'Saved. Lead alerts paused.'
+          : status === 'setup'
+            ? 'Saved. Finish setting up to start alerts.'
+            : 'Lead settings saved.',
+      );
+      close();
+    },
+    onError: (error) => toast.error(error.message),
+  });
   /** A code has been sent to the number, waiting to be typed in. */
   const [codeSent, setCodeSent] = useState(false);
   const [code, setCode] = useState('');
@@ -170,17 +213,65 @@ function SettingsForm() {
   /** Something is shown missing, in red: no category, or an unconfirmed
       number. Save waits until it is put right. */
   const showsMissing = needsCategory || numberUnconfirmed;
-  const status = leadAlertStatus(draft);
 
   return (
     <div className={styles.form}>
-      {/* When the last one went, on its own line. */}
-      {saved.lastSentLabel && saved.enabled ? (
-        <p className={styles.last}>Last alert {saved.lastSentLabel}.</p>
-      ) : null}
+    {/* Which requests are leads: the store's own choice, deciding its
+        Leads list, and the alerts below follow it. */}
+    <section className={styles.group}>
+          <h3 className={styles.label}>Show me leads for</h3>
+          <Segmented<AlertMatch>
+            label="Show me leads for"
+            options={MATCHES}
+            value={draft.match}
+            onChange={(match) => set({ match })}
+          />
+          {/* One line, whatever is chosen: what it means, or what is
+              missing. */}
+          <p className={needsCategory ? styles.warn : styles.note}>
+            {draft.match === 'stock'
+              ? 'Requests for items like the ones you have live. Your Leads and your alerts both follow this.'
+              : needsCategory
+                ? 'Choose at least one category below.'
+                : 'Any request in the categories you choose, even with nothing in stock, to source to order. Your Leads and your alerts both follow this.'}
+          </p>
+          {/* Always in place, greyed unless categories are chosen above. */}
+          <ChipWrap label="Categories">
+            {CATEGORIES.map((category) => (
+              <Chip
+                key={category}
+                square
+                disabled={draft.match !== 'categories'}
+                selected={
+                  draft.match === 'categories' &&
+                  draft.categories.includes(category)
+                }
+                onClick={() => toggleCategory(category)}
+              >
+                {CATEGORY_LABELS[category]}
+              </Chip>
+            ))}
+          </ChipWrap>
+      </section>
+
+      {/* Lead alerts: a part of the settings, whether and how the store is
+          told about a new lead. */}
+      <section className={styles.group}>
+        <h3 className={styles.sectionTitle}>Lead alerts</h3>
+        {alertsPlan ? (
+          <p className={styles.headingPlan}>
+            {alertsPlan.priceLabel}
+            {alertsPlan.detail ? ` · ${alertsPlan.detail}` : ''}
+          </p>
+        ) : null}
+        {/* When the last one went, on its own line. */}
+        {saved.lastSentLabel && saved.enabled ? (
+          <p className={styles.last}>Last alert {saved.lastSentLabel}.</p>
+        ) : null}
+      </section>
 
       {/* From a laptop up, two columns: whether and where on the left,
-          what about on the right. */}
+          when and which on the right. */}
       <div className={styles.columns}>
         <div className={styles.column}>
           <TickTile
@@ -289,6 +380,9 @@ function SettingsForm() {
             </div>
           </section>
 
+        </div>
+
+        <div className={styles.column}>
           {/* When WhatsApp keeps quiet: greyed while it is off. */}
           <section className={styles.group}>
             <TickTile
@@ -315,44 +409,7 @@ function SettingsForm() {
               />
             </FieldRow>
           </section>
-        </div>
-
-        <div className={styles.column}>
-          {/* What they are about. */}
           <section className={styles.group}>
-            <h3 className={styles.label}>Alert me about</h3>
-            <Segmented<AlertMatch>
-              label="Alert me about"
-              options={MATCHES}
-              value={draft.match}
-              onChange={(match) => set({ match })}
-            />
-            {/* One line, whatever is chosen: what it means, or what is
-                missing. */}
-            <p className={needsCategory ? styles.warn : styles.note}>
-              {draft.match === 'stock'
-                ? 'Requests for items like the ones you have live.'
-                : needsCategory
-                  ? 'Choose at least one category below.'
-                  : 'Any request in the categories you choose, to source to order.'}
-            </p>
-            {/* Always in place, greyed unless categories are chosen above. */}
-            <ChipWrap label="Categories">
-              {CATEGORIES.map((category) => (
-                <Chip
-                  key={category}
-                  square
-                  disabled={draft.match !== 'categories'}
-                  selected={
-                    draft.match === 'categories' &&
-                    draft.categories.includes(category)
-                  }
-                  onClick={() => toggleCategory(category)}
-                >
-                  {CATEGORY_LABELS[category]}
-                </Chip>
-              ))}
-            </ChipWrap>
             <TickTile
               checked={draft.includeSwaps}
               onChange={(includeSwaps) => set({ includeSwaps })}
@@ -382,17 +439,8 @@ function SettingsForm() {
         <Button
           size="lg"
           disabled={showsMissing}
-          onClick={() => {
-            save(draft);
-            toast.success(
-              status === 'paused'
-                ? 'Lead alerts paused.'
-                : status === 'setup'
-                  ? 'Saved. Finish setting up to start alerts.'
-                  : 'Lead alerts saved.',
-            );
-            close();
-          }}
+          loading={save.isPending}
+          onClick={() => save.mutate(draft)}
         >
           Save
         </Button>

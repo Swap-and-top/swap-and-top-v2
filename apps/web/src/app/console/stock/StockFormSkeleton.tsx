@@ -5,7 +5,7 @@
  */
 
 import { Bone, ConsoleShell } from '@snt/ui';
-import { currentStore, newLeadCount } from '@snt/core';
+import { currentStore } from '@snt/core';
 import styles from './StockForm.module.css';
 
 /** A labelled box: its label bar set in over a pale pill. */
@@ -33,7 +33,6 @@ export function StockFormSkeleton({
       store={currentStore}
       title={title}
       meta={meta}
-      newLeadCount={newLeadCount}
     >
       <div className={styles.form} aria-busy aria-label="Loading">
         {editing ? (

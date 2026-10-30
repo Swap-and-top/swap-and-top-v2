@@ -34,6 +34,77 @@ import styles from './Sheet.module.css';
 
 const CloseContext = createContext<() => void>(() => {});
 
+/** How far the scroll indicator stays from the panel's top and bottom:
+    clear of its round corners. */
+const THUMB_INSET = 18;
+
+/**
+ * The sheet's own scroll indicator (`.thumb`), in place of the browser's,
+ * which Firefox and Zen draw on the panel's edge, into its round corners.
+ * Placed over the panel as `scroller` scrolls or changes size, hidden when
+ * nothing scrolls, and dragged to scroll. A listener, not loading.
+ */
+function useScrollThumb(
+  scroller: React.RefObject<HTMLDivElement | null>,
+  thumb: React.RefObject<HTMLDivElement | null>,
+) {
+  useEffect(() => {
+    const box = scroller.current;
+    const bar = thumb.current;
+    if (!box || !bar) return;
+
+    const track = () => box.clientHeight - THUMB_INSET * 2;
+    const size = () => Math.max(32, (track() * box.clientHeight) / box.scrollHeight);
+
+    function place() {
+      if (!box || !bar) return;
+      const room = box.scrollHeight - box.clientHeight;
+      bar.hidden = room <= 1;
+      if (bar.hidden) return;
+      const height = size();
+      const top = THUMB_INSET + (box.scrollTop / room) * (track() - height);
+      bar.style.height = `${height}px`;
+      bar.style.transform = `translateY(${top}px)`;
+    }
+
+    // Dragged: the page moves as far, in proportion, as the bar does.
+    let from: { y: number; scroll: number } | null = null;
+    function down(event: PointerEvent) {
+      from = { y: event.clientY, scroll: box!.scrollTop };
+      bar!.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    }
+    function move(event: PointerEvent) {
+      if (!from || !box) return;
+      const room = box.scrollHeight - box.clientHeight;
+      const free = track() - size();
+      if (free > 0) box.scrollTop = from.scroll + ((event.clientY - from.y) * room) / free;
+    }
+    function up() {
+      from = null;
+    }
+
+    place();
+    box.addEventListener('scroll', place, { passive: true });
+    bar.addEventListener('pointerdown', down);
+    bar.addEventListener('pointermove', move);
+    bar.addEventListener('pointerup', up);
+    bar.addEventListener('pointercancel', up);
+    // The sheet's size, or what is in it, changing.
+    const watch = new ResizeObserver(place);
+    watch.observe(box);
+    if (box.firstElementChild) watch.observe(box.firstElementChild);
+    return () => {
+      box.removeEventListener('scroll', place);
+      bar.removeEventListener('pointerdown', down);
+      bar.removeEventListener('pointermove', move);
+      bar.removeEventListener('pointerup', up);
+      bar.removeEventListener('pointercancel', up);
+      watch.disconnect();
+    };
+  }, [scroller, thumb]);
+}
+
 
 /** Closes the sheet this is inside, animating it away. */
 export function useCloseSheet(): () => void {
@@ -60,6 +131,9 @@ export function Sheet({
   children: ReactNode;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
+  const thumb = useRef<HTMLDivElement>(null);
+  useScrollThumb(scroller, thumb);
   const titleId = useId();
   const [closing, setClosing] = useState(false);
   const done = useRef(false);
@@ -139,6 +213,9 @@ export function Sheet({
         }}
       >
       <CloseContext.Provider value={close}>
+      {/* What scrolls, inside the still, rounded panel, with its own
+          indicator over it. */}
+      <div ref={scroller} className={styles.scroll}>
       <div className={styles.body}>
         <div className={styles.head}>
           {heading ? (
@@ -164,6 +241,8 @@ export function Sheet({
         </div>
         {children}
       </div>
+      </div>
+      <div ref={thumb} className={styles.thumb} hidden aria-hidden />
       </CloseContext.Provider>
       </div>
     </dialog>,

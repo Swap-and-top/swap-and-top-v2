@@ -15,7 +15,6 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import {
   currentStore,
-  newLeadCount,
   NO_STOCK_FILTERS,
   useConsoleStore,
   useSponsorStore,
@@ -57,6 +56,7 @@ import { BoostedTab } from './BoostedTab';
 import { filterStock, filtersInUse } from './filterStock';
 import { StockFiltersSheet } from './StockFiltersSheet';
 import { useConsoleStock } from './useConsoleStock';
+import Loading from './loading';
 import { VerifyNudge } from './VerifyNudge';
 import styles from './page.module.css';
 
@@ -241,11 +241,14 @@ export default function ConsoleStockPage() {
     .filter(Boolean)
     .join(' · ');
 
+  // Until the stock has come, the page's whole skeleton, so it all changes
+  // to the real page at once rather than in parts.
+  if (loaded === null) return <Loading />;
+
   return (
     <ConsoleShell
       store={currentStore}
       title="Stock"
-      newLeadCount={newLeadCount}
       stockCount={all.length}
       actions={
         <>
@@ -336,7 +339,7 @@ export default function ConsoleStockPage() {
         <>
           <VerifyNudge />
           {/* What there is, just above the table. */}
-          <p className={styles.summary}>{loaded === null ? '\u00a0' : summary}</p>
+          <p className={styles.summary}>{summary}</p>
           <div className={styles.list}>
             {/* Desktop only — the table's column headings. */}
             <div className={styles.headerRow} aria-hidden>

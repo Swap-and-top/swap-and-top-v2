@@ -10,12 +10,16 @@
  * (`useConsoleTarget`).
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { useSessionStore, type Store } from '@snt/core';
 import {
   AppHeader,
   Button,
   ButtonLink,
+  ConsoleLeadCountContext,
+  ConsoleShell,
   ConsoleTargetContext,
   EmptyState,
   Screen,
@@ -25,6 +29,23 @@ import {
 } from '@snt/ui';
 import { StorePassSheet } from '@/components/StorePassSheet';
 import { useConsoleChoice } from '@/lib/consoleChoice';
+import { storeLeadsQuery } from '@/lib/storeLeads';
+import LeadsLoading from './leads/loading';
+import StatsLoading from './stats/loading';
+import StockLoading from './stock/loading';
+import StoreLoading from './store/loading';
+import OffersLoading from './trade-ins/loading';
+
+/** Each page's own skeleton, by its address, to show from the very first
+    moment: the same one the page shows while its data comes, so it all
+    changes to the real page at once. */
+const SKELETONS: Record<string, () => ReactNode> = {
+  '/console/stock': StockLoading,
+  '/console/leads': LeadsLoading,
+  '/console/trade-ins': OffersLoading,
+  '/console/stats': StatsLoading,
+  '/console/store': StoreLoading,
+};
 
 /** "Kopje Computers" → "KC"; "Samora" → "SA", as the API makes them. */
 function initialsOf(name: string): string {
@@ -34,10 +55,46 @@ function initialsOf(name: string): string {
   return letters.toUpperCase();
 }
 
+/** No store yet, while who is signed in is still coming. */
+const WAITING: Store = {
+  id: '',
+  slug: '',
+  name: '',
+  initials: '',
+  description: '',
+  location: '',
+  openingHours: '',
+  verified: false,
+  stockCount: 0,
+  confirmedDeals: 0,
+  replyHours: 1,
+  joinedAt: '',
+};
+
+/** While the sign in and who it is come: the page's own skeleton, or for a
+    page without one the console's frame in bones; the store's name a bone
+    too, as it is not known yet. Never a blank page. */
+function Waiting() {
+  const Skeleton = SKELETONS[usePathname() ?? ''];
+  return (
+    <ConsoleTargetContext.Provider value={WAITING}>
+      {Skeleton ? <Skeleton /> : <ConsoleShell store={WAITING} title="">{null}</ConsoleShell>}
+    </ConsoleTargetContext.Provider>
+  );
+}
+
 export default function ConsoleLayout({ children }: { children: ReactNode }) {
+  const restored = useSessionStore((state) => state.restored);
+  const signedIn = useSessionStore((state) => state.signedIn);
+  // A remembered sign in comes back a moment after the page loads.
+  if (!restored && !signedIn) return <Waiting />;
   return (
     <SignInGate>
-      <Gate>{children}</Gate>
+      {/* The address is read as the page draws (useSearchParams), which
+          asks for a Suspense boundary. */}
+      <Suspense fallback={null}>
+        <Gate>{children}</Gate>
+      </Suspense>
     </SignInGate>
   );
 }
@@ -48,15 +105,18 @@ function Gate({ children }: { children: ReactNode }) {
   const chosen = useConsoleChoice((state) => state.storeId);
   const choose = useConsoleChoice((state) => state.choose);
 
-  // Opened from Me for one store: `?store=<id>` chooses it.
+  // Opened from My stores for one store: `?store=<id>` chooses it. It is
+  // read as the page draws, so the store chosen before never shows first,
+  // and kept for the console's other pages.
+  const asked = useSearchParams().get('store');
   useEffect(() => {
-    const asked = new URLSearchParams(window.location.search).get('store');
     if (asked) choose(asked);
-  }, [choose]);
+  }, [asked, choose]);
 
-  // The store they chose, if they are still in it; else their first store
-  // with a pass running; else their first store.
+  // The store asked for, or else they chose, if they are still in it; else
+  // their first store with a pass running; else their first store.
   const mine =
+    viewer?.stores.find((s) => s.id === asked) ??
     viewer?.stores.find((s) => s.id === chosen) ??
     viewer?.stores.find((s) => s.paidUntil) ??
     viewer?.stores[0];
@@ -82,8 +142,13 @@ function Gate({ children }: { children: ReactNode }) {
     [mine],
   );
 
+  // The store's leads, for the badge on Leads: how many are new. Only once
+  // a pass covers it, as the console itself. The Leads page reads the same.
+  const leads = useQuery({ ...storeLeadsQuery(mine?.id ?? ''), enabled: Boolean(mine?.paidUntil) });
+  const newLeads = leads.data ? leads.data.filter((lead) => lead.isNew).length : 0;
+
   // Who they are comes from the API a moment after sign in.
-  if (!viewer) return null;
+  if (!viewer) return <Waiting />;
 
   if (!mine || !store) {
     return (
@@ -112,9 +177,16 @@ function Gate({ children }: { children: ReactNode }) {
           }
           action={
             owner ? (
-              <Button size="lg" block onClick={() => setBuying(true)}>
-                Get a store pass
-              </Button>
+              <Stack gap={4}>
+                <Button size="lg" block onClick={() => setBuying(true)}>
+                  Get a store pass
+                </Button>
+                {/* A free store's details are edited from here too, now
+                    that Me only lists the stores. */}
+                <ButtonLink href={`/store/${mine.slug}/edit`} variant="secondary" size="lg" block>
+                  Edit store details
+                </ButtonLink>
+              </Stack>
             ) : null
           }
         />
@@ -124,7 +196,9 @@ function Gate({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ConsoleTargetContext.Provider value={store}>{children}</ConsoleTargetContext.Provider>
+    <ConsoleTargetContext.Provider value={store}>
+      <ConsoleLeadCountContext.Provider value={newLeads}>{children}</ConsoleLeadCountContext.Provider>
+    </ConsoleTargetContext.Provider>
   );
 }
 
@@ -148,8 +222,8 @@ function Message({
           action={
             <Stack gap={4}>
               {action}
-              <ButtonLink href="/" variant="secondary" size="lg" block>
-                Back to marketplace
+              <ButtonLink href="/me" variant="secondary" size="lg" block>
+                Back to my profile
               </ButtonLink>
             </Stack>
           }

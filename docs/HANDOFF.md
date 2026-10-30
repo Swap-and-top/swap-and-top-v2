@@ -25,12 +25,20 @@ of it is committed on `redesign/pdf-style` and live on `main`.
 Vercel builds only Production (Hillary turned Preview builds off).
 
 **Where the next agent starts:** the **open safeguards** (item 4
-below). They were put to Hillary on 2026-10-30 with a suggestion: before
-launch, staff signing in with a password as well as the phone code, a
-sealed second super admin account, and data requests (a Trust and
-safety leader downloads or deletes a user's data from their record);
-later, false reports counting on the reporter and bulk actions. She has
-not chosen yet: ask which to build, or whether to go to Phase 6 first.
+below). Hillary chose (2026-10-30) to build three before Phase 6, in this
+order: (1) staff password, **done**, see "Staff password" below; (2) a
+sealed second super admin, **done**, see "Sealed second super admin"
+below (Hillary marks the accounts herself in Supabase, by the steps in
+`docs/product/staff-console.md`, and tells the next agent who and when,
+to note here); (3) data requests on
+a user's record for Trust and safety leaders: Download their data (one
+file) and Delete their account (signs them out, removes name, phone,
+email and listings, keeps deal and report records without their name;
+a required note, logged, cannot be undone). **Data requests are next**:
+the plan above was agreed in outline; it needs one small database
+change, so ask before running the migration. False reports and bulk
+actions come later. Parked at Hillary's word: renaming the `people`
+table to `users` (it needs a stand in view during the deploy).
 Look at each page in the browser first, offer how it should look, and
 build what she picks.
 
@@ -186,6 +194,173 @@ number.
 
 **Also 2026-10-30:** the sign in sheet (`packages/ui/src/auth/SignIn.tsx`)
 says "Continue with email or phone", not "Continue with email".
+
+**Also 2026-10-30: stores on Me, at Hillary's
+request.** Me's "For stores" is one small row, "My stores" with the
+count (or "Open a store" with none), opening `/me/stores`
+(`app/me/stores`): one row a store, with "Paid until …", "Free store" or
+"Staff", each opening that store's Store console. Edit store details and
+the store pass are no longer on Me: the console's Store profile has
+"Extend store pass" beside "Edit store details" (owner only), and a free
+store's "needs a store pass" screen has "Edit store details" under "Get a
+store pass".
+Two flashes fixed with it: Me's loading screen (`app/me/loading.tsx`)
+still had the old "Switch to Store console" row, and My stores, having
+no loading screen, showed it; My stores now has its own. And the
+console's gate (`app/console/layout.tsx`) read `?store=` in an effect, so
+the store opened before showed for a moment (its "needs a store pass"
+screen, say); it now reads it as the page draws (`useSearchParams`, in a
+Suspense boundary).
+
+**Also 2026-10-30: store listings are the store's.**
+Hillary saw Tinashe's Kopje Computers listings in his My listings too.
+Now:
+- My listings (`GET /api/me/listings`) is a person's personal listings
+  only (`storeId` null).
+- A listing posted as a store, by its owner or a staff member, is the
+  store's: only the store's current owner and staff change it (`mayManage`
+  in `routes/post.ts`, for edit and status; boosts already did this). A
+  staff member removed from the store keeps no access to what they
+  posted, and running boosts are listed for a store only to its members.
+  The listing page shows its owner's tools by the same rule
+  (`useOwnsListing` in `@snt/core`, in Sale, Swap and Request details).
+- A free store (no pass, so no Store console) is looked after on its own
+  page, `/me/stores/{id}` (`app/me/stores/[id]`): its listings as cards
+  (`GET /api/me/listings?store={id}`, members only), and for the owner
+  Get a store pass and Edit store details. My stores opens a free store
+  there and a store with a pass in its console. Moving a listing into or
+  out of a store is still the store owner's alone.
+- The rest of the app's "is this mine" checks (the feeds leaving out your
+  own posts, offers on your listings) still go by who posted it; only
+  managing a listing changed.
+- Posting: Post New Item's "Post as" (`components/PostAs.tsx`) now starts
+  on the person themselves, their name first and then their stores; it
+  used to start on their first store. It is the only way a free store
+  posts; a store with a pass can also use Add stock in its console, which
+  is always for that store.
+- Post as is outlined in the blue before it is opened
+  (`PostAs.module.css`, `.choice`).
+- Edit store details loads in its own shape (`app/store/[slug]/edit/
+  Skeleton.tsx`, used by its `loading.tsx`, the page while the store
+  loads, and the Verified store panel while its standing loads), so
+  nothing shifts.
+- The Store console's Leads badge was the old mock number on every page
+  (`newLeadCount` from `@snt/core`'s mock leads). Now the console's gate
+  reads the store's real leads (`storeLeadsQuery` in `lib/storeLeads.ts`,
+  the same query the Leads page uses) and passes the count of new ones to
+  `ConsoleShell` through `ConsoleLeadCountContext` (`@snt/ui`); none new,
+  no badge. Pages no longer pass `newLeadCount`. Leads shows a plain
+  message when a tab is empty ("No matching requests yet", "No number
+  reveals yet") instead of a bare list or an empty table.
+- **Lead settings, saved per store (migration `0009_icy_gressill`, run
+  on the shared database with Hillary's consent, 2026-10-30).** Table
+  `store_lead_settings` (one row a store; no row means the defaults):
+  `match` (`stock` or `categories`), `categories`, and `alerts` (jsonb:
+  on or paused, WhatsApp number, quiet hours, swaps, a least budget).
+  `GET` and `PUT /api/stores/{id}/lead-settings` (owner and staff;
+  Whole categories needs one category), in `routes/leads.ts`
+  (`leadSettingsFor`). "Show me leads for" (Items in my stock, or Whole
+  categories) now decides the Leads list as well as the alerts: with
+  Whole categories, `GET /stores/{id}/leads` takes requests in the chosen
+  categories even with nothing in stock. The sheet is "Lead settings"
+  (Hillary: the leads choice is its own setting, alerts a part of it):
+  "Show me leads for" at the top, full width, then a "Lead alerts" part
+  with its price line and the alert options in two columns; the button
+  beside the alerts pill says "Lead settings". It
+  (`components/leadAlerts/LeadAlerts.tsx`) reads and saves through
+  TanStack Query for the open store; the old browser only store
+  (`useLeadAlertStore` in `@snt/core`) is gone. Defaults: Items in my
+  stock, alerts on, WhatsApp off (the sample number is gone). Alerts are
+  still not sent; swaps and a least budget only shape alerts, not the
+  list. Deleting a store for good now also needs its
+  `store_lead_settings` row deleted first.
+- **Staff password.** The Staff console now asks for
+  the account's password (the one set in Settings; checked against its
+  email, or its phone when it has none) once a day on each device,
+  besides the phone code. `POST /api/staff/unlock` (`routes/
+  staffUnlock.ts`) checks it with Supabase Auth and gives a staff pass
+  for 12 hours (`staffPass.ts`: the person and its end, signed with a key
+  made from `SUPABASE_SECRET_KEY`, so nothing new on Vercel). Every other
+  `/api/staff/...` and `/api/admin/...` request needs it in `X-Staff-Key`
+  (app.ts), or answers 401 `code: 'staff-key'`. Five wrong passwords in
+  15 minutes and it stops trying for 15 minutes. Unlocks and wrong
+  passwords are in the Activity log (`staff.unlock`,
+  `staff.unlock-failed`). The web app keeps the pass in localStorage
+  (`lib/staffPass.ts`, `snt-staff-pass`), sends it from `apiAsViewer`,
+  and drops it when the API turns it down; `app/staff/StaffUnlock.tsx`
+  is the password screen (with Set a password, to Settings). **Before
+  pushing it live:** Hillary, Patrick and Ray must each know their
+  password (set one in Settings if not), or they cannot open the
+  console. Rumbi (0005) now has the test password `testpass123`.
+- **Sealed second super admin (built and tested).** `people.sealed` (migration `0010_nervous_madame_masque`, run
+  on the shared database with Hillary's consent, 2026-10-30; every
+  account starts not sealed). A sealed account is a super admin kept for
+  emergencies. When it opens the Staff console (`POST /api/staff/unlock`)
+  the log says `staff.sealed-use` (not `staff.unlock`) and every other
+  super admin gets an `account` notification at once ("The sealed super
+  admin account just opened the Staff console. If that was not planned,
+  act now.", to the Activity log); the pass says `sealed`, and the
+  console shows a red strip across the top the whole time
+  (`app/staff/layout.tsx`). Nothing in the app makes an account sealed:
+  Hillary creates the second account herself and gives its email, and it
+  is set by hand (role `super_admin`, `sealed` true). Tested 2026-10-30
+  by marking Rumbi (0005) sealed while still a member (making a test
+  account a super admin was refused as a permission grant): the log
+  entry, Hillary's notification and the strip all came; then put back
+  and the test rows deleted.
+  **Making a super admin is database only** (Hillary, 2026-10-30; no
+  button in the app, by design): the steps are in
+  `docs/product/staff-console.md`, "Making or removing a super admin".
+  Hillary is adding one person herself in Supabase. Record who and when
+  here once done.
+- The profile's Staff console row links straight to the person's first
+  section (`useStaffHome` in `app/staff/sections.tsx`), not `/staff`,
+  which drew an empty frame and then redirected. `/staff` stays for a
+  typed address.
+- The footer came off the task pages: Settings, Edit store details, Open
+  a store and the appeal page. It stays on the profile (the only way a
+  signed in user reaches Terms, Privacy and Contact), sign in and sign
+  up, and the information pages. Settings without it was not looked at
+  in the browser (Hillary stopped that check), so look at the foot of
+  those pages next time.
+- Sheets (`packages/ui/src/primitives/Sheet.tsx`): the rounded panel
+  stays still and a box inside it scrolls, to the panel's edges. The
+  browser's scrollbar is hidden there (Firefox and Zen drew it into the
+  round corners, where it was cut) and the sheet draws its own thin blue
+  bar (`.thumb`, `useScrollThumb`), 18 pixels clear of the top and bottom,
+  that follows the scroll and can be dragged. The Lead settings heading
+  shows the gear.
+- The two scrollbars of this kind (dropdown lists, sheets) are the
+  outlined buttons' blue (`--snt-control-idle`), the filled blue
+  (`--snt-control-active`) on hover: plain to see.
+- Stock loads in its own shape all the way: while its stock comes, the
+  table shows rows of bones (`StockBoneRows`, from its `loading.tsx`)
+  rather than an empty table; and the console's gate
+  (`app/console/layout.tsx`) shows the console's frame in bones
+  (`Waiting`) while the sign in and who it is come, where it showed a
+  blank page. `ConsoleShell` shows a bone for a store with no name yet.
+  Then, at Hillary's asking, all at once: Stock shows its whole skeleton
+  (now with the Stock and Boosted tabs and the count line) until its
+  stock has come, then the real page in one go; the gate's `Waiting`
+  shows the page's own skeleton from the first moment for Stock, Leads,
+  Offers, Stats and Store (`SKELETONS` in `app/console/layout.tsx`); and
+  `components/BoneContinuity.tsx` (in the root layout) marks the page
+  once bones have shown half a second, so a skeleton that takes over
+  from another shows at once rather than blinking out for its first half
+  second (`:root[data-bones-shown] .bone` in `Skeleton.module.css`).
+- Leads the same way: it returns its whole skeleton (`leads/loading.tsx`)
+  until its leads, number reveals and lead settings have all come, then
+  the real page at once. The skeleton now matches: two tabs, the alerts
+  pill and Lead settings, and lead cards line for line (a Wanted card 270
+  pixels and a swap card 342, as the real ones). New standing rule 12 in
+  CLAUDE.md: one skeleton that matches, then the page; check both.
+- A console page's skeleton is put up two or three times while it
+  loads (the gate's, the route's `loading.tsx`, the page's own): the same
+  shapes, but each restarted its pulse, a shade apart, which read as a
+  flash. `BoneContinuity` now sets every bone's pulse to one shared clock
+  as it arrives (`animation-delay`), so a swap for its twin cannot be
+  seen. Measured: the bones' shade across a swap differs by 3 in 255 or
+  not at all.
 
 **What comes next, in Hillary's order (do them in this order):**
 
@@ -826,7 +1001,7 @@ Sign in with a phone (Continue with phone) and the code **123456**:
 | 077 000 0002 | Avondale Games owner (`u-avgames`) | A free store, `s-avondale-games`. |
 | 077 000 0003 | Tinashe K. (`u-kopje`) | Owner of Kopje Computers (`s-kopje`), a paid store with a month pass. |
 | 077 000 0004 | Kuda S. (`u-kuda`) | Staff at Kopje Computers. |
-| 077 000 0005 | Rumbi M. (`u-rumbi`) | Trust and safety member. |
+| 077 000 0005 | Rumbi M. (`u-rumbi`) | Trust and safety member. Test password `testpass123`, for the Staff console. |
 | 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Trust and safety lead. |
 | ~~077 000 0007~~ | Hillary M. (`u-hillary`) | Super admin. **Moved to Hillary's real number on 2026-10-28** (in the database and in Supabase Auth); 0007 is no longer this account. |
 | ~~077 000 0008~~ | Patrick M. (`u-patrick`) | In every department: lead of Trust and safety, Sales and Marketing; member of Finance, DevOps, Executives and Board. **Moved to Patrick's real number on 2026-10-28.** No store. |

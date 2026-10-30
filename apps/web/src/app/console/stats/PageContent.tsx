@@ -25,7 +25,6 @@ import { useState } from 'react';
 import {
   currentStore,
   dollars,
-  newLeadCount,
   useConsoleStore,
   useStoreSponsorships,
   type ItemStats,
@@ -118,7 +117,6 @@ export default function ConsoleStatsPage() {
       store={store}
       title="Stats"
       meta="How your store is doing, and ways to grow it"
-      newLeadCount={newLeadCount}
       actions={
         <div className={styles.range}>
           <Tabs

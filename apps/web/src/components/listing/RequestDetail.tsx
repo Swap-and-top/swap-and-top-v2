@@ -16,7 +16,7 @@ import {
   type RequestListing,
   offerCountFor,
   useOfferStore,
-  useViewerId,
+  useOwnsListing,
   type Item,
 } from '@snt/core';
 import {
@@ -63,8 +63,8 @@ export function RequestDetail({
   const responses = offerCountFor(offers, listing.id, listing.responseCount);
   /** Your own post: worded from your side, with your controls in place of a
       buyer's actions. */
-  const viewer = useViewerId();
-  const mine = !preview && viewer === listing.ownerId;
+  const owns = useOwnsListing(listing);
+  const mine = !preview && owns;
   const report = useListingReport(listing.id, listing.title, mine || preview);
   /** The poster shares their details only once they accept an offer. */
   const keptBack = useContactKeptBack(listing);

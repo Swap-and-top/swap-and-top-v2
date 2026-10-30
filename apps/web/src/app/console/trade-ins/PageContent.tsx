@@ -21,7 +21,6 @@ import { useQuery } from '@tanstack/react-query';
 import {
   currentStore,
   getListing,
-  newLeadCount,
   rememberListings,
   takesOffers,
   useConsoleStore,
@@ -93,7 +92,6 @@ export default function ConsoleOffersPage() {
       store={store}
       title="Offers"
       meta={stock === null ? ' ' : `${waiting} waiting for a reply`}
-      newLeadCount={newLeadCount}
       actions={
         <div className={styles.tabs}>
           <Tabs

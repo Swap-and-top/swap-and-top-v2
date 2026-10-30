@@ -16,6 +16,8 @@ Two things described together because they are the same object seen from two sid
 | **User side** | "Wanted" — say what you are looking for, and offers come to you |
 | **Dealer side** | "Leads" — see who is actively looking for what you stock, and respond first |
 
+**What counts as a store's lead is its choice** (Hillary, 2026-10-30), its own setting at the top of Lead settings, "Show me leads for", with lead alerts a part under it: **Items in my stock** (the default: requests like what it has live) or **Whole categories** (any request in the categories it picks, even with nothing in stock, to source to order). The same choice decides its Leads list and its lead alerts. Specific words ("iPhone 13") may come later if stores ask.
+
 This is the platform's structural difference from Facebook Marketplace. Facebook is a **supply board**: people post what they have and wait. Demand is invisible, or it disappears into a group chat.
 
 Here, demand is a first-class object — and it is what dealers pay for.

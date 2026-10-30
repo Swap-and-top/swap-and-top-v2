@@ -1,0 +1,50 @@
+/** My stores: the title and the empty line as on Deals to confirm. */
+
+.title {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.none {
+  margin: 0;
+  padding: var(--snt-space-8) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}
+
+/* A row while the page loads, as tall as a store's row. */
+.boneRow {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  min-height: 56px;
+  padding: 0 var(--snt-space-8);
+}
+
+/* A store's page: what it is, a line under the title. */
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+/* Get a store pass and Edit store details, side by side. */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--snt-space-4);
+}
+
+/* A heading over the listings, as Me's section headings are. */
+.section {
+  margin: var(--snt-space-4) 0 calc(var(--snt-space-6) * -1 + var(--snt-space-3));
+  padding-left: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}

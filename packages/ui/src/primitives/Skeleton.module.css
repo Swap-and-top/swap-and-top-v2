@@ -37,6 +37,13 @@
   }
 }
 
+/* A skeleton taking over from another already on screen (see the web
+   app's BoneContinuity): shown at once, still pulsing, so the swap does not
+   blink. */
+:global(:root[data-bones-shown]) .bone {
+  animation: snt-bone-pulse 1.2s ease-in-out infinite alternate;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bone {
     animation: snt-bone-in 0s 500ms both;

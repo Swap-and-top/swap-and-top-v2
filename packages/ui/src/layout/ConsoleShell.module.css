@@ -72,7 +72,7 @@
   color: color-mix(in srgb, white 82%, transparent);
 }
 
-/* Back to marketplace: outlined in white on the blue, the size of the
+/* Back to my profile: outlined in white on the blue, the size of the
    marketplace's Post New Item. */
 .headerLink {
   display: inline-flex;
@@ -239,7 +239,7 @@
     flex-shrink: 0;
     width: var(--snt-console-sidebar-w);
     /* Held to the side, the height of the screen, while the page scrolls
-       past it: Back to marketplace stays in view at its foot, and the
+       past it: Back to my profile stays in view at its foot, and the
        sidebar never scrolls itself. */
     position: sticky;
     top: 0;

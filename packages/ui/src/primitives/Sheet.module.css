@@ -40,13 +40,66 @@
   border-radius: var(--snt-radius-xl) var(--snt-radius-xl) 0 0;
   background: var(--snt-bg-card);
   color: var(--snt-ink);
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  /* The rounded panel stays still and clips; what is in it scrolls inside
+     (.scroll), so its corners stay round in every browser, Firefox and Zen
+     too, where a scrollbar on the panel's own edge squares them off. */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* For the scroll indicator, placed over it (.thumb). */
+  position: relative;
   /* Lifted off the page behind: a soft, deep shadow, cast upwards from a
      sheet on the bottom edge. */
   box-shadow: 0 -10px 40px rgb(24 52 74 / 0.22);
   /* In unhurried: 420ms, easing out. */
   animation: rise 420ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* What scrolls, to the panel's very edges. The browser's own scrollbar is
+   hidden: Firefox and Zen draw it on the edge, into the round corners,
+   where it is cut. The sheet draws its own instead (.thumb). */
+.scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* The sheet's own scroll indicator, as the dropdown lists' scrollbar looks:
+   a thin bar in the outlined buttons' blue, plain to see, in from the right edge and clear of the
+   round corners top and bottom (Sheet.tsx places it). It can be dragged. */
+.thumb {
+  position: absolute;
+  top: 0;
+  right: 3px;
+  width: 4px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-idle);
+  cursor: grab;
+  touch-action: none;
+  transition: background var(--snt-transition);
+}
+
+/* A wider place to catch it with a pointer than the bar itself. */
+.thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0 -4px;
+}
+
+@media (hover: hover) {
+  .thumb:hover {
+    background: var(--snt-control-active);
+  }
+}
+
+.thumb[hidden] {
+  display: none;
 }
 
 /*

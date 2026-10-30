@@ -80,6 +80,12 @@ function describe(entry: Entry): string {
       return `upheld the decision on ${who}’s appeal`;
     case 'appeal.overturn':
       return `overturned the decision on ${who}’s appeal`;
+    case 'staff.unlock':
+      return 'opened the Staff console with their password';
+    case 'staff.sealed-use':
+      return 'opened the Staff console with the sealed super admin account';
+    case 'staff.unlock-failed':
+      return 'gave a wrong password for the Staff console';
     case 'store.verify':
       return `verified ${String(detail.store ?? 'the store')}, run by ${who}`;
     case 'store.decline':

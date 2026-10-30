@@ -20,7 +20,6 @@ import {
   Dropdown,
   Field,
   FieldRow,
-  Footer,
   Panel,
   Screen,
   ScreenBody,
@@ -122,7 +121,6 @@ export default function OpenStorePage() {
           </Stack>
         </SignInGate>
       </ScreenBody>
-      <Footer />
     </Screen>
   );
 }

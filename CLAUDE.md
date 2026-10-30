@@ -42,11 +42,21 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   heading strip, pills for states, compact one line rows below a
   laptop, and the shared page buttons (`app/staff/Pager.tsx`). Keep the
   rest the same.
+- **Safeguards built (2026-10-30):** the staff password (the Staff
+  console asks for the account's password once a day on each device,
+  giving a 12 hour pass every staff request must carry;
+  `apps/api/src/staffPass.ts`) and the sealed second super admin
+  (`people.sealed`). Making a super admin is **database only**, never in
+  the app (Hillary's decision): steps in `docs/product/staff-console.md`.
+- **Stores (2026-10-30):** a listing posted as a store is the store's,
+  managed only by its current owner and staff, and not in the poster's
+  My listings. Me has one "My stores" row; a free store has its own page
+  (`/me/stores/{id}`). Each store's lead settings are saved per store
+  and decide its Leads list (`store_lead_settings`).
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): 1. the open safeguards, put to Hillary on 2026-10-30 and
-  waiting on her choice (suggested before launch: a staff password as
-  well as the phone code, a sealed second super admin, data requests);
-  2. Phase 6 (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
+  stopped"): 1. data requests on a user's record (download their data,
+  delete their account), the last safeguard before launch; 2. Phase 6
+  (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
   has the console's design and safeguards (section 9).
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
@@ -59,7 +69,9 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   numbers). On the live site test numbers (077 000 0xxx) carry no staff
   powers. For scripted staff tests use Tafadzwa (0006, Trust and safety
   leader) and Rumbi (0005, member); both sign in (Tafadzwa again since
-  2026-10-30). Opening a user's record as either logs a look in the
+  2026-10-30). The Staff console also asks for the account's password
+  once a day on each device (the staff pass, `apps/api/src/staffPass.ts`);
+  Rumbi's test password is `testpass123`. Opening a user's record as either logs a look in the
   Activity log: delete the test rows after (`staff_log` with `actor_id`
   `'u-rumbi'` or `'u-tafadzwa'`).
 - **Verification documents come later** (Hillary, 2026-10-30): owners
@@ -111,6 +123,15 @@ These came from repeated feedback. Follow them without being asked.
     never "people" or "person": the section is Users at `/staff/users`.
     Code names stay (`lead` in `staff_departments`, the `people` table,
     `person.view` in the log).
+12. **One skeleton, then the page.** Whenever you build a skeleton or
+    check how a page loads, check two things in the browser: the skeleton
+    looks like the content it stands for (same parts, same sizes, so
+    nothing shifts), and it shows once and then the real page replaces it
+    all at once, never pieces of skeleton giving way one by one. A page
+    shows its whole skeleton (its `loading.tsx`, also returned by the page
+    while its main queries load) until its major parts have come; only
+    small things, like a count in a tab, may fill in after. Hillary,
+    2026-10-30, after Stock and Leads loaded in stages.
 
 ## Working with the backend
 

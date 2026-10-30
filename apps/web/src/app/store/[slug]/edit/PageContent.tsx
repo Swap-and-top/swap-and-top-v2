@@ -28,7 +28,6 @@ import {
   Dropdown,
   Field,
   FieldRow,
-  Footer,
   Panel,
   Screen,
   ScreenBody,
@@ -41,6 +40,7 @@ import { apiSend, publicGet, QueryProblem } from '@/lib/query';
 import { refreshStore } from '@/lib/refresh';
 import { refreshViewer } from '@/lib/viewer';
 import { VerifyPanel } from './VerifyPanel';
+import { StoreFormSkeleton } from './Skeleton';
 import styles from './page.module.css';
 
 const TOWN_OPTIONS = TOWNS.map((town) => ({ value: town, label: town }));
@@ -83,7 +83,9 @@ export default function EditStorePage({ slug }: { slug: string }) {
         <SignInGate>
           <Stack gap={6}>
             <h1 className={styles.title}>Edit store details</h1>
-            {!known ? null : !owner || !mine ? (
+            {!known ? (
+              <StoreFormSkeleton />
+            ) : !owner || !mine ? (
               <Panel padded>
                 <p className={styles.lead}>Only the store’s owner can change its details.</p>
               </Panel>
@@ -91,14 +93,15 @@ export default function EditStorePage({ slug }: { slug: string }) {
               <QueryProblem error={loaded.error} onRetry={() => void loaded.refetch()} />
             ) : loaded.data ? (
               <StoreForm slug={slug} mine={mine} store={loaded.data} />
-            ) : null}
+            ) : (
+              <StoreFormSkeleton />
+            )}
             <ButtonLink href="/me" variant="secondary" block>
               Cancel
             </ButtonLink>
           </Stack>
         </SignInGate>
       </ScreenBody>
-      <Footer />
     </Screen>
   );
 }

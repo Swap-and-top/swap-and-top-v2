@@ -5,7 +5,7 @@
  * then the four numbers, the graph and the best listings, in bones.
  */
 
-import { currentStore, newLeadCount } from '@snt/core';
+import { currentStore } from '@snt/core';
 import { Bone, ConsoleShell, Tabs } from '@snt/ui';
 import styles from './page.module.css';
 
@@ -49,7 +49,6 @@ export default function Loading() {
       store={currentStore}
       title="Stats"
       meta="How your store is doing, and ways to grow it"
-      newLeadCount={newLeadCount}
       actions={
         <div className={styles.range}>
           <Tabs

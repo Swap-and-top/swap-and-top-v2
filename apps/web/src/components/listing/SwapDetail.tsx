@@ -24,7 +24,7 @@ import {
   getUser,
   offerCountFor,
   useOfferStore,
-  useViewerId,
+  useOwnsListing,
   type Item,
   type SwapListing,
 } from '@snt/core';
@@ -72,8 +72,8 @@ export function SwapDetail({
   const offerCount = offerCountFor(offers, listing.id, listing.offerCount);
   /** Your own swap: worded from your side, with your panel in place of a
       buyer's actions. */
-  const viewer = useViewerId();
-  const mine = !preview && viewer === listing.ownerId;
+  const owns = useOwnsListing(listing);
+  const mine = !preview && owns;
   const report = useListingReport(listing.id, listing.title, mine || preview);
   /** The poster shares their details only once they accept an offer. */
   const keptBack = useContactKeptBack(listing);

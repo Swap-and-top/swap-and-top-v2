@@ -97,9 +97,14 @@ The store becomes a free store, gently:
 - The moment a new pass is bought, everything paused by the lapse goes live
   again.
 - The Store console closes until the next pass; stock and history are kept
-  there, untouched. Meanwhile the free store manages its listings through
-  My listings, as a person does.
+  there, untouched. Meanwhile the free store manages its listings on its
+  own page under My stores (2026-10-30).
 - Lead alerts stop until the next pass.
+
+**A store's listings are the store's** (Hillary, 2026-10-30): posted by
+its owner or a staff member, they are managed only by the store's current
+owner and staff, and are not in the poster's My listings, which holds only
+their personal listings.
 
 Nothing is ever lost, so letting a pass lapse is never frightening. Worth
 watching once real stores pay: a store buying only single days, on the days
@@ -118,7 +123,7 @@ it posts. The pause at lapse mostly answers it.
    Anything not moved stays personal.
 4. **Posting afterwards:** from the Store console, everything is posted as
    the store. From Post New Item, anyone with a store sees one choice at the
-   top, **Post as: Tarisai M. / Kopje Computers**, starting on the store.
+   top, **Post as: Tarisai M. / Kopje Computers**, starting on themselves (Hillary, 2026-10-30), so a store listing is always chosen.
    Nobody without a store sees it.
 5. **Switching:** the account menu shows the store; "Store console" opens
    it. No signing out and in.

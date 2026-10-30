@@ -19,7 +19,6 @@ import {
   CATEGORY_LABELS,
   CONDITION_LABELS,
   currentStore,
-  newLeadCount,
 } from '@snt/core';
 import {
   Badge,
@@ -137,7 +136,6 @@ export default function BulkImportPage() {
       store={store}
       title="Bulk import"
       meta="Bring in the list you already keep"
-      newLeadCount={newLeadCount}
       stockCount={stock.length}
     >
       <div className={styles.page}>

@@ -5,7 +5,7 @@
  * listing in brief and its offers on their thread, in bones.
  */
 
-import { currentStore, newLeadCount } from '@snt/core';
+import { currentStore } from '@snt/core';
 import { Bone, ConsoleShell, OfferCardSkeleton, Tabs } from '@snt/ui';
 import groups from '@/components/offers/OfferGroups.module.css';
 import styles from './page.module.css';
@@ -45,7 +45,6 @@ export default function Loading() {
       store={currentStore}
       title="Offers"
       meta={<Bone width={140} height={11} />}
-      newLeadCount={newLeadCount}
       actions={
         <div className={styles.tabs}>
           <Tabs

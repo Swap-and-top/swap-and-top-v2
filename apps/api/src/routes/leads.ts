@@ -6,6 +6,12 @@
  * words in what they want. A match names the store's item; no match is still
  * a lead, since stores source to order.
  *
+ * What counts as a lead is the store's choice (its lead settings, table
+ * `store_lead_settings`, read and saved here): requests for items like its
+ * live stock (`stock`, the default), or any request in the categories it
+ * chooses (`categories`), to source to order. The same choice decides its
+ * lead alerts.
+ *
  * Number reveals are not here yet: Show contact does not record them.
  */
 
@@ -60,7 +66,7 @@ const leads = createRoute({
   tags: ['Stores'],
   summary: 'A store\'s leads',
   description:
-    'Other people\'s live Wanted and swap listings in the categories the store has stock in, that let stores make offers, newest first, each matched against the store\'s live stock. Its owner and staff only, while a store pass covers now.',
+    'Other people\'s live Wanted and swap listings that let stores make offers, newest first, each matched against the store\'s live stock: in the categories it has stock in, or, if its lead settings say so, in the categories it chose. Its owner and staff only, while a store pass covers now.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: { params: z.object({ id: z.string() }) },
@@ -85,7 +91,9 @@ leadRoutes.openapi(leads, async (c) => {
     .select({ id: t.listings.id, title: t.listings.title, category: t.listings.category })
     .from(t.listings)
     .where(and(eq(t.listings.storeId, id), eq(t.listings.status, 'live'), eq(t.listings.type, 'sale')));
-  const categories = [...new Set(stock.map((item) => item.category))];
+  const settings = await leadSettingsFor(id);
+  const categories =
+    settings.match === 'categories' ? settings.categories : [...new Set(stock.map((item) => item.category))];
   if (categories.length === 0) return c.json({ leads: [] }, 200);
 
   const demand = await loadListings(
@@ -170,4 +178,108 @@ leadRoutes.openapi(leads, async (c) => {
     ];
   });
   return c.json({ leads: out }, 200);
+});
+
+/* --- the store's lead settings ------------------------------------------- */
+
+const DEFAULT_ALERTS: t.StoreLeadAlerts = {
+  enabled: true,
+  whatsapp: { on: false, number: '', confirmed: false },
+  includeSwaps: true,
+  minBudget: null,
+  quietHours: { on: true, from: '21:00', to: '07:00' },
+};
+
+/** A store's lead settings, or the defaults (Items in my stock) when it
+    has saved none. */
+export async function leadSettingsFor(storeId: string) {
+  const [row] = await db.select().from(t.storeLeadSettings).where(eq(t.storeLeadSettings.storeId, storeId));
+  return {
+    match: row?.match ?? ('stock' as const),
+    categories: row?.categories ?? [],
+    ...(row?.alerts ?? DEFAULT_ALERTS),
+  };
+}
+
+const LeadSettingsSchema = z
+  .object({
+    /** Requests like the store's live stock, or any in the chosen categories. */
+    match: z.enum(['stock', 'categories']),
+    categories: z.array(z.enum(t.category.enumValues)),
+    enabled: z.boolean(),
+    whatsapp: z.object({ on: z.boolean(), number: z.string().max(30), confirmed: z.boolean() }),
+    includeSwaps: z.boolean(),
+    minBudget: z.number().int().min(0).nullable(),
+    quietHours: z.object({
+      on: z.boolean(),
+      from: z.string().regex(/^\d{2}:\d{2}$/),
+      to: z.string().regex(/^\d{2}:\d{2}$/),
+    }),
+  })
+  .openapi('LeadSettings');
+
+const readSettings = createRoute({
+  method: 'get',
+  path: '/stores/{id}/lead-settings',
+  tags: ['Stores'],
+  summary: 'A store\'s lead settings',
+  description:
+    'What counts as a lead for the store (its Leads list and its alerts) and how it is alerted. The defaults until it saves its own. Its owner and staff only.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: { description: 'The settings', content: { 'application/json': { schema: LeadSettingsSchema } } },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not the store\'s owner or staff', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+leadRoutes.openapi(readSettings, async (c) => {
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if (!(await isMember(person.id, id))) {
+    return c.json({ error: 'Only the store\'s owner and staff can see its lead settings.' }, 403);
+  }
+  return c.json(await leadSettingsFor(id), 200);
+});
+
+const saveSettings = createRoute({
+  method: 'put',
+  path: '/stores/{id}/lead-settings',
+  tags: ['Stores'],
+  summary: 'Save a store\'s lead settings',
+  description:
+    'Saves what counts as a lead for the store and how it is alerted. Whole categories needs at least one category. Its owner and staff only.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    params: z.object({ id: z.string() }),
+    body: { content: { 'application/json': { schema: LeadSettingsSchema } } },
+  },
+  responses: {
+    200: { description: 'Saved', content: { 'application/json': { schema: LeadSettingsSchema } } },
+    400: { description: 'No category chosen', content: { 'application/json': { schema: ErrorSchema } } },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not the store\'s owner or staff', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+leadRoutes.openapi(saveSettings, async (c) => {
+  const { id } = c.req.valid('param');
+  const body = c.req.valid('json');
+  const person = await personFor(c.get('authUser'));
+  if (!(await isMember(person.id, id))) {
+    return c.json({ error: 'Only the store\'s owner and staff can change its lead settings.' }, 403);
+  }
+  if (body.match === 'categories' && body.categories.length === 0) {
+    return c.json({ error: 'Choose at least one category.' }, 400);
+  }
+  const { match, categories, ...alerts } = body;
+  const row = { match, categories: [...new Set(categories)], alerts, updatedAt: new Date() };
+  await db
+    .insert(t.storeLeadSettings)
+    .values({ storeId: id, ...row })
+    .onConflictDoUpdate({ target: t.storeLeadSettings.storeId, set: row });
+  return c.json(await leadSettingsFor(id), 200);
 });

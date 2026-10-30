@@ -6,7 +6,7 @@
  */
 
 import { useParams } from 'next/navigation';
-import { currentStore, newLeadCount } from '@snt/core';
+import { currentStore } from '@snt/core';
 import { ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
 import { StockForm } from '../../StockForm';
 import { StockFormSkeleton } from '../../StockFormSkeleton';
@@ -31,7 +31,6 @@ export default function EditStockPage() {
     <ConsoleShell
       store={store}
       title="Item not found"
-      newLeadCount={newLeadCount}
       stockCount={stock.length}
     >
       <div className={styles.form}>

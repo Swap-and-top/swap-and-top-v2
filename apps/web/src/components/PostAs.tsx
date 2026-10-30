@@ -2,8 +2,11 @@
 
 /**
  * Post as: for someone with a store, one choice at the top of posting,
- * starting on the store (docs/product/accounts-and-stores.md). Nobody
- * without a store sees it.
+ * starting on themselves, their name first and then their stores
+ * (docs/product/accounts-and-stores.md). A store's listings are the
+ * store's, not in their My listings, so posting to a store is the choice
+ * they make, never one made for them (Hillary, 2026-10-30). Nobody without
+ * a store sees it.
  */
 
 import { useId } from 'react';
@@ -18,8 +21,9 @@ const NO_STORES: never[] = [];
 export function usePostAs(): string | null {
   const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
   const postAs = usePostDraftStore((state) => state.postAs);
-  if (stores.length === 0 || postAs === null) return null;
-  return stores.some((store) => store.id === postAs) ? postAs! : stores[0]!.id;
+  // Not chosen yet, or a store they are no longer in: themselves.
+  if (!postAs) return null;
+  return stores.some((store) => store.id === postAs) ? postAs : null;
 }
 
 const ME = 'me';
@@ -32,8 +36,8 @@ export function PostAsChoice() {
   if (!viewer || viewer.stores.length === 0) return null;
 
   const options = [
-    ...viewer.stores.map((store) => ({ value: store.id, label: store.name })),
     { value: ME, label: viewerName(viewer) },
+    ...viewer.stores.map((store) => ({ value: store.id, label: store.name })),
   ];
   return (
     <div className={styles.postAs}>
@@ -45,6 +49,7 @@ export function PostAsChoice() {
         options={options}
         onChange={(value) => setPostAs(value === ME ? null : value)}
         labelledBy={label}
+        className={styles.choice}
       />
     </div>
   );

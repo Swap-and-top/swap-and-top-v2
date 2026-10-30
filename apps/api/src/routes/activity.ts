@@ -99,6 +99,8 @@ const ACTION_WORDS: [string, string][] = [
   ['verif', 'store.'],
   ['declin', 'store.decline'],
   ['store', 'store.'],
+  ['password', 'staff.unlock'],
+  ['open', 'staff.unlock'],
   ['team', 'team.'],
   ['lead', 'lead'],
 ];

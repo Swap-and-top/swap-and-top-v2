@@ -128,7 +128,12 @@ boostRoutes.openapi(mine, async (c) => {
       and(
         gt(t.boosts.endsAt, new Date()),
         isNull(t.boosts.stoppedAt),
-        or(eq(t.listings.ownerId, person.id), and(isNotNull(t.listings.storeId), inArray(t.listings.storeId, stores))),
+        // Their personal listings, and their stores' (not a store's they
+        // have left, though they posted it).
+        or(
+          and(isNull(t.listings.storeId), eq(t.listings.ownerId, person.id)),
+          and(isNotNull(t.listings.storeId), inArray(t.listings.storeId, stores)),
+        ),
       ),
     )
     .orderBy(desc(t.boosts.endsAt));

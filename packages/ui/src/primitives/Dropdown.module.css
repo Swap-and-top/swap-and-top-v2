@@ -92,14 +92,14 @@
   list-style: none;
 }
 
-/* A long list's scrollbar: thin, in the app's blue, inside the card with
+/* A long list's scrollbar: thin, in the outlined buttons' blue, plain to see (Hillary, 2026-10-30), inside the card with
    room around it, not on its very edge (the rules below). Chrome and Safari
    would drop those for these two, so only browsers without them (Firefox,
    Zen) get these. */
 @supports not selector(::-webkit-scrollbar) {
   .scroll {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--snt-control-active) 35%, transparent) transparent;
+    scrollbar-color: var(--snt-control-idle) transparent;
   }
 }
 
@@ -116,11 +116,11 @@
 .scroll::-webkit-scrollbar-thumb {
   border: 3px solid transparent;
   border-radius: var(--snt-radius-pill);
-  background: color-mix(in srgb, var(--snt-control-active) 35%, transparent) padding-box;
+  background: var(--snt-control-idle) padding-box;
 }
 
 .scroll::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--snt-control-active) 55%, transparent) padding-box;
+  background: var(--snt-control-active) padding-box;
 }
 
 /* A count after an option's name, in a small round tinted with its own

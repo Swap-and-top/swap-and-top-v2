@@ -19,7 +19,7 @@ import {
   getStore,
   getUser,
   takesOffers,
-  useViewerId,
+  useOwnsListing,
   type SaleListing,
 } from '@snt/core';
 import {
@@ -62,9 +62,10 @@ export function SaleDetail({
 }) {
   const store = getStore(listing.storeId);
   const owner = getUser(listing.ownerId);
-  /** Your own listing: your panel in place of a buyer's actions. */
-  const viewer = useViewerId();
-  const mine = !preview && viewer === listing.ownerId;
+  /** Your own listing, or your store's: your panel in place of a buyer's
+      actions. */
+  const owns = useOwnsListing(listing);
+  const mine = !preview && owns;
   const report = useListingReport(listing.id, listing.title, mine || preview);
   /** The poster shares their details only once they accept an offer. */
   const keptBack = useContactKeptBack(listing);

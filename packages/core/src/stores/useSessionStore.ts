@@ -80,6 +80,21 @@ export function useViewerId(): string | undefined {
   return useSessionStore((state) => state.viewer?.id);
 }
 
+/**
+ * Whether the signed in person runs this listing, so it shows as theirs: a
+ * personal one they posted, or one posted as a store they are in now (not
+ * one they posted for a store they have since left).
+ */
+export function useOwnsListing(listing: { ownerId: string; storeId?: string }): boolean {
+  return useSessionStore((state) => {
+    const viewer = state.viewer;
+    if (!viewer) return false;
+    return listing.storeId
+      ? viewer.stores.some((store) => store.id === listing.storeId)
+      : viewer.id === listing.ownerId;
+  });
+}
+
 /** The same, outside a component. */
 export function viewerId(): string | undefined {
   return useSessionStore.getState().viewer?.id;

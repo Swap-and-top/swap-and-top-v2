@@ -9,12 +9,16 @@
  * public page itself, under the marketplace's header, is one button away.
  *
  * Under it, the store's owner and staff (StaffPanel): the owner adds and
- * removes staff here. Loaded through TanStack Query.
+ * removes staff here. The owner edits the store's details and extends its
+ * store pass from the toolbar (they are no longer on Me). Loaded through
+ * TanStack Query.
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { currentStore, newLeadCount, type Listing, type Store } from '@snt/core';
-import { ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
+import { useState } from 'react';
+import { currentStore, useSessionStore, type Listing, type Store } from '@snt/core';
+import { Button, ButtonLink, ConsoleShell, useConsoleTarget } from '@snt/ui';
+import { StorePassSheet } from '@/components/StorePassSheet';
 import { StorefrontBody, StorefrontBodySkeleton } from '@/components/Storefront';
 import { LeadAlertsChip } from '@/components/leadAlerts/LeadAlerts';
 import { useConsoleRole } from '@/lib/consoleRole';
@@ -28,6 +32,9 @@ export default function ConsoleStorePage() {
   const stock = useConsoleStock(target.id);
   /** Changing the store's details is the owner's. */
   const owner = useConsoleRole() === 'owner';
+  /** The store as the sign in has it, with its pass's end date. */
+  const mine = useSessionStore((state) => state.viewer?.stores.find((s) => s.id === target.id));
+  const [buying, setBuying] = useState(false);
   /** The store as its public page has it: details, and live listings. */
   const { data: page } = useQuery({
     queryKey: ['store', target.slug, 'page'],
@@ -42,7 +49,6 @@ export default function ConsoleStorePage() {
       store={target}
       title="Store profile"
       meta="Your store as buyers find it, and who runs it"
-      newLeadCount={newLeadCount}
       stockCount={stock?.length ?? 0}
       actions={
         <div className={styles.toolbar}>
@@ -56,6 +62,11 @@ export default function ConsoleStorePage() {
               Edit store details
             </ButtonLink>
           ) : null}
+          {owner && mine ? (
+            <Button variant="secondary" size="sm" onClick={() => setBuying(true)}>
+              Extend store pass
+            </Button>
+          ) : null}
         </div>
       }
     >
@@ -67,6 +78,7 @@ export default function ConsoleStorePage() {
         )}
         <StaffPanel storeId={target.id} />
       </div>
+      {buying && mine ? <StorePassSheet store={mine} onClose={() => setBuying(false)} /> : null}
     </ConsoleShell>
   );
 }

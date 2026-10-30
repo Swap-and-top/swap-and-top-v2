@@ -1,32 +1,47 @@
 /**
- * Loading: Leads. Built from the page's own styles: the alerts pill (real,
- * it does not depend on the leads), the tabs as bars, then on a phone a feed
- * of lead cards in bones and from a laptop the two cards side by side.
+ * Loading: Leads. Built from the page's own styles: the alerts pill and
+ * Lead settings, the two tabs as bars, then on a phone a feed of lead cards
+ * in bones, line for line, and from a laptop the list beside the open
+ * request. The page shows it too until its leads, number reveals and lead
+ * settings have all come, so it changes to the real page at once.
  */
 
-import { currentStore, newLeadCount } from '@snt/core';
+import { currentStore } from '@snt/core';
 import { Bone, ConsoleShell, Panel } from '@snt/ui';
 import styles from './page.module.css';
 import skeleton from './loading.module.css';
 
-/** A lead card in bones; some leads carry something to swap, some not. */
+/** A line of a lead card, as tall as the real one, its bone centred. */
+function Line({ height, gap, children }: { height: number; gap: number; children: React.ReactNode }) {
+  return <div style={{ height, marginTop: gap, display: 'flex', alignItems: 'center' }}>{children}</div>;
+}
+
+/** A lead card in bones, line for line as the real one (LeadCard): the
+    label and age, what is wanted, the area and budget, for a swap the item
+    they have, whether it matches, who asks, and the two buttons. */
 function LeadCardBones({ swap }: { swap: boolean }) {
   return (
     <Panel padded>
-      <div className={skeleton.head}>
-        <Bone shape="pill" width={40} height={20} />
-        <Bone width={150} height={11} />
+      <div className={skeleton.head} style={{ height: 24 }}>
+        <Bone shape="pill" width={swap ? 63 : 78} height={24} />
+        <Bone width={62} height={11} />
       </div>
-      <Bone width="64%" height={18} style={{ marginTop: 12 }} />
-      {swap ? (
-        <Bone shape="block" height={44} style={{ marginTop: 10 }} />
-      ) : (
-        <Bone width="50%" height={13} style={{ marginTop: 8 }} />
-      )}
-      <Bone width="58%" height={12} style={{ marginTop: 12 }} />
-      <div className={skeleton.actions}>
-        <Bone shape="pill" width="auto" height={48} />
-        <Bone shape="circle" width={48} height={48} />
+      <Line height={20} gap={12}>
+        <Bone width="58%" height={16} />
+      </Line>
+      <Line height={16} gap={4}>
+        <Bone width="55%" height={11} />
+      </Line>
+      {swap ? <Bone shape="block" height={60} style={{ marginTop: 11 }} /> : null}
+      <Line height={16} gap={swap ? 10 : 9}>
+        <Bone width="52%" height={11} />
+      </Line>
+      <Line height={16} gap={12}>
+        <Bone width={70} height={11} />
+      </Line>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 13 }}>
+        <Bone shape="pill" height={44} />
+        <Bone shape="pill" height={44} />
       </div>
     </Panel>
   );
@@ -39,7 +54,7 @@ export function LeadsBones() {
     <>
       {/* Phone: a feed of lead cards. */}
       <div className={styles.feed} aria-busy aria-label="Loading leads">
-        {[true, false, false].map((swap, i) => (
+        {[false, true, false].map((swap, i) => (
           <LeadCardBones key={i} swap={swap} />
         ))}
       </div>
@@ -112,15 +127,18 @@ export default function Loading() {
       store={currentStore}
       title="Leads"
       meta="People asking for what you sell, newest first"
-      newLeadCount={newLeadCount}
       actions={
         <>
+          {/* How alerts stand, and Lead settings beside it. */}
           <div className={styles.alerts}>
-            <Bone shape="pill" width={200} height={30} />
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <Bone shape="pill" width={170} height={30} />
+              <Bone shape="pill" width={146} height={36} />
+            </span>
           </div>
           {/* The tabs' switch: its pale strip, a bar for each tab. */}
           <div className={[styles.tabs, skeleton.tabs].join(' ')} aria-hidden>
-            {[0, 1, 2].map((i) => (
+            {[0, 1].map((i) => (
               <span key={i} className={skeleton.tabBone}>
                 <Bone width="70%" height={14} />
               </span>

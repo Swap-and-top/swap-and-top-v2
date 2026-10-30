@@ -21,7 +21,6 @@ import {
   Bone,
   Button,
   ButtonLink,
-  Footer,
   Panel,
   Screen,
   ScreenBody,
@@ -251,7 +250,6 @@ export default function AppealPage({
           </Stack>
         </SignInGate>
       </ScreenBody>
-      <Footer />
     </Screen>
   );
 }
