@@ -30,6 +30,7 @@ import { Badge, Bone, Button, ButtonLink, Dropdown, Panel, Sheet, Stack, type Ba
 import { ImageSmallIcon } from '@snt/ui/icons';
 import { refreshListing } from '@/lib/refresh';
 import { apiGet, apiSend, QueryProblem } from '@/lib/query';
+import { useLoadingBar } from '@/lib/loadingBar';
 import { useInDepartment } from '@/lib/staff';
 import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
@@ -124,6 +125,8 @@ export default function ReportsPage({ openFirst }: { openFirst?: string }) {
     // The rows on show stay while another filter loads.
     placeholderData: keepPreviousData,
   });
+  // Other rows on the way (a filter, a search, a page): the top bar runs.
+  useLoadingBar(list.isPlaceholderData);
   const reports = list.data?.reports ?? null;
   const counts = list.data?.counts;
   const opened = reports?.find((report) => report.id === openId) ?? null;

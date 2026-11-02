@@ -155,6 +155,7 @@ export { WantedCard } from './cards/WantedCard';
 /* --- layout -------------------------------------------------------------- */
 export { BottomNav } from './layout/BottomNav';
 export { ConsoleLeadCountContext, ConsoleTargetContext, useConsoleTarget } from './layout/ConsoleTarget';
+export { StaffHomeContext, useStaffHomeHref } from './layout/StaffHome';
 export { ConsoleShell } from './layout/ConsoleShell';
 export { StaffShell, type StaffSection } from './layout/StaffShell';
 export {

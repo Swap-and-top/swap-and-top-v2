@@ -150,6 +150,15 @@ When a developer truly needs real data, they use their own logged access: a deli
 
 ---
 
+## Business definitions (agreed with Hillary, 2026-10-30)
+
+Every number in Phase 6 uses these, so they mean the same on every page.
+
+- **Active user:** someone who used the app in the last 30 days (`people.last_seen_at`). Deleted accounts never count.
+- **Value swapped:** deals both sides confirmed, adding up the money only: the listing's price, or the cash in the accepted offer. A straight swap with no cash counts as a deal and adds $0, so the figure is never inflated.
+- **Revenue:** paid payments. Until Paynow is live every payment is a test one (`provider = 'test'`): they show, clearly marked Test, and never count in real totals.
+- **The order of building:** Stores to call, then Money, then Overview, then Board summary.
+
 ## Making or removing a super admin (database only)
 
 Decided by Hillary, 2026-10-30: there are only two super admins and they rarely change, so the role is **never given in the app**. A stolen account cannot make itself or anyone else a super admin; only someone with access to the database can. Protect that access: two step sign in on the Supabase and Vercel accounts, and only Hillary and the developers on them.
@@ -192,7 +201,7 @@ Found in a review on 2026-10-28, going through each kind of account. Each rule i
 - **Bans need a lead,** and an appeal is decided by a lead other than the one who acted.
 - **Verify stores:** nobody verifies a store they own or work for, and the decision names who made it.
 - **False reports:** a person can report a limited number of times a day, and reports cleared as false count on the reporter's record.
-- **Data requests:** a person asking for their data or for their account to be deleted (their right under the Cyber and Data Protection Act) is handled by a Trust and safety lead, with deal and report records kept as the law allows.
+- **Data requests:** a person asking for their data or for their account to be deleted (their right under the Cyber and Data Protection Act) is handled by a Trust and safety lead, with deal and report records kept as the law allows. *Built 2026-10-30:* "Data request" on a user's page downloads their data as one file, or deletes their account with a required note. Refused for anyone on the team and while banned or suspended.
 
 ### Sales
 

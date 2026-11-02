@@ -162,6 +162,19 @@ export const PersonIcon = ({
   </Svg>
 );
 
+/** Our team: three people, one in front in the middle and one either side
+    behind, for the Staff console. */
+export const TeamIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <circle cx="12" cy="8.5" r="3" />
+    <path d="M6.5 19.5c0-3.1 2.5-5.2 5.5-5.2s5.5 2.1 5.5 5.2" />
+    <circle cx="5.5" cy="9.8" r="2.2" />
+    <path d="M2 18.2c0-2.4 1.5-3.9 3.6-3.9" />
+    <circle cx="18.5" cy="9.8" r="2.2" />
+    <path d="M22 18.2c0-2.4-1.5-3.9-3.6-3.9" />
+  </Svg>
+);
+
 export const PlusIcon = (props: IconProps) => (
   <Svg weight={2.2} {...props}>
     <path d="M12 5v14M5 12h14" />

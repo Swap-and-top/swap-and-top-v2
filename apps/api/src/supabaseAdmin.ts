@@ -21,7 +21,7 @@ export interface AdminResult {
 
 export async function supabaseAdmin(
   path: string,
-  method: 'POST' | 'PUT',
+  method: 'POST' | 'PUT' | 'DELETE',
   payload: Record<string, unknown>,
 ): Promise<AdminResult> {
   const { SUPABASE_URL, SUPABASE_SECRET_KEY } = process.env;

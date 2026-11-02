@@ -47,6 +47,7 @@ import {
   SettingsIcon,
   ShieldCheckIcon,
   SwapIcon,
+  TeamIcon,
 } from '@snt/ui/icons';
 import { DevTools } from '@/components/DevTools';
 import { useOnTeam } from '@/lib/staff';
@@ -179,7 +180,7 @@ export default function MePage() {
                 <ListGroup>
                   <ListRow
                     href={staffHome}
-                    icon={<ShieldCheckIcon size={19} />}
+                    icon={<TeamIcon size={19} />}
                     label="Staff console"
                   />
                 </ListGroup>

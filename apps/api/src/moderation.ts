@@ -66,7 +66,13 @@ export async function targetsOf(personIds: string[]) {
   if (personIds.length === 0) return new Map<string, Target>();
   const [people, staffRows, stores] = await Promise.all([
     db
-      .select({ id: t.people.id, name: t.people.displayName, role: t.people.role, standing: t.people.standing })
+      .select({
+        id: t.people.id,
+        name: t.people.displayName,
+        role: t.people.role,
+        standing: t.people.standing,
+        deletedAt: t.people.deletedAt,
+      })
       .from(t.people)
       .where(inArray(t.people.id, personIds)),
     db
@@ -98,6 +104,7 @@ export interface Target {
   name: string;
   role: string;
   standing: string;
+  deletedAt: Date | null;
   rank: 'lead' | 'member' | null;
   stores: string[];
 }
@@ -106,6 +113,7 @@ export interface Target {
     store, where there is one); why not, if not. */
 export function mayActOn(actor: Actor, target: Target | undefined, storeId?: string | null): string | null {
   if (!target) return 'That user is not there any more.';
+  if (target.deletedAt) return 'This account was deleted.';
   if (target.id === actor.id) return 'This is about you, so someone else has to handle it.';
   if (storeId && actor.stores.has(storeId)) return 'You run this store, so someone else has to handle it.';
   if (target.stores.some((store) => actor.stores.has(store))) {

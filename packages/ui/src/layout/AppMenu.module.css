@@ -831,3 +831,31 @@
     height: 36px;
   }
 }
+
+/* Their place on our team, under their name: a small plain pill (no icon,
+   the regular weight) that opens the Staff console. The class is the menu's own; the pill is a link. */
+.teamPill {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--snt-space-3);
+  border-radius: var(--snt-radius-pill);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-surface));
+  color: var(--snt-control-active);
+  font-size: 11px;
+  font-weight: var(--snt-weight-normal);
+  text-decoration: none;
+  transition: background var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .teamPill:hover {
+    background: color-mix(in srgb, var(--snt-control-active) 20%, var(--snt-bg-surface));
+  }
+}
+
+.teamPill:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}

@@ -4,6 +4,7 @@ import { ToastOffset } from '@/components/ToastOffset';
 import { AskName } from '@/components/AskName';
 import { BannedGate } from '@/components/BannedGate';
 import { QueryProvider } from '@/lib/query';
+import { StaffHomeProvider } from '@/components/StaffHomeProvider';
 import { LiveListingsLoader } from '@/components/LiveListingsLoader';
 import { SessionRestore } from '@/components/SessionRestore';
 import { SignInToast } from '@/components/SignInToast';
@@ -111,7 +112,10 @@ export default function RootLayout({
             lib/query), the sign in and the live listings included. */}
         <QueryProvider>
           {/* A banned account sees only their ban, and can appeal it. */}
-          <BannedGate>{children}</BannedGate>
+          {/* Where the account menu's staff pill opens the console. */}
+          <StaffHomeProvider>
+            <BannedGate>{children}</BannedGate>
+          </StaffHomeProvider>
           {/* A remembered sign in, back before the first paint. */}
           <SessionRestore />
           {/* The live listings from the database, for the search panel and

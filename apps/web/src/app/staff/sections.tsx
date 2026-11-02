@@ -46,8 +46,8 @@ const SECTIONS: SectionDef[] = [
   // The business side (Phase 6) and Marketing and DevOps (Phase 7)
   { href: '/staff/overview', label: 'Overview', shortLabel: 'Overview', icon: (s) => <ChartIcon size={s} />, department: 'executives', built: false },
   { href: '/staff/board', label: 'Board summary', shortLabel: 'Board', icon: (s) => <GridIcon size={s} />, department: 'board', built: false },
-  { href: '/staff/money', label: 'Money', shortLabel: 'Money', icon: (s) => <CashHandIcon size={s} filled={false} />, department: 'finance', built: false },
-  { href: '/staff/sales', label: 'Stores to call', shortLabel: 'Sales', icon: (s) => <StorefrontIcon size={s} />, department: 'sales', built: false },
+  { href: '/staff/revenue', label: 'Revenue', shortLabel: 'Revenue', icon: (s) => <CashHandIcon size={s} filled={false} />, department: 'finance', built: true },
+  { href: '/staff/stores', label: 'Stores', shortLabel: 'Stores', icon: (s) => <StorefrontIcon size={s} />, department: 'sales', built: true },
   { href: '/staff/growth', label: 'Growth', shortLabel: 'Growth', icon: (s) => <TrendIcon size={s} />, department: 'marketing', built: false },
   { href: '/staff/health', label: 'Health', shortLabel: 'Health', icon: (s) => <DesktopIcon size={s} />, department: 'devops', built: false },
   // The team: the super admin, and leads for their own department
@@ -68,6 +68,8 @@ export const staffKeys = {
   reports: ['staff', 'reports'] as const,
   appeals: ['staff', 'appeals'] as const,
   verify: ['staff', 'verify'] as const,
+  sales: ['staff', 'sales'] as const,
+  revenue: ['staff', 'revenue'] as const,
   team: ['staff', 'team'] as const,
   users: (q: string) => ['staff', 'users', q] as const,
   user: (id: string) => ['staff', 'user', id] as const,

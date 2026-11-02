@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { REPORT_REASON_LABELS, type ReportReason } from '@snt/core';
 import { Badge, Bone, Button, ButtonLink, Dropdown, Panel, Sheet, Stack, type BadgeTone } from '@snt/ui';
 import { apiGet, apiSend, QueryProblem } from '@/lib/query';
+import { useLoadingBar } from '@/lib/loadingBar';
 import { useInDepartment } from '@/lib/staff';
 import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
@@ -104,6 +105,8 @@ export default function AppealsPage() {
     // The rows on show stay while another filter loads.
     placeholderData: keepPreviousData,
   });
+  // Other rows on the way (a filter, a search, a page): the top bar runs.
+  useLoadingBar(list.isPlaceholderData);
   const appeals = list.data?.appeals ?? null;
   const counts = list.data?.counts;
   const opened = appeals?.find((appeal) => appeal.id === openId) ?? null;

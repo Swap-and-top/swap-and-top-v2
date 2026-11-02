@@ -51,8 +51,14 @@ export async function paidUntil(storeId: string, now = new Date()): Promise<Date
     .from(t.storePasses)
     .where(and(eq(t.storePasses.storeId, storeId), gt(t.storePasses.endsAt, now)))
     .orderBy(t.storePasses.startsAt);
+  return coveredUntil(passes, now);
+}
+
+/** The same, from a store's passes in hand, earliest first. */
+export function coveredUntil(passes: { startsAt: Date; endsAt: Date }[], now = new Date()): Date | null {
   let end: Date | null = null;
   for (const pass of passes) {
+    if (pass.endsAt <= now) continue;
     // The first must cover now; each after it must follow on.
     if (end === null ? pass.startsAt > now : pass.startsAt > end) break;
     if (end === null || pass.endsAt > end) end = pass.endsAt;

@@ -21,6 +21,7 @@ import { DEPARTMENT_LABELS, REPORT_REASON_LABELS, type Department, type ReportRe
 import { Bone, Button, Field, FieldRow, Panel, Sheet, useCloseSheet } from '@snt/ui';
 import { FilterIcon } from '@snt/ui/icons';
 import { apiGet, QueryProblem } from '@/lib/query';
+import { useLoadingBar } from '@/lib/loadingBar';
 import { useInDepartment } from '@/lib/staff';
 import { useDebounced } from '@/lib/useDebounced';
 import { staffKeys } from '../sections';
@@ -82,6 +83,14 @@ function describe(entry: Entry): string {
       return `overturned the decision on ${who}’s appeal`;
     case 'staff.unlock':
       return 'opened the Staff console with their password';
+    case 'revenue.export':
+      return `downloaded the payments for ${String(detail.period ?? 'a period')}`;
+    case 'sales.phone':
+      return `looked at ${who}’s phone number, to call them`;
+    case 'person.export':
+      return `downloaded ${who}’s data, on a data request`;
+    case 'person.delete':
+      return 'deleted an account, on a data request';
     case 'staff.sealed-use':
       return 'opened the Staff console with the sealed super admin account';
     case 'staff.unlock-failed':
@@ -125,6 +134,8 @@ export default function ActivityPage() {
     // The page on show stays while the next one comes.
     placeholderData: keepPreviousData,
   });
+  // Other rows on the way (a filter, a search, a page): the top bar runs.
+  useLoadingBar(log.isPlaceholderData);
   const entries = log.data?.entries ?? null;
   const total = log.data?.total ?? 0;
   /** The page on show, which is not yet the one asked for while it loads. */

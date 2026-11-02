@@ -11,10 +11,15 @@
  * quick moves never flicker; it creeps on while waiting, then fills and fades
  * once the new page's real content is on screen, its skeleton gone. Actions
  * that stay on the page show a spinner in their button instead.
+ *
+ * It also runs while a page fetches without moving (new figures for a month
+ * just chosen): `useLoadingBar` in lib/loadingBar.ts says when, counted, and
+ * the bar finishes when the last is done.
  */
 
 import { useEffect, useRef, useState } from 'react';
 import { PAGE_LOAD_START as START } from '@snt/ui';
+import { DATA_LOAD_END, DATA_LOAD_START } from '@/lib/loadingBar';
 import styles from './PageLoadBar.module.css';
 
 type Phase = 'idle' | 'waiting' | 'running' | 'done';
@@ -86,14 +91,33 @@ export function PageLoadBar() {
       later(finish, 15000);
     };
 
+    // Fetching on the page: running while any is, finished when the last is.
+    let fetching = 0;
+    const onDataStart = () => {
+      fetching += 1;
+      if (fetching > 1) return;
+      clear();
+      setPhase('waiting');
+      later(() => setPhase((now) => (now === 'waiting' ? 'running' : now)), 100);
+      later(finish, 15000);
+    };
+    const onDataEnd = () => {
+      fetching = Math.max(0, fetching - 1);
+      if (fetching === 0) finish();
+    };
+
     document.addEventListener('click', onClick, true);
     window.addEventListener('popstate', onBack);
     window.addEventListener(START, start);
+    window.addEventListener(DATA_LOAD_START, onDataStart);
+    window.addEventListener(DATA_LOAD_END, onDataEnd);
     return () => {
       clear();
       document.removeEventListener('click', onClick, true);
       window.removeEventListener('popstate', onBack);
       window.removeEventListener(START, start);
+      window.removeEventListener(DATA_LOAD_START, onDataStart);
+      window.removeEventListener(DATA_LOAD_END, onDataEnd);
     };
   }, []);
 

@@ -383,3 +383,15 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Delete their account: the alert colour, so it reads as the serious one. */
+.deleteButton {
+  color: var(--snt-alert);
+  border-color: color-mix(in srgb, var(--snt-alert) 45%, transparent);
+}
+
+.deleteConfirm,
+.deleteConfirm:hover:not(:disabled) {
+  background: var(--snt-alert);
+  color: var(--snt-ink-on-dark);
+}

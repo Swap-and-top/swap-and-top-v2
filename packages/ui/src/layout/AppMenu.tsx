@@ -33,6 +33,7 @@ import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { SocialMark } from './SocialMarks';
 import { BurgerLines } from './BurgerLines';
 import { GuestMark } from './GuestMark';
+import { useStaffHomeHref } from './StaffHome';
 import { PrivacyMark, TermsMark, TipsMark } from './HelpMarks';
 import styles from './AppMenu.module.css';
 
@@ -192,6 +193,11 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
   const signOut = useSessionStore((state) => state.signOut);
   const user = useSessionStore((state) => state.viewer);
   const { confirmedDeals } = useDealStore();
+  const staffHome = useStaffHomeHref();
+  /** Their place on our team, for the pill under their name: none when
+      they are not on it. */
+  const teamPill =
+    user?.role === 'super_admin' ? 'Super admin' : (user?.staff ?? []).length ? 'Staff member' : null;
   const next = pathname && pathname !== '/signin' ? pathname : '/';
   const year = new Date().getFullYear();
 
@@ -211,6 +217,18 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
               </span>
               <div className={styles.whoText}>
                 <span className={styles.name}>{viewerName(user)}</span>
+                {/* On our team: a pill that opens the Staff console (its
+                    password first), quicker than going by the profile. */}
+                {teamPill && user.standing !== 'banned' ? (
+                  <Link
+                    href={staffHome}
+                    className={styles.teamPill}
+                    title="Go to the Staff console"
+                    onClick={onNavigate}
+                  >
+                    {teamPill}
+                  </Link>
+                ) : null}
                 <ConfirmedDealsBadge count={confirmedDeals} size="md" long />
               </div>
             </div>

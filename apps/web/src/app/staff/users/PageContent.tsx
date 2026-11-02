@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
 import { Badge, Bone, Button, Dropdown, Field, Panel } from '@snt/ui';
 import { apiGet, QueryProblem } from '@/lib/query';
+import { useLoadingBar } from '@/lib/loadingBar';
 import { useInDepartment } from '@/lib/staff';
 import { useDebounced } from '@/lib/useDebounced';
 import { Pager, PagerSkeleton, usePageSize } from '../Pager';
@@ -71,6 +72,8 @@ export default function PeoplePage() {
     // The rows on show stay while the next ones come.
     placeholderData: keepPreviousData,
   });
+  // Other rows on the way (a filter, a search, a page): the top bar runs.
+  useLoadingBar(list.isPlaceholderData);
   const people = list.data?.people ?? null;
   const total = list.data?.total ?? 0;
   const counts = list.data?.counts;

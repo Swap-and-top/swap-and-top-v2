@@ -53,10 +53,10 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   My listings. Me has one "My stores" row; a free store has its own page
   (`/me/stores/{id}`). Each store's lead settings are saved per store
   and decide its Leads list (`store_lead_settings`).
+- **Data requests (2026-10-30):** on a user's page, leaders can download
+  their data or delete their account (`apps/api/src/routes/dataRequests.ts`).
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): 1. data requests on a user's record (download their data,
-  delete their account), the last safeguard before launch; 2. Phase 6
-  (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
+  stopped"): Phase 6 (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
   has the console's design and safeguards (section 9).
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
@@ -71,7 +71,7 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   leader) and Rumbi (0005, member); both sign in (Tafadzwa again since
   2026-10-30). The Staff console also asks for the account's password
   once a day on each device (the staff pass, `apps/api/src/staffPass.ts`);
-  Rumbi's test password is `testpass123`. Opening a user's record as either logs a look in the
+  Rumbi's and Tafadzwa's test password is `testpass123`. Opening a user's record as either logs a look in the
   Activity log: delete the test rows after (`staff_log` with `actor_id`
   `'u-rumbi'` or `'u-tafadzwa'`).
 - **Verification documents come later** (Hillary, 2026-10-30): owners

@@ -19,6 +19,7 @@ import { actionText, actorOf, applyAction, dayMonth, mayActOn, mayBan, targetsOf
 import { ErrorSchema } from '../schemas';
 import { inDepartment } from '../staff';
 import { confirmedDealsOf } from './deals';
+import { whyNoDataRequest, whyNoDelete } from './dataRequests';
 import { personFor } from './me';
 import { photosOf, reportLabel } from './reports';
 import { notify } from './notifications';
@@ -139,7 +140,7 @@ userRoutes.openapi(find, async (c) => {
         joinedAt: t.people.joinedAt,
       })
       .from(t.people)
-      .where(and(search, narrowed[show]))
+      .where(and(isNull(t.people.deletedAt), search, narrowed[show]))
       .orderBy(desc(t.people.joinedAt), asc(t.people.id))
       .limit(size)
       .offset((page - 1) * size),
@@ -148,7 +149,7 @@ userRoutes.openapi(find, async (c) => {
         db
           .select({ n: count() })
           .from(t.people)
-          .where(and(search, narrowed[each]))
+          .where(and(isNull(t.people.deletedAt), search, narrowed[each]))
           .then(([row]) => [each, row?.n ?? 0] as const),
       ),
     ),
@@ -263,6 +264,11 @@ const RecordSchema = z
     /** Why this viewer may not act on them; none when they may. */
     cannotAct: z.string().optional(),
     canBan: z.boolean(),
+    /** This viewer may handle a data request for them: a Trust and safety
+        leader, on someone they may act on. */
+    canExport: z.boolean(),
+    /** Why the account cannot be deleted just now; none when it can. */
+    cannotDelete: z.string().optional(),
   })
   .openapi('PersonRecord');
 
@@ -346,6 +352,7 @@ userRoutes.openapi(record, async (c) => {
       .limit(20),
   ]);
   const target = targets.get(id);
+  const noRequest = whyNoDataRequest(actor, target);
   const photos = await photosOf(listings.map((row) => row.id));
   /** A report as the record lists it. */
   const line = (row: (typeof reports)[number] & { personName?: string | null }) => ({
@@ -418,6 +425,8 @@ userRoutes.openapi(record, async (c) => {
           ? 'Banned. Only an overturned appeal lifts a ban.'
           : (mayActOn(actor, target) ?? undefined),
       canBan: mayBan(actor),
+      canExport: !noRequest,
+      cannotDelete: noRequest ?? (target ? (whyNoDelete(target) ?? undefined) : undefined),
     },
     200,
   );

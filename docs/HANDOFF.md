@@ -34,10 +34,8 @@ to note here); (3) data requests on
 a user's record for Trust and safety leaders: Download their data (one
 file) and Delete their account (signs them out, removes name, phone,
 email and listings, keeps deal and report records without their name;
-a required note, logged, cannot be undone). **Data requests are next**:
-the plan above was agreed in outline; it needs one small database
-change, so ask before running the migration. False reports and bulk
-actions come later. Parked at Hillary's word: renaming the `people`
+a required note, logged, cannot be undone). Data requests are **built, not committed**, see "Data requests" below.
+False reports and bulk actions come later; **Phase 6 is next**. Parked at Hillary's word: renaming the `people`
 table to `users` (it needs a stand in view during the deploy).
 Look at each page in the browser first, offer how it should look, and
 build what she picks.
@@ -274,6 +272,86 @@ Now:
   still not sent; swaps and a least budget only shape alerts, not the
   list. Deleting a store for good now also needs its
   `store_lead_settings` row deleted first.
+- **Phase 6 started (not committed).** Business definitions agreed with
+  Hillary, in `docs/product/staff-console.md`, "Business definitions":
+  active is used in 30 days; value swapped is confirmed deals, money
+  only; test payments show marked Test; the order is Stores to call,
+  Money, Overview, Board summary. **Stores** (`/staff/stores`, the
+  sidebar's "Stores"; API `routes/sales.ts`, department `sales`): two
+  tabs, at Hillary's asking. All stores: every open store with owner,
+  live listings and pass, filtered by free, paid or verified. Stores to
+  call: stores near the free limit (12 of 15), passes ending within 3
+  days or lapsed, and users near the limit of 5 with no store, filtered
+  by each. The fullest first; a number shows one at a time
+  on Show number and each look is logged (`sales.phone`). **Only the
+  refusals are tested so far:** no account available to test with is in
+  Sales, so the page has not been seen with rows (Hillary, as super
+  admin, can see it). Still to do from the
+  design: export for leaders (no phone numbers), and a store owner saying
+  no to being called (a line in the terms, and a mark on the store).
+- **Revenue (Phase 6, not committed; was "Money", renamed at Hillary's
+  asking).** `/staff/revenue`, `routes/revenue.ts`, department `finance`.
+  One row of controls scopes the page: Week, Month or Year; which one;
+  "Compare with the ... before" (on at first); "Include test payments"
+  (on by default while no real payment exists, with a plain note that
+  test payments are not real money). Four tiles (revenue, paid, failed,
+  pending) with the change on the period before; "Revenue over time" as
+  Bars or Line (this period brand green `#1cb67f`, the one before brand
+  blue `#255dab`; days of a week or month, months of a year); "Revenue by
+  product" as Pie (a donut) or Bars; the same figures as a table; the
+  period's payments with a filter. A Finance leader downloads the period
+  (`/staff/revenue/export`, `revenue.export` in the log). The charts are
+  hand drawn SVG in `app/staff/revenue/charts.tsx`, to the dataviz skill
+  (palette validated: the pair and the four product colours pass; green
+  and yellow are under 3:1 on white, so every chart has a legend or
+  labels and a table). Checked by eye with sample figures on a throwaway
+  preview page (deleted); the real page is not yet seen with data, as no
+  account available to test with is in Finance (Hillary can see it as
+  super admin).
+- **Revenue, then (2026-11-02):** Day as well (hour by hour), and
+  Compare with any period of the same length, not only the one before
+  (`against`; the "Compare with" choice shows while Compare is on). The
+  Day, Week, Month, Year switch and the charts' type switches are small
+  pills (`ChipRow`), not the large `Segmented`, which looked wrong in the
+  toolbar. **Test payments left in on purpose (Hillary asked):** 2,075
+  payments from 1 Nov 2024 to 2 Nov 2026 (provider `test`,
+  `provider_ref` starting `test-seed-`), paid by the test accounts for a
+  closed store "Test Revenue Store" (`test-s-revenue`), with 1,579
+  store passes on it marked reminded and settled (so nothing lapses or
+  notifies). To remove: delete `store_passes` where `store_id =
+  'test-s-revenue'`, then `payments` where `provider_ref like
+  'test-seed-%'`, then the store.
+- **The top loading bar on in page fetches (2026-11-02):** the yellow bar
+  now also runs while a page fetches without moving (another month,
+  filter, tab or page of rows): `useLoadingBar(query.isPlaceholderData)`
+  from `lib/loadingBar.ts`, counted by `PageLoadBar`, shown after a
+  tenth of a second, filled and faded when done. Used on Revenue,
+  Stores, Users, Reports, Appeals, Verify stores and the Activity log.
+- **The account menu's staff pill (2026-11-02):** under the name, "Super
+  admin" or "Staff member" with the new `TeamIcon` (three people), for
+  anyone on the team; it opens the Staff console at their first section
+  (`StaffHomeContext` in `@snt/ui`, given by `components/
+  StaffHomeProvider.tsx` in the root layout), the password asked first.
+  The profile's Staff console row has the same icon.
+- **Data requests (built and tested, not committed).** Migration
+  `0011_uneven_clea` (`people.deleted_at`), run on the shared database
+  with Hillary's consent. `routes/dataRequests.ts`: on a user's page,
+  "Data request" (Trust and safety leaders and the super admin, on
+  someone they may act on; `app/staff/users/[id]/DataRequest.tsx`) offers
+  Download their data (`GET /api/staff/users/{id}/data`, one JSON file,
+  logged as `person.export`; never who reported them or our team's
+  notes) and Delete their account (`POST .../delete`, a required note,
+  `person.delete`, cannot be undone). Delete removes name, phone, email,
+  area, saved listings, notifications and the Supabase sign in; withdraws
+  their personal listings, their waiting offers, and closes stores they
+  own with their listings; keeps deals, reports, decisions and payments
+  under "Deleted user". Refused for anyone on our team (take them off
+  first) and while banned or suspended (it frees the phone number, so it
+  would dodge the ban). The row keeps `authUserId`, so a sign in left in
+  a browser is turned away (`code: 'deleted'`, app.ts; the web app signs
+  it out) instead of making a new account. Deleted accounts leave the
+  Users list and cannot be acted on. Tafadzwa (0006) now has the test
+  password `testpass123` too.
 - **Staff password.** The Staff console now asks for
   the account's password (the one set in Settings; checked against its
   email, or its phone when it has none) once a day on each device,
@@ -1002,7 +1080,7 @@ Sign in with a phone (Continue with phone) and the code **123456**:
 | 077 000 0003 | Tinashe K. (`u-kopje`) | Owner of Kopje Computers (`s-kopje`), a paid store with a month pass. |
 | 077 000 0004 | Kuda S. (`u-kuda`) | Staff at Kopje Computers. |
 | 077 000 0005 | Rumbi M. (`u-rumbi`) | Trust and safety member. Test password `testpass123`, for the Staff console. |
-| 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Trust and safety lead. |
+| 077 000 0006 | Tafadzwa A. (`u-tafadzwa`) | Trust and safety leader. Test password `testpass123`, for the Staff console. |
 | ~~077 000 0007~~ | Hillary M. (`u-hillary`) | Super admin. **Moved to Hillary's real number on 2026-10-28** (in the database and in Supabase Auth); 0007 is no longer this account. |
 | ~~077 000 0008~~ | Patrick M. (`u-patrick`) | In every department: lead of Trust and safety, Sales and Marketing; member of Finance, DevOps, Executives and Board. **Moved to Patrick's real number on 2026-10-28.** No store. |
 | ~~077 000 0009~~ | Ray L. (`u-ray`) | Trust and safety lead; member of Sales, Marketing and Finance. **Moved to Ray's real (Brazilian) number on 2026-10-28.** No store. |

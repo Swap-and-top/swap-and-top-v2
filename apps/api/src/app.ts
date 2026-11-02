@@ -28,6 +28,9 @@ import { offerRoutes } from './routes/offers';
 import { postRoutes } from './routes/post';
 import { savedRoutes } from './routes/saved';
 import { storeRoutes } from './routes/stores';
+import { dataRequestRoutes } from './routes/dataRequests';
+import { salesRoutes } from './routes/sales';
+import { revenueRoutes } from './routes/revenue';
 import { staffUnlockRoutes } from './routes/staffUnlock';
 import { staffPassValid } from './staffPass';
 
@@ -53,6 +56,11 @@ app.use('*', async (c, next) => {
     const person = await personFor(user);
     if (person.standing === 'banned') return c.json({ error: 'Your account is banned.', code: 'banned' }, 403);
   }
+  // Deleted on a data request: a sign in left in a browser gets nothing.
+  if (user) {
+    const person = await personFor(user);
+    if (person.deletedAt) return c.json({ error: 'This account was deleted.', code: 'deleted' }, 401);
+  }
   await next();
 });
 
@@ -74,6 +82,9 @@ app.use('*', async (c, next) => {
 
 app.route('/', healthRoutes);
 app.route('/', staffUnlockRoutes);
+app.route('/', dataRequestRoutes);
+app.route('/', salesRoutes);
+app.route('/', revenueRoutes);
 app.route('/', listingRoutes);
 app.route('/', storeRoutes);
 app.route('/', meRoutes);

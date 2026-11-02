@@ -12,7 +12,8 @@
  * or suspends them, or bans them for a leader
  * (POST /api/staff/users/{id}/action), where the API lets this person act
  * on them (never on a banned account: only an overturned appeal lifts a
- * ban); else it says why not.
+ * ban); else it says why not. "Data request", for leaders, downloads their
+ * data or deletes their account (DataRequest.tsx).
  */
 
 import Link from 'next/link';
@@ -26,6 +27,7 @@ import { apiSend, QueryProblem } from '@/lib/query';
 import { staffKeys } from '../../sections';
 import { StaffPage } from '../../StaffPage';
 import { STANDING_LABEL, STANDING_TONE } from '../standing';
+import { DataRequestSheet } from './DataRequest';
 import styles from '../page.module.css';
 import record from './record.module.css';
 import { useUserRecord, type Kind, type PersonRecord } from './shared';
@@ -48,6 +50,7 @@ function initialsOf(name: string): string {
 export default function PersonPage({ id }: { id: string }) {
   const { allowed, query } = useUserRecord(id);
   const [acting, setActing] = useState(false);
+  const [requesting, setRequesting] = useState(false);
   const person = query.data;
   const standing = person
     ? `${STANDING_LABEL[person.standing] ?? person.standing}${person.suspendedUntilLabel ? ` until ${person.suspendedUntilLabel}` : ''}`
@@ -72,6 +75,12 @@ export default function PersonPage({ id }: { id: string }) {
                 Take action
               </Button>
             )}
+            {/* Their data, or deleting their account, when they ask. */}
+            {person.canExport ? (
+              <Button variant="secondary" size="sm" onClick={() => setRequesting(true)}>
+                Data request
+              </Button>
+            ) : null}
             <ButtonLink href="/staff/users" variant="secondary" size="sm">
               Back to Users
             </ButtonLink>
@@ -190,6 +199,7 @@ export default function PersonPage({ id }: { id: string }) {
             </div>
           </>
         )}
+        {requesting && person ? <DataRequestSheet person={person} onClose={() => setRequesting(false)} /> : null}
         {acting && person ? (
           <ActionSheet person={person} onClose={() => setActing(false)} onDone={() => setActing(false)} />
         ) : null}

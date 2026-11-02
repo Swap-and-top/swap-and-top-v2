@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { Badge, Bone, Button, ButtonLink, Dropdown, Panel, Sheet, Stack, type BadgeTone } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
 import { apiGet, apiSend, QueryProblem } from '@/lib/query';
+import { useLoadingBar } from '@/lib/loadingBar';
 import { useInDepartment } from '@/lib/staff';
 import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
@@ -106,6 +107,8 @@ export default function VerifyStoresPage() {
     // The rows on show stay while another filter loads.
     placeholderData: keepPreviousData,
   });
+  // Other rows on the way (a filter, a search, a page): the top bar runs.
+  useLoadingBar(list.isPlaceholderData);
   const requests = list.data?.requests ?? null;
   const counts = list.data?.counts;
   const opened = requests?.find((request) => request.id === openId) ?? null;

@@ -70,6 +70,8 @@ export async function apiAsViewer<T>(
   if (!response?.ok) {
     // The pass has ended or was turned down: the password screen again.
     if (body?.code === 'staff-key') useStaffPassStore.getState().drop();
+    // Deleted on a data request: the sign in left here is ended.
+    if (body?.code === 'deleted') void supabase.auth.signOut();
     return {
       error: body?.error ?? 'Something went wrong. Try again in a minute.',
       code: body?.code,

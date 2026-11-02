@@ -58,6 +58,10 @@ export interface PersonRecord {
   }[];
   cannotAct?: string;
   canBan: boolean;
+  /** May handle a data request for them. */
+  canExport: boolean;
+  /** Why the account cannot be deleted just now. */
+  cannotDelete?: string;
 }
 
 export type Kind = 'warning' | 'suspension' | 'ban';

@@ -81,6 +81,9 @@ export const people = pgTable(
         Each time it opens the Staff console it is logged and every other
         super admin is told at once (routes/staffUnlock.ts). */
     sealed: boolean().notNull().default(false),
+    /** Their account was deleted on a data request (routes/dataRequests.ts):
+        the row stays, nameless, for the deal and report records on it. */
+    deletedAt: timestamp({ withTimezone: true }),
   },
 ).enableRLS();
 

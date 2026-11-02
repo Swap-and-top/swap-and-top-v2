@@ -1,0 +1,302 @@
+/**
+ * Revenue, set as the other Staff console pages are: one row of controls,
+ * four white tiles, two white chart cards, then small tables in one white
+ * card each under a pale blue strip of headings, rows parted by thin lines
+ * set in from the card's edges. Below a laptop the payments run on, one
+ * compact line each.
+ */
+
+/* One row of controls over everything they scope. */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+/* Said plainly while test payments are counted. */
+.testNote {
+  margin: 0 0 var(--snt-space-6);
+  padding: var(--snt-space-4) var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: color-mix(in srgb, var(--snt-warning, #eda100) 16%, var(--snt-bg-surface));
+  color: var(--snt-card-ink);
+  font-size: var(--snt-text-sm);
+}
+
+/* A chart in its own white card, its heading and type switch on top. */
+.card {
+  margin-bottom: var(--snt-space-8);
+  padding: var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-surface);
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-4);
+  margin-bottom: var(--snt-space-6);
+}
+
+.cardHead .heading {
+  margin: 0;
+}
+
+
+.loading {
+  opacity: 0.55;
+  transition: opacity var(--snt-transition);
+}
+
+/* The month and the payments filter: blue outlined pills, as elsewhere.
+   The class is doubled to win over the dropdown's own look. */
+.filter.filter {
+  width: 200px;
+  height: 36px;
+  border: 1px solid var(--snt-control-idle);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-weight: var(--snt-weight-medium);
+}
+
+@media (hover: hover) {
+  .filter.filter:hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+/* The month's four numbers: four across on a laptop, two on a phone. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--snt-space-6);
+  margin-bottom: var(--snt-space-8);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  padding: var(--snt-space-7) var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-surface);
+}
+
+.tileLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.tileValue {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: 1.1;
+  color: var(--snt-accent-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.tileNote {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.heading {
+  margin: 0 0 var(--snt-space-5);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The payments' heading, with its filter beside it. */
+.list + .paymentsHead,
+.paymentsHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-4);
+  margin: var(--snt-space-10) 0 var(--snt-space-5);
+}
+
+.paymentsHead .heading {
+  margin: 0;
+}
+
+/* A table: one white card, no outline. */
+.list {
+  display: flex;
+  flex-direction: column;
+  background: var(--snt-bg-surface);
+  border-radius: var(--snt-radius-xl);
+  overflow: hidden;
+}
+
+.headerRow,
+.row {
+  display: grid;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-4) var(--snt-space-8);
+}
+
+.headerRow {
+  background: color-mix(in srgb, var(--snt-control-active) 12%, var(--snt-bg-app));
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The line between rows: the page's pale blue, set in from both edges. */
+.row {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-8) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.headerRow + .row {
+  background-image: none;
+}
+
+.productRow {
+  grid-template-columns: minmax(0, 1fr) 60px 120px 120px;
+}
+
+.productRow > :not(:first-child) {
+  text-align: right;
+}
+
+.paymentRow {
+  grid-template-columns: 110px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr) 70px 140px;
+  grid-template-areas: 'when payer store product amount status';
+}
+
+.when {
+  grid-area: when;
+  color: var(--snt-ink-muted);
+  white-space: nowrap;
+}
+
+.payer {
+  grid-area: payer;
+  font-weight: var(--snt-weight-bold);
+}
+
+.store {
+  grid-area: store;
+}
+
+.product {
+  grid-area: product;
+}
+
+.payer,
+.store,
+.product {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amount,
+.number {
+  grid-area: amount;
+  font-variant-numeric: tabular-nums;
+}
+
+.number {
+  grid-area: auto;
+}
+
+.paymentRow > .amount,
+.paymentRow > span:nth-child(5) {
+  text-align: right;
+}
+
+.status {
+  grid-area: status;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--snt-space-2);
+}
+
+.strong {
+  font-weight: var(--snt-weight-bold);
+}
+
+.muted {
+  font-weight: var(--snt-weight-normal);
+  color: var(--snt-ink-muted);
+}
+
+.none {
+  padding: var(--snt-space-8);
+  color: var(--snt-ink-muted);
+  font-size: var(--snt-text-md);
+}
+
+.none p {
+  margin: 0;
+}
+
+/* Below a laptop: no headings over the payments; each one compact line,
+   who and what with the amount, then when and the store under it. */
+@media (max-width: 1023px) {
+  .paymentRow.headerRow {
+    display: none;
+  }
+
+  .paymentRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'payer amount'
+      'product status'
+      'when status';
+    row-gap: var(--snt-space-1);
+    padding: var(--snt-space-4) var(--snt-space-6);
+    background-size: calc(100% - var(--snt-space-6) * 2) 1px;
+  }
+
+  .paymentRow > .store {
+    display: none;
+  }
+
+  .paymentRow > .when,
+  .paymentRow > .product {
+    font-size: var(--snt-text-xs);
+    color: var(--snt-ink-muted);
+  }
+
+  .headerRow + .paymentRow,
+  .paymentRow:first-of-type {
+    background-image: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--snt-space-4);
+  }
+
+  .tile {
+    padding: var(--snt-space-6);
+  }
+}
