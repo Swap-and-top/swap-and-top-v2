@@ -6,7 +6,7 @@ laid out, the design patterns in use and what was done most recently; its
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
 
-## Where things stand (2026-10-30)
+## Where things stand (2026-11-03)
 
 - **Built and live on `main`:** Phases 1 to 4 (everything a user and a
   store uses, on the database), apart from real Paynow payment, which
@@ -55,9 +55,18 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   and decide its Leads list (`store_lead_settings`).
 - **Data requests (2026-10-30):** on a user's page, leaders can download
   their data or delete their account (`apps/api/src/routes/dataRequests.ts`).
+- **Phase 6 started (live 2026-11-03):** Stores at `/staff/stores`
+  (Sales; All stores and Stores to call; `apps/api/src/routes/sales.ts`)
+  and Revenue at `/staff/revenue` (Finance; hand drawn SVG charts in
+  `app/staff/revenue/charts.tsx`, Day to Year, compare with any period;
+  `apps/api/src/routes/revenue.ts`). 2,075 test payments on "Test
+  Revenue Store" are left in on purpose (removal steps in the handoff).
+  The account menu shows a small staff pill that opens the console, and
+  every staff table runs the top loading bar while new rows come
+  (`useLoadingBar` in `apps/web/src/lib/loadingBar.ts`).
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): Phase 6 (Executives, Board, Finance, Sales). `docs/product/staff-console.md`
-  has the console's design and safeguards (section 9).
+  stopped"): the Executives Overview, then the Board monthly summary.
+  Business definitions are in `docs/product/staff-console.md`.
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
   listing, and three test stores asking to be verified (Test Mbare

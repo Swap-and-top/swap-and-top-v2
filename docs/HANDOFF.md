@@ -12,33 +12,31 @@ file is the state of the code and the recent work. **Start with "Where we
 stopped" just below**, then `docs/architecture/backend-plan.md` ("Where it
 stands") for the backend in full.
 
-## Where we stopped (2026-10-30)
+## Where we stopped (2026-11-03)
 
 **In one line:** Phases 1 to 4 are built and live (only real Paynow
 payment waits, on Hillary's merchant account). Phase 5, the Staff
-console, has everything planned for Trust and safety built and live,
-every decision carries a required note, and the look of each page is
-reviewed with Hillary page by page: the Activity log, Reports, Users,
-Appeals, Verify stores, Team members, the user's appeal page and the
-banned page are done, and so is a design pass on the Store console. All
-of it is committed on `redesign/pdf-style` and live on `main`.
-Vercel builds only Production (Hillary turned Preview builds off).
+console, is built, reviewed page by page with Hillary and live. The
+three safeguards Hillary chose are built and live: the staff password,
+the sealed second super admin (Hillary marks the accounts herself in
+Supabase, by the steps in `docs/product/staff-console.md`, and will say
+who and when, to note here) and data requests. Phase 6 has started:
+**Stores** (Sales) and **Revenue** (Finance) are built and live, with
+the staff pill in the account menu and the top loading bar on every
+staff table. Everything is committed on `redesign/pdf-style` and live
+on `main` (commit 60ee10a, 2026-11-03). Vercel builds only Production.
 
-**Where the next agent starts:** the **open safeguards** (item 4
-below). Hillary chose (2026-10-30) to build three before Phase 6, in this
-order: (1) staff password, **done**, see "Staff password" below; (2) a
-sealed second super admin, **done**, see "Sealed second super admin"
-below (Hillary marks the accounts herself in Supabase, by the steps in
-`docs/product/staff-console.md`, and tells the next agent who and when,
-to note here); (3) data requests on
-a user's record for Trust and safety leaders: Download their data (one
-file) and Delete their account (signs them out, removes name, phone,
-email and listings, keeps deal and report records without their name;
-a required note, logged, cannot be undone). Data requests are **built, not committed**, see "Data requests" below.
-False reports and bulk actions come later; **Phase 6 is next**. Parked at Hillary's word: renaming the `people`
+**Where the next agent starts:** Phase 6, the **Executives Overview**,
+then the **Board monthly summary** (order agreed with Hillary; business
+definitions in `docs/product/staff-console.md`, "Business definitions").
+Ask Hillary before building, show her the page in the browser, and
+build what she picks. Offered and not yet chosen: an export of Stores
+for Sales leaders (no phone numbers), a mark for store owners who say
+no to being called, and a payments by day chart. Not seen with real
+rows yet: Stores and Revenue, as no test account is in Sales or
+Finance (Hillary, as super admin, can see both). False reports and bulk
+actions come later. Parked at Hillary's word: renaming the `people`
 table to `users` (it needs a stand in view during the deploy).
-Look at each page in the browser first, offer how it should look, and
-build what she picks.
 
 **What was done on 2026-10-30 (newest last):**
 
@@ -272,7 +270,7 @@ Now:
   still not sent; swaps and a least budget only shape alerts, not the
   list. Deleting a store for good now also needs its
   `store_lead_settings` row deleted first.
-- **Phase 6 started (not committed).** Business definitions agreed with
+- **Phase 6 started (committed and live 2026-11-03).** Business definitions agreed with
   Hillary, in `docs/product/staff-console.md`, "Business definitions":
   active is used in 30 days; value swapped is confirmed deals, money
   only; test payments show marked Test; the order is Stores to call,
@@ -289,7 +287,7 @@ Now:
   admin, can see it). Still to do from the
   design: export for leaders (no phone numbers), and a store owner saying
   no to being called (a line in the terms, and a mark on the store).
-- **Revenue (Phase 6, not committed; was "Money", renamed at Hillary's
+- **Revenue (Phase 6, live; was "Money", renamed at Hillary's
   asking).** `/staff/revenue`, `routes/revenue.ts`, department `finance`.
   One row of controls scopes the page: Week, Month or Year; which one;
   "Compare with the ... before" (on at first); "Include test payments"
@@ -327,13 +325,13 @@ Now:
   from `lib/loadingBar.ts`, counted by `PageLoadBar`, shown after a
   tenth of a second, filled and faded when done. Used on Revenue,
   Stores, Users, Reports, Appeals, Verify stores and the Activity log.
-- **The account menu's staff pill (2026-11-02):** under the name, "Super
-  admin" or "Staff member" with the new `TeamIcon` (three people), for
-  anyone on the team; it opens the Staff console at their first section
+- **The account menu's staff pill (2026-11-02):** under the name, a small
+  pill "Super admin" or "Staff member" (no icon, regular weight, tooltip
+  "Go to the Staff console"), for anyone on the team; it opens the Staff console at their first section
   (`StaffHomeContext` in `@snt/ui`, given by `components/
   StaffHomeProvider.tsx` in the root layout), the password asked first.
-  The profile's Staff console row has the same icon.
-- **Data requests (built and tested, not committed).** Migration
+  The profile's Staff console row has the new `TeamIcon` (three people).
+- **Data requests (built, tested and live).** Migration
   `0011_uneven_clea` (`people.deleted_at`), run on the shared database
   with Hillary's consent. `routes/dataRequests.ts`: on a user's page,
   "Data request" (Trust and safety leaders and the super admin, on
