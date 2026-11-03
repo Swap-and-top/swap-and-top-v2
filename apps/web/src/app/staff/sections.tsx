@@ -42,7 +42,7 @@ interface SectionDef extends StaffSection {
 
 const SECTIONS: SectionDef[] = [
   // In the order Hillary set (2026-11-03); Revenue, which she did not
-  // name, after Stores; then the sections not built yet.
+  // name, after Stores, and Growth and Health (Phase 7) after it.
   { href: '/staff/overview', label: 'Overview', shortLabel: 'Overview', icon: (s) => <ChartIcon size={s} />, everyone: true, built: true },
   { href: '/staff/reports', label: 'Reports', shortLabel: 'Reports', icon: (s) => <ReportIcon size={s} />, department: 'trust_safety', built: true },
   { href: '/staff/appeals', label: 'Appeals', shortLabel: 'Appeals', icon: (s) => <MessageIcon size={s} />, department: 'trust_safety', lead: true, built: true },
@@ -51,8 +51,8 @@ const SECTIONS: SectionDef[] = [
   { href: '/staff/stores', label: 'Stores', shortLabel: 'Stores', icon: (s) => <StorefrontIcon size={s} />, department: 'sales', leadersOf: 'trust_safety', built: true },
   { href: '/staff/revenue', label: 'Revenue', shortLabel: 'Revenue', icon: (s) => <CashHandIcon size={s} filled={false} />, department: 'finance', built: true },
   { href: '/staff/activity', label: 'Activity log', shortLabel: 'Log', icon: (s) => <ListIcon size={s} />, department: 'trust_safety', built: true },
-  { href: '/staff/growth', label: 'Growth', shortLabel: 'Growth', icon: (s) => <TrendIcon size={s} />, department: 'marketing', built: false },
-  { href: '/staff/health', label: 'Health', shortLabel: 'Health', icon: (s) => <DesktopIcon size={s} />, department: 'devops', built: false },
+  { href: '/staff/growth', label: 'Growth', shortLabel: 'Growth', icon: (s) => <TrendIcon size={s} />, department: 'marketing', built: true },
+  { href: '/staff/health', label: 'Health', shortLabel: 'Health', icon: (s) => <DesktopIcon size={s} />, department: 'devops', built: true },
 ];
 
 function allowed(section: SectionDef, superAdmin: boolean, staff: StaffMembership[]): boolean {
@@ -74,6 +74,8 @@ export const staffKeys = {
   sales: ['staff', 'sales'] as const,
   revenue: ['staff', 'revenue'] as const,
   overview: ['staff', 'overview'] as const,
+  growth: ['staff', 'growth'] as const,
+  health: ['staff', 'health'] as const,
   team: ['staff', 'team'] as const,
   users: (q: string) => ['staff', 'users', q] as const,
   user: (id: string) => ['staff', 'user', id] as const,

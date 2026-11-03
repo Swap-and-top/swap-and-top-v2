@@ -1,0 +1,68 @@
+/**
+ * Growth's own: the column widths of its tables and the space between its
+ * parts. Everything else is Revenue's (../revenue/page.module.css).
+ */
+
+/* A name and two figures. */
+.twoRow {
+  grid-template-columns: minmax(0, 1fr) 110px 110px;
+}
+
+/* A category and four figures. */
+.categoryRow {
+  grid-template-columns: minmax(0, 1fr) repeat(4, 110px);
+}
+
+.twoRow > :not(:first-child),
+.categoryRow > :not(:first-child) {
+  text-align: right;
+}
+
+.twoRow > :first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Space above each part after the charts. */
+.gap {
+  margin-top: var(--snt-space-10);
+}
+
+.note {
+  margin: calc(var(--snt-space-3) * -1) 0 var(--snt-space-5);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+/* Three tiles for boosts. */
+.threeTiles {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* On a phone: narrower figure columns, smaller headings. */
+@media (max-width: 767px) {
+  .twoRow {
+    grid-template-columns: minmax(0, 1fr) 72px 72px;
+  }
+
+  .categoryRow {
+    grid-template-columns: minmax(0, 1fr) repeat(4, 48px);
+    gap: var(--snt-space-3);
+  }
+
+  .twoRow,
+  .categoryRow {
+    padding-left: var(--snt-space-6);
+    padding-right: var(--snt-space-6);
+  }
+
+  .categoryRow:first-child {
+    font-size: var(--snt-text-xs);
+  }
+
+  .threeTiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

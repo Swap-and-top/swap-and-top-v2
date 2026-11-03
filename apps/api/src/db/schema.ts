@@ -84,6 +84,12 @@ export const people = pgTable(
     /** Their account was deleted on a data request (routes/dataRequests.ts):
         the row stays, nameless, for the deal and report records on it. */
     deletedAt: timestamp({ withTimezone: true }),
+    /** Where they came from when they joined (lib/firstSource.ts in the
+        web app): the campaign's source tag, else the site that sent them,
+        else "direct". Shown only as totals, on Growth. */
+    signupSource: text(),
+    /** The campaign tag they came in on, if any. */
+    signupCampaign: text(),
   },
 ).enableRLS();
 
@@ -837,3 +843,55 @@ export const staffOverviewCards = pgTable('staff_overview_cards', {
   cards: text().array().notNull().default([]),
   updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 }).enableRLS();
+
+/* ── Growth and health (Phase 7) ──────────────────────────────────────── */
+
+/**
+ * What people search for (routes/growth.ts), with no one's name on it:
+ * one row a term a day ("2026-11-03") and one a term a month ("2026-11"),
+ * counted up as searches come. Day rows are cleared after two months; month
+ * rows stay, so a year can be put beside the next. Anything that looks like
+ * a phone number or an email is taken out before a term is kept.
+ */
+export const searchCounts = pgTable(
+  'search_counts',
+  {
+    period: text().notNull(),
+    term: text().notNull(),
+    count: integer().notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.period, t.term] })],
+).enableRLS();
+
+/**
+ * A request the API answered with an error, or slowly (over 2 seconds),
+ * for DevOps (recordRequests.ts). Only the route's pattern, never its
+ * address, so no one's id or details are kept. Each is kept two months;
+ * `requestIssueMonths` keeps the totals for good.
+ */
+export const requestIssues = pgTable(
+  'request_issues',
+  {
+    id: id(),
+    kind: text().$type<'error' | 'slow'>().notNull(),
+    method: text().notNull(),
+    route: text().notNull(),
+    status: integer().notNull(),
+    ms: integer().notNull(),
+    at: createdAt(),
+  },
+  (t) => [index().on(t.at)],
+).enableRLS();
+
+/** Errors and slow requests a month a route, for comparing year on year. */
+export const requestIssueMonths = pgTable(
+  'request_issue_months',
+  {
+    month: text().notNull(),
+    route: text().notNull(),
+    kind: text().$type<'error' | 'slow'>().notNull(),
+    count: integer().notNull().default(0),
+    totalMs: integer().notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.month, t.route, t.kind] })],
+).enableRLS();

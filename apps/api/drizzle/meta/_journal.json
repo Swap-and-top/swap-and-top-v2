@@ -92,6 +92,13 @@
       "when": 1793706903056,
       "tag": "0012_new_gideon",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793712993309,
+      "tag": "0013_mysterious_slipstream",
+      "breakpoints": true
     }
   ]
 }

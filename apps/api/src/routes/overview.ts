@@ -22,7 +22,7 @@
  * - Finance: revenue, payments made and failed, store passes and boosts
  *   sold.
  * - Marketing: new users, active users, listing views, number reveals.
- * - DevOps: nothing recorded yet (health comes with Phase 7); it says so.
+ * - DevOps: a line pointing to the Health page (routes/devops.ts).
  *
  * Each section is a tab on the page, one on show at a time, so each is
  * whole: a tile two departments share (revenue, say) is in both.
@@ -461,7 +461,7 @@ overviewRoutes.openapi(read, async (c) => {
       key: 'devops',
       title: 'DevOps',
       tiles: [],
-      note: 'Nothing is recorded for DevOps yet. The health of the site comes with Phase 7.',
+      note: 'The health of the site, its errors and slow requests are on the Health page.',
     });
   }
 

@@ -217,10 +217,12 @@ Found in a review on 2026-10-28, going through each kind of account. Each rule i
 
 - **Totals only, and no tiny groups:** a figure about fewer than 5 people is not shown, so a total cannot point at one person.
 - **Searches are kept without who searched,** and anything that looks like a phone number or email is removed before it is stored.
+- *Built 2026-11-03:* Growth (`/staff/growth`). Visits and sources from Umami (sample figures until it is connected); new users by source, top searches (5 or more only), categories and boosts from our own records. Searches are counted a term a day (kept two months) and a term a month (kept), so one year compares with the next without keeping every search.
 
 ### DevOps
 
 - See section 8. In the console: health only, no people's data, no exports.
+- *Built 2026-11-03:* Health (`/staff/health`): the database's answer time, connections and size, the store pass check, the deploy running, and the last 30 days of errors and slow requests (over 2 seconds) by day, by route and the latest, with monthly totals for a year. Recorded on the live site only, by route pattern, kept two months with monthly totals kept for good.
 
 ### Executives and Board
 

@@ -48,6 +48,7 @@ import {
   SearchFilters,
   type SearchFilterValues,
 } from './SearchFilters';
+import { publicSend } from '@/lib/query';
 import { MAX_QUERY, searchHref } from './searchParams';
 import styles from './SearchEntry.module.css';
 
@@ -178,6 +179,8 @@ export function SearchEntry({
 
   /** The results page — for Enter, a suggested term, or "View all". */
   function goToResults(q: string) {
+    // Counted for Growth, with no one's name on it.
+    void publicSend('/searches', { q }).catch(() => undefined);
     dismiss();
     input.current?.blur();
     startPageLoad();

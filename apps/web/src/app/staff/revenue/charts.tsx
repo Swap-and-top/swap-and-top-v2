@@ -16,6 +16,8 @@ import styles from './charts.module.css';
 export interface Series {
   name: string;
   color: string;
+  /** One a bucket. On a line, fewer than the buckets stops the line at the
+      last: a period still running (Growth). */
   values: number[];
 }
 
@@ -234,7 +236,7 @@ export function LineChart({
           {[...series].reverse().map((s) => (
             <g key={s.name}>
               <polyline
-                points={labels.map((_, n) => `${xOf(n)},${yOf(s.values[n] ?? 0)}`).join(' ')}
+                points={s.values.slice(0, labels.length).map((value, n) => `${xOf(n)},${yOf(value)}`).join(' ')}
                 fill="none"
                 stroke={s.color}
                 strokeWidth={2}
@@ -242,7 +244,7 @@ export function LineChart({
                 strokeLinecap="round"
               />
               {/* The end, and the day pointed at: a dot ringed in the surface. */}
-              {[labels.length - 1, ...(hover !== null ? [hover] : [])].map((n) => (
+              {[Math.min(labels.length, s.values.length) - 1, ...(hover !== null && hover < s.values.length ? [hover] : [])].map((n) => (
                 <circle key={n} cx={xOf(n)} cy={yOf(s.values[n] ?? 0)} r={4} fill={s.color} className={styles.ring} />
               ))}
             </g>
@@ -254,7 +256,11 @@ export function LineChart({
           x={Math.min(width - 150, xOf(hover) + 10)}
           y={PAD.top}
           title={labels[hover] ?? ''}
-          rows={series.map((s) => ({ name: s.name, color: s.color, value: format(s.values[hover] ?? 0) }))}
+          rows={series.map((s) => ({
+            name: s.name,
+            color: s.color,
+            value: hover < s.values.length ? format(s.values[hover] ?? 0) : 'Not yet',
+          }))}
         />
       ) : null}
     </div>

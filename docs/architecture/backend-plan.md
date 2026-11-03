@@ -203,6 +203,7 @@ Decided 2026-10-28; the whole design is in [../product/staff-console.md](../prod
 - **Recording first:** where visitors come from, what people search for, errors and slow requests.
 - **Marketing:** growth, sources, searches, categories, Wanted demand, boost performance; totals only.
 - **DevOps:** health, errors, slow pages, the last deploy, database connections, background work; no people's data.
+- **Started 2026-11-03:** the recording (migration `0013`: `people.signup_source`, `search_counts`, `request_issues`, `request_issue_months`) and the Marketing page, Growth (`routes/growth.ts`, visits from Umami through `umami.ts`, sample figures until Umami is set up), and the DevOps page, Health (`routes/devops.ts`). Phase 7 is built.
 
 ---
 

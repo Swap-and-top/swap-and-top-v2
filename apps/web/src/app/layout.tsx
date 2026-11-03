@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import Script from 'next/script';
 import { ToastOffset } from '@/components/ToastOffset';
 import { AskName } from '@/components/AskName';
 import { BannedGate } from '@/components/BannedGate';
@@ -89,6 +90,14 @@ export const viewport: Viewport = {
  * faded banned look) straight away. SessionRestore and BannedGate keep the
  * marks in step afterwards.
  */
+/**
+ * Umami counts every visit, with no cookies and no names, for Growth in the
+ * Staff console (apps/api/src/umami.ts). Loaded only once both settings are
+ * there; until Umami is set up with the final hosting, nothing loads.
+ */
+const UMAMI_SCRIPT = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
+const UMAMI_SITE = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+
 const MARK_SESSION = `try{var h=document.documentElement,k=Object.keys(localStorage).filter(function(x){return x.indexOf('sb-')===0&&/-auth-token$/.test(x)})[0];if(k){h.setAttribute('data-signed-in','');var u=(JSON.parse(localStorage.getItem(k))||{}).user;if(u&&u.id&&localStorage.getItem('snt-banned')===u.id)h.setAttribute('data-banned','')}}catch(e){}`;
 
 export default function RootLayout({
@@ -103,6 +112,9 @@ export default function RootLayout({
     <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: MARK_SESSION }} />
+        {UMAMI_SCRIPT && UMAMI_SITE && (
+          <Script src={UMAMI_SCRIPT} data-website-id={UMAMI_SITE} strategy="afterInteractive" />
+        )}
         {/* Each new page opens at its top. */}
         <ScrollToTop />
         {/* A thin bar along the top while a page is on its way. */}

@@ -17,6 +17,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useSessionStore, type Viewer } from '@snt/core';
 import { clearAccountData, loadAccountData } from '@/lib/accountData';
+import { noteFirstSource, sendFirstSource } from '@/lib/firstSource';
 import { apiGet } from '@/lib/query';
 import { supabase } from '@/lib/supabase';
 import { viewerKey } from '@/lib/viewer';
@@ -41,6 +42,8 @@ export function SessionRestore() {
   }, []);
 
   useEffect(() => {
+    // Where this visitor came from, kept for when they join (lib/firstSource).
+    noteFirstSource();
     useSessionStore.setState({
       signOut: () =>
         void supabase.auth.signOut().then(({ error }) => {
@@ -100,6 +103,8 @@ export function SessionRestore() {
       const found = await apiGet<Viewer>('/me');
       // Still the one signed in: put them in the store.
       if (useSessionStore.getState().signedIn) useSessionStore.setState({ viewer: found, viewerFailed: false });
+      // Just joined: where they came from, sent once.
+      sendFirstSource();
       return found;
     },
     enabled: Boolean(authUserId),

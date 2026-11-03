@@ -34,6 +34,9 @@ import { revenueRoutes } from './routes/revenue';
 import { overviewRoutes } from './routes/overview';
 import { staffUnlockRoutes } from './routes/staffUnlock';
 import { staffPassValid } from './staffPass';
+import { recordRequests } from './recordRequests';
+import { growthRoutes, searchRoutes } from './routes/growth';
+import { devopsRoutes } from './routes/devops';
 
 export const app = new OpenAPIHono({
   // A request that fails its checks gets one plain message back.
@@ -43,6 +46,9 @@ export const app = new OpenAPIHono({
     }
   },
 }).basePath('/api');
+
+// Errors and slow requests, kept for DevOps without anyone's details.
+app.use('*', recordRequests);
 
 // The web app runs on another port while testing.
 app.use('*', cors({ origin: ['http://localhost:3000'] }));
@@ -87,6 +93,9 @@ app.route('/', dataRequestRoutes);
 app.route('/', salesRoutes);
 app.route('/', revenueRoutes);
 app.route('/', overviewRoutes);
+app.route('/', growthRoutes);
+app.route('/', searchRoutes);
+app.route('/', devopsRoutes);
 app.route('/', listingRoutes);
 app.route('/', storeRoutes);
 app.route('/', meRoutes);

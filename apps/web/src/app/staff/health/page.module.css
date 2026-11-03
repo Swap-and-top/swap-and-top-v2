@@ -1,0 +1,111 @@
+/**
+ * Health's own: the deploy line and its tables' columns. Everything else is
+ * Revenue's (../revenue/page.module.css) and Growth's.
+ */
+
+.deploy {
+  margin-top: 0;
+}
+
+.deployLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--snt-space-2) var(--snt-space-5);
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-accent-bold);
+}
+
+/* The commit, as code is shown. */
+.commit {
+  padding: 2px var(--snt-space-3);
+  border-radius: var(--snt-radius-sm);
+  background: var(--snt-bg-app);
+  font-family: ui-monospace, Menlo, monospace;
+  font-weight: var(--snt-weight-bold);
+}
+
+.muted {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+}
+
+/* A route, as code: shortened when it does not fit. */
+.route {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+}
+
+.routeRow {
+  grid-template-columns: minmax(0, 1fr) 80px 80px 110px;
+}
+
+.routeRow > :not(:first-child) {
+  text-align: right;
+}
+
+.latestRow {
+  grid-template-columns: 110px minmax(0, 1fr) 110px 80px;
+}
+
+.latestRow > :last-child {
+  text-align: right;
+}
+
+@media (max-width: 767px) {
+  .routeRow {
+    grid-template-columns: minmax(0, 1fr) 48px 48px 64px;
+    gap: var(--snt-space-3);
+  }
+
+  /* On a phone, two lines each: the route and what, then when and the
+     time; no headings. */
+  .latestRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'route what'
+      'when time';
+    gap: var(--snt-space-1) var(--snt-space-3);
+  }
+
+  .latestRow.latestRow:first-child {
+    display: none;
+  }
+
+  .latestRow > :nth-child(1) {
+    grid-area: when;
+    font-size: var(--snt-text-xs);
+  }
+
+  .latestRow > :nth-child(2) {
+    grid-area: route;
+  }
+
+  .latestRow > :nth-child(3) {
+    grid-area: what;
+    text-align: right;
+  }
+
+  .latestRow > :nth-child(4) {
+    grid-area: time;
+    font-size: var(--snt-text-xs);
+  }
+
+  .routeRow,
+  .latestRow {
+    padding-left: var(--snt-space-6);
+    padding-right: var(--snt-space-6);
+  }
+}
+
+.when {
+  color: var(--snt-ink-muted);
+  white-space: nowrap;
+}

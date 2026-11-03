@@ -68,8 +68,7 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   The account menu shows a small staff pill that opens the console, and
   every staff table runs the top loading bar while new rows come
   (`useLoadingBar` in `apps/web/src/lib/loadingBar.ts`).
-- **The Overview (2026-11-03, on `redesign/pdf-style`, not on `main`
-  yet):** every team member's
+- **The Overview (live 2026-11-03):** every team member's
   first page, `/staff/overview`: a tab for each part of the team (the
   business, Trust and safety, Sales, Finance, Marketing, DevOps), each
   person getting their departments' tabs and the super admin all, each
@@ -77,11 +76,21 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   ordered behind its gear, kept in `staff_overview_cards`
   (`apps/api/src/routes/overview.ts`; the skeleton's shape in
   `app/staff/overview/shape.ts` keeps the same lists). Phase 6 is built.
-  Pushed to the branch only (Hillary, 2026-11-03): fast forward `main`
-  when she says. Migration `0012` is already applied.
+- **Phase 7, Growth (2026-11-03, not committed):** the Marketing section
+  at `/staff/growth` (`apps/api/src/routes/growth.ts`). Visits come from
+  Umami (`apps/api/src/umami.ts`), which is **not set up yet**, so they
+  are sample figures and the page says so; the settings to fill later are
+  in the handoff's "Waiting on the owner". We record ourselves where each
+  new user came from (`people.signup_source`), searches (`search_counts`,
+  by day for two months and by month for good) and, for DevOps, errors
+  and slow requests on the live site (`request_issues`, two months, and
+  `request_issue_months`, for good). Migration `0013` is applied.
+- **Phase 7, Health (2026-11-03, not committed):** the DevOps section at
+  `/staff/health` (`apps/api/src/routes/devops.ts`): the database's answer
+  time, connections and size, the store pass check, the deploy running,
+  and the last 30 days of errors and slow requests. Phase 7 is built.
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): Hillary looks at the Overview, `main` is fast forwarded at
-  her word, then Phase 7 (Marketing and DevOps).
+  stopped"): Hillary looks at Growth and Health, then commit at her word.
   Business definitions are in `docs/product/staff-console.md`.
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed

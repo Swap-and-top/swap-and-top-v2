@@ -136,11 +136,83 @@ members, Stores, Revenue (Hillary did not name it; put after Stores),
 Activity log. Tested as Tafadzwa (Trust and safety leader, in Sales) on
 a laptop and a phone.
 
-**Where the next agent starts:** Hillary looks at the Overview (as
-super admin she sees every section) and says what to change; then, at
-her word, `main` is fast forwarded to the branch so it goes live. With it, Phase 6 is built (Executives,
-Board, Finance, Sales). Then Phase 7 (Marketing and DevOps), or the
-things offered and not yet chosen below.
+**The Overview went live** on 2026-11-03 (`main` fast forwarded to
+1d82a99 at Hillary's word). Phase 6 is built and live.
+
+**Phase 7 started 2026-11-03: Growth, the Marketing section (not
+committed).** Hillary chose Marketing first, then DevOps. At
+`/staff/growth` ("Growth" in the menu, after Revenue; department
+`marketing`), `GET /api/staff/growth?unit=month|year&period=…`
+(`apps/api/src/routes/growth.ts`): a month or a year beside the one
+before. Tiles: visitors, visits, new users, active users (30 days).
+"Visits over time" and "New users over time" as lines (this period green,
+the one before blue; a period still running stops at today, the readout
+saying "Not yet"; `Series.values` may now be shorter than the buckets in
+`revenue/charts.tsx`, Revenue unchanged). Tables: where visitors come from
+(Umami), where new users came from (with how many went on to post), top
+searches (only those made 5 times or more), each category's listings,
+views, number reveals and Wanted listings; and boosts (started, views and
+reveals while boosted). Totals only: a figure about fewer than 5 users
+shows "Under 5", sources under 5 are put together as Other.
+**Umami (Hillary, 2026-11-03):** she uses Umami (on Dokploy) and the
+final hosting may not be Vercel. No Umami is running for this site yet,
+so `apps/api/src/umami.ts` answers **sample figures**, steady for each
+day, and the page says so in a yellow strip. Everything is ready to
+connect: see "Waiting on the owner". **What we record ourselves**
+(migration `0013_mysterious_slipstream`, run with Hillary's yes on
+2026-11-03): `people.signup_source` and `signup_campaign` (the browser
+keeps the first visit's `utm_source`, else the referring site, else
+"direct", and `utm_campaign`, in `snt-first-source`,
+`apps/web/src/lib/firstSource.ts`; sent once after sign in to `POST
+/api/me/source`, kept only for an account made in the last day);
+`search_counts` (a row a term a day and a term a month, counted up by
+`POST /api/searches` from the search box's `goToResults`; lower cased,
+emails and phone numbers taken out, no one's name; day rows cleared
+after two months, month rows kept); and, for DevOps next,
+`request_issues` (each server error or request over 2 seconds: route
+pattern, method, status, time; kept two months) with
+`request_issue_months` (counts and total time a month a route, kept),
+from `apps/api/src/recordRequests.ts`, **live site only**
+(`NODE_ENV=production`), since a laptop's trips to the database in
+Ireland are slow anyway. **Retention, Hillary 2026-11-03:** keep a year
+to compare; if a year of detail is a lot, keep detail about two months
+and condense each month into totals, so one year can be put beside the
+next. That is what the tables do. **Tested:** the endpoints (Growth
+refuses anyone outside Marketing; a search is cleaned and counted; an
+old account's source is left alone) and the queries run directly
+against the shared database; the page itself on a throwaway preview with
+sample figures on a laptop and a phone (deleted), and its skeleton lines
+up with it to within 3 pixels. **Not seen with real rows:** adding a
+test account to Marketing was refused as a permission grant; Hillary as
+super admin can see it. Test rows deleted.
+
+**Also 2026-11-03: Health, the DevOps section (not committed).** At
+`/staff/health` ("Health", last in the menu; department `devops`),
+`GET /api/staff/health` (`apps/api/src/routes/devops.ts`, the figures in
+`healthReport()`), read again every minute. No controls. Now: the
+database's answer time (a second `select 1`, so not the connection's
+opening), its connections of the most it allows (`pg_stat_activity`,
+`max_connections`), its size, the store pass check ("Keeping up", or
+"Behind" with ended passes over 15 minutes old not dealt with and
+suspensions not lifted), and the deploy running ("Running now": the
+commit, its message and branch from Vercel's own settings, or
+`COMMIT_SHA`, `COMMIT_MESSAGE` and `COMMIT_BRANCH` on another host; on a
+laptop it says it is not a deploy). Then the last 30 days from
+`request_issues`: errors, slow requests and their average time, a line
+chart by day (errors purple, slow blue), by route, the latest 20, and
+each month's totals for the last year from `request_issue_months`. Off
+the live site a yellow strip says nothing is recorded there. Only route
+patterns, never addresses or users. The Overview's DevOps tab now points
+to Health. **Tested:** the refusal for anyone outside DevOps, the report
+run directly against the shared database, the page on a throwaway
+preview with sample figures on a laptop and a phone (deleted), and its
+skeleton lines up with it. **Not seen with real rows:** no test account
+is in DevOps (adding one is a permission grant); Hillary as super admin
+can see it. **With Health, Phase 7 is built.**
+
+**Where the next agent starts:** Hillary looks at Growth and Health and
+says what to change; then commit and push at her word. After that, the
+things offered and not yet chosen below, or what Hillary picks next.
 Ask Hillary before building, show her the page in the browser, and
 build what she picks. Offered and not yet chosen: an export of Stores
 for Sales leaders (no phone numbers), a mark for store owners who say
@@ -1110,9 +1182,23 @@ Before real users join:
   date, and removes 263770000007, 0008 and 0009 from that list. Told to her
   on 2026-10-28; check with her whether it is done before testing as them.
 
+- **Umami, for Growth's visits** (Hillary, 2026-11-03: with the final
+  hosting, likely Dokploy). Set up Umami, add the site, and make a view
+  only Umami user for the console. Then fill five settings in the root
+  `.env` and the hosting's settings (all in `turbo.json` already):
+  `NEXT_PUBLIC_UMAMI_SCRIPT_URL` (Umami's `script.js` address) and
+  `NEXT_PUBLIC_UMAMI_WEBSITE_ID` load the counting script in the web
+  app (`app/layout.tsx`); `UMAMI_URL`, `UMAMI_WEBSITE_ID`,
+  `UMAMI_USERNAME` and `UMAMI_PASSWORD` let the API read the figures
+  (`apps/api/src/umami.ts`, kept five minutes). Once they are there the
+  sample strip goes and the figures are real. The API calls
+  (`/api/auth/login`, `/websites/{id}/stats`, `/pageviews`, `/metrics`)
+  are written to Umami's documented API but not yet tried on a real
+  server: check them against the version installed.
+
 **Good to know before starting:**
 
-- Migrations `0001` to `0012` are applied to the shared database. A new
+- Migrations `0001` to `0013` are applied to the shared database. A new
   one is made with `db:generate`; running `db:migrate` changes the live
   database, so ask the owner first.
 - Real payment waits on a Paynow merchant account; every payment is a test
