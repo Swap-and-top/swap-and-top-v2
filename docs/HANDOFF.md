@@ -23,12 +23,124 @@ Supabase, by the steps in `docs/product/staff-console.md`, and will say
 who and when, to note here) and data requests. Phase 6 has started:
 **Stores** (Sales) and **Revenue** (Finance) are built and live, with
 the staff pill in the account menu and the top loading bar on every
-staff table. Everything is committed on `redesign/pdf-style` and live
-on `main` (commit 60ee10a, 2026-11-03). Vercel builds only Production.
+staff table. Those are live on `main` (commit 60ee10a, 2026-11-03).
+**Phase 6 is now built:** the Overview for every team member (with My
+overview), Verify stores as a tab of Stores and the menu in Hillary's
+order, and the small fixes below. Those are committed and pushed on
+`redesign/pdf-style` only (2026-11-03); **not on `main` yet**, at
+Hillary's word, so not live. When she says, fast forward `main` (commit
+flow step 5) and check Vercel. Migration `0012` (`staff_overview_cards`)
+is already applied to the shared database. Vercel builds only Production.
 
-**Where the next agent starts:** Phase 6, the **Executives Overview**,
-then the **Board monthly summary** (order agreed with Hillary; business
-definitions in `docs/product/staff-console.md`, "Business definitions").
+**Built 2026-11-03: the Overview, for everyone on the
+team** (Hillary, 2026-11-03: every team member has an Overview, its
+tiles chosen by their departments), at `/staff/overview`, first in the
+menu and where the console opens (`everyone: true` in `sections.tsx`).
+`GET /api/staff/overview?unit=week|month|year&period=…`
+(`apps/api/src/routes/overview.ts`) answers the sections the viewer may
+see, each tile once: **The business** (Executives and the Board: new
+users, new listings, offers made, confirmed deals, value swapped,
+revenue; Executives also active users, live listings, paying and
+verified stores, open reports, appeals waiting); **Trust and safety**
+(reports received, handled, handled by you, actions taken, open reports,
+waiting over 2 days, users suspended or banned; leaders also appeals
+decided, appeals waiting, stores to verify); **Sales** (new stores, store
+passes sold, stores to call as the tab counts them, passes ending soon,
+lapsed passes, paying stores; `storeRows` and `toCall` now exported from
+`routes/sales.ts`); **Finance** (revenue, payments made and failed, store
+passes and boosts sold); **Marketing** (new users, active users, listing
+views, number reveals); **DevOps** (a line: nothing recorded until Phase
+7). **Each section is a tab** (Hillary, 2026-11-03, for information at a
+glance): The business, Trust and safety, Sales, Finance, Marketing,
+DevOps, only those the person has (one alone has no tab strip; on a phone
+"Business" and "Trust" and the strip scrolls). Each tab is whole: a tile
+two departments share (Revenue in The business and Finance) is in both,
+worked out once a request. Test payments never count; a tile says how
+many it left out. Week, Month or Year and which one; a tile of what
+happened, tapped, shows its chart under the tab's tiles (each tab keeps
+its own pick). The skeleton
+takes each person's shape from their departments (`overview/shape.ts`,
+the API's lists again). Tested as Tafadzwa (Trust and safety leader and
+Sales; then in every department for a moment, as the super admin sees
+it: six tabs) and Rumbi (member), on a laptop and a phone.
+Planned with Hillary from the previous app's role dashboards
+(`../swap-and-top/docs/ADMIN_DASHBOARD_DOCUMENTATION.md`).
+
+**Also 2026-11-03: My overview**, the first tab of
+the Overview, the cards a team member chose and ordered themselves
+(Hillary, 2026-11-03). Its button, the gear with the words "Customize
+my overview" (only the big button of the same name while the tab is
+empty), opens the sheet of that name
+(`app/staff/overview/CardsSheet.tsx`), set as Android's quick settings
+tiles are edited (Hillary, 2026-11-03): Your cards two to a row in their
+order, and every card of the person's own departments two to a row, by
+department, each with a tick box. A card is dragged with a mouse
+anywhere on it (after a 4 pixel move, so a click is not a drag) or with a
+finger by its six dot grip, at the card's right end so the hand does
+not hide the card (Hillary, 2026-11-03), so the sheet still scrolls: a faded copy
+follows the pointer, drawn inside the sheet's own dialog (a modal
+dialog is above everything, so a copy on the page body was hidden), and
+the card's place turns to a dashed slot that moves to the nearest place
+as it goes, the others making room; letting go drops it there. Arrow
+keys on the grip move it one place (left, right) or a row (up, down).
+While a card is dragged the sheet's dialog has `grabbing`, so the
+cursor stays a closed hand over the other cards and the tick boxes.
+Names wrap to two lines. Save, off until something has changed (a card ticked or
+unticked, or the order; back as it was, off again), sends
+`PUT /api/staff/overview/cards` (it refuses a card not theirs) and keeps
+them in the new table `staff_overview_cards` (person, cards in order;
+migration `0012_new_gideon`, run on the shared database on 2026-11-03
+with Hillary's yes). `GET /api/staff/overview` gives My overview first
+(`key: 'mine'`, cards they can no longer see left out) and `choices`.
+Once it has cards the page opens on it; until then on their first part
+of the team, and the tab says "Pick the cards you want to see here" with
+a Choose your cards button. No My overview for DevOps alone (no cards to
+choose). The skeleton opens on My overview in its shape from the count
+kept in the browser (`snt-overview-mine`). Tested as Tafadzwa and Rumbi
+(saving, the order, a card not theirs refused, the reload opening on it,
+the sheet on a phone); their test cards deleted after.
+
+**Also 2026-11-03, small things for Hillary:** Save
+on Customize my overview waits until the Overview has been read again,
+so the sheet closes onto the new cards (Save spins meanwhile). The
+Overview's skeleton always shows eight cards, four to a row, and the
+chart. The account menu, when taller than the screen, hides the
+browser's scroll bar (its lane showed the panel's blue beside the bands)
+and draws its own thin white bar with a blue edge, in from the right and
+clear of the corners (`AppMenu.tsx`, `.scrollBar`). Every password box
+has the sign in page's eye: built into `Field` for `type="password"`
+(the staff password, Settings), and added to the reset page's two boxes;
+the eye drawings moved to `packages/ui/src/primitives/PasswordEye.tsx`
+(`EyeOpen`, `EyeClosed` from `@snt/ui`). On a phone the Overview's (and
+Stores') tab strip stays inside the page and slides on its own: its
+style had `max-width: none`, which let it grow to every tab's width and
+pushed the whole page wide; it is `max-width: 100%` now. Every
+dropdown (the shared `Dropdown`) picks on a tap, not on touch: it picked
+on `pointerdown` and cancelled the touch, so a finger could not scroll a
+long list (the Overview's 104 weeks); now a finger's press is left to
+the browser, a drag scrolls (`touch-action: pan-y`, `overscroll-behavior:
+contain`) and `click` picks, while a mouse press still keeps the focus
+on the pill.
+
+**Also 2026-11-03: Verify stores is a tab of Stores,
+and the menu is in Hillary's order.** Stores (`app/staff/stores`) shows
+the tabs each person has: All stores and Stores to call for Sales,
+Verify stores for Trust and safety leaders (the super admin, all
+three); one tab alone shows no tab strip. The Verify stores page moved
+to `stores/VerifyTab.tsx` (its styles to `stores/verify.module.css`),
+unchanged inside; `/staff/verify` redirects to `/staff/stores?tab=verify`.
+Each tab shows its own count once it has loaded. The Stores section shows
+for Sales and for Trust and safety leaders (`leadersOf: 'trust_safety'`
+in `sections.tsx`). The menu: Overview, Reports, Appeals, Users, Team
+members, Stores, Revenue (Hillary did not name it; put after Stores),
+Activity log. Tested as Tafadzwa (Trust and safety leader, in Sales) on
+a laptop and a phone.
+
+**Where the next agent starts:** Hillary looks at the Overview (as
+super admin she sees every section) and says what to change; then, at
+her word, `main` is fast forwarded to the branch so it goes live. With it, Phase 6 is built (Executives,
+Board, Finance, Sales). Then Phase 7 (Marketing and DevOps), or the
+things offered and not yet chosen below.
 Ask Hillary before building, show her the page in the browser, and
 build what she picks. Offered and not yet chosen: an export of Stores
 for Sales leaders (no phone numbers), a mark for store owners who say
@@ -1000,7 +1112,7 @@ Before real users join:
 
 **Good to know before starting:**
 
-- Migrations `0001` to `0008` are applied to the shared database. A new
+- Migrations `0001` to `0012` are applied to the shared database. A new
   one is made with `db:generate`; running `db:migrate` changes the live
   database, so ask the owner first.
 - Real payment waits on a Paynow merchant account; every payment is a test

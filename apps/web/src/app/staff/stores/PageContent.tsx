@@ -1,11 +1,13 @@
 'use client';
 
 /**
- * Stores, the Sales section of the Staff console (GET /api/staff/sales), set
- * as Users and Reports are. Two tabs at the top: All stores, every open
- * store with its owner, listings and pass; and Stores to call, those worth
- * phoning (near the free limit, pass ending soon or lapsed, and users near
- * the limit of 5 with no store). Under them the search box and one filter,
+ * Stores, in the Staff console, set as Users and Reports are. Its tabs
+ * follow the departments: for Sales (GET /api/staff/sales), All stores,
+ * every open store with its owner, listings and pass, and Stores to call,
+ * those worth phoning (near the free limit, pass ending soon or lapsed,
+ * and users near the limit of 5 with no store); for Trust and safety
+ * leaders, Verify stores (VerifyTab), the stores asking for the badge.
+ * The super admin sees all three. `?tab=verify` opens on the last. Under them the search box and one filter,
  * with counts, for that tab; the table, the fullest first; the page
  * buttons; on a phone one compact line each.
  * A number shows one at a time, on Show number
@@ -14,7 +16,7 @@
  */
 
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { Badge, Button, Dropdown, Field, Panel, Tabs, type BadgeTone } from '@snt/ui';
 import { apiGet, QueryProblem } from '@/lib/query';
@@ -26,9 +28,11 @@ import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
 import { initialsOf } from '../users/standing';
 import Loading from './loading';
+import { VerifyTab } from './VerifyTab';
 import styles from './page.module.css';
 
-type Tab = 'stores' | 'call';
+type Tab = 'stores' | 'call' | 'verify';
+type SalesTab = Exclude<Tab, 'verify'>;
 type Show = 'stores' | 'free' | 'paid' | 'verified' | 'call' | 'near' | 'ending' | 'lapsed' | 'users';
 
 interface Row {
@@ -46,7 +50,7 @@ interface Row {
 }
 
 /** Each tab's filter, its choices in order; the first is the whole tab. */
-const FILTERS: Record<Tab, Show[]> = {
+const FILTERS: Record<SalesTab, Show[]> = {
   stores: ['stores', 'free', 'paid', 'verified'],
   call: ['call', 'near', 'ending', 'lapsed', 'users'],
 };
@@ -82,15 +86,62 @@ function passPill(row: Row): { label: string; tone: BadgeTone } {
 /** "077 123 4567" as a number to call: +263 77 123 4567. */
 const telOf = (phone: string) => `tel:+263${phone.replace(/\D/g, '').slice(1)}`;
 
-export default function StoresPage() {
-  const allowed = useInDepartment('sales');
+const TAB_LABELS: Record<Tab, string> = {
+  stores: 'All stores',
+  call: 'Stores to call',
+  verify: 'Verify stores',
+};
+
+export default function StoresPage({ initialTab }: { initialTab?: Tab }) {
+  const sales = useInDepartment('sales');
+  const leader = useInDepartment('trust_safety', true);
+  /** The tabs this person has: Sales', then Trust and safety leaders'. */
+  const mine: Tab[] = [...(sales ? (['stores', 'call'] as const) : []), ...(leader ? (['verify'] as const) : [])];
+  const [chosen, setChosen] = useState<Tab | undefined>(initialTab);
+  const tab = chosen && mine.includes(chosen) ? chosen : (mine[0] ?? 'stores');
+
+  /** The tabs, with what each tab knows of its own counts. */
+  const tabs = (counts: Partial<Record<Tab, number>>) =>
+    mine.length > 1 ? (
+      <div className={styles.tabs}>
+        <Tabs<Tab>
+          tabs={mine.map((value) => ({ value, label: TAB_LABELS[value], count: counts[value] }))}
+          active={tab}
+          onChange={setChosen}
+          label="Which stores"
+        />
+      </div>
+    ) : null;
+
+  if (sales === undefined) return <Loading />;
+  if (tab === 'verify') return <VerifyTab tabs={(waiting) => tabs({ verify: waiting })} />;
+  return <SalesStores tab={tab} allowed={sales} tabs={tabs} />;
+}
+
+/** All stores and Stores to call, for Sales. */
+function SalesStores({
+  tab,
+  allowed,
+  tabs,
+}: {
+  tab: SalesTab;
+  allowed: boolean;
+  tabs: (counts: Partial<Record<Tab, number>>) => ReactNode;
+}) {
   const showLabel = useId();
   const [query, setQuery] = useState('');
   /** What was typed, once they stop typing for a moment. */
   const search = useDebounced(query.trim(), 250);
-  const [tab, setTab] = useState<Tab>('stores');
-  const [show, setShow] = useState<Show>('stores');
+  const [show, setShow] = useState<Show>(FILTERS[tab][0]!);
   const [page, setPage] = useState(1);
+  // Another tab: its whole list, from the first page (set while rendering,
+  // so no effect is needed).
+  const [tabShown, setTabShown] = useState(tab);
+  if (tabShown !== tab) {
+    setTabShown(tab);
+    setShow(FILTERS[tab][0]!);
+    setPage(1);
+  }
   const [size, setSize] = usePageSize('snt-sales-size');
   /** The numbers shown so far, by person: asked for one at a time. */
   const [numbers, setNumbers] = useState<Record<string, string>>({});
@@ -135,21 +186,7 @@ export default function StoresPage() {
       actions={
         allowed !== false ? (
           <>
-          <div className={styles.tabs}>
-            <Tabs<Tab>
-              tabs={[
-                { value: 'stores', label: 'All stores', count: counts?.stores },
-                { value: 'call', label: 'Stores to call', count: counts?.call },
-              ]}
-              active={tab}
-              onChange={(next) => {
-                setTab(next);
-                setShow(FILTERS[next][0]!);
-                setPage(1);
-              }}
-              label="All stores or stores to call"
-            />
-          </div>
+          {tabs({ stores: counts?.stores, call: counts?.call })}
           <div className={styles.toolbar}>
             <Field
               label="Find a store"

@@ -49,7 +49,7 @@ The test accounts moved the same way: Rumbi M. (077 000 0005) became a Trust and
 | **Marketing** | Growth and promotion | Growth: new and active people, where visitors come from, what people search for, popular categories, Wanted demand, how boosts perform. Totals only, never names or numbers | Look | Export; add or remove Marketing members |
 | **DevOps** | Engineering | Health: errors, slow pages, the last deploy, database connections, background work (such as the store pass check that runs as pages are read). No access to people's data | Look | Add or remove DevOps members |
 | **Executives** | Leadership | Overview: the headline numbers of every department, as totals, with charts over time | Look | Add or remove Executives members |
-| **Board** | Board members | Board summary: a short monthly report of the main numbers, shorter than the Executives' Overview | Look | Add or remove Board members |
+| **Board** | Board members | The Overview's business section, without the day to day figures (every team member has an Overview of their departments' sections, Hillary, 2026-11-03) | Look | Add or remove Board members |
 | **Super admin** | Hillary | Every section, plus Team | Everything | (not a department: it is the role) |
 
 **Who may act on whom (as the first app had it):** a Trust and safety member acts only on ordinary users; a lead also on members of the team; the super admin on anyone. Nobody acts on the super admin.
@@ -128,7 +128,7 @@ Already recorded, ready for the numbers: sign ups, last seen, listings and their
 | Phase | What | Why this order |
 |---|---|---|
 | **5** | The Staff console frame, `staff_departments`, the roles change, Team, and Trust and safety: Report on listings and people, the Reports queue, People, Appeals, Verify stores (moved in from `/admin/verify`), the Activity log | Keeping people safe comes first once real people use the site |
-| **6** | Executives Overview, Board summary, Finance, Sales | The money and business side, from data already recorded |
+| **6** | The Overview (Executives and Board), Finance, Sales | The money and business side, from data already recorded |
 | **7** | Marketing and DevOps | They need new recording first (traffic sources, searches, errors) |
 
 **Left out on purpose, from the first app:** approving listings before they go live (dropped; listings go live at once), system health and uptime (Vercel and Supabase show it), security and system settings pages (nothing to set yet; added when there is).
@@ -157,7 +157,7 @@ Every number in Phase 6 uses these, so they mean the same on every page.
 - **Active user:** someone who used the app in the last 30 days (`people.last_seen_at`). Deleted accounts never count.
 - **Value swapped:** deals both sides confirmed, adding up the money only: the listing's price, or the cash in the accepted offer. A straight swap with no cash counts as a deal and adds $0, so the figure is never inflated.
 - **Revenue:** paid payments. Until Paynow is live every payment is a test one (`provider = 'test'`): they show, clearly marked Test, and never count in real totals.
-- **The order of building:** Stores to call, then Money, then Overview, then Board summary.
+- **The order of building:** Stores to call, then Money, then the Overview (for Executives and the Board, one page).
 
 ## Making or removing a super admin (database only)
 

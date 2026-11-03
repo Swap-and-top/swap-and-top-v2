@@ -98,6 +98,33 @@
   }
 }
 
+/* The browser's own scroll bar is hidden: its lane would show the
+   panel's blue beside the white and green bands. AppMenu draws the
+   dropdowns' thin blue bar in its place (.scrollBar). */
+.panel {
+  scrollbar-width: none;
+}
+
+.panel::-webkit-scrollbar {
+  display: none;
+}
+
+/* The menu's scroll bar, when it is taller than the room: thin and round,
+   as the dropdowns' (Dropdown.module.css), in from the right edge and clear
+   of the rounded corners. White with a fine blue edge, not the dropdowns'
+   solid blue, which would vanish on the menu's blue and green bands; it
+   shows on the white top as well. Placed by AppMenu. */
+.scrollBar {
+  position: absolute;
+  right: 4px;
+  z-index: 3;
+  width: 5px;
+  border-radius: var(--snt-radius-pill);
+  background: rgb(255 255 255 / 0.85);
+  box-shadow: 0 0 0 1px rgb(37 93 171 / 0.35);
+  pointer-events: none;
+}
+
 @keyframes snt-menu-drop-in {
   from {
     opacity: 0;

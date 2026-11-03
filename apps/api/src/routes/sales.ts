@@ -100,12 +100,10 @@ const list = createRoute({
   },
 });
 
-salesRoutes.openapi(list, async (c) => {
-  const { q, show, page, size } = c.req.valid('query');
-  const viewer = await personFor(c.get('authUser'));
-  if (!(await inDepartment(viewer, 'sales'))) return c.json({ error: notSales }, 403);
-
-  const now = new Date();
+/** Every open store with its owner, listings and pass, and the users near
+    the limit with no store: the rows Stores lists, also counted on the
+    Overview (overview.ts). */
+export async function storeRows(now: Date): Promise<Row[]> {
   const [stores, passes, storeLive, personLive, memberships] = await Promise.all([
     db
       .select({
@@ -188,8 +186,20 @@ salesRoutes.openapi(list, async (c) => {
     }
   }
 
-  const isNear = (row: Row) => row.kind === 'store' && row.limit !== undefined && row.live >= NEAR_STORE;
-  const toCall = (row: Row) => isNear(row) || row.state === 'ending' || row.state === 'lapsed' || row.kind === 'user';
+  return rows;
+}
+
+const isNear = (row: Row) => row.kind === 'store' && row.limit !== undefined && row.live >= NEAR_STORE;
+/** Worth a call: near the free limit, a pass ending soon or lapsed, or a
+    user near the limit with no store. */
+export const toCall = (row: Row) => isNear(row) || row.state === 'ending' || row.state === 'lapsed' || row.kind === 'user';
+
+salesRoutes.openapi(list, async (c) => {
+  const { q, show, page, size } = c.req.valid('query');
+  const viewer = await personFor(c.get('authUser'));
+  if (!(await inDepartment(viewer, 'sales'))) return c.json({ error: notSales }, 403);
+
+  const rows = await storeRows(new Date());
   const test: Record<Show, (row: Row) => boolean> = {
     stores: (row) => row.kind === 'store',
     call: toCall,

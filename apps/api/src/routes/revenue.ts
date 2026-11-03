@@ -29,7 +29,7 @@ const DAY = 24 * 60 * 60_000;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const UNITS = ['day', 'week', 'month', 'year'] as const;
-type Unit = (typeof UNITS)[number];
+export type Unit = (typeof UNITS)[number];
 const SHOWS = ['all', 'paid', 'failed', 'pending', 'test'] as const;
 type Show = (typeof SHOWS)[number];
 const PAGE_SIZES = [10, 20, 30, 40] as const;
@@ -45,7 +45,7 @@ const instant = (wall: number) => new Date(wall - HARARE);
 
 /** The period's key holding this moment: "2026-11-02" (a day, or the
     Monday a week starts), "2026-10", "2026". */
-function keyOf(unit: Unit, at: Date): string {
+export function keyOf(unit: Unit, at: Date): string {
   const d = local(at);
   if (unit === 'year') return String(d.getUTCFullYear());
   if (unit === 'month') return d.toISOString().slice(0, 7);
@@ -55,7 +55,7 @@ function keyOf(unit: Unit, at: Date): string {
 }
 
 /** Where a period starts and ends, as instants. */
-function bounds(unit: Unit, key: string): [Date, Date] {
+export function bounds(unit: Unit, key: string): [Date, Date] {
   if (unit === 'year') {
     const y = Number(key);
     return [instant(Date.UTC(y, 0, 1)), instant(Date.UTC(y + 1, 0, 1))];
@@ -70,13 +70,13 @@ function bounds(unit: Unit, key: string): [Date, Date] {
 }
 
 /** The period before. */
-function previousKey(unit: Unit, key: string): string {
+export function previousKey(unit: Unit, key: string): string {
   const [start] = bounds(unit, key);
   return keyOf(unit, new Date(start.getTime() - 1));
 }
 
 /** "Oct 2026", "2026", "27 Oct to 2 Nov". */
-function labelOf(unit: Unit, key: string): string {
+export function labelOf(unit: Unit, key: string): string {
   if (unit === 'year') return key;
   if (unit === 'month') return `${MONTHS[Number(key.slice(5)) - 1]} ${key.slice(0, 4)}`;
   const [start, end] = bounds(unit, key);
@@ -91,7 +91,7 @@ function labelOf(unit: Unit, key: string): string {
 
 /** The buckets a period's chart has, labelled: hours of a day, days of a
     week or month, months of a year. */
-function bucketsOf(unit: Unit, key: string): string[] {
+export function bucketsOf(unit: Unit, key: string): string[] {
   if (unit === 'year') return [...MONTHS];
   if (unit === 'day') return Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, '0')}:00`);
   if (unit === 'week') {
@@ -104,7 +104,7 @@ function bucketsOf(unit: Unit, key: string): string[] {
 }
 
 /** Which bucket of its period a moment falls in. */
-function bucketOf(unit: Unit, key: string, at: Date): number {
+export function bucketOf(unit: Unit, key: string, at: Date): number {
   const [start] = bounds(unit, key);
   if (unit === 'year') return local(at).getUTCMonth();
   if (unit === 'day') return Math.floor((at.getTime() - start.getTime()) / (60 * 60_000));

@@ -10,8 +10,11 @@
   margin-top: var(--snt-space-6);
 }
 
+/* As wide as its tabs, but never wider than the page: when they do not
+   fit (a phone, or every part of the team), the strip slides on its own,
+   not the page. */
 .tabs > [role='tablist'] {
-  max-width: none;
+  max-width: 100%;
   margin-inline: 0;
 }
 

@@ -38,12 +38,14 @@ function useWidth(): [React.RefObject<HTMLDivElement | null>, number] {
   return [box, width];
 }
 
-/** A clean top for the axis, and its ticks: 0, then even steps. */
-function niceScale(max: number): number[] {
+/** A clean top for the axis, and its ticks: 0, then even steps (whole ones
+    for a count, which has no halves). */
+function niceScale(max: number, whole = false): number[] {
   if (max <= 0) return [0, 1, 2, 3, 4];
   const rough = max / 4;
   const power = 10 ** Math.floor(Math.log10(rough));
-  const step = [1, 2, 2.5, 5, 10].map((m) => m * power).find((s) => s >= rough) ?? rough;
+  const nice = [1, 2, 2.5, 5, 10].map((m) => m * power).find((s) => s >= rough) ?? rough;
+  const step = whole ? Math.max(1, Math.ceil(nice)) : nice;
   return Array.from({ length: 5 }, (_, n) => n * step);
 }
 
@@ -86,11 +88,14 @@ function TimeFrame({
   width,
   labels,
   ticks,
+  format = money,
   children,
 }: {
   width: number;
   labels: string[];
   ticks: number[];
+  /** How a tick reads: money, unless a count. */
+  format?: (value: number) => string;
   children: ReactNode;
 }) {
   const inner = width - PAD.left - PAD.right;
@@ -106,7 +111,7 @@ function TimeFrame({
           <g key={tick}>
             <line x1={PAD.left} x2={width - PAD.right} y1={y} y2={y} className={styles.grid} />
             <text x={PAD.left - 8} y={y} className={styles.tick} textAnchor="end" dominantBaseline="middle">
-              {money(tick)}
+              {format(tick)}
             </text>
           </g>
         );
@@ -184,11 +189,23 @@ export function ColumnChart({ labels, series, label }: { labels: string[]; serie
   );
 }
 
-/** Revenue over time as lines, with a crosshair that finds the day. */
-export function LineChart({ labels, series, label }: { labels: string[]; series: Series[]; label: string }) {
+/** Revenue over time as lines, with a crosshair that finds the day. With
+    `count`, the values are counts (the Overview's), not money. */
+export function LineChart({
+  labels,
+  series,
+  label,
+  count = false,
+}: {
+  labels: string[];
+  series: Series[];
+  label: string;
+  count?: boolean;
+}) {
   const [box, width] = useWidth();
   const [hover, setHover] = useState<number | null>(null);
-  const ticks = niceScale(Math.max(0, ...series.flatMap((s) => s.values)));
+  const format = count ? String : money;
+  const ticks = niceScale(Math.max(0, ...series.flatMap((s) => s.values)), count);
   const top = ticks[ticks.length - 1] ?? 1;
   const inner = width - PAD.left - PAD.right;
   const plot = HEIGHT - PAD.top - PAD.bottom;
@@ -209,7 +226,7 @@ export function LineChart({ labels, series, label }: { labels: string[]; series:
         }}
         onPointerLeave={() => setHover(null)}
       >
-        <TimeFrame width={width} labels={labels} ticks={ticks}>
+        <TimeFrame width={width} labels={labels} ticks={ticks} format={format}>
           {hover !== null ? (
             <line x1={xOf(hover)} x2={xOf(hover)} y1={PAD.top} y2={PAD.top + plot} className={styles.crosshair} />
           ) : null}
@@ -237,7 +254,7 @@ export function LineChart({ labels, series, label }: { labels: string[]; series:
           x={Math.min(width - 150, xOf(hover) + 10)}
           y={PAD.top}
           title={labels[hover] ?? ''}
-          rows={series.map((s) => ({ name: s.name, color: s.color, value: money(s.values[hover] ?? 0) }))}
+          rows={series.map((s) => ({ name: s.name, color: s.color, value: format(s.values[hover] ?? 0) }))}
         />
       ) : null}
     </div>

@@ -1,0 +1,344 @@
+/**
+ * The Overview, set as Revenue is (revenue/page.module.css): the length
+ * and period pills under a tab for each part of the team, then that
+ * part's white tiles four across (two on a phone), and the chart of the
+ * tile picked in its own white card under them. A tile with a chart is a button, ringed in the blue while its
+ * chart shows, as on the Store console's Stats.
+ */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-6);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--snt-space-6);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-3);
+  padding: var(--snt-space-7) var(--snt-space-8);
+  border: 1.5px solid transparent;
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+/* One with a chart: tapped to show it. */
+.tap {
+  cursor: pointer;
+  transition: border-color var(--snt-transition);
+}
+
+.tileOn {
+  border-color: var(--snt-control-active);
+}
+
+@media (hover: hover) {
+  .tap:not(.tileOn):hover {
+    border-color: color-mix(in srgb, var(--snt-control-active) 25%, transparent);
+  }
+}
+
+.tap:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}
+
+/* A tab for each part of the team, as on Stores. */
+.tabs {
+  margin-top: var(--snt-space-6);
+}
+
+/* As wide as its tabs, but never wider than the page: when they do not
+   fit (a phone, or every part of the team), the strip slides on its own,
+   not the page. */
+.tabs > [role='tablist'] {
+  max-width: 100%;
+  margin-inline: 0;
+}
+
+/* My overview's bar: what it holds, and the gear to choose its cards. */
+.mineBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--snt-space-4);
+  margin-bottom: var(--snt-space-5);
+}
+
+/* Customize my overview: the gear and its words in a small blue outlined
+   pill, so it reads as the way to change the cards. */
+.gear {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--snt-space-3);
+  height: 36px;
+  padding: 0 var(--snt-space-6) 0 var(--snt-space-5);
+  border: 1px solid var(--snt-control-idle);
+  border-radius: var(--snt-radius-pill);
+  background: none;
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .gear:hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+.gear:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 2px;
+}
+
+/* Customize my overview: a heading over each part. */
+.sheetHeading {
+  margin: 0 0 var(--snt-space-4);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* Your cards, in their order: two to a row, as Android's quick settings
+   tiles when edited, a pale tile each with its grip on the right, so a
+   finger holding it does not hide the card it moves (Hillary,
+   2026-11-03). */
+.order {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-3);
+  margin: var(--snt-space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.orderTile {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  min-width: 0;
+  min-height: 48px;
+  padding: var(--snt-space-2) var(--snt-space-2) var(--snt-space-2) var(--snt-space-4);
+  border: 1.5px solid transparent;
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-inset);
+  color: var(--snt-accent-bold);
+  font-size: var(--snt-text-sm);
+  cursor: grab;
+  user-select: none;
+}
+
+/* Where the card being dragged will land: a dashed empty slot. */
+.orderSlot {
+  border: 1.5px dashed var(--snt-control-active);
+  background: none;
+}
+
+.orderSlot > * {
+  visibility: hidden;
+}
+
+/* While a card is dragged, set on the sheet's dialog: a closed hand
+   wherever the pointer goes in it, over the cards that offer an open one
+   and the tick boxes too, until it is let go. */
+.grabbing,
+.grabbing * {
+  cursor: grabbing !important;
+}
+
+/* The faded copy that follows the pointer while dragging. */
+.orderGhost {
+  position: fixed;
+  z-index: 1000;
+  box-sizing: border-box;
+  opacity: 0.7;
+  background: var(--snt-bg-surface);
+  box-shadow: 0 8px 24px rgb(37 93 171 / 0.25);
+  cursor: grabbing;
+  pointer-events: none;
+}
+
+/* The cards to add: two to a row, a tick box each, the chosen ones tinted. */
+.choiceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-3);
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  min-width: 0;
+  min-height: 44px;
+  padding: var(--snt-space-2) var(--snt-space-4);
+  border: 1px solid var(--snt-bg-inset);
+  border-radius: var(--snt-radius-lg);
+  color: var(--snt-ink);
+  font-size: var(--snt-text-sm);
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .choice:not(.choiceOn):hover {
+    border-color: color-mix(in srgb, var(--snt-control-active) 30%, transparent);
+  }
+}
+
+.choiceOn {
+  border-color: transparent;
+  background: var(--snt-bg-inset);
+  color: var(--snt-accent-bold);
+}
+
+.choiceBox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--snt-accent);
+}
+
+/* The grip: held to drag, so the page does not scroll under a finger. */
+.grip {
+  /* Last, at the right end, whatever comes before it. */
+  order: 1;
+  margin-left: auto;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--snt-card-ink-muted);
+  cursor: grab;
+  touch-action: none;
+}
+
+.grip:active {
+  cursor: grabbing;
+}
+
+.grip:focus-visible {
+  outline: 2px solid var(--snt-control-active);
+  outline-offset: 1px;
+}
+
+.orderNumber {
+  min-width: 18px;
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-control-active);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A name on up to two lines, so a phone's narrow tile shows it whole. */
+.orderLabel {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* What stands in for tiles while there are none: DevOps, for now. */
+.notePanel {
+  padding: var(--snt-space-7) var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-surface);
+}
+
+.tileLabel {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.tileValue {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  line-height: 1.1;
+  color: var(--snt-accent-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.tileNote {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.card {
+  margin-top: var(--snt-space-6);
+  padding: var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-surface);
+}
+
+.heading {
+  margin: 0 0 var(--snt-space-6);
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+/* Which one: a blue outlined pill, as on Revenue. The class is doubled
+   to win over the dropdown's own look. */
+.filter.filter {
+  width: 200px;
+  height: 36px;
+  border: 1px solid var(--snt-control-idle);
+  background: none;
+  color: var(--snt-control-idle-ink);
+  font-weight: var(--snt-weight-medium);
+}
+
+@media (hover: hover) {
+  .filter.filter:hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+/* Another length on its way: what is on show fades meanwhile. */
+.loading {
+  opacity: 0.55;
+  transition: opacity var(--snt-transition);
+}
+
+@media (max-width: 767px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--snt-space-4);
+  }
+
+  .tile {
+    padding: var(--snt-space-6);
+  }
+}

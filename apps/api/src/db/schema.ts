@@ -823,3 +823,17 @@ export interface StoreLeadAlerts {
   minBudget: number | null;
   quietHours: { on: boolean; from: string; to: string };
 }
+
+/**
+ * The cards a team member chose for My overview, the first tab of their
+ * Overview, in their order (tile keys from routes/overview.ts). Only cards
+ * of their own departments are kept; one they can no longer see is left
+ * out when the Overview is read.
+ */
+export const staffOverviewCards = pgTable('staff_overview_cards', {
+  personId: text()
+    .primaryKey()
+    .references(() => people.id),
+  cards: text().array().notNull().default([]),
+  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+}).enableRLS();

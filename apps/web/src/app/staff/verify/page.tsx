@@ -1,10 +1,7 @@
-/** Verify stores, in the Staff console: Trust and safety leads' list of
-    requests. See PageContent. */
+/** Verify stores is a tab of Stores now: an old link opens it there. */
 
-import PageContent from './PageContent';
-
-export const metadata = { title: 'Verify stores · Swap & Top' };
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  return <PageContent />;
+  redirect('/staff/stores?tab=verify');
 }

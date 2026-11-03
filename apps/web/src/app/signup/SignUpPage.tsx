@@ -25,11 +25,10 @@ import { useId, useState, type FormEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { DEFAULT_TOWN, TOWNS, type Town } from '@snt/core';
-import { Button, Dropdown, Spinner, StepBar, startPageLoad, type Step } from '@snt/ui';
+import { Button, Dropdown, EyeClosed, EyeOpen, Spinner, startPageLoad, StepBar, type Step } from '@snt/ui';
 import { publicSend } from '@/lib/query';
 import { AuthLayout } from '../signin/AuthLayout';
 import { VerifyEmailStep } from '../signin/VerifyEmail';
-import { EyeClosed, EyeOpen } from '../signin/SignInPage';
 import styles from '../signin/SignInPage.module.css';
 
 const STEPS: Step[] = [{ label: 'Your details' }, { label: 'Password' }, { label: 'Verify email' }];

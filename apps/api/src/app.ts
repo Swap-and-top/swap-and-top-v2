@@ -31,6 +31,7 @@ import { storeRoutes } from './routes/stores';
 import { dataRequestRoutes } from './routes/dataRequests';
 import { salesRoutes } from './routes/sales';
 import { revenueRoutes } from './routes/revenue';
+import { overviewRoutes } from './routes/overview';
 import { staffUnlockRoutes } from './routes/staffUnlock';
 import { staffPassValid } from './staffPass';
 
@@ -85,6 +86,7 @@ app.route('/', staffUnlockRoutes);
 app.route('/', dataRequestRoutes);
 app.route('/', salesRoutes);
 app.route('/', revenueRoutes);
+app.route('/', overviewRoutes);
 app.route('/', listingRoutes);
 app.route('/', storeRoutes);
 app.route('/', meRoutes);

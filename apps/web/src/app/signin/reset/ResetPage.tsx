@@ -13,7 +13,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { ButtonLink, Spinner } from '@snt/ui';
+import { ButtonLink, EyeClosed, EyeOpen, Spinner } from '@snt/ui';
 import { CheckIcon } from '@snt/ui/icons';
 import { supabase } from '@/lib/supabase';
 import { AuthLayout } from '../AuthLayout';
@@ -26,6 +26,9 @@ export function ResetPage() {
   const [linked, setLinked] = useState<boolean | null>(null);
   const [password, setPassword] = useState('');
   const [again, setAgain] = useState('');
+  /** Each box's eye: whether what is typed is on show. */
+  const [showPassword, setShowPassword] = useState(false);
+  const [showAgain, setShowAgain] = useState(false);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -106,12 +109,20 @@ export function ResetPage() {
             <span className={styles.box}>
               <input
                 className={styles.input}
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 autoComplete="new-password"
                 placeholder="At least 8 characters"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
+              <button
+                type="button"
+                className={styles.eye}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword((shown) => !shown)}
+              >
+                {showPassword ? <EyeClosed /> : <EyeOpen />}
+              </button>
             </span>
           </label>
           <label className={styles.field}>
@@ -119,12 +130,20 @@ export function ResetPage() {
             <span className={styles.box}>
               <input
                 className={styles.input}
-                type="password"
+                type={showAgain ? 'text' : 'password'}
                 autoComplete="new-password"
                 placeholder="Enter it again"
                 value={again}
                 onChange={(event) => setAgain(event.target.value)}
               />
+              <button
+                type="button"
+                className={styles.eye}
+                aria-label={showAgain ? 'Hide password' : 'Show password'}
+                onClick={() => setShowAgain((shown) => !shown)}
+              >
+                {showAgain ? <EyeClosed /> : <EyeOpen />}
+              </button>
             </span>
           </label>
           <p className={styles.note} />

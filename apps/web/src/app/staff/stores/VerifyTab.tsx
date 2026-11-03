@@ -1,8 +1,9 @@
 'use client';
 
 /**
- * Verify stores, a section of the Staff console, for Trust and safety
- * leaders (and the super admin), set as Reports and Appeals are
+ * Verify stores, a tab of Stores in the Staff console (see PageContent),
+ * for Trust and safety leaders (and the super admin), set as Reports and
+ * Appeals are
  * (GET /api/admin/verifications): every request for the Verified store
  * badge, the waiting ones first, oldest first, then the decided ones,
  * newest first. The filter narrows it to waiting, verified or declined,
@@ -17,7 +18,7 @@
 
 import Link from 'next/link';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { Badge, Bone, Button, ButtonLink, Dropdown, Panel, Sheet, Stack, type BadgeTone } from '@snt/ui';
 import { refreshStore } from '@/lib/refresh';
@@ -26,7 +27,7 @@ import { useLoadingBar } from '@/lib/loadingBar';
 import { useInDepartment } from '@/lib/staff';
 import { staffKeys } from '../sections';
 import { StaffPage } from '../StaffPage';
-import styles from './page.module.css';
+import styles from './verify.module.css';
 
 type Show = 'all' | 'waiting' | 'verified' | 'declined';
 type Outcome = 'verified' | 'declined';
@@ -88,7 +89,7 @@ function initialsOf(name: string): string {
 /** "077 123 4567" as a number to call: +263 77 123 4567. */
 const telOf = (phone: string) => `tel:+263${phone.replace(/\D/g, '').slice(1)}`;
 
-export default function VerifyStoresPage() {
+export function VerifyTab({ tabs }: { tabs: (waiting?: number) => ReactNode }) {
   /** Trust and safety leaders verify stores (and the super admin). */
   const leader = useInDepartment('trust_safety', true);
   const showLabel = useId();
@@ -142,10 +143,12 @@ export default function VerifyStoresPage() {
 
   return (
     <StaffPage
-      title="Verify stores"
+      title="Stores"
       meta="Stores asking for the Verified store badge, the waiting ones first"
       actions={
         leader ? (
+          <>
+          {tabs(counts?.waiting)}
           <div className={styles.toolbar}>
             <span id={showLabel} hidden>
               Show
@@ -162,6 +165,7 @@ export default function VerifyStoresPage() {
               className={styles.filter}
             />
           </div>
+          </>
         ) : null
       }
     >

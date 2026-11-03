@@ -90,6 +90,10 @@
   padding: 0;
   overflow-y: auto;
   list-style: none;
+  /* A finger scrolls the list up and down, and when it reaches an end the
+     page behind does not carry on scrolling. */
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 /* A long list's scrollbar: thin, in the outlined buttons' blue, plain to see (Hillary, 2026-10-30), inside the card with

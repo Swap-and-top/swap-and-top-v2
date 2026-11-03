@@ -18,8 +18,12 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   checked with `inDepartment` (`apps/api/src/staff.ts`) and
   `useInDepartment` (`apps/web/src/lib/staff.ts`). The console at
   `/staff` (sections in `apps/web/src/app/staff/sections.tsx`, shown once
-  `built: true`): Reports, Users, Appeals, Verify stores, the Activity
-  log and Team, with waiting counts on Reports and Appeals. Who may act
+  `built: true`), in Hillary's order (2026-11-03): Overview, Reports,
+  Appeals, Users, Team members, Stores, Revenue, Activity log, with
+  waiting counts on Reports and Appeals. Verify stores is a tab of
+  Stores (`app/staff/stores/VerifyTab.tsx`; `/staff/verify` redirects
+  there): Stores shows Sales its All stores and Stores to call, and Trust
+  and safety leaders Verify stores (`leadersOf` in `sections.tsx`). Who may act
   on whom, what an action does and how it is undone are in
   `apps/api/src/moderation.ts`. A banned account sees only its ban and
   appeal (`BannedGate`), and the API refuses it everything else
@@ -64,8 +68,20 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   The account menu shows a small staff pill that opens the console, and
   every staff table runs the top loading bar while new rows come
   (`useLoadingBar` in `apps/web/src/lib/loadingBar.ts`).
+- **The Overview (2026-11-03, on `redesign/pdf-style`, not on `main`
+  yet):** every team member's
+  first page, `/staff/overview`: a tab for each part of the team (the
+  business, Trust and safety, Sales, Finance, Marketing, DevOps), each
+  person getting their departments' tabs and the super admin all, each
+  tab whole, and first **My overview**, the cards each person chose and
+  ordered behind its gear, kept in `staff_overview_cards`
+  (`apps/api/src/routes/overview.ts`; the skeleton's shape in
+  `app/staff/overview/shape.ts` keeps the same lists). Phase 6 is built.
+  Pushed to the branch only (Hillary, 2026-11-03): fast forward `main`
+  when she says. Migration `0012` is already applied.
 - **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): the Executives Overview, then the Board monthly summary.
+  stopped"): Hillary looks at the Overview, `main` is fast forwarded at
+  her word, then Phase 7 (Marketing and DevOps).
   Business definitions are in `docs/product/staff-console.md`.
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed

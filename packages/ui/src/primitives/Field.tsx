@@ -5,11 +5,13 @@
  *
  * Every input has a real `<label>` tied to it by id — including the ones the
  * wireframes draw with only a placeholder, where the label is visually hidden
- * rather than absent.
+ * rather than absent. A password box has the sign in page's eye at its end,
+ * to show or hide what is typed.
  */
 
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import type { InputHTMLAttributes, ReactNode } from 'react';
+import { EyeClosed, EyeOpen } from './PasswordEye';
 import styles from './Field.module.css';
 
 export interface FieldProps
@@ -41,6 +43,27 @@ export function Field({
   ...rest
 }: FieldProps) {
   const id = useId();
+  const password = rest.type === 'password';
+  /** A password box's eye: whether what is typed is on show. */
+  const [shown, setShown] = useState(false);
+
+  const input = (
+    <input
+      id={id}
+      className={[
+        styles.input,
+        size === 'sm' ? styles.inputSm : '',
+        strong ? styles.inputStrong : '',
+        pill ? styles.inputPill : '',
+        filled ? styles.inputFilled : '',
+        password ? styles.inputPassword : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      {...rest}
+      type={password && shown ? 'text' : rest.type}
+    />
+  );
 
   return (
     <div className={[styles.field, className ?? ''].filter(Boolean).join(' ')}>
@@ -51,19 +74,21 @@ export function Field({
         {label}
         {hint ? <span className={styles.hint}>{hint}</span> : null}
       </label>
-      <input
-        id={id}
-        className={[
-          styles.input,
-          size === 'sm' ? styles.inputSm : '',
-          strong ? styles.inputStrong : '',
-          pill ? styles.inputPill : '',
-          filled ? styles.inputFilled : '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        {...rest}
-      />
+      {password ? (
+        <span className={styles.passwordBox}>
+          {input}
+          <button
+            type="button"
+            className={styles.eye}
+            aria-label={shown ? 'Hide password' : 'Show password'}
+            onClick={() => setShown((now) => !now)}
+          >
+            {shown ? <EyeClosed /> : <EyeOpen />}
+          </button>
+        </span>
+      ) : (
+        input
+      )}
     </div>
   );
 }

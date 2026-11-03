@@ -118,6 +118,7 @@ export {
   SignInGate,
   SignInHost,
 } from './auth/SignIn';
+export { EyeClosed, EyeOpen } from './primitives/PasswordEye';
 export { Sheet, useCloseSheet } from './primitives/Sheet';
 export { NotificationBell } from './layout/NotificationBell';
 export { AppToaster } from './primitives/AppToaster';

@@ -174,11 +174,13 @@ export function Dropdown<T extends string>({
                     .filter(Boolean)
                     .join(' ')}
                   onPointerEnter={() => setActive(index)}
-                  // Picks on press, before the trigger loses focus.
+                  // A mouse press keeps the focus on the pill. A finger's
+                  // is left alone, so dragging scrolls the list (Hillary,
+                  // 2026-11-03): only a tap, not a drag, then picks.
                   onPointerDown={(event) => {
-                    event.preventDefault();
-                    pick(index);
+                    if (event.pointerType === 'mouse') event.preventDefault();
                   }}
+                  onClick={() => pick(index)}
                 >
                   <span className={styles.optionText}>
                     <span className={styles.optionLabel}>

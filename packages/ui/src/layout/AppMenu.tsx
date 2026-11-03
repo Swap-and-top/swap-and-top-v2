@@ -57,6 +57,9 @@ export function AppMenu({
   /** The phone's lines, crossed once the menu is in, uncrossed as it goes. */
   const [crossed, setCrossed] = useState(false);
   const opened = useRef(pathname);
+  /** The menu's own scroll bar, when it is taller than the room: where its
+      blue bar sits and how long it is. */
+  const [bar, setBar] = useState<{ top: number; height: number } | null>(null);
 
   function close() {
     if (closing) return;
@@ -93,6 +96,37 @@ export function AppMenu({
       cancelAnimationFrame(frame);
     };
   }, [anchor]);
+
+  // When the menu is taller than the screen leaves room for, a thin blue
+  // bar in from its right edge, as the dropdowns' (the browser's own is
+  // hidden: its lane showed the panel's blue beside the white and green
+  // bands). Followed as it scrolls or changes size: a listener, not loading.
+  useLayoutEffect(() => {
+    const el = panel.current;
+    if (!el) return;
+    /** Clear of the rounded corners, top and bottom. */
+    const inset = 22;
+    const follow = () => {
+      const room = el.clientHeight;
+      const whole = el.scrollHeight;
+      if (whole <= room + 1) {
+        setBar(null);
+        return;
+      }
+      const track = room - inset * 2;
+      const height = Math.max(32, (track * room) / whole);
+      const top = el.scrollTop + inset + ((track - height) * el.scrollTop) / (whole - room);
+      setBar({ top, height });
+    };
+    follow();
+    el.addEventListener('scroll', follow, { passive: true });
+    const watcher = new ResizeObserver(follow);
+    watcher.observe(el);
+    return () => {
+      el.removeEventListener('scroll', follow);
+      watcher.disconnect();
+    };
+  }, []);
 
   // Closes on a move to another page, Escape, or a tap outside.
   useEffect(() => {
@@ -160,6 +194,7 @@ export function AppMenu({
           <CloseIcon size={18} />
         </button>
         <MenuContent onNavigate={close} />
+        {bar ? <span className={styles.scrollBar} style={{ top: bar.top, height: bar.height }} aria-hidden /> : null}
       </div>
       {/* On a phone: the header button's three lines, drawn over the menu in
           the same place, crossing to close it. */}
