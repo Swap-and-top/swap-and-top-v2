@@ -6,7 +6,7 @@ laid out, the design patterns in use and what was done most recently; its
 endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
 `docs/00-SUMMARY.md` and the rest of `docs/` describe the product itself.
 
-## Where things stand (2026-11-03)
+## Where things stand (2026-11-04)
 
 - **Built and live on `main`:** Phases 1 to 4 (everything a user and a
   store uses, on the database), apart from real Paynow payment, which
@@ -76,7 +76,7 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   ordered behind its gear, kept in `staff_overview_cards`
   (`apps/api/src/routes/overview.ts`; the skeleton's shape in
   `app/staff/overview/shape.ts` keeps the same lists). Phase 6 is built.
-- **Phase 7, Growth (2026-11-03, not committed):** the Marketing section
+- **Phase 7, Growth (live 2026-11-03):** the Marketing section
   at `/staff/growth` (`apps/api/src/routes/growth.ts`). Visits come from
   Umami (`apps/api/src/umami.ts`), which is **not set up yet**, so they
   are sample figures and the page says so; the settings to fill later are
@@ -85,12 +85,15 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   by day for two months and by month for good) and, for DevOps, errors
   and slow requests on the live site (`request_issues`, two months, and
   `request_issue_months`, for good). Migration `0013` is applied.
-- **Phase 7, Health (2026-11-03, not committed):** the DevOps section at
+- **Phase 7, Health (live 2026-11-03):** the DevOps section at
   `/staff/health` (`apps/api/src/routes/devops.ts`): the database's answer
   time, connections and size, the store pass check, the deploy running,
   and the last 30 days of errors and slow requests. Phase 7 is built.
-- **Next, in Hillary's order** (details in the handoff's "Where we
-  stopped"): Hillary looks at Growth and Health, then commit at her word.
+- **Next** (details in the handoff's "Where we stopped"): Hillary looks
+  at Growth and Health and says what to change, then picks what comes
+  next (offered: a Stores export for Sales leaders, a "do not call" mark
+  on stores, a payments by day chart; waiting on her: Umami with the
+  final hosting, Paynow, real email and SMS).
   Business definitions are in `docs/product/staff-console.md`.
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed

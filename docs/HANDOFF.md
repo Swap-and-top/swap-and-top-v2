@@ -12,25 +12,30 @@ file is the state of the code and the recent work. **Start with "Where we
 stopped" just below**, then `docs/architecture/backend-plan.md` ("Where it
 stands") for the backend in full.
 
-## Where we stopped (2026-11-03)
+## Where we stopped (2026-11-04)
 
-**In one line:** Phases 1 to 4 are built and live (only real Paynow
-payment waits, on Hillary's merchant account). Phase 5, the Staff
-console, is built, reviewed page by page with Hillary and live. The
-three safeguards Hillary chose are built and live: the staff password,
-the sealed second super admin (Hillary marks the accounts herself in
-Supabase, by the steps in `docs/product/staff-console.md`, and will say
-who and when, to note here) and data requests. Phase 6 has started:
-**Stores** (Sales) and **Revenue** (Finance) are built and live, with
-the staff pill in the account menu and the top loading bar on every
-staff table. Those are live on `main` (commit 60ee10a, 2026-11-03).
-**Phase 6 is now built:** the Overview for every team member (with My
-overview), Verify stores as a tab of Stores and the menu in Hillary's
-order, and the small fixes below. Those are committed and pushed on
-`redesign/pdf-style` only (2026-11-03); **not on `main` yet**, at
-Hillary's word, so not live. When she says, fast forward `main` (commit
-flow step 5) and check Vercel. Migration `0012` (`staff_overview_cards`)
-is already applied to the shared database. Vercel builds only Production.
+**In one line:** Phases 1 to 7 are built and live on `main` (commit
+ac67c91, 2026-11-03), apart from real Paynow payment (waiting on
+Hillary's merchant account) and Umami (waiting on the final hosting;
+Growth shows sample visits until then). Phase 5 is the Staff console's
+Trust and safety; the three safeguards Hillary chose (staff password,
+sealed second super admin, data requests) are built and live. Phase 6
+is Stores (Sales), Revenue (Finance) and the Overview with My overview.
+Phase 7 is Growth (Marketing) and Health (DevOps), with the recording
+behind them (migration `0013`). Migrations `0001` to `0013` are applied.
+Vercel builds only Production. Nothing is left uncommitted.
+
+**Where the next agent starts:** Hillary looks at Growth and Health (as
+super admin she sees every section; no test account is in Marketing or
+DevOps, and adding one is refused as a permission grant) and says what
+to change. Then whatever she picks next: the things offered and not yet
+chosen (an export of Stores for Sales leaders, a mark for store owners
+who say no to being called, a payments by day chart), Umami once the
+hosting is chosen ("Waiting on the owner"), real Paynow payment, or
+real email and SMS before launch. Ask Hillary before building, show
+her the page in the browser, and build what she picks.
+
+The notes below are newest at the end of each part, from 2026-11-03.
 
 **Built 2026-11-03: the Overview, for everyone on the
 team** (Hillary, 2026-11-03: every team member has an Overview, its
@@ -139,8 +144,8 @@ a laptop and a phone.
 **The Overview went live** on 2026-11-03 (`main` fast forwarded to
 1d82a99 at Hillary's word). Phase 6 is built and live.
 
-**Phase 7 started 2026-11-03: Growth, the Marketing section (not
-committed).** Hillary chose Marketing first, then DevOps. At
+**Phase 7 started 2026-11-03: Growth, the Marketing section (live,
+ac67c91).** Hillary chose Marketing first, then DevOps. At
 `/staff/growth` ("Growth" in the menu, after Revenue; department
 `marketing`), `GET /api/staff/growth?unit=month|year&period=…`
 (`apps/api/src/routes/growth.ts`): a month or a year beside the one
@@ -186,7 +191,7 @@ up with it to within 3 pixels. **Not seen with real rows:** adding a
 test account to Marketing was refused as a permission grant; Hillary as
 super admin can see it. Test rows deleted.
 
-**Also 2026-11-03: Health, the DevOps section (not committed).** At
+**Also 2026-11-03: Health, the DevOps section (live, ac67c91).** At
 `/staff/health` ("Health", last in the menu; department `devops`),
 `GET /api/staff/health` (`apps/api/src/routes/devops.ts`, the figures in
 `healthReport()`), read again every minute. No controls. Now: the
@@ -210,9 +215,8 @@ skeleton lines up with it. **Not seen with real rows:** no test account
 is in DevOps (adding one is a permission grant); Hillary as super admin
 can see it. **With Health, Phase 7 is built.**
 
-**Where the next agent starts:** Hillary looks at Growth and Health and
-says what to change; then commit and push at her word. After that, the
-things offered and not yet chosen below, or what Hillary picks next.
+Growth and Health went live on 2026-11-03 (ac67c91). Where the next
+agent starts is at the top, under "Where we stopped".
 Ask Hillary before building, show her the page in the browser, and
 build what she picks. Offered and not yet chosen: an export of Stores
 for Sales leaders (no phone numbers), a mark for store owners who say
