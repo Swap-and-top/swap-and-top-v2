@@ -104,6 +104,9 @@ export async function loadAccountData() {
       confirmedDeals: deals.data.confirmedDeals,
       loaded: true,
     });
+  } else {
+    // Answered, if not with them: pages waiting on it (Me) show themselves.
+    useDealStore.setState({ loaded: true });
   }
 }
 

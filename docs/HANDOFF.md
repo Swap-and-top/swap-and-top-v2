@@ -31,6 +31,16 @@ on R2" below), committed dcfd2ce. **Not committed:** the real seller on
 cards, the review step's preview and required details ("Sellers on
 cards" below). Next: Umami on Dokploy.
 
+**Before Umami (Hillary, 2026-11-06): go through real email first.**
+Sign up's email code is a mock (always 123456, nothing sent; `MOCK_CODE`,
+`apps/api/src/routes/account.ts`), so anyone could verify any address on
+the live site; password reset emails have the same gap. Steps: pick a
+sending service (Resend, Brevo or Amazon SES), add its DNS records for a
+sending address such as `noreply@swapandtop.co.zw` in Cloudflare, fill
+Supabase's Authentication, SMTP Settings, then switch sign up back to
+Supabase's own flow so step 3 checks the real code. Hillary picks the
+service.
+
 **Where the next agent starts:** Hillary looks at Growth and Health (as
 super admin she sees every section; no test account is in Marketing or
 DevOps, and adding one is refused as a permission grant) and says what
@@ -1248,9 +1258,12 @@ arguments; with none it shows no deploy line.
    `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`,
    `SUPABASE_SECRET_KEY`, `SUPABASE_JWKS_URL` (the build reads the
    database to make pages ahead; they stay in the build stage only).
-   Optionally `COMMIT_SHA`, `COMMIT_MESSAGE`, `COMMIT_BRANCH`.
+   Also `R2_PUBLIC_URL`, or the pages made ahead link photos as
+   `/photos/...` on the site itself and they do not show (found on
+   2026-11-06). Optionally `COMMIT_SHA`, `COMMIT_MESSAGE`, `COMMIT_BRANCH`.
 4. Environment (while running): the same database and Supabase settings,
-   and the four `UMAMI_...` ones once Umami runs. The values are the ones
+   the five `R2_...` ones (photos upload and show only with them), and the
+   four `UMAMI_...` ones once Umami runs. The values are the ones
    in the root `.env` and Vercel; never paste them anywhere else.
 5. Domain: the site's host name, container port 3000, HTTPS with Let's
    Encrypt. In Cloudflare, point the name at the server with the cloud
@@ -1379,6 +1392,22 @@ no seller on its card as a guest. Not committed yet.
   name, surname and email are in; Create account is now off until the
   neighbourhood and both passwords are typed. Only real mistakes (a
   password under 8 characters, two that differ) get a toast.
+- **Me** (`app/me/PageContent.tsx`) shows its skeleton (`loading.tsx`)
+  while the browser looks for a sign in and until the name, My listings
+  and the account data (deals, offers, saved; `useDealStore.loaded`, now
+  set even when deals fail) have come, then all of it at once: no blank
+  name or zeros first. The skeleton has the "For our team" row for staff,
+  remembered in this browser (`snt-me-on-team`) as the server cannot know.
+- **The team icon** (`TeamIcon`) has closed bodies, flat at the foot, the
+  two behind meeting the one in front; it is now also on the Staff
+  console's Team members and in the account menu's staff pill.
+- **Share** (cards, listing page, store page) goes through `shareLink`
+  (`packages/ui/src/primitives/shareLink.ts`): the device's own share
+  window (Hillary wants that, not a window of our own: one was tried and
+  taken out on 2026-11-06), else the link copied with "Link copied" (it
+  used to copy silently, so it looked broken); a share window that
+  refuses falls back to copying. Chrome and Firefox on many laptops have
+  no share window, so there it copies.
 - **A photo taken off a form is always sent for deleting**
   (`PhotoPicker`); the API refuses while a saved listing holds it. Before,
   the form only deleted photos it remembered uploading, which a trip to the

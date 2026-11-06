@@ -28,6 +28,8 @@ ARG SUPABASE_URL
 ARG SUPABASE_PUBLISHABLE_KEY
 ARG SUPABASE_SECRET_KEY
 ARG SUPABASE_JWKS_URL
+# Photos' public address, for the pages made ahead (their photos' links).
+ARG R2_PUBLIC_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm --filter @snt/web build
 

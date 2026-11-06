@@ -163,15 +163,16 @@ export const PersonIcon = ({
 );
 
 /** Our team: three people, one in front in the middle and one either side
-    behind, for the Staff console. */
+    behind, for the Staff console. Each body is a closed outline, flat at
+    the foot; those behind meet the one in front (Hillary, 2026-11-06). */
 export const TeamIcon = (props: IconProps) => (
   <Svg {...props}>
     <circle cx="12" cy="8.5" r="3" />
-    <path d="M6.5 19.5c0-3.1 2.5-5.2 5.5-5.2s5.5 2.1 5.5 5.2" />
+    <path d="M6.5 19.5c0-3.1 2.5-5.2 5.5-5.2s5.5 2.1 5.5 5.2Z" />
     <circle cx="5.5" cy="9.8" r="2.2" />
-    <path d="M2 18.2c0-2.4 1.5-3.9 3.6-3.9" />
+    <path d="M6.6 18.2H2c0-2.4 1.5-3.9 3.6-3.9 1 0 1.8.3 2.4.8" />
     <circle cx="18.5" cy="9.8" r="2.2" />
-    <path d="M22 18.2c0-2.4-1.5-3.9-3.6-3.9" />
+    <path d="M17.4 18.2H22c0-2.4-1.5-3.9-3.6-3.9-1 0-1.8.3-2.4.8" />
   </Svg>
 );
 

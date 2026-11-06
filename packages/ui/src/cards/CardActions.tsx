@@ -10,6 +10,7 @@
 
 import { getListing, useViewerId } from '@snt/core';
 import { ReportIcon, SaveStarIcon, ShareIcon } from '../icons';
+import { shareLink } from '../primitives/shareLink';
 import { useWishlist } from './useWishlist';
 import styles from './CardActions.module.css';
 
@@ -46,21 +47,9 @@ export function CardActions({
   const mine = viewer !== undefined && getListing(listingId)?.ownerId === viewer;
   const showSave = save && !mine;
 
-  /**
-   * The phone's own share sheet where there is one — WhatsApp is where these
-   * links go — and a copied link otherwise.
-   */
-  async function share() {
-    const url = new URL(href, window.location.origin).toString();
-    try {
-      if (navigator.share) {
-        await navigator.share({ title, url });
-      } else {
-        await navigator.clipboard.writeText(url);
-      }
-    } catch {
-      // Dismissing the share sheet rejects; there is nothing to do.
-    }
+  /** The device's own share window, else the link copied (shareLink). */
+  function share() {
+    void shareLink({ title, url: new URL(href, window.location.origin).toString() });
   }
 
   return (

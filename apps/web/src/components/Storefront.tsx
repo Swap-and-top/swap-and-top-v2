@@ -11,7 +11,6 @@
  */
 
 import { useState } from 'react';
-import { toast } from 'sonner';
 import {
   CATEGORY_LABELS,
   type Category,
@@ -32,6 +31,7 @@ import {
   Tabs,
   VerifiedStoreBadge,
   replyShort,
+  shareLink,
   type TabItem,
 } from '@snt/ui';
 import { ShareIcon } from '@snt/ui/icons';
@@ -94,20 +94,10 @@ export function StorefrontBody({
       ? listings
       : listings.filter((listing) => listing.category === tab);
 
-  /** The phone's own share sheet where there is one, a copied link if not. */
-  async function share() {
+  /** The device's own share window, else the link copied (shareLink). */
+  function share() {
     // The store's public address, wherever it is shared from.
-    const url = `${window.location.origin}/store/${store.slug}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: store.name, url });
-      } else {
-        await navigator.clipboard.writeText(url);
-        toast.success('Link copied');
-      }
-    } catch {
-      // Closing the share sheet is not an error worth showing.
-    }
+    void shareLink({ title: store.name, url: `${window.location.origin}/store/${store.slug}` });
   }
 
   return (
@@ -132,7 +122,7 @@ export function StorefrontBody({
             type="button"
             className={styles.share}
             aria-label="Share store"
-            onClick={() => void share()}
+            onClick={share}
           >
             <ShareIcon size={18} />
           </button>

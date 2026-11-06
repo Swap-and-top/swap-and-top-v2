@@ -23,6 +23,7 @@ import {
   PersonIcon,
   ReportIcon,
   StorefrontIcon,
+  TeamIcon,
   TrendIcon,
 } from '@snt/ui/icons';
 
@@ -47,7 +48,7 @@ const SECTIONS: SectionDef[] = [
   { href: '/staff/reports', label: 'Reports', shortLabel: 'Reports', icon: (s) => <ReportIcon size={s} />, department: 'trust_safety', built: true },
   { href: '/staff/appeals', label: 'Appeals', shortLabel: 'Appeals', icon: (s) => <MessageIcon size={s} />, department: 'trust_safety', lead: true, built: true },
   { href: '/staff/users', label: 'Users', shortLabel: 'Users', icon: (s) => <PersonIcon size={s} />, department: 'trust_safety', built: true },
-  { href: '/staff/team', label: 'Team members', shortLabel: 'Team', icon: (s) => <PersonIcon size={s} />, built: true },
+  { href: '/staff/team', label: 'Team members', shortLabel: 'Team', icon: (s) => <TeamIcon size={s} />, built: true },
   { href: '/staff/stores', label: 'Stores', shortLabel: 'Stores', icon: (s) => <StorefrontIcon size={s} />, department: 'sales', leadersOf: 'trust_safety', built: true },
   { href: '/staff/revenue', label: 'Revenue', shortLabel: 'Revenue', icon: (s) => <CashHandIcon size={s} filled={false} />, department: 'finance', built: true },
   { href: '/staff/activity', label: 'Activity log', shortLabel: 'Log', icon: (s) => <ListIcon size={s} />, department: 'trust_safety', built: true },

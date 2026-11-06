@@ -865,6 +865,7 @@
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
+  gap: var(--snt-space-2);
   height: 18px;
   padding: 0 var(--snt-space-3);
   border-radius: var(--snt-radius-pill);

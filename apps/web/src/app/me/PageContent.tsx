@@ -10,6 +10,7 @@
  * Wireframe artboard: `Me`.
  */
 
+import { useEffect } from 'react';
 import {
   confirmationsAwaiting,
   useDealStore,
@@ -53,6 +54,7 @@ import { DevTools } from '@/components/DevTools';
 import { useOnTeam } from '@/lib/staff';
 import { useMyListings } from '@/lib/myListings';
 import { useStaffHome } from '../staff/sections';
+import Loading, { ON_TEAM } from './loading';
 import styles from './page.module.css';
 
 /** One empty list, so a guest's stores are the same each time they are read. */
@@ -81,7 +83,9 @@ export default function MePage() {
 
   /** What the user has posted and still has up, from the API. */
   const changes = useListingStatusStore((state) => state.changes);
-  const posted = useMyListings(me) ?? [];
+  /** Null until they have come. */
+  const loadedListings = useMyListings(me);
+  const posted = loadedListings ?? [];
   const myListings = posted.filter((listing) => {
     const status = statusOf(listing, changes);
     return status !== 'withdrawn' && status !== 'removed';
@@ -89,6 +93,28 @@ export default function MePage() {
 
   /** Deals still waiting on the user's answer. */
   const toConfirm = confirmationsAwaiting(deals, answers);
+
+  // Remembered in this browser for the skeleton next time (loading.tsx).
+  useEffect(() => {
+    if (!viewer) return;
+    try {
+      localStorage.setItem(ON_TEAM, onTeam ? '1' : '0');
+    } catch {
+      // Storage may be off: the skeleton then waits to know.
+    }
+  }, [viewer, onTeam]);
+
+  /** Their name, listings and account data (deals, offers, saved, which come
+      together) all in: until then the page's skeleton, then all of it at
+      once, never zeros and no name first (rule 12; Hillary, 2026-11-06). */
+  const dealsLoaded = useDealStore((state) => state.loaded);
+  const signedIn = useSessionStore((state) => state.signedIn);
+  /** Whether the browser has looked for a sign in yet; until it has, the
+      skeleton rather than an empty page. */
+  const restored = useSessionStore((state) => state.restored);
+  if (!restored || (signedIn && (!viewer || loadedListings === null || !dealsLoaded))) {
+    return <Loading />;
+  }
 
   return (
     <Screen>

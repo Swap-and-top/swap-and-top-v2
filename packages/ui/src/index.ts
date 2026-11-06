@@ -125,6 +125,7 @@ export { NotificationBell } from './layout/NotificationBell';
 export { AppToaster } from './primitives/AppToaster';
 export { Img, type ImgProps } from './primitives/Img';
 export { Spinner } from './primitives/Spinner';
+export { shareLink } from './primitives/shareLink';
 export { ActionMenu, type MenuAction } from './primitives/ActionMenu';
 export { PAGE_LOAD_START, startPageLoad } from './pageLoad';
 export {
