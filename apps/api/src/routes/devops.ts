@@ -39,7 +39,8 @@ function atLabel(at: Date): string {
 }
 
 /** The deploy running: from the host's settings (Vercel's own, or
-    COMMIT_SHA and COMMIT_MESSAGE elsewhere); none on a laptop. */
+    COMMIT_SHA, COMMIT_MESSAGE, COMMIT_BRANCH and APP_HOST on our own
+    server, from the Dockerfile); none on a laptop. */
 function deploy() {
   const env = process.env;
   const commit = env.VERCEL_GIT_COMMIT_SHA ?? env.COMMIT_SHA;
@@ -48,7 +49,7 @@ function deploy() {
     commit: commit.slice(0, 7),
     message: (env.VERCEL_GIT_COMMIT_MESSAGE ?? env.COMMIT_MESSAGE ?? '').split('\n')[0]!.slice(0, 120),
     branch: env.VERCEL_GIT_COMMIT_REF ?? env.COMMIT_BRANCH ?? null,
-    host: env.VERCEL ? 'Vercel' : null,
+    host: env.VERCEL ? 'Vercel' : (env.APP_HOST ?? null),
   };
 }
 

@@ -24,7 +24,12 @@
         "UMAMI_URL",
         "UMAMI_WEBSITE_ID",
         "UMAMI_USERNAME",
-        "UMAMI_PASSWORD"
+        "UMAMI_PASSWORD",
+        "APP_ENV",
+        "APP_HOST",
+        "COMMIT_SHA",
+        "COMMIT_MESSAGE",
+        "COMMIT_BRANCH"
       ]
     },
     "lint": {

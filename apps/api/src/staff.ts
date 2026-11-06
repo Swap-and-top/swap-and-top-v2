@@ -15,7 +15,9 @@ import { db } from './db/client';
 import * as t from './db/schema';
 
 const TEST_PHONE = /^\+263770000\d{3}$/;
-const LIVE = process.env.VERCEL_ENV === 'production';
+// The live site: APP_ENV on our own server (Dokploy, set in the Dockerfile),
+// VERCEL_ENV on Vercel. Without it, test numbers would carry staff powers.
+const LIVE = process.env.APP_ENV === 'production' || process.env.VERCEL_ENV === 'production';
 
 /** Whether this account's phone is one of our test numbers, on the live site. */
 export function isLiveTestAccount(phone: string | null): boolean {

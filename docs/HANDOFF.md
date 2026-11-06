@@ -23,7 +23,8 @@ sealed second super admin, data requests) are built and live. Phase 6
 is Stores (Sales), Revenue (Finance) and the Overview with My overview.
 Phase 7 is Growth (Marketing) and Health (DevOps), with the recording
 behind them (migration `0013`). Migrations `0001` to `0013` are applied.
-Vercel builds only Production. Nothing is left uncommitted.
+Vercel builds only Production. Prepared, not yet committed (2026-11-06):
+the Dockerfile for Dokploy ("Hosting on Dokploy" below).
 
 **Where the next agent starts:** Hillary looks at Growth and Health (as
 super admin she sees every section; no test account is in Marketing or
@@ -1209,6 +1210,78 @@ Before real users join:
   one (`payments.provider = 'test'`) recorded as paid at once.
 - Test data: none left behind. `db:seed-activity` puts back the sample
   offers, deal checks, saved listings, notifications and boosts.
+
+## Hosting on Dokploy (prepared 2026-11-06)
+
+Hillary plans to move the site from Vercel to her own server on Dokploy,
+with Cloudflare in front and R2 for photos. The code is ready for it; the
+site still runs on Vercel until she switches the domain. **One container**
+holds the site and the API (at `/api`), as on Vercel: splitting them would
+mean two domains, CORS and two deploys for no gain yet. The API can still
+run alone later (`apps/api/src/index.ts`), for a phone app.
+
+**What the repo has for it:** `Dockerfile` and `.dockerignore` at the root
+(Node 22, pnpm, `next build` with `output: 'standalone'` in
+`apps/web/next.config.ts`, then a small image that runs
+`node apps/web/server.js` on port 3000, as the `node` user, with a health
+check on `/api/health`). The image sets `APP_ENV=production` and
+`APP_HOST=Dokploy`. **`APP_ENV=production` is what keeps test numbers
+from staff powers off Vercel** (`apps/api/src/staff.ts`, which also
+still reads `VERCEL_ENV`). Health shows the deploy from `COMMIT_SHA`,
+`COMMIT_MESSAGE` and `COMMIT_BRANCH` when they are passed as build
+arguments; with none it shows no deploy line.
+
+**Steps on Dokploy:**
+
+1. A server close to the database (Ireland): London or Amsterdam, not
+   the US or South Africa, since a page makes several trips to it.
+2. New application from the GitHub repo, branch `main`, build type
+   Dockerfile (`Dockerfile` at the root), auto deploy on push.
+3. Build arguments: `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL`,
+   `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (baked into the pages), and
+   `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`,
+   `SUPABASE_SECRET_KEY`, `SUPABASE_JWKS_URL` (the build reads the
+   database to make pages ahead; they stay in the build stage only).
+   Optionally `COMMIT_SHA`, `COMMIT_MESSAGE`, `COMMIT_BRANCH`.
+4. Environment (while running): the same database and Supabase settings,
+   and the four `UMAMI_...` ones once Umami runs. The values are the ones
+   in the root `.env` and Vercel; never paste them anywhere else.
+5. Domain: the site's host name, container port 3000, HTTPS with Let's
+   Encrypt. In Cloudflare, point the name at the server with the cloud
+   grey until the certificate is issued, then turn the proxy on, SSL mode
+   Full (strict).
+6. Supabase, Authentication, URL Configuration: the new address as Site
+   URL and in Redirect URLs, or reset links point at the old one.
+7. Try it on a spare host name first while Vercel stays live; both use
+   the same database (Vercel one connection a request, the container a
+   pool of five, within the session pooler's 15). Then move the main
+   domain and turn Vercel off.
+
+**Tested (2026-11-06):** the image built on a laptop with the settings
+from `.env` (376 MB, 120 pages made), ran on port 3100: the feed, a
+store, sign in, Swagger and `/api/health` answer, no console errors, the
+health check reports healthy, no setting or database address is in the
+image, and Tafadzwa (0006) has no staff departments there while the dev
+server still gives her hers. **Careful when trying the image:** it counts
+as the live site, so its requests over 2 seconds go into
+`request_issues` and `request_issue_months` in the shared database;
+delete them after (done for this test). A Supabase build from a laptop
+downloads slowly; the `esbuild` build script warning is harmless (only
+the migration tools use it).
+
+**Not built yet: photo uploads on R2.** The plan agreed in chat on
+2026-11-06: a public bucket for listing photos and store logos on its own
+subdomain through Cloudflare (never the `r2.dev` address), and a private
+bucket for verification documents later; the phone shrinks a photo to
+about 1600 pixels, asks `POST /api/uploads` (signed in, owner of the
+listing or store, JPEG, PNG or WebP only) for a signed upload link, and
+sends the file straight to R2; keys like `listings/{id}/{random}.webp` and
+`stores/{id}/logo/{random}.webp`; deleting a listing, store or account
+deletes its photos. Settings to add then: `R2_ACCOUNT_ID`,
+`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_URL`.
+The old app's Worker (`swap-and-top/SnT-image-upload-worker`) took any
+upload with no sign in check, so it is not reused.
 
 ## The project
 

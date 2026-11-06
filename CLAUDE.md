@@ -95,6 +95,10 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   on stores, a payments by day chart; waiting on her: Umami with the
   final hosting, Paynow, real email and SMS).
   Business definitions are in `docs/product/staff-console.md`.
+- **Dokploy (prepared 2026-11-06):** a root `Dockerfile` (one container,
+  site and API, port 3000) for moving off Vercel; `APP_ENV=production`
+  replaces `VERCEL_ENV` for the live check. Steps and the R2 photo plan
+  are in the handoff's "Hosting on Dokploy".
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
   listing, and three test stores asking to be verified (Test Mbare

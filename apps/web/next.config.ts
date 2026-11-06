@@ -1,6 +1,16 @@
+import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  /**
+   * For our own server (Dokploy): the build also makes .next/standalone, the
+   * server and only the files it needs, which the Dockerfile copies into a
+   * small image. Traced from the repo's root, so the workspace packages come
+   * too. Vercel ignores it.
+   */
+  output: 'standalone',
+  outputFileTracingRoot: path.join(__dirname, '../..'),
+
   /**
    * The workspace packages ship as TypeScript source rather than a build, so
    * Next compiles them itself. This is what lets `@snt/ui` use CSS Modules —

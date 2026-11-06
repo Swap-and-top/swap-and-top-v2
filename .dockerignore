@@ -1,0 +1,14 @@
+# What the Docker build never needs: installed packages and builds (made
+# again inside), git, settings files with secrets, and notes.
+**/node_modules
+**/.next
+**/.turbo
+**/*.tsbuildinfo
+.git
+.vercel
+.claude
+.env
+**/.env
+**/.env.*
+docs
+**/.DS_Store
