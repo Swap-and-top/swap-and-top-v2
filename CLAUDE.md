@@ -99,6 +99,12 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   site and API, port 3000) for moving off Vercel; `APP_ENV=production`
   replaces `VERCEL_ENV` for the live check. Steps and the R2 photo plan
   are in the handoff's "Hosting on Dokploy".
+- **Photos on R2 (built 2026-11-06, not committed):** listing photos and
+  store logos, shrunk in the browser and checked by the API before R2
+  (`apps/api/src/r2.ts`, `routes/uploads.ts`, `components/PhotoPicker.tsx`);
+  the database keeps keys. Migration `0014` (stores' `logo`) is applied.
+  The five `R2_...` settings must be in Vercel and Dokploy before this is
+  deployed. Details in the handoff's "Photos on R2".
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
   listing, and three test stores asking to be verified (Test Mbare

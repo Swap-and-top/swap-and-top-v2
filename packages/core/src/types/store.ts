@@ -11,6 +11,8 @@ export interface Store {
   name: string;
   /** Two-letter mark used where a logo image is not available. */
   initials: string;
+  /** Its logo's address, when it has one. */
+  logo?: string;
   description: string;
   location: string;
   openingHours: string;

@@ -163,7 +163,7 @@ export function ConsoleShell({
           {/* The mark and the fold button on one line, the store's name
               under them with room to breathe. */}
           <div className={styles.sidebarTop}>
-            <StoreMark initials={store.initials} size={34} />
+            <StoreMark initials={store.initials} logo={store.logo} size={34} />
             <button
               type="button"
               className={styles.fold}
@@ -248,7 +248,7 @@ export function ConsoleShell({
         {/* Left out on a narrow phone, so the store's name fits beside the
             bell and Back to my profile. */}
         <span className={styles.headerMark}>
-          <StoreMark initials={store.initials} size={36} />
+          <StoreMark initials={store.initials} logo={store.logo} size={36} />
         </span>
         <span className={styles.headerBody}>
           <span className={styles.storeName}>{store.name || <Bone width={110} height={14} />}</span>

@@ -18,6 +18,7 @@ import { dayMonth, paidUntil, settlePasses } from '../passes';
 import { isLiveTestAccount, staffOf } from '../staff';
 import { ErrorSchema, MeSchema } from '../schemas';
 import { MOCK_CODE, supabaseAdmin } from '../supabaseAdmin';
+import { photoUrl } from '../r2';
 
 export const meRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -130,6 +131,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
       role: t.storeMembers.role,
       phone: t.stores.phone,
       verifiedAt: t.stores.verifiedAt,
+      logo: t.stores.logo,
     })
     .from(t.storeMembers)
     .innerJoin(t.stores, eq(t.stores.id, t.storeMembers.storeId))
@@ -165,7 +167,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
     standing: person.standing,
     ...(ban ? { banActionId: ban.id } : {}),
     stores: await Promise.all(
-      rows.map(async ({ phone, verifiedAt, ...store }) => {
+      rows.map(async ({ phone, verifiedAt, logo, ...store }) => {
         const [until, [waiting]] = await Promise.all([
           paidUntil(store.id),
           db
@@ -178,6 +180,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
           ...store,
           verified: verifiedAt !== null,
           verifyPending: Boolean(waiting),
+          ...(logo ? { logo: photoUrl(logo) } : {}),
           ...(until ? { paidUntil: dayMonth(until) } : {}),
           // Only its owner sees it here; buyers get it through Show contact.
           ...(phone && store.role === 'owner' ? { phone: `0${phone.slice(4, 6)} ${phone.slice(6, 9)} ${phone.slice(9)}` } : {}),

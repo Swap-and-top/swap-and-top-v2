@@ -73,3 +73,17 @@
   font-weight: var(--snt-weight-bold);
   line-height: 1;
 }
+
+/* A store with a logo: the logo fills the square, on white, a hairline
+   round it so a white logo still has an edge. */
+.storeLogo {
+  overflow: hidden;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+.storeLogoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

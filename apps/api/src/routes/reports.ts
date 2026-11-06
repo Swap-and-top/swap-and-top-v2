@@ -29,6 +29,7 @@ import { inDepartment } from '../staff';
 import { appealsWaitingFor } from './appeals';
 import { personFor } from './me';
 import { notify } from './notifications';
+import { photoUrl } from '../r2';
 
 export const reportRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -285,7 +286,7 @@ export async function photosOf(listingIds: string[]): Promise<Map<string, string
       .where(inArray(t.swapDetails.listingId, listingIds)),
   ]);
   return new Map(
-    [...sales, ...swaps].flatMap((row) => (row.images[0] ? [[row.id, row.images[0]] as const] : [])),
+    [...sales, ...swaps].flatMap((row) => (row.images[0] ? [[row.id, photoUrl(row.images[0])] as const] : [])),
   );
 }
 

@@ -42,6 +42,8 @@ export interface Viewer {
     /** Verified store, and whether a request for it is waiting. */
     verified?: boolean;
     verifyPending?: boolean;
+    /** Its logo's address; missing: its initials show instead. */
+    logo?: string;
   }[];
 }
 

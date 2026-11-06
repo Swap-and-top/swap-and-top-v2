@@ -28,6 +28,7 @@ import { db } from '../db/client';
 import * as t from '../db/schema';
 import { loadListings } from '../listings';
 import { FREE_STORE_LIMIT, paidUntil, settlePasses } from '../passes';
+import { deletePhotos, photoKey } from '../r2';
 import { ErrorSchema, ListingSchema } from '../schemas';
 import { personFor } from './me';
 
@@ -61,6 +62,8 @@ const NewListing = z
     contactToStores: z.boolean(),
     /** A sale: how many of this model a store holds. */
     stockCount: z.number().int().positive().max(9999).optional(),
+    /** Photos of what they have, in order: keys from POST /uploads/photo. */
+    images: z.array(z.string()).max(8).optional(),
     /** Kept as a draft, not listed: a store's stock not ready yet. A draft
         sale may have no price. */
     draft: z.boolean().optional(),
@@ -68,6 +71,20 @@ const NewListing = z
   .openapi('NewListing');
 
 const PERSON_LIMIT = 5;
+
+/** The most photos a listing keeps. */
+const MAX_PHOTOS = 8;
+
+/**
+ * The photos to keep from what a browser sent (keys or addresses): each one
+ * this person uploaded (in their own folder on R2) or one the item already
+ * had. Null when one is neither, which only a made up request would send.
+ */
+function keptPhotos(personId: string, sent: string[], had: string[] = []): string[] | null {
+  const keys = [...new Set(sent.map(photoKey))].slice(0, MAX_PHOTOS);
+  const own = `photos/${personId}/`;
+  return keys.every((key) => key.startsWith(own) || had.includes(key)) ? keys : null;
+}
 
 /**
  * Why one more live listing for sale or swap may not go up, as the person
@@ -205,6 +222,10 @@ postRoutes.openapi(post, async (c) => {
     return c.json({ error: 'Enter how much cash.' }, 400);
   }
 
+  // Wanted listings have no photos: the poster does not own the thing.
+  const images = body.kind === 'request' ? [] : keptPhotos(person.id, body.images ?? []);
+  if (!images) return c.json({ error: 'One of those photos is not yours.' }, 400);
+
   const title = body.kind === 'sale' ? have : body.kind === 'swap' ? `${have} for ${want}` : want;
   // Where it is: the store's neighbourhood for a store's listing, else the
   // poster's, from "Avondale, Harare"; Harare until there is one.
@@ -223,6 +244,7 @@ postRoutes.openapi(post, async (c) => {
           name,
           condition: wanted ? null : (body.condition ?? null),
           specs: wanted ? {} : (body.specs ?? {}),
+          images: wanted ? [] : images,
           wanted,
         })
         .returning({ id: t.items.id });
@@ -450,6 +472,9 @@ const editSale = createRoute({
             price: money.optional(),
             stockCount: z.number().int().positive().max(9999).optional(),
             acceptsSwaps: z.boolean(),
+            /** Its photos, in order: those it had (address or key) and new
+                keys from POST /uploads/photo. Missing: left as they are. */
+            images: z.array(z.string()).max(8).optional(),
             /** List a draft, now that it has a price. */
             publish: z.boolean().optional(),
           }),
@@ -493,11 +518,15 @@ postRoutes.openapi(editSale, async (c) => {
   if (!sale) return c.json({ error: 'That listing is not there any more.' }, 404);
   const now = new Date();
   const price = body.price ?? 0;
+  const [item] = await db.select({ images: t.items.images }).from(t.items).where(eq(t.items.id, sale.itemId));
+  const had = item?.images ?? [];
+  const images = body.images === undefined ? had : keptPhotos(person.id, body.images, had);
+  if (!images) return c.json({ error: 'One of those photos is not yours.' }, 400);
 
   const saved = await db.transaction(async (tx) => {
     await tx
       .update(t.items)
-      .set({ name: body.title, category: body.category, condition: body.condition, specs: body.specs })
+      .set({ name: body.title, category: body.category, condition: body.condition, specs: body.specs, images })
       .where(eq(t.items.id, sale.itemId));
     await tx
       .update(t.saleDetails)
@@ -527,6 +556,8 @@ postRoutes.openapi(editSale, async (c) => {
       .returning({ id: t.listings.id, slug: t.listings.slug, status: t.listings.status });
     return changed!;
   });
+  // Photos taken off it are deleted from R2, once it is saved without them.
+  void deletePhotos(had.filter((key) => !images.includes(key)));
   return c.json(saved, 200);
 });
 

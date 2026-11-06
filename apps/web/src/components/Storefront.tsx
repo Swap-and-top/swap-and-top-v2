@@ -115,7 +115,7 @@ export function StorefrontBody({
       {/* The store: one white card, as the profile page is. */}
       <section className={styles.card}>
         <div className={styles.head}>
-          <StoreMark initials={store.initials} size={56} />
+          <StoreMark initials={store.initials} logo={store.logo} size={56} />
           <div className={styles.headBody}>
             <h1 className={styles.name}>{store.name}</h1>
             {/* For 30 days after a rename, so its record cannot be shed. */}

@@ -6,6 +6,10 @@
  * shows "formerly …" under it on the store page for 30 days. The phone number
  * is for calls and WhatsApp; empty, the owner's own is used. The web address
  * does not change. Reached from Me and the console's Store profile.
+ *
+ * At its top, the store's logo: chosen, it is shrunk, saved and shown at
+ * once (PUT /api/stores/{id}/logo), apart from Save; Remove logo puts its
+ * initials back.
  * Staff and others are told it is the owner's.
  *
  * At its foot, Close store, with a check first: its page and listings come
@@ -17,7 +21,7 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { DEFAULT_TOWN, TOWNS, useSessionStore, type Town } from '@snt/core';
@@ -35,7 +39,9 @@ import {
   SignInGate,
   Stack,
   startPageLoad,
+  StoreMark,
 } from '@snt/ui';
+import { uploadLogo } from '@/lib/photos';
 import { apiSend, publicGet, QueryProblem } from '@/lib/query';
 import { refreshStore } from '@/lib/refresh';
 import { refreshViewer } from '@/lib/viewer';
@@ -58,6 +64,7 @@ function splitPlace(place: string): { area: string; town: Town } {
 /** The store's details as its page has them. */
 interface StoreDetails {
   name: string;
+  initials: string;
   formerName?: string;
   verified: boolean;
   description: string;
@@ -65,7 +72,7 @@ interface StoreDetails {
   location: string;
 }
 
-type Mine = { id: string; role: 'owner' | 'staff'; phone?: string };
+type Mine = { id: string; role: 'owner' | 'staff'; phone?: string; logo?: string };
 
 export default function EditStorePage({ slug }: { slug: string }) {
   const known = useSessionStore((state) => state.viewer !== null);
@@ -84,7 +91,7 @@ export default function EditStorePage({ slug }: { slug: string }) {
           <Stack gap={6}>
             <h1 className={styles.title}>Edit store details</h1>
             {!known ? (
-              <StoreFormSkeleton />
+              <StoreFormSkeleton logo={Boolean(mine?.logo)} />
             ) : !owner || !mine ? (
               <Panel padded>
                 <p className={styles.lead}>Only the store’s owner can change its details.</p>
@@ -94,7 +101,7 @@ export default function EditStorePage({ slug }: { slug: string }) {
             ) : loaded.data ? (
               <StoreForm slug={slug} mine={mine} store={loaded.data} />
             ) : (
-              <StoreFormSkeleton />
+              <StoreFormSkeleton logo={Boolean(mine?.logo)} />
             )}
             <ButtonLink href="/me" variant="secondary" block>
               Cancel
@@ -189,6 +196,7 @@ function StoreForm({ slug, mine, store }: { slug: string; mine: Mine; store: Sto
         <form onSubmit={save}>
           <Stack gap={5}>
             <p className={styles.lead}>{savedName}, as buyers see it on its page.</p>
+            <LogoField storeId={mine.id} slug={slug} initials={store.initials} logo={mine.logo} />
             <Field
               label="Store name"
               placeholder="e.g. Kopje Computers"
@@ -277,5 +285,88 @@ function StoreForm({ slug, mine, store }: { slug: string; mine: Mine; store: Sto
         </Sheet>
       ) : null}
     </>
+  );
+}
+
+/** The logo: the store's mark as it shows, and a button to choose one (or
+    another), with Remove logo once there is one. Saved as soon as chosen. */
+function LogoField({
+  storeId,
+  slug,
+  initials,
+  logo,
+}: {
+  storeId: string;
+  slug: string;
+  initials: string;
+  logo?: string;
+}) {
+  const queryClient = useQueryClient();
+  const input = useRef<HTMLInputElement>(null);
+  const after = async () => {
+    // Me, the console and the store page show it at once.
+    await refreshViewer(queryClient);
+    await refreshStore(slug);
+  };
+  const choose = useMutation({
+    mutationFn: async (file: File) => {
+      await uploadLogo(storeId, file);
+      await after();
+    },
+    onSuccess: () => toast.success('Logo saved'),
+    onError: (error) => toast.error(error.message),
+  });
+  const remove = useMutation({
+    mutationFn: async () => {
+      await apiSend(`/stores/${encodeURIComponent(storeId)}/logo`, 'DELETE');
+      await after();
+    },
+    onSuccess: () => toast.success('Logo removed'),
+    onError: (error) => toast.error(error.message),
+  });
+  const busy = choose.isPending || remove.isPending;
+  return (
+    <div className={styles.field}>
+      <span className={styles.label}>Logo</span>
+      <div className={styles.logoRow}>
+        <StoreMark initials={initials} logo={logo} size={64} />
+        <div className={styles.logoButtons}>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            loading={choose.isPending}
+            disabled={busy}
+            onClick={() => input.current?.click()}
+          >
+            {logo ? 'Change logo' : 'Add logo'}
+          </Button>
+          {logo ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              loading={remove.isPending}
+              disabled={busy}
+              onClick={() => remove.mutate()}
+            >
+              Remove logo
+            </Button>
+          ) : null}
+        </div>
+        <input
+          ref={input}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            if (file) choose.mutate(file);
+            event.target.value = '';
+          }}
+        />
+      </div>
+      <span className={styles.hint}>Shows in place of its initials.</span>
+    </div>
   );
 }

@@ -110,6 +110,8 @@ export const StoreSchema = z
     slug: z.string().openapi({ example: 'kopje-computers' }),
     name: z.string(),
     initials: z.string(),
+    /** Its logo's address; missing: show its initials. */
+    logo: z.string().optional(),
     description: z.string(),
     location: z.string(),
     openingHours: z.string(),
@@ -168,6 +170,8 @@ export const MeSchema = z
         /** Verified store, and whether a request for it is waiting. */
         verified: z.boolean(),
         verifyPending: z.boolean(),
+        /** Its logo's address; missing: its initials show instead. */
+        logo: z.string().optional(),
       }),
     ),
   })

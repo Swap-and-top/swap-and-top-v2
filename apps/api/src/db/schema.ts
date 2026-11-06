@@ -111,6 +111,8 @@ export const stores = pgTable('stores', {
   renamedAt: timestamp({ withTimezone: true }),
   /** Set when staff have checked the business. Verified store badge. */
   verifiedAt: timestamp({ withTimezone: true }),
+  /** Its logo's key on R2 (../r2.ts); none: its initials show instead. */
+  logo: text(),
   createdAt: createdAt(),
   /** Closed by its owner. Its listings close with it. */
   closedAt: timestamp({ withTimezone: true }),

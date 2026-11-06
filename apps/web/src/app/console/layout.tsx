@@ -129,6 +129,7 @@ function Gate({ children }: { children: ReactNode }) {
             slug: mine.slug,
             name: mine.name,
             initials: initialsOf(mine.name),
+            logo: mine.logo,
             description: '',
             location: '',
             openingHours: '',

@@ -35,6 +35,7 @@ import {
   AppHeader,
   Button,
   ImagePlaceholder,
+  PhotoGallery,
   Panel,
   POST_STEPS,
   Price,
@@ -117,6 +118,7 @@ export default function PostReviewPage() {
         storeId: postAs ?? undefined,
         category,
         haveTitle: kind === 'request' ? undefined : draft.haveTitle.trim(),
+        images: kind === 'request' ? undefined : draft.photos,
         // Only the details its category asks for, and only those filled in.
         specs: Object.fromEntries(
           specFieldsFor(category)
@@ -158,6 +160,7 @@ export default function PostReviewPage() {
                 has={{
                   name: draft.haveTitle || 'Your item',
                   category: draft.category ?? 'other',
+                  images: draft.photos,
                   // Only the details its category asks for.
                   specs: Object.fromEntries(
                     (draft.category ? specFieldsFor(draft.category) : []).map((field) => [
@@ -182,7 +185,18 @@ export default function PostReviewPage() {
             </div>
           ) : (
             <>
-              {kind === 'sale' ? <ImagePlaceholder height={142} flush /> : null}
+              {kind === 'sale' ? (
+                draft.photos.length ? (
+                  <PhotoGallery
+                    images={draft.photos}
+                    alt={draft.haveTitle || 'Your item'}
+                    tone={postAs ? 'store' : 'person'}
+                    height={142}
+                  />
+                ) : (
+                  <ImagePlaceholder height={142} flush />
+                )
+              ) : null}
               <div className={styles.saleBody}>
                 <Price
                   amount={

@@ -122,14 +122,18 @@ export function Avatar({
 /** A store's square initials mark, standing in for a logo. */
 export function StoreMark({
   initials,
+  logo,
   size = 20,
 }: {
   initials: string;
+  /** Its logo's address: shown in place of the initials, in the same
+      rounded square, on white. */
+  logo?: string;
   size?: number;
 }) {
   return (
     <span
-      className={styles.storeMark}
+      className={[styles.storeMark, logo ? styles.storeLogo : ''].filter(Boolean).join(' ')}
       style={{
         width: size,
         height: size,
@@ -139,7 +143,8 @@ export function StoreMark({
       }}
       aria-hidden
     >
-      {initials}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {logo ? <img src={logo} alt="" className={styles.storeLogoImage} /> : initials}
     </span>
   );
 }

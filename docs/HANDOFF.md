@@ -22,9 +22,12 @@ Trust and safety; the three safeguards Hillary chose (staff password,
 sealed second super admin, data requests) are built and live. Phase 6
 is Stores (Sales), Revenue (Finance) and the Overview with My overview.
 Phase 7 is Growth (Marketing) and Health (DevOps), with the recording
-behind them (migration `0013`). Migrations `0001` to `0013` are applied.
-Vercel builds only Production. Prepared, not yet committed (2026-11-06):
-the Dockerfile for Dokploy ("Hosting on Dokploy" below).
+behind them (migration `0013`). Migrations `0001` to `0014` are applied
+(`0014`, the stores' `logo` column, with Hillary's yes on 2026-11-06).
+Vercel builds only Production. The Dockerfile for Dokploy is committed on
+the branch (12250c3, "Hosting on Dokploy" below). **Built 2026-11-06, not
+committed: photo uploads on R2** (listing photos and store logos, "Photos
+on R2" below). Next after it: Umami on Dokploy.
 
 **Where the next agent starts:** Hillary looks at Growth and Health (as
 super admin she sees every section; no test account is in Marketing or
@@ -1270,18 +1273,64 @@ delete them after (done for this test). A Supabase build from a laptop
 downloads slowly; the `esbuild` build script warning is harmless (only
 the migration tools use it).
 
-**Not built yet: photo uploads on R2.** The plan agreed in chat on
-2026-11-06: a public bucket for listing photos and store logos on its own
-subdomain through Cloudflare (never the `r2.dev` address), and a private
-bucket for verification documents later; the phone shrinks a photo to
-about 1600 pixels, asks `POST /api/uploads` (signed in, owner of the
-listing or store, JPEG, PNG or WebP only) for a signed upload link, and
-sends the file straight to R2; keys like `listings/{id}/{random}.webp` and
-`stores/{id}/logo/{random}.webp`; deleting a listing, store or account
-deletes its photos. Settings to add then: `R2_ACCOUNT_ID`,
-`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_URL`.
-The old app's Worker (`swap-and-top/SnT-image-upload-worker`) took any
-upload with no sign in check, so it is not reused.
+## Photos on R2 (built 2026-11-06)
+
+Listing photos and store logos are kept on Cloudflare R2, in the public
+bucket `swap-and-top-photos`, served from `photos.gretaworksdigital.com`
+for now (a custom domain through Cloudflare, never the `r2.dev` address).
+**Settings** (root `.env`; add them to Vercel and Dokploy before this code
+is deployed, all in `turbo.json`): `R2_ACCOUNT_ID` (the ID, or the whole
+endpoint address Cloudflare shows; `apps/api/src/r2.ts` takes the ID out
+of it), `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` (an Account API token,
+Object Read & Write, this bucket only), `R2_BUCKET`, `R2_PUBLIC_URL`.
+Without them uploads answer "Photos are not set up yet" and the rest
+works.
+
+**How it works.** The browser shrinks a photo first (`lib/photos.ts`:
+1600 pixels on its long side, 512 for a logo, WebP or else JPEG, which
+also drops what the camera wrote into the file) and sends it to our API,
+not straight to R2: R2 cannot limit size or type on a signed link. The
+API (`routes/uploads.ts`) needs a sign in, a verified phone and an
+account not suspended or banned, checks the first bytes are JPEG, PNG or
+WebP and the size is at most 3 MB, and puts it under
+`photos/{personId}/{random}.{ext}`. The database keeps **keys, not
+addresses** (`items.images`, `stores.logo`); `photoUrl` makes the address
+when read, so moving to the final domain is only `R2_PUBLIC_URL`.
+Browsers keep a photo a year, Cloudflare's cache a day (`s-maxage`), so a
+deleted photo stops showing by the next day. Photos are sent to R2 whole
+with a signed request (`putPhoto`): a signed Request's streamed body gets
+411 from R2 inside Next.
+
+**On screen.** `components/PhotoPicker.tsx` (`usePhotoPicker`) on the post
+form (`post/details`, kept in the draft as `photos`) and on Add stock and
+Edit (`console/stock/StockForm.tsx`): each photo goes up as it is chosen,
+faded with a spinner until kept, up to 8; Next and Save wait while any
+are going up. The review step's preview shows them. `POST /listings` and
+`PATCH /listings/{id}` take `images` (keys or addresses), only ones in
+the sender's own folder or already on the item ("One of those photos is
+not yours."). **Deleting:** a photo taken off a form before saving goes
+at once (`DELETE /uploads/photo`, only an unused one in the sender's
+folder); one taken off a saved listing goes when it is saved without it;
+deleting an account (data requests) deletes its listings' photos and its
+own stores' logos. **Store logo:** Edit store details (owner only), Add
+logo, Change logo, Remove logo, saved at once (`PUT` and `DELETE
+/stores/{id}/logo`, the old one deleted), shown by `StoreMark` (`logo`
+prop) on the store page and in the Store console; the edit page's
+skeleton shows two buttons when there is a logo.
+
+**Tested 2026-11-06** against real R2 on localhost: refusals (no sign in,
+not a photo, too big, another person's photo, not the store's owner), a
+listing posted in the browser with two photos (4000 by 3000 shrunk to
+1600 by 1200 WebP), Add stock and Edit on Kopje Computers (the removed
+photo deleted only on Save), a logo set, replaced and removed, at laptop
+and phone size. All test listings, logos and photos deleted after; the
+bucket was left empty.
+
+**Not yet:** feed cards still take stores from the mock data, so they show
+initials, not logos; photos chosen and then left on an unsaved form stay
+in R2 (a later cleanup could list `photos/` against `items.images`);
+bulk import takes no photos; a private bucket for verification documents
+comes with that feature.
 
 ## The project
 
@@ -1686,8 +1735,8 @@ See `git log` for the full detail; each commit body explains its change.
 ## Known loose ends and ideas offered
 
 - **Where we stopped:** see the section near the top.
-- **Gaps in what is built:** photos are not uploaded (new listings show the
-  grey placeholder); editing a listing is not built; Show contact does not
+- **Gaps in what is built:** (photos are uploaded since 2026-11-06, "Photos
+  on R2"); editing a listing is not built; Show contact does not
   ask for a verified phone yet; deal checks, expiring listings and leads
   send no notifications yet; Google and Facebook sign in are not connected;
   email and phone codes are mock (123456) and would work on the live site
@@ -1695,7 +1744,7 @@ See `git log` for the full detail; each commit body explains its change.
   of the Twilio placeholders) are set up; Supabase Redirect URLs need
   `http://localhost:3000/**` and the Vercel address for real reset links;
   other people's names and badges on cards come from the mock data; bulk
-  import and Add stock do not take photos yet.
+  import does not take photos yet.
 - The feed shows one sponsored listing per three others, so on short type
   tabs (Swaps, Wanted) only one of two sponsored shows; spacing every two
   was offered, not built.

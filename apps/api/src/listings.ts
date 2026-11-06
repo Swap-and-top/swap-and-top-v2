@@ -10,6 +10,7 @@ import { db } from './db/client';
 import * as t from './db/schema';
 import { settlePasses } from './passes';
 import type { ItemSchema, ListingSchema } from './schemas';
+import { photoUrl } from './r2';
 
 type ListingOut = z.infer<typeof ListingSchema>;
 type ItemOut = z.infer<typeof ItemSchema>;
@@ -128,7 +129,7 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
       defects: opt(item.defects),
       accessories: opt(item.accessories),
       specs: item.specs as Record<string, string>,
-      images: item.images,
+      images: item.images.map(photoUrl),
       wanted: item.wanted,
     };
   };

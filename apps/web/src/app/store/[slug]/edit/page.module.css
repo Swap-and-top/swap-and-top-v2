@@ -41,6 +41,28 @@
   color: var(--snt-accent-bold);
 }
 
+/* The logo: the store's mark beside its buttons, set in as the boxes are. */
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding-left: var(--snt-space-8);
+}
+
+.logoButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-3);
+}
+
+/* Under it, as a Field's hint. */
+.hint {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-xs);
+  line-height: 1.4;
+  color: var(--snt-ink-muted);
+}
+
 /* The app's pale text box, taller, for a few lines. */
 .textarea {
   width: 100%;

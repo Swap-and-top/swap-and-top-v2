@@ -36,7 +36,8 @@ interface PostDraftState {
    */
   specs: ItemSpecs;
   condition: string;
-  photoCount: number;
+  /** Photos of what they have, kept on R2 as they were chosen, in order. */
+  photos: string[];
 
   /** What the poster wants. Used by swap and request. */
   wantTitle: string;
@@ -84,8 +85,8 @@ interface PostDraftState {
   setSpec: (key: keyof ItemSpecs, value: string) => void;
   setCashUpTo: (upTo: boolean) => void;
   setAcceptsSwaps: (accepts: boolean) => void;
-  addPhoto: () => void;
-  removePhoto: () => void;
+  /** Changes the photos, from what they are now. */
+  setPhotos: (update: (now: string[]) => string[]) => void;
   toggleChannel: (channel: ContactChannel) => void;
   setAllowStoreOffers: (allow: boolean) => void;
   setContactSignedInOnly: (only: boolean) => void;
@@ -108,7 +109,7 @@ const initial = {
   specs: {} as ItemSpecs,
   // A condition's key, as the condition dropdown offers them, once chosen.
   condition: 'boxed-new',
-  photoCount: 0,
+  photos: [] as string[],
   wantTitle: '',
   price: '',
   budget: '',
@@ -134,10 +135,7 @@ export const usePostDraftStore = create<PostDraftState>((set) => ({
     set((state) => ({ specs: { ...state.specs, [key]: value } })),
   setCashUpTo: (cashUpTo) => set({ cashUpTo }),
   setAcceptsSwaps: (acceptsSwaps) => set({ acceptsSwaps }),
-  addPhoto: () =>
-    set((state) => ({ photoCount: Math.min(8, state.photoCount + 1) })),
-  removePhoto: () =>
-    set((state) => ({ photoCount: Math.max(0, state.photoCount - 1) })),
+  setPhotos: (update) => set((state) => ({ photos: update(state.photos) })),
   toggleChannel: (channel) =>
     set((state) => ({
       contactChannels: state.contactChannels.includes(channel)

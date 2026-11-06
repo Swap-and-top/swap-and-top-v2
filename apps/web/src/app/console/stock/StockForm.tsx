@@ -10,15 +10,15 @@
  * Saved through the API: a new item is posted as the store
  * (POST /api/listings), an existing one changed in place
  * (PATCH /api/listings/{id}), and a new status set through the status
- * endpoint. Photos are chosen from the device and shown at once, but are not
- * uploaded yet. An item with a price goes live; one without is kept as a
+ * endpoint. Photos go up as they are chosen (components/PhotoPicker.tsx) and
+ * are saved with the item. An item with a price goes live; one without is kept as a
  * draft, since nothing is listed unpriced.
  *
  * Given an item, the form opens filled in with it: "Finish" on a draft, to
  * price and list it, or "Edit" on anything else, to change it in place.
  */
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -40,18 +40,17 @@ import {
   ConsoleShell,
   Dropdown,
   Field,
-  Img,
   specFieldsFor,
   startPageLoad,
   TickTile,
   useConsoleTarget,
 } from '@snt/ui';
-import { CloseIcon, PlusIcon } from '@snt/ui/icons';
 import { SponsorBanner } from '@/components/sponsor/SponsorBanner';
 import { refreshListing } from '@/lib/refresh';
 import { apiSend } from '@/lib/query';
 import { stockKey, useConsoleStock } from './useConsoleStock';
 import styles from './StockForm.module.css';
+import { MAX_PHOTOS, PhotoPicker, usePhotoPicker } from '@/components/PhotoPicker';
 
 const CATEGORIES: Category[] = [
   'laptops',
@@ -64,8 +63,6 @@ const CATEGORIES: Category[] = [
 ];
 
 const CONDITIONS = Object.keys(CONDITION_LABELS) as Condition[];
-
-const MAX_PHOTOS = 8;
 
 /** The statuses an item already listed can be given on the form. */
 type ListedStatus = 'live' | 'paused' | 'sold';
@@ -124,47 +121,12 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
     editing && isListed(editing.status) ? editing.status : undefined,
   );
 
-  const picker = useRef<HTMLInputElement>(null);
+  const picking = usePhotoPicker(photos, setPhotos);
   const conditionLabel = useId();
   const fields = specFieldsFor(category);
 
-  // Photos chosen here and not kept are let go when the page closes.
-  const kept = useRef(false);
-  const latest = useRef(photos);
-  latest.current = photos;
-  useEffect(
-    () => () => {
-      if (kept.current) return;
-      latest.current
-        .filter((url) => url.startsWith('blob:') && !item?.images.includes(url))
-        .forEach((url) => URL.revokeObjectURL(url));
-    },
-    [item],
-  );
-
   const named = title.trim().length > 0;
   const priced = dollars(price) !== undefined;
-
-  function addPhotos(files: FileList | null) {
-    if (!files) return;
-    const room = MAX_PHOTOS - photos.length;
-    const urls = Array.from(files)
-      .filter((file) => file.type.startsWith('image/'))
-      .slice(0, room)
-      .map((file) => URL.createObjectURL(file));
-    setPhotos((current) => [...current, ...urls]);
-  }
-
-  function removePhoto(index: number) {
-    setPhotos((current) => {
-      const url = current[index]!;
-      // Only a photo chosen here, not one the item already had.
-      if (url.startsWith('blob:') && !item?.images.includes(url)) {
-        URL.revokeObjectURL(url);
-      }
-      return current.filter((_, at) => at !== index);
-    });
-  }
 
   const queryClient = useQueryClient();
 
@@ -180,6 +142,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
       ) as Record<string, string>,
       stockCount: dollars(quantity),
       acceptsSwaps,
+      images: photos,
     };
   }
 
@@ -224,6 +187,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
         price: item.price,
         stockCount: item.stockCount,
         acceptsSwaps: item.acceptsSwaps,
+        images: item.images,
         draft,
         // A store's stock is reached as the store is; its own contact
         // ways come later.
@@ -251,7 +215,8 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
     saveItem.isPending || saveItem.isSuccess ? (saveItem.variables ? 'draft' : 'listed') : null;
 
   function save(draft: boolean) {
-    kept.current = true;
+    // Not while a photo is still going up: it would be left out.
+    if (picking.busy) return;
     saveItem.mutate(draft);
   }
 
@@ -335,45 +300,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
               ({photos.length} of {MAX_PHOTOS})
             </span>
           </span>
-          <div className={styles.photos}>
-            {photos.map((url, index) => (
-              <div key={url} className={styles.photoThumb}>
-                <Img
-                  src={url}
-                  alt={`Photo ${index + 1}`}
-                  className={styles.photo}
-                />
-                <button
-                  type="button"
-                  aria-label={`Remove photo ${index + 1}`}
-                  className={styles.removePhoto}
-                  onClick={() => removePhoto(index)}
-                >
-                  <CloseIcon size={12} weight={2.4} />
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              aria-label="Add photos"
-              className={styles.addPhoto}
-              onClick={() => picker.current?.click()}
-              disabled={photos.length >= MAX_PHOTOS}
-            >
-              <PlusIcon size={21} />
-            </button>
-            <input
-              ref={picker}
-              type="file"
-              accept="image/*"
-              multiple
-              hidden
-              onChange={(event) => {
-                addPhotos(event.target.files);
-                event.target.value = '';
-              }}
-            />
-          </div>
+          <PhotoPicker picking={picking} />
         </div>
 
         <Field
@@ -466,7 +393,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
             <Button
               type="submit"
               size="lg"
-              disabled={!named || !priced}
+              disabled={!named || !priced || picking.busy}
               loading={saving !== null}
             >
               Save changes
@@ -478,7 +405,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
               type="button"
               variant="secondary"
               size="lg"
-              disabled={!named || saving !== null}
+              disabled={!named || saving !== null || picking.busy}
               loading={saving === 'draft'}
               onClick={() => save(true)}
             >
@@ -487,7 +414,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
             <Button
               type="submit"
               size="lg"
-              disabled={!named || !priced || saving !== null}
+              disabled={!named || !priced || saving !== null || picking.busy}
               loading={saving === 'listed'}
             >
               Add to stock

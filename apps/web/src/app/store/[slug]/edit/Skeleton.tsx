@@ -1,6 +1,6 @@
 /**
- * Edit store details while it loads: the form's own shape in bones (a
- * label over each pale pill box, the larger About box, the half width pair,
+ * Edit store details while it loads: the form's own shape in bones (the
+ * logo, a label over each pale pill box, the larger About box, the half width pair,
  * Save), the Verified store panel and Close store, so nothing shifts when
  * the store's details come.
  */
@@ -48,12 +48,26 @@ export function VerifyPanelSkeleton() {
   );
 }
 
-export function StoreFormSkeleton() {
+/** With `logo`, when the store has one: two buttons beside its mark, as
+    the form has then (Change logo, Remove logo), wrapping as theirs do. */
+export function StoreFormSkeleton({ logo = false }: { logo?: boolean }) {
   return (
     <>
       <Panel padded>
         <Stack gap={5}>
           <TextBone width="55%" line={17} />
+          {/* The logo: its label, the mark beside its button, the hint. */}
+          <div className={styles.field}>
+            <TextBone width={50} />
+            <div className={styles.logoRow}>
+              <Bone shape="block" width={64} height={64} />
+              <div className={styles.logoButtons}>
+                <Bone shape="pill" width={logo ? 132 : 100} height={36} />
+                {logo ? <Bone shape="pill" width={136} height={36} /> : null}
+              </div>
+            </div>
+            <TextBone width={180} />
+          </div>
           <FieldBone />
           <FieldBone hint />
           <FieldBone tall />

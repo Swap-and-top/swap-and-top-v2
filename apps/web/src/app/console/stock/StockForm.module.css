@@ -81,65 +81,12 @@
   grid-column: 1 / -1;
 }
 
-/* --- photos -------------------------------------------------------------- */
+/* --- photos: the skeleton's row (the real one is PhotoPicker's) -------- */
 
 .photos {
   display: flex;
   flex-wrap: wrap;
   gap: var(--snt-space-5);
-}
-
-.photoThumb {
-  position: relative;
-}
-
-.photo {
-  display: block;
-  width: 68px;
-  height: 68px;
-  object-fit: cover;
-  border-radius: var(--snt-radius-md);
-}
-
-/** Add photos: a pale rounded square with a blue plus. */
-.addPhoto {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 68px;
-  height: 68px;
-  flex-shrink: 0;
-  border-radius: var(--snt-radius-md);
-  background: var(--snt-bg-inset);
-  color: var(--snt-control-active);
-  transition: box-shadow var(--snt-transition);
-}
-
-@media (hover: hover) {
-  .addPhoto:hover:not(:disabled) {
-    box-shadow: var(--snt-focus-ring);
-  }
-}
-
-.addPhoto:disabled {
-  color: var(--snt-control-idle);
-  cursor: not-allowed;
-}
-
-/** Remove a photo: a small white circle with a blue cross, on its corner. */
-.removePhoto {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-card);
-  color: var(--snt-control-active);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
 }
 
 /* --- the foot of the form ------------------------------------------------ */

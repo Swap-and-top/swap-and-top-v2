@@ -29,6 +29,7 @@ import { actorOf, mayActOn, targetsOf, type Actor, type Target } from '../modera
 import { ErrorSchema } from '../schemas';
 import { supabaseAdmin } from '../supabaseAdmin';
 import { personFor } from './me';
+import { deletePhotos } from '../r2';
 
 export const dataRequestRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -214,7 +215,7 @@ const remove = createRoute({
   tags: ['Staff'],
   summary: 'Delete a user\'s account',
   description:
-    'For a data request: removes their name, phone, email, area and sign in, closes their listings and any stores they own, and keeps deal, report and payment records under "Deleted user". Cannot be undone. Trust and safety leaders, with a note saying why, on someone they may act on; not anyone on our team, and not while banned or suspended.',
+    'For a data request: removes their name, phone, email, area and sign in, closes their listings and any stores they own, deletes the photos of those listings and the logos of those stores, and keeps deal, report and payment records under "Deleted user". Cannot be undone. Trust and safety leaders, with a note saying why, on someone they may act on; not anyone on our team, and not while banned or suspended.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -254,6 +255,8 @@ dataRequestRoutes.openapi(remove, async (c) => {
   if (person?.deletedAt) return c.json({ error: 'This account is already deleted.' }, 400);
 
   const now = new Date();
+  /** Photos of what they listed, taken off and deleted from R2 after. */
+  const photos: string[] = [];
   await db.transaction(async (tx) => {
     // The stores they own close, as closing one does: off every page, with
     // its listings, kept on record.
@@ -271,7 +274,15 @@ dataRequestRoutes.openapi(remove, async (c) => {
       );
     const storeIds = owned.map((row) => row.id);
     if (storeIds.length) {
-      await tx.update(t.stores).set({ closedAt: now, phone: null }).where(inArray(t.stores.id, storeIds));
+      const logos = await tx
+        .select({ logo: t.stores.logo })
+        .from(t.stores)
+        .where(inArray(t.stores.id, storeIds));
+      photos.push(...logos.flatMap((row) => (row.logo ? [row.logo] : [])));
+      await tx
+        .update(t.stores)
+        .set({ closedAt: now, phone: null, logo: null })
+        .where(inArray(t.stores.id, storeIds));
     }
     await tx
       .update(t.listings)
@@ -285,6 +296,33 @@ dataRequestRoutes.openapi(remove, async (c) => {
           ),
         ),
       );
+    // Every photo of those listings, open or closed before: the items keep
+    // their names on record, not pictures of someone's things.
+    const theirs = or(
+      and(eq(t.listings.ownerId, id), isNull(t.listings.storeId)),
+      storeIds.length ? inArray(t.listings.storeId, storeIds) : undefined,
+    );
+    const [sold, swapped] = await Promise.all([
+      tx
+        .select({ itemId: t.saleDetails.itemId })
+        .from(t.saleDetails)
+        .innerJoin(t.listings, eq(t.listings.id, t.saleDetails.listingId))
+        .where(theirs),
+      tx
+        .select({ itemId: t.swapDetails.hasItemId })
+        .from(t.swapDetails)
+        .innerJoin(t.listings, eq(t.listings.id, t.swapDetails.listingId))
+        .where(theirs),
+    ]);
+    const itemIds = [...sold, ...swapped].map((row) => row.itemId);
+    if (itemIds.length) {
+      const cleared = await tx
+        .select({ images: t.items.images })
+        .from(t.items)
+        .where(inArray(t.items.id, itemIds));
+      photos.push(...cleared.flatMap((row) => row.images));
+      await tx.update(t.items).set({ images: [] }).where(inArray(t.items.id, itemIds));
+    }
     await tx
       .update(t.storeMembers)
       .set({ removedAt: now })
@@ -303,6 +341,8 @@ dataRequestRoutes.openapi(remove, async (c) => {
       .where(eq(t.people.id, id));
     await tx.insert(t.staffLog).values({ actorId: viewer.id, action: 'person.delete', targetPersonId: id, detail: { note } });
   });
+
+  void deletePhotos(photos);
 
   // Their sign in, last: if this fails the row still turns them away.
   if (person?.authUserId) {

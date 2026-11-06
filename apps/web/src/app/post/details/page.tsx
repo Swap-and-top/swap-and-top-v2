@@ -32,12 +32,12 @@ import {
 } from '@snt/core';
 import {
   AppHeader,
+  Button,
   ButtonLink,
   Chip,
   ChipRow,
   Dropdown,
   Field,
-  ImagePlaceholder,
   POST_STEPS,
   Screen,
   ScreenBody,
@@ -45,7 +45,7 @@ import {
   StepBar,
   TickTile,
 } from '@snt/ui';
-import { CloseIcon, PlusIcon } from '@snt/ui/icons';
+import { MAX_PHOTOS, PhotoPicker, usePhotoPicker } from '@/components/PhotoPicker';
 import styles from './page.module.css';
 
 const CATEGORIES: Category[] = [
@@ -74,6 +74,7 @@ export default function PostDetailsPage() {
   // No category yet: no details to ask for until one is picked.
   const fields = draft.category ? specFieldsFor(draft.category) : [];
   const conditionLabel = useId();
+  const picking = usePhotoPicker(draft.photos, draft.setPhotos);
 
   return (
     <Screen surface>
@@ -110,39 +111,16 @@ export default function PostDetailsPage() {
           </div>
 
           {/* Requests need no photographs: the poster does not own the
-              thing. */}
+              thing. Each goes up as it is chosen. */}
           {kind !== 'request' ? (
             <div className={styles.group}>
               <span className={[styles.label, styles.flush].join(' ')}>
                 Photos of what you have{' '}
                 <span className={styles.optional}>
-                  ({draft.photoCount} of 8)
+                  ({draft.photos.length} of {MAX_PHOTOS})
                 </span>
               </span>
-              <div className={styles.photos}>
-                {Array.from({ length: draft.photoCount }).map((_, index) => (
-                  <div key={index} className={styles.photoThumb}>
-                    <ImagePlaceholder height={68} width={68} small />
-                    <button
-                      type="button"
-                      aria-label={`Remove photo ${index + 1}`}
-                      className={styles.removePhoto}
-                      onClick={draft.removePhoto}
-                    >
-                      <CloseIcon size={12} weight={2.4} />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  aria-label="Add photo"
-                  className={styles.addPhoto}
-                  onClick={draft.addPhoto}
-                  disabled={draft.photoCount >= 8}
-                >
-                  <PlusIcon size={21} />
-                </button>
-              </div>
+              <PhotoPicker picking={picking} />
             </div>
           ) : null}
 
@@ -314,9 +292,16 @@ export default function PostDetailsPage() {
           ) : null}
 
           {/* On to the review, under the last thing to fill in. */}
-          <ButtonLink href="/post/review" size="lg" block className={styles.next}>
-            Next: review
-          </ButtonLink>
+          {/* Waits while photos are still going up. */}
+          {picking.busy ? (
+            <Button size="lg" block loading className={styles.next}>
+              Next: review
+            </Button>
+          ) : (
+            <ButtonLink href="/post/review" size="lg" block className={styles.next}>
+              Next: review
+            </ButtonLink>
+          )}
         </div>
       </ScreenBody>
     </Screen>

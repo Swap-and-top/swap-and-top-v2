@@ -55,14 +55,16 @@ export async function apiAsViewer<T>(
   if (!token) return { error: 'Sign in again to carry on.', status: 401 };
   // A staff request carries this device's staff pass (lib/staffPass.ts).
   const staffKey = isStaffPath(path) ? staffKeyFor(useSessionStore.getState().viewer?.id) : undefined;
+  // A form (a photo) goes as it is, the browser setting its own type.
+  const form = init.body instanceof FormData;
   const response = await fetch(`/api${path}`, {
     method: init.method,
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      ...(form ? {} : { 'Content-Type': 'application/json' }),
       ...(staffKey ? { 'X-Staff-Key': staffKey } : {}),
     },
-    body: init.body === undefined ? undefined : JSON.stringify(init.body),
+    body: init.body === undefined ? undefined : form ? (init.body as FormData) : JSON.stringify(init.body),
   }).catch(() => null);
   const body = (await response?.json().catch(() => ({}))) as
     | { error?: string; code?: string }

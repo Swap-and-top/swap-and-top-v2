@@ -15,6 +15,8 @@ import { notify } from './notifications';
 import { isMember, roleIn } from './post';
 import { ErrorSchema, ListingSchema, StoreSchema } from '../schemas';
 import { personFor } from './me';
+import { readPhoto } from './uploads';
+import { deletePhotos, photoUrl, photosReady, putPhoto } from '../r2';
 
 export const storeRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -71,6 +73,7 @@ export async function storeBySlug(slug: string) {
     slug: store.slug,
     name: store.name,
     initials: store.initials,
+    ...(store.logo ? { logo: photoUrl(store.logo) } : {}),
     description: store.description,
     location: store.location,
     openingHours: store.openingHours,
@@ -603,4 +606,81 @@ storeRoutes.openapi(close, async (c) => {
     return { slug: store?.slug ?? '', closedListings: closed.length };
   });
   return c.json(done, 200);
+});
+
+/* --- its logo ------------------------------------------------------------- */
+
+const LogoAnswer = z.object({ logo: z.string().nullable() });
+
+const setLogo = createRoute({
+  method: 'put',
+  path: '/stores/{id}/logo',
+  tags: ['Stores'],
+  summary: 'Set a store\'s logo',
+  description:
+    'The owner only: one photo as the form field `photo` (JPEG, PNG or WebP, up to 3 MB), kept on R2 and shown in place of the store\'s initials. The logo before it is deleted.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    params: z.object({ id: z.string() }),
+    body: {
+      content: {
+        'multipart/form-data': {
+          schema: z.object({ photo: z.any().openapi({ type: 'string', format: 'binary' }) }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: { description: 'Saved', content: { 'application/json': { schema: LogoAnswer } } },
+    400: { description: 'Not a photo we can use', content: { 'application/json': { schema: ErrorSchema } } },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not the store\'s owner', content: { 'application/json': { schema: ErrorSchema } } },
+    503: { description: 'Photos are not set up yet', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+storeRoutes.openapi(setLogo, async (c) => {
+  if (!photosReady) return c.json({ error: 'Photos are not set up yet.' }, 503);
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if ((await roleIn(person.id, id)) !== 'owner') {
+    return c.json({ error: 'Only the store’s owner can change its logo.' }, 403);
+  }
+  const photo = await readPhoto(await c.req.parseBody());
+  if ('error' in photo) return c.json({ error: photo.error }, 400);
+  const key = `stores/${id}/logo/${crypto.randomUUID()}.${photo.ext}`;
+  await putPhoto(key, photo.body, photo.type);
+  const [before] = await db.select({ logo: t.stores.logo }).from(t.stores).where(eq(t.stores.id, id));
+  await db.update(t.stores).set({ logo: key }).where(eq(t.stores.id, id));
+  if (before?.logo) void deletePhotos([before.logo]);
+  return c.json({ logo: photoUrl(key) }, 200);
+});
+
+const dropLogo = createRoute({
+  method: 'delete',
+  path: '/stores/{id}/logo',
+  tags: ['Stores'],
+  summary: 'Remove a store\'s logo',
+  description: 'The owner only: its initials show again, and the logo is deleted from R2.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: { description: 'Removed', content: { 'application/json': { schema: LogoAnswer } } },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not the store\'s owner', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+storeRoutes.openapi(dropLogo, async (c) => {
+  const { id } = c.req.valid('param');
+  const person = await personFor(c.get('authUser'));
+  if ((await roleIn(person.id, id)) !== 'owner') {
+    return c.json({ error: 'Only the store’s owner can change its logo.' }, 403);
+  }
+  const [before] = await db.select({ logo: t.stores.logo }).from(t.stores).where(eq(t.stores.id, id));
+  await db.update(t.stores).set({ logo: null }).where(eq(t.stores.id, id));
+  if (before?.logo) void deletePhotos([before.logo]);
+  return c.json({ logo: null }, 200);
 });
