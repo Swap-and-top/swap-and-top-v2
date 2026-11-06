@@ -16,8 +16,8 @@
  */
 
 import {
-  getStore,
-  getUser,
+  storeOf,
+  posterOf,
   takesOffers,
   useOwnsListing,
   type SaleListing,
@@ -60,8 +60,8 @@ export function SaleDetail({
    */
   preview?: boolean;
 }) {
-  const store = getStore(listing.storeId);
-  const owner = getUser(listing.ownerId);
+  const store = storeOf(listing);
+  const owner = posterOf(listing);
   /** Your own listing, or your store's: your panel in place of a buyer's
       actions. */
   const owns = useOwnsListing(listing);

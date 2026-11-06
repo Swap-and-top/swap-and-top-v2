@@ -85,6 +85,26 @@ export interface ItemSpecs {
   details?: string;
 }
 
+/** Who posted a listing, as cards and listing pages show them. */
+export interface ListingPoster {
+  id: string;
+  displayName: string;
+  joinedAt: string;
+  confirmedDeals: number;
+  hasUpheldReports: boolean;
+}
+
+/** The store a listing was posted as, as cards and listing pages show it. */
+export interface ListingStore {
+  id: string;
+  slug: string;
+  name: string;
+  initials: string;
+  logo?: string;
+  verified: boolean;
+  stockCount: number;
+}
+
 /** Everything every listing carries, regardless of type. */
 export interface ListingBase {
   id: string;
@@ -94,6 +114,11 @@ export interface ListingBase {
   ownerId: string;
   /** Present only when the owner is a store. */
   storeId?: string;
+  /** Who posted it, as the API sends it (the mock listings have none:
+      `posterOf` falls back to the mock users). */
+  poster?: ListingPoster;
+  /** The store it was posted as, as the API sends it. */
+  store?: ListingStore;
   category: Category;
   title: string;
   location: string;

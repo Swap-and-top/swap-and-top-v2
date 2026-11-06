@@ -42,8 +42,10 @@ import {
   Screen,
   ScreenBody,
   specFieldsFor,
+  Stack,
   StepBar,
   TickTile,
+  withUnit,
 } from '@snt/ui';
 import { MAX_PHOTOS, PhotoPicker, usePhotoPicker } from '@/components/PhotoPicker';
 import styles from './page.module.css';
@@ -75,6 +77,7 @@ export default function PostDetailsPage() {
   const fields = draft.category ? specFieldsFor(draft.category) : [];
   const conditionLabel = useId();
   const picking = usePhotoPicker(draft.photos, draft.setPhotos);
+  const ready = detailsReady(draft, kind);
 
   return (
     <Screen surface>
@@ -117,7 +120,7 @@ export default function PostDetailsPage() {
               <span className={[styles.label, styles.flush].join(' ')}>
                 Photos of what you have{' '}
                 <span className={styles.optional}>
-                  ({draft.photos.length} of {MAX_PHOTOS})
+                  ({draft.photos.length} of {MAX_PHOTOS}, upload at least {MIN_PHOTOS})
                 </span>
               </span>
               <PhotoPicker picking={picking} />
@@ -148,12 +151,16 @@ export default function PostDetailsPage() {
               {fields.map((field) => (
                 <Field
                   key={field.key}
-                  label={field.label}
+                  label={field.optional ? `${field.label} (optional)` : field.label}
                   placeholder={`e.g. ${field.example}`}
                   value={draft.specs[field.key] ?? ''}
                   onChange={(event) =>
                     draft.setSpec(field.key, event.target.value)
                   }
+                  onBlur={(event) => {
+                    const done = withUnit(field, event.target.value);
+                    if (done !== event.target.value) draft.setSpec(field.key, done);
+                  }}
                 />
               ))}
               {/* The same four conditions as everywhere, in the same
@@ -193,7 +200,7 @@ export default function PostDetailsPage() {
               {draft.category === 'other' ? (
                 <Field
                   className={styles.wide}
-                  label="Details"
+                  label="Details (optional)"
                   placeholder="e.g. Canon EOS 200D, with its lens and charger"
                   value={draft.specs.details ?? ''}
                   onChange={(event) =>
@@ -291,19 +298,66 @@ export default function PostDetailsPage() {
             />
           ) : null}
 
-          {/* On to the review, under the last thing to fill in. */}
-          {/* Waits while photos are still going up. */}
-          {picking.busy ? (
-            <Button size="lg" block loading className={styles.next}>
-              Next: review
-            </Button>
-          ) : (
-            <ButtonLink href="/post/review" size="lg" block className={styles.next}>
-              Next: review
-            </ButtonLink>
-          )}
+          {/* Back to Choose beside Next, as Edit details sits beside Post
+              listing (the draft is kept). Next is off until everything
+              asked for is in, and while photos are still going up. */}
+          <Stack gap={4} className={styles.next}>
+            <div className={styles.actions}>
+              <ButtonLink href="/post" variant="secondary" size="lg" block>
+                Back
+              </ButtonLink>
+              {picking.busy || !ready ? (
+                <Button size="lg" block loading={picking.busy} disabled>
+                  Next
+                </Button>
+              ) : (
+                <ButtonLink href="/post/review" size="lg" block>
+                  Next
+                </ButtonLink>
+              )}
+            </div>
+            {!ready ? (
+              <p className={styles.nextNote}>
+                {kind === 'request'
+                  ? 'Fill in everything to carry on.'
+                  : `Upload at least ${MIN_PHOTOS} photos and fill in everything not marked optional to carry on.`}
+              </p>
+            ) : null}
+          </Stack>
         </div>
       </ScreenBody>
     </Screen>
   );
+}
+
+/** The fewest photos a sale or a swap goes up with (Hillary, 2026-11-06). */
+const MIN_PHOTOS = 2;
+
+/** A typed amount: "$250" → 250; nothing or nonsense → 0. */
+const amountOf = (typed: string) => Number(typed.replace(/[^0-9.]/g, '')) || 0;
+
+/**
+ * Whether everything the listing needs is filled in (Hillary, 2026-11-06):
+ * what they have, the details its category asks for but those marked
+ * optional (Other's description is optional too), and the price; for a swap,
+ * what they want and, unless it is straight, how much; for a Wanted
+ * listing, what they are looking for and the budget; and, but for a Wanted
+ * listing, at least two photos. Condition always has one chosen.
+ */
+function detailsReady(
+  draft: ReturnType<typeof usePostDraftStore.getState>,
+  kind: 'sale' | 'swap' | 'request',
+): boolean {
+  if (!draft.category) return false;
+  if (kind === 'request') return Boolean(draft.wantTitle.trim()) && amountOf(draft.budget) > 0;
+  if (!draft.haveTitle.trim()) return false;
+  if (draft.photos.length < MIN_PHOTOS) return false;
+  const specsIn = specFieldsFor(draft.category).every(
+    (field) => field.optional || Boolean(draft.specs[field.key]?.trim()),
+  );
+  if (!specsIn) return false;
+  if (kind === 'sale') return amountOf(draft.price) > 0;
+  if (!draft.wantTitle.trim()) return false;
+  const direction = draft.cashDirection ?? 'straight';
+  return direction === 'straight' || amountOf(draft.cashAmount) > 0;
 }

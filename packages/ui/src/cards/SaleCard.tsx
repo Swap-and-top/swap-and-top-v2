@@ -128,7 +128,7 @@ export function SaleCard({
                 tabIndex={-1}
                 aria-hidden
               >
-                <StoreMark initials={store.initials} size={40} />
+                <StoreMark initials={store.initials} logo={store.logo} size={40} />
               </Link>
               <span className={styles.storeIdentity}>
                 <Link

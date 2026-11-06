@@ -47,7 +47,17 @@ export const visibleOwner = and(
 /** Listings matching `where`, newest first, in the API's shape. */
 export async function loadListings(where: SQL | undefined, limit = 100): Promise<ListingOut[]> {
   const rows = await db
-    .select({ listing: t.listings })
+    .select({
+      listing: t.listings,
+      poster: { displayName: t.people.displayName, joinedAt: t.people.joinedAt },
+      store: {
+        slug: t.stores.slug,
+        name: t.stores.name,
+        initials: t.stores.initials,
+        logo: t.stores.logo,
+        verifiedAt: t.stores.verifiedAt,
+      },
+    })
     .from(t.listings)
     .innerJoin(t.people, eq(t.people.id, t.listings.ownerId))
     .leftJoin(t.stores, eq(t.stores.id, t.listings.storeId))
@@ -57,11 +67,13 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
   if (rows.length === 0) return [];
 
   const ids = rows.map((row) => row.listing.id);
+  const owners = [...new Set(rows.map((row) => row.listing.ownerId))];
+  const storeIds = [...new Set(rows.flatMap((row) => (row.listing.storeId ? [row.listing.storeId] : [])))];
   const now = new Date();
 
   // Everything else in one batch, the items too, found through the details
   // rather than after them: each trip to the database is slow from afar.
-  const [sales, swaps, requests, reveals, offers, boosts, itemRows] = await Promise.all([
+  const [sales, swaps, requests, reveals, offers, boosts, itemRows, asked, owned, upheld, stock] = await Promise.all([
     db.select().from(t.saleDetails).where(inArray(t.saleDetails.listingId, ids)),
     db.select().from(t.swapDetails).where(inArray(t.swapDetails.listingId, ids)),
     db.select().from(t.requestDetails).where(inArray(t.requestDetails.listingId, ids)),
@@ -113,6 +125,36 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
           ),
         ),
       ),
+    // Who posted them: deals both sides confirmed, as asker or as owner.
+    db
+      .select({ personId: t.dealChecks.askerId, n: count() })
+      .from(t.dealChecks)
+      .where(and(eq(t.dealChecks.state, 'confirmed'), inArray(t.dealChecks.askerId, owners)))
+      .groupBy(t.dealChecks.askerId),
+    db
+      .select({ personId: t.dealChecks.ownerId, n: count() })
+      .from(t.dealChecks)
+      .where(and(eq(t.dealChecks.state, 'confirmed'), inArray(t.dealChecks.ownerId, owners)))
+      .groupBy(t.dealChecks.ownerId),
+    // And whether any report against them was upheld.
+    db
+      .selectDistinct({ personId: t.reports.personId })
+      .from(t.reports)
+      .where(and(eq(t.reports.state, 'approved'), inArray(t.reports.personId, owners))),
+    // The stores they were posted as: how many live listings each has.
+    storeIds.length
+      ? db
+          .select({ storeId: t.listings.storeId, n: count() })
+          .from(t.listings)
+          .where(
+            and(
+              inArray(t.listings.storeId, storeIds),
+              eq(t.listings.status, 'live'),
+              inArray(t.listings.type, ['sale', 'swap']),
+            ),
+          )
+          .groupBy(t.listings.storeId)
+      : Promise.resolve([]),
   ]);
 
   const items = new Map(itemRows.map((item) => [item.id, item]));
@@ -133,16 +175,42 @@ export async function loadListings(where: SQL | undefined, limit = 100): Promise
       wanted: item.wanted,
     };
   };
+  const deals = new Map<string, number>();
+  for (const row of [...asked, ...owned]) {
+    if (row.personId) deals.set(row.personId, (deals.get(row.personId) ?? 0) + row.n);
+  }
+  const reported = new Set(upheld.map((row) => row.personId));
+  const stockOf = new Map(stock.map((row) => [row.storeId, row.n]));
   const revealCount = new Map(reveals.map((r) => [r.listingId, r.n]));
   const offerCount = new Map(offers.map((o) => [o.listingId, o.n]));
   const boosted = new Set(boosts.map((b) => b.listingId));
 
-  return rows.flatMap(({ listing }): ListingOut[] => {
+  return rows.flatMap(({ listing, poster, store }): ListingOut[] => {
     const shared = {
       id: listing.id,
       slug: listing.slug,
       ownerId: listing.ownerId,
       storeId: opt(listing.storeId),
+      poster: {
+        id: listing.ownerId,
+        displayName: poster.displayName || 'Someone',
+        joinedAt: dateOnly(poster.joinedAt),
+        confirmedDeals: deals.get(listing.ownerId) ?? 0,
+        hasUpheldReports: reported.has(listing.ownerId),
+      },
+      ...(listing.storeId && store
+        ? {
+            store: {
+              id: listing.storeId,
+              slug: store.slug,
+              name: store.name,
+              initials: store.initials,
+              ...(store.logo ? { logo: photoUrl(store.logo) } : {}),
+              verified: store.verifiedAt !== null,
+              stockCount: stockOf.get(listing.storeId) ?? 0,
+            },
+          }
+        : {}),
       category: listing.category,
       title: listing.title,
       location: listing.location,

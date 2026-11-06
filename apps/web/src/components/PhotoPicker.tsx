@@ -6,9 +6,10 @@
  * Each photo goes up as soon as it is chosen (shrunk first, lib/photos.ts),
  * shown at once faded with a spinner, then as it is kept. The form saves
  * the addresses; its button waits while any are still going up (`busy`).
- * A photo chosen here and taken off again before saving is deleted at
- * once; one the listing already had goes when the listing is saved
- * without it (the API does that).
+ * A photo taken off is deleted at once unless a saved listing holds it
+ * (the API checks, DELETE /uploads/photo), so it goes even after a trip to
+ * the review step and back; one the listing already had goes when the
+ * listing is saved without it.
  */
 
 import { useMutation } from '@tanstack/react-query';
@@ -38,8 +39,6 @@ export function usePhotoPicker(
   setPhotos: (update: (now: string[]) => string[]) => void,
 ): PhotoPicking {
   const [pending, setPending] = useState<PhotoPicking['pending']>([]);
-  /** Put up from this form and not saved yet: deleted if taken off. */
-  const fresh = useRef(new Set<string>());
   const upload = useMutation({ mutationFn: uploadPhoto });
 
   function pick(files: FileList | null) {
@@ -56,10 +55,7 @@ export function usePhotoPicker(
       upload
         .mutateAsync(file)
         .then(
-          (url) => {
-            fresh.current.add(url);
-            setPhotos((now) => [...now, url]);
-          },
+          (url) => setPhotos((now) => [...now, url]),
           (error: Error) => toast.error(error.message),
         )
         .finally(() => {
@@ -71,7 +67,8 @@ export function usePhotoPicker(
 
   function remove(url: string) {
     setPhotos((now) => now.filter((each) => each !== url));
-    if (fresh.current.delete(url)) discardPhoto(url);
+    // Refused by the API while a saved listing holds it.
+    discardPhoto(url);
   }
 
   return { photos, pending, pick, remove, busy: pending.length > 0 };

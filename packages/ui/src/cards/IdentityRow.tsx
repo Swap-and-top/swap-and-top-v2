@@ -62,7 +62,7 @@ export function StoreRow({ store }: { store: Store }) {
   return (
     <Panel>
       <Link href={`/store/${store.slug}`} className={styles.row}>
-        <StoreMark initials={store.initials} size={36} />
+        <StoreMark initials={store.initials} logo={store.logo} size={36} />
         <div className={styles.body}>
           <div className={styles.nameLine}>
             <span className={styles.name}>{store.name}</span>

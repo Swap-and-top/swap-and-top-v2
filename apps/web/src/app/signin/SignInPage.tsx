@@ -25,7 +25,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { useSessionStore } from '@snt/core';
 import {
@@ -62,6 +62,12 @@ export function SignInPage({ next }: { next: string }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  /** The browser filled in a saved email or password: Chrome shows them
+      but keeps them from the page until a tap, so Sign in goes on then,
+      and reads the boxes themselves when pressed. */
+  const [autofilled, setAutofilled] = useState(false);
+  const emailBox = useRef<HTMLInputElement>(null);
+  const passwordBox = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   /** Signed in with an email not yet verified: the card asks for its code. */
   const [verifying, setVerifying] = useState(false);
@@ -135,14 +141,15 @@ export function SignInPage({ next }: { next: string }) {
   }
 
   async function signInWithEmail() {
-    if (!email.trim() || !password) {
-      toast.error('Enter your email and password.');
-      return;
-    }
+    // Sign in stays off until both are filled in (Hillary, 2026-11-06);
+    // what the browser filled in is read from the boxes.
+    const givenEmail = (email || emailBox.current?.value || '').trim();
+    const givenPassword = password || passwordBox.current?.value || '';
+    if (!givenEmail || !givenPassword) return;
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
+      email: givenEmail,
+      password: givenPassword,
     });
     if (error?.code === 'email_not_confirmed') {
       // As the first app did: the card asks for the email's code first.
@@ -217,8 +224,12 @@ export function SignInPage({ next }: { next: string }) {
                 inputMode="email"
                 autoComplete="email"
                 placeholder="e.g. johndoe@gmail.com"
+                ref={emailBox}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
+                onAnimationStart={(event) => {
+                  if (event.animationName.includes('autofill')) setAutofilled(true);
+                }}
               />
             </span>
           </label>
@@ -231,8 +242,12 @@ export function SignInPage({ next }: { next: string }) {
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 placeholder="Enter password"
+                ref={passwordBox}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                onAnimationStart={(event) => {
+                  if (event.animationName.includes('autofill')) setAutofilled(true);
+                }}
               />
               <button
                 type="button"
@@ -254,7 +269,9 @@ export function SignInPage({ next }: { next: string }) {
           <button
             type={way === 'email' ? 'submit' : 'button'}
             className={styles.signIn}
-            disabled={busy}
+            // Off until an email and a password are typed, so the only
+            // message left is a wrong pair (Hillary, 2026-11-06).
+            disabled={busy || (!autofilled && (!email.trim() || !password))}
             aria-busy={(busy && way === 'email') || undefined}
           >
             {busy && way === 'email' ? <Spinner size={20} label="Signing in" /> : 'Sign in'}
@@ -314,7 +331,9 @@ export function SignInPage({ next }: { next: string }) {
           <button
             type={way === 'phone' ? 'submit' : 'button'}
             className={styles.signIn}
-            disabled={busy || (phone !== null && code.length < 6)}
+            // Send code off until a number is typed, Sign in until the
+            // code's six digits are.
+            disabled={busy || (phone === null ? !typed.trim() : code.length < 6)}
             aria-busy={(busy && way === 'phone') || undefined}
           >
             {busy && way === 'phone' ? (

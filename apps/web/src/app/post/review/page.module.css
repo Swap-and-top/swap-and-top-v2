@@ -23,25 +23,18 @@
   color: var(--snt-ink-muted);
 }
 
-/* --- the live card preview --- */
+/* --- the live card preview: the feed's own card ------------------------- */
 
-.card {
-  overflow: hidden;
+/* Its star, share, name and title do not answer a pointer (no hover, no
+   hand), as the listing is not up yet; its photos still slide and open. */
+.preview :is(a, button) {
+  pointer-events: none;
+  cursor: default;
 }
 
-.saleBody {
-  padding: var(--snt-space-8) var(--snt-card-pad) var(--snt-space-10);
-}
-
-/* The swap tiles bring their own top and side padding; close the card. */
-.swapPreview {
-  padding-bottom: var(--snt-card-pad);
-}
-
-.saleTitle {
-  font-size: var(--snt-text-md);
-  font-weight: var(--snt-weight-normal);
-  margin-top: var(--snt-space-1);
+.preview [aria-roledescription='carousel'] :is(a, button) {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* --- the form -------------------------------------------------------------- */
@@ -103,4 +96,11 @@
   font-size: var(--snt-text-xs);
   line-height: var(--snt-leading-normal);
   color: var(--snt-ink-muted);
+}
+
+/* Edit details and Post listing, side by side, as Add stock's buttons. */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4);
 }

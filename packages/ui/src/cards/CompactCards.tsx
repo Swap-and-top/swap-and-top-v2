@@ -6,7 +6,7 @@
 
 import Link from 'next/link';
 import type { Listing, SwapListing } from '@snt/core';
-import { getStore, getUser } from '@snt/core';
+import { posterOf, storeOf } from '@snt/core';
 import { ImagePlaceholder, listingPhoto } from '../primitives/Placeholder';
 import { Bone } from '../primitives/Skeleton';
 import { Panel } from '../primitives/Surface';
@@ -27,8 +27,8 @@ function isGone(listing: Listing): boolean {
 /** Horizontal line item. Used by Saved. */
 export function CompactListingRow({ listing }: { listing: Listing }) {
   const gone = isGone(listing);
-  const store = getStore(listing.storeId);
-  const owner = getUser(listing.ownerId);
+  const store = storeOf(listing);
+  const owner = posterOf(listing);
 
   const dropped =
     listing.type === 'sale' &&

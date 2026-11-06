@@ -27,7 +27,9 @@ behind them (migration `0013`). Migrations `0001` to `0014` are applied
 Vercel builds only Production. The Dockerfile for Dokploy is committed on
 the branch (12250c3, "Hosting on Dokploy" below). **Built 2026-11-06, not
 committed: photo uploads on R2** (listing photos and store logos, "Photos
-on R2" below). Next after it: Umami on Dokploy.
+on R2" below), committed dcfd2ce. **Not committed:** the real seller on
+cards, the review step's preview and required details ("Sellers on
+cards" below). Next: Umami on Dokploy.
 
 **Where the next agent starts:** Hillary looks at Growth and Health (as
 super admin she sees every section; no test account is in Marketing or
@@ -1331,6 +1333,75 @@ initials, not logos; photos chosen and then left on an unsaved form stay
 in R2 (a later cleanup could list `photos/` against `items.images`);
 bulk import takes no photos; a private bucket for verification documents
 comes with that feature.
+
+## Sellers on cards, the post preview and required details (2026-11-06)
+
+Built after Hillary posted a real listing (Nintendo Switch Lite) and saw
+no seller on its card as a guest. Not committed yet.
+
+- **The real seller and store on every listing.** `loadListings`
+  (`apps/api/src/listings.ts`) now returns `poster` (name, joined,
+  confirmed deals, any upheld report) and, for a store's listing, `store`
+  (name, initials, logo, verified, live stock count), in the same batch of
+  queries. `posterOf` and `storeOf` (`packages/core/src/mock/posters.ts`)
+  read them, falling back to the mock users for mock listings; feed cards,
+  compact cards, the Wanted feed and the listing pages use them in place
+  of `getUser` and `getStore`. Store cards show the store's logo. Offer
+  cards and deal checks still use the mock users.
+- **The review step shows the feed's own card** (`ListingCard`, made from
+  the draft by `draftListing` in `post/review/page.tsx`), as others will
+  see it: their name or the store's, the area (Me now sends the user's and
+  each store's `location`), "Just now". Its photos slide and open as in
+  the feed; its other links and buttons, the star and share too, do
+  nothing and show no hover or hand (`.preview` in its CSS, and a click
+  caught before them, outside the carousel). The full screen photo
+  viewer is portalled to the page's top but its clicks still pass through
+  the preview in React, so the catch leaves alone any click not on the card
+  itself; its close button and backdrop work. **Edit details** sits beside Post listing
+  and goes back with the draft kept.
+- **GB added to a bare number** in RAM and Storage when the box is left
+  (`withUnit` and `unit: 'GB'` in `SpecGrid.tsx`), on the post form and
+  Add stock: "512" becomes "512GB"; anything with a unit or words ("1TB",
+  "8 gb", "512MB", "256GB SSD") is left as typed. The price box adds no
+  "$" while typing; the number is read from whatever is typed and cards
+  always show "$". A part's Capacity has no unit added (not asked for).
+- **Posting goes straight to the new listing.** The draft used to be
+  emptied before the listing's page opened, so the review page redrew as
+  a blank form for a second or two; it is now emptied when the review page
+  closes (`posted` in `post/review/page.tsx`).
+- **Sign in** (`signin/SignInPage.tsx`) is off, faded, until an email and
+  a password are typed, so the only toast left is a wrong pair; with a
+  phone, Send code is off until a number is typed and Sign in until the
+  six digit code is. Saved details the browser fills in turn it on (a
+  `:-webkit-autofill` animation the page listens for) and are read from
+  the boxes when pressed, as Chrome hides them from the page until a tap.
+- **Sign up** (`signup/SignUpPage.tsx`): Continue was already off until a
+  name, surname and email are in; Create account is now off until the
+  neighbourhood and both passwords are typed. Only real mistakes (a
+  password under 8 characters, two that differ) get a toast.
+- **A photo taken off a form is always sent for deleting**
+  (`PhotoPicker`); the API refuses while a saved listing holds it. Before,
+  the form only deleted photos it remembered uploading, which a trip to the
+  review step and back forgot, leaving them in R2.
+- **Next on the details step is off until what is needed is filled in**
+  (`detailsReady` in `post/details/page.tsx`), with "Upload at least 2
+  photos and fill in everything not marked optional to carry on." under
+  it. It reads "Next", with **Back** (to Choose, the draft kept) beside
+  it. A sale or a swap needs **at least 2 photos** (`MIN_PHOTOS`; the
+  label says "upload at least 2"), up to 8. Needed: what they have, its
+  details but those marked `optional` in `specFieldsFor`
+  (`packages/ui/src/primitives/SpecGrid.tsx`), Other's description, and
+  the price; for a swap, what they want and the amount unless straight;
+  for Wanted, what and the budget. Optional, shown "(optional)", as
+  Hillary set them on 2026-11-06: laptop Graphics and Screen, desktop
+  Graphics and Form factor, phone RAM (Colour is needed), console
+  Controllers, part Capacity, accessory Colour, and Other's Details.
+  Condition always has one chosen; photos may wait. The API itself does
+  not demand the details, so Add stock is unchanged.
+- **Tested** on localhost: the Switch card and listing page say "Hillary
+  M." to a guest; as Tafadzwa, Next stayed off until Battery and Price were
+  in, a swap needed what they want and the amount, and the sale and swap
+  previews matched feed cards at laptop and phone size. Nothing posted.
 
 ## The project
 

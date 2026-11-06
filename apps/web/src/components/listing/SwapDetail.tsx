@@ -21,7 +21,7 @@
  */
 
 import {
-  getUser,
+  posterOf,
   offerCountFor,
   useOfferStore,
   useOwnsListing,
@@ -67,7 +67,7 @@ export function SwapDetail({
    */
   preview?: boolean;
 }) {
-  const owner = getUser(listing.ownerId);
+  const owner = posterOf(listing);
   const offers = useOfferStore((store) => store.offers);
   const offerCount = offerCountFor(offers, listing.id, listing.offerCount);
   /** Your own swap: worded from your side, with your panel in place of a

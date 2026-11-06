@@ -29,11 +29,38 @@ export const ItemSchema = z
   })
   .openapi('Item');
 
+/** Who posted it, as cards and listing pages show them. */
+const PosterSchema = z.object({
+  id: z.string(),
+  /** "Hillary M.": first name and the surname's initial. */
+  displayName: z.string(),
+  joinedAt: z.string().openapi({ example: '2026-09-24' }),
+  /** Deals both sides confirmed. */
+  confirmedDeals: z.number().int(),
+  /** Any report against them upheld by our team. */
+  hasUpheldReports: z.boolean(),
+});
+
+/** The store it was posted as, as cards and listing pages show it. */
+const ListingStoreSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  name: z.string(),
+  initials: z.string(),
+  logo: z.string().optional(),
+  verified: z.boolean(),
+  /** Its live listings for sale or swap. */
+  stockCount: z.number().int(),
+});
+
 const base = {
   id: z.string(),
   slug: z.string().openapi({ example: 'thinkpad-t480-i5-8gb-256gb' }),
   ownerId: z.string(),
   storeId: z.string().optional(),
+  poster: PosterSchema,
+  /** Present when posted as a store. */
+  store: ListingStoreSchema.optional(),
   category,
   title: z.string(),
   location: z.string(),
@@ -140,6 +167,8 @@ export const MeSchema = z
     id: z.string().openapi({ example: 'u-tarisai' }),
     /** Empty for a new person until they give their name. */
     displayName: z.string().openapi({ example: 'Tarisai M.' }),
+    /** "Avondale, Harare", once they have said where they are. */
+    location: z.string().optional(),
     phone: z.string().optional().openapi({ example: '+263770000001' }),
     /** Needed to post, make offers and reach other people. */
     phoneVerified: z.boolean(),
@@ -172,6 +201,8 @@ export const MeSchema = z
         verifyPending: z.boolean(),
         /** Its logo's address; missing: its initials show instead. */
         logo: z.string().optional(),
+        /** "Avondale, Harare": where it is. */
+        location: z.string(),
       }),
     ),
   })

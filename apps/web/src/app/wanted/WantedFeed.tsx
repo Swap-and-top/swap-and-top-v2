@@ -16,7 +16,7 @@
 
 import {
   CATEGORY_LABELS,
-  getUser,
+  posterOf,
   isDemand,
   useLiveListings,
   useViewerId,
@@ -106,7 +106,7 @@ export function WantedFeed({
               <WantedCard
                 key={listing.id}
                 listing={listing}
-                requester={getUser(listing.ownerId)}
+                requester={posterOf(listing)}
               />
             ))}
           </Stack>

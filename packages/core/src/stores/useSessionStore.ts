@@ -20,6 +20,8 @@ export interface Viewer {
   id: string;
   /** Empty for a new person until they give their name. */
   displayName: string;
+  /** "Avondale, Harare", once they have said where they are. */
+  location?: string;
   phone?: string;
   /** Needed to post, make offers and reach other people. */
   phoneVerified: boolean;
@@ -44,6 +46,8 @@ export interface Viewer {
     verifyPending?: boolean;
     /** Its logo's address; missing: its initials show instead. */
     logo?: string;
+    /** "Avondale, Harare": where it is. */
+    location?: string;
   }[];
 }
 

@@ -128,6 +128,21 @@
   outline: none;
 }
 
+/* A box the browser filled in from saved details starts this (it does
+   nothing to the look), so the page knows to turn Sign in on. */
+.input:-webkit-autofill {
+  animation: autofill 1ms;
+}
+
+@keyframes autofill {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .input::placeholder {
   color: var(--snt-placeholder);
   opacity: 1;
@@ -293,9 +308,11 @@
   transition: filter var(--snt-transition);
 }
 
-.signIn:hover,
-.platform:hover {
-  filter: brightness(0.96);
+@media (hover: hover) {
+  .signIn:not(:disabled):hover,
+  .platform:hover {
+    filter: brightness(0.96);
+  }
 }
 
 .signIn:disabled:not([aria-busy]) {

@@ -62,6 +62,7 @@ export {
   specParts,
   specRowsFor,
   specFieldsFor,
+  withUnit,
   type SpecField,
   specSummary,
 } from './primitives/SpecGrid';

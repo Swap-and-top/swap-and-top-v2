@@ -12,7 +12,7 @@
  */
 
 import {
-  getUser,
+  posterOf,
   type RequestListing,
   offerCountFor,
   useOfferStore,
@@ -58,7 +58,7 @@ export function RequestDetail({
    */
   preview?: boolean;
 }) {
-  const owner = getUser(listing.ownerId);
+  const owner = posterOf(listing);
   const offers = useOfferStore((store) => store.offers);
   const responses = offerCountFor(offers, listing.id, listing.responseCount);
   /** Your own post: worded from your side, with your controls in place of a

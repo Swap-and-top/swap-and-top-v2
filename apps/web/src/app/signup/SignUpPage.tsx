@@ -66,23 +66,19 @@ export function SignUpPage({ next }: { next: string }) {
   const detailsReady =
     firstName.trim() !== '' && surname.trim() !== '' && looksLikeEmail(email.trim());
 
+  /** Step two's boxes all filled in: Create account goes on then
+      (Hillary, 2026-11-06), so the only messages left are real mistakes,
+      a short password or two that differ. */
+  const accountReady = area.trim() !== '' && password !== '' && again !== '';
+
   function toStepTwo() {
-    if (!firstName.trim() || !surname.trim() || !email.trim()) {
-      toast.error('Enter your first name, surname and email.');
-      return;
-    }
-    if (!looksLikeEmail(email.trim())) {
-      toast.error('Check the email, it does not look right.');
-      return;
-    }
+    // Continue stays off until these are in.
+    if (!detailsReady) return;
     setStep(2);
   }
 
   function createAccount() {
-    if (!area.trim()) {
-      toast.error('Enter your neighbourhood.');
-      return;
-    }
+    if (!accountReady) return;
     if (password.length < 8) {
       toast.error('Choose a longer password, at least 8 characters.');
       return;
@@ -242,7 +238,7 @@ export function SignUpPage({ next }: { next: string }) {
           <button
             type="submit"
             className={styles.signIn}
-            disabled={busy}
+            disabled={busy || !accountReady}
             aria-busy={busy || undefined}
           >
             {busy ? <Spinner size={20} label="Creating your account" /> : 'Create account'}

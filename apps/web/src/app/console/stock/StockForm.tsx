@@ -41,6 +41,7 @@ import {
   Dropdown,
   Field,
   specFieldsFor,
+  withUnit,
   startPageLoad,
   TickTile,
   useConsoleTarget,
@@ -325,6 +326,12 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
                   [field.key]: event.target.value,
                 }))
               }
+              onBlur={(event) => {
+                const done = withUnit(field, event.target.value);
+                if (done !== event.target.value) {
+                  setSpecs((current) => ({ ...current, [field.key]: done }));
+                }
+              }}
             />
           ))}
           {category === 'other' ? (

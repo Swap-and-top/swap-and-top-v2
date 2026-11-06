@@ -179,3 +179,18 @@
 .next {
   margin-top: var(--snt-space-2);
 }
+
+/* Under Next while it is off: what is missing, in a word. */
+.nextNote {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-ink-muted);
+  text-align: center;
+}
+
+/* Back and Next, side by side, as Edit details and Post listing. */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4);
+}

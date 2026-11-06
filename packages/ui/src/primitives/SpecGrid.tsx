@@ -43,6 +43,22 @@ export interface SpecField {
   label: string;
   /** A real example, shown faintly in the empty box on the post form. */
   example: string;
+  /** May be left empty on the post form; the rest must be filled in
+      before Next (Hillary, 2026-11-06). */
+  optional?: true;
+  /** Put after a bare number when the box is left: "512" → "512GB". */
+  unit?: 'GB';
+}
+
+/**
+ * A detail as typed, with its unit added when it is a bare number ("512"
+ * → "512GB", "8" → "8GB"), so the poster sees what buyers will; anything
+ * with a unit or words ("1TB", "512 gb", "256GB SSD") is left as it is
+ * (Hillary, 2026-11-06). Used when a box is left.
+ */
+export function withUnit(field: SpecField, value: string): string {
+  const typed = value.trim();
+  return field.unit && /^\d+(\.\d+)?$/.test(typed) ? `${typed}${field.unit}` : value;
 }
 
 /**
@@ -53,34 +69,34 @@ export interface SpecField {
 const ORDER: Record<string, SpecField[]> = {
   laptops: [
     { key: 'processor', label: 'Processor', example: 'Core i5-8250U' },
-    { key: 'ram', label: 'RAM', example: '16GB' },
-    { key: 'storage', label: 'Storage', example: '256GB SSD' },
-    { key: 'graphics', label: 'Graphics', example: 'Integrated' },
-    { key: 'screen', label: 'Screen', example: '14in 1080p' },
+    { key: 'ram', label: 'RAM', example: '16GB', unit: 'GB' },
+    { key: 'storage', label: 'Storage', example: '256GB SSD', unit: 'GB' },
+    { key: 'graphics', label: 'Graphics', example: 'Integrated', optional: true },
+    { key: 'screen', label: 'Screen', example: '14in 1080p', optional: true },
     { key: 'battery', label: 'Battery', example: 'Holds 4h' },
   ],
   desktops: [
     { key: 'processor', label: 'Processor', example: 'Core i7-8700' },
-    { key: 'ram', label: 'RAM', example: '16GB' },
-    { key: 'storage', label: 'Storage', example: '512GB SSD' },
-    { key: 'graphics', label: 'Graphics', example: 'GTX 1660' },
-    { key: 'formFactor', label: 'Form factor', example: 'Tower' },
+    { key: 'ram', label: 'RAM', example: '16GB', unit: 'GB' },
+    { key: 'storage', label: 'Storage', example: '512GB SSD', unit: 'GB' },
+    { key: 'graphics', label: 'Graphics', example: 'GTX 1660', optional: true },
+    { key: 'formFactor', label: 'Form factor', example: 'Tower', optional: true },
   ],
   phones: [
-    { key: 'storage', label: 'Storage', example: '128GB' },
-    { key: 'ram', label: 'RAM', example: '6GB' },
+    { key: 'storage', label: 'Storage', example: '128GB', unit: 'GB' },
+    { key: 'ram', label: 'RAM', example: '6GB', optional: true, unit: 'GB' },
     { key: 'battery', label: 'Battery', example: '89% health' },
     { key: 'colour', label: 'Colour', example: 'Black' },
   ],
   consoles: [
-    { key: 'storage', label: 'Storage', example: '1TB' },
-    { key: 'controllers', label: 'Controllers', example: '2' },
+    { key: 'storage', label: 'Storage', example: '1TB', unit: 'GB' },
+    { key: 'controllers', label: 'Controllers', example: '2', optional: true },
   ],
   parts: [
     { key: 'partType', label: 'Type', example: 'Graphics card' },
-    { key: 'capacity', label: 'Capacity', example: '8GB' },
+    { key: 'capacity', label: 'Capacity', example: '8GB', optional: true },
   ],
-  accessories: [{ key: 'colour', label: 'Colour', example: 'White' }],
+  accessories: [{ key: 'colour', label: 'Colour', example: 'White', optional: true }],
   other: [],
 };
 

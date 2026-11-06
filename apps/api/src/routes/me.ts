@@ -132,6 +132,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
       phone: t.stores.phone,
       verifiedAt: t.stores.verifiedAt,
       logo: t.stores.logo,
+      location: t.stores.location,
     })
     .from(t.storeMembers)
     .innerJoin(t.stores, eq(t.stores.id, t.storeMembers.storeId))
@@ -160,6 +161,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
   return {
     id: person.id,
     displayName: person.displayName,
+    ...(person.location ? { location: person.location } : {}),
     phone: person.phone ?? undefined,
     phoneVerified: person.phoneVerifiedAt !== null,
     role: person.role,

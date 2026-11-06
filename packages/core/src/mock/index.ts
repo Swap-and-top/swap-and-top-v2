@@ -5,3 +5,4 @@ export * from './leads';
 export * from './deals';
 export * from './stats';
 export * from './notifications';
+export * from './posters';
