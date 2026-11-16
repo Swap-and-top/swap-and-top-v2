@@ -132,7 +132,12 @@ These came from repeated feedback. Follow them without being asked.
 1. **Never commit or push unless asked.** The site deploys live from `main`.
    Make changes, verify them, report them as uncommitted, and wait.
 2. **Never create or delete a git branch without consent.** Work on
-   `redesign/pdf-style` unless told otherwise.
+   `dev` unless told otherwise. Three branches, each fast forwarded from
+   the one before (Hillary, 2026-11-16): `dev` (all work, tested on
+   localhost), then `staging` (the staging app on Dokploy, tested there),
+   then `main` (production). Never commit on `staging` or `main`
+   directly, and move each only when asked ("push to staging", "go
+   live").
 3. **One dev server.** Before previewing, check port 3000
    (`lsof -iTCP:3000 -sTCP:LISTEN`). If something listens, use
    http://localhost:3000. A second `next dev` shares `apps/web/.next` and
@@ -255,7 +260,7 @@ quotes, two spaces.
 
 ## Commit flow (only when asked)
 
-1. Check the branch (`redesign/pdf-style`).
+1. Check the branch (`dev`).
 2. `pnpm -s typecheck`.
 3. Production build in a throwaway worktree in the scratchpad, so the
    running dev server's `.next` is untouched:
@@ -270,8 +275,13 @@ quotes, two spaces.
 4. `git add -A` (check no `.env` file is listed), commit with a plain
    sentence subject and a short body, ending with the attribution line the
    session asks for.
-5. Push the branch; check `git merge-base --is-ancestor origin/main HEAD`;
-   `git checkout main && git merge --ff-only redesign/pdf-style`;
-   push `main`; check out `redesign/pdf-style` again.
-6. Wait for Vercel (about five minutes) and check the live site answers the
-   new pages or endpoints before saying it is live.
+5. Push `dev`. That is all, unless asked for more.
+6. "Push to staging": `git checkout staging && git merge --ff-only dev`,
+   push `staging`, check out `dev` again. Dokploy rebuilds the staging
+   app; check it answers before saying it is there.
+7. "Go live", only after staging was tested: check
+   `git merge-base --is-ancestor origin/main staging`;
+   `git checkout main && git merge --ff-only staging`; push `main`;
+   check out `dev` again. Wait for the build (Vercel, about five
+   minutes, until production moves to Dokploy) and check the live site
+   answers the new pages or endpoints before saying it is live.

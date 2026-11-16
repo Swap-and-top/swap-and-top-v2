@@ -23,8 +23,16 @@ if (!process.env.DATABASE_URL) {
  */
 const shared = globalThis as { sntSql?: ReturnType<typeof postgres> };
 
-export const sql = (shared.sntSql ??= postgres(process.env.DATABASE_URL ?? '', {
-  ssl: 'require',
+/**
+ * Supabase is reached over the internet, so SSL is asked for. Our own
+ * Postgres sits on the same server as the site and has none: its address
+ * says so by ending in `?sslmode=disable`.
+ */
+const url = process.env.DATABASE_URL ?? '';
+const ssl = /[?&]sslmode=disable\b/.test(url) ? false : 'require';
+
+export const sql = (shared.sntSql ??= postgres(url, {
+  ssl,
   prepare: false,
   // One each on Vercel, and while a production build makes pages in several
   // workers at once.
