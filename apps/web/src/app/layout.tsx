@@ -84,7 +84,7 @@ export const viewport: Viewport = {
 };
 
 /**
- * Before the first paint: marks <html> as signed in when Supabase has a
+ * Before the first paint: marks <html> as signed in when this browser has an
  * session saved in this browser, and as banned when that account is the
  * one this browser last saw banned, so the header draws the bell and the account circle (or their
  * faded banned look) straight away. SessionRestore and BannedGate keep the
@@ -98,7 +98,7 @@ export const viewport: Viewport = {
 const UMAMI_SCRIPT = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
 const UMAMI_SITE = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
 
-const MARK_SESSION = `try{var h=document.documentElement,k=Object.keys(localStorage).filter(function(x){return x.indexOf('sb-')===0&&/-auth-token$/.test(x)})[0];if(k){h.setAttribute('data-signed-in','');var u=(JSON.parse(localStorage.getItem(k))||{}).user;if(u&&u.id&&localStorage.getItem('snt-banned')===u.id)h.setAttribute('data-banned','')}}catch(e){}`;
+const MARK_SESSION = `try{var h=document.documentElement,u=localStorage.getItem('snt-account');if(u){h.setAttribute('data-signed-in','');if(localStorage.getItem('snt-banned')===u)h.setAttribute('data-banned','')}}catch(e){}`;
 
 export default function RootLayout({
   children,

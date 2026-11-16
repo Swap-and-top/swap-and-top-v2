@@ -11,7 +11,7 @@
  * were doing carries on.
  *
  * SMS is not set up yet, so no SMS is sent and the code is a mock one, said
- * under the box (MOCK_CODE in apps/api/src/supabaseAdmin.ts).
+ * under the box (MOCK_CODE in apps/api/src/messages.ts).
  */
 
 import { useState, type FormEvent } from 'react';
@@ -24,7 +24,7 @@ import {
 } from '@snt/core';
 import { Button, Field, Sheet, Stack, useCloseSheet } from '@snt/ui';
 import { apiSend } from '@/lib/query';
-import { toPhone } from '@/lib/supabase';
+import { toPhone } from '@/lib/account';
 import { setViewerData } from '@/lib/viewer';
 import styles from './VerifyPhone.module.css';
 

@@ -6,7 +6,7 @@
  * someone whose email is not verified yet.
  *
  * Email is not set up yet, so no email is sent and the code is a mock one,
- * said on the card (MOCK_CODE in apps/api/src/supabaseAdmin.ts). Once it is
+ * said on the card (MOCK_CODE in apps/api/src/messages.ts). Once it is
  * verified they are signed in with the password they just typed.
  */
 
@@ -14,8 +14,7 @@ import { useState, type FormEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Spinner } from '@snt/ui';
-import { publicSend } from '@/lib/query';
-import { supabase } from '@/lib/supabase';
+import { signInWithEmail, verifyEmailCode } from '@/lib/account';
 import styles from './SignInPage.module.css';
 
 /** The mock code, until real email is set up. */
@@ -36,8 +35,8 @@ export function VerifyEmailStep({
   /** Verifies the code, then signs them in with the password just typed. */
   const verifyCode = useMutation({
     mutationFn: async () => {
-      await publicSend('/auth/verify-email', { email, code: code.trim() });
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (!(await verifyEmailCode(email, code.trim()))) throw new Error('That code is not right.');
+      const { error } = await signInWithEmail(email, password);
       // Verified, but the sign in did not take: they sign in themselves.
       if (error) throw new Error('Your email is verified. Sign in to carry on.');
     },

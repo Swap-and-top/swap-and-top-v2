@@ -17,17 +17,11 @@ COPY . .
 RUN pnpm install --frozen-lockfile --offline
 
 # Baked into the pages by Next, so they are needed while building.
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
 # The build reads the database to make the feed, listing and store pages
 # ahead. Used only in this stage; the image that runs has none of them.
 ARG DATABASE_URL
-ARG SUPABASE_URL
-ARG SUPABASE_PUBLISHABLE_KEY
-ARG SUPABASE_SECRET_KEY
-ARG SUPABASE_JWKS_URL
 # Photos' public address, for the pages made ahead (their photos' links).
 ARG R2_PUBLIC_URL
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -41,7 +35,8 @@ ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0 \
     APP_ENV=production \
-    APP_HOST=Dokploy
+    APP_HOST=Dokploy \
+    MIGRATIONS_DIR=/app/apps/api/drizzle
 # Which deploy is running, for the Staff console's Health page.
 ARG COMMIT_SHA
 ARG COMMIT_MESSAGE
@@ -53,6 +48,8 @@ ENV COMMIT_SHA=$COMMIT_SHA \
 COPY --from=build --chown=node:node /repo/apps/web/.next/standalone ./
 COPY --from=build --chown=node:node /repo/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build --chown=node:node /repo/apps/web/public ./apps/web/public
+# The table changes, applied as the server starts (apps/api/src/db/migrate.ts).
+COPY --from=build --chown=node:node /repo/apps/api/drizzle ./apps/api/drizzle
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \

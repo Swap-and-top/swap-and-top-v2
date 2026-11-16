@@ -13,7 +13,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx src/db/seed.ts",
     "clean": "rm -rf .turbo node_modules *.tsbuildinfo",
-    "db:seed-activity": "tsx src/db/seedActivityRun.ts"
+    "db:seed-activity": "tsx src/db/seedActivityRun.ts",
+    "db:import-accounts": "tsx src/db/importAccounts.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.4",
@@ -27,15 +28,17 @@
     "@hono/zod-openapi": "1.6.3",
     "@snt/core": "workspace:*",
     "aws4fetch": "1.0.20",
+    "bcryptjs": "3.0.3",
+    "better-auth": "1.7.25",
     "drizzle-orm": "0.45.4",
     "hono": "4.13.14",
-    "jose": "^6.2.13",
     "postgres": "3.4.9",
     "zod": "4.6.7"
   },
   "exports": {
     "./vercel": "./src/vercel.ts",
     "./listings": "./src/listings.ts",
+    "./migrate": "./src/db/migrate.ts",
     "./stores": "./src/routes/stores.ts"
   }
 }

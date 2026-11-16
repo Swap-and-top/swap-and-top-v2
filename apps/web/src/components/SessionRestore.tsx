@@ -1,9 +1,10 @@
 'use client';
 
 /**
- * Keeps the session store in step with Supabase Auth. Supabase brings back a
- * remembered sign in as the app loads, and says whenever someone signs in or
- * out (the one effect here: it listens, it loads nothing). Who it is
+ * Keeps the session store in step with who is signed in (lib/account.ts):
+ * the account this browser has noted as the app loads, and whenever someone
+ * signs in or out, here or in another tab (the one effect here: it listens,
+ * it loads nothing). Who it is
  * (GET /api/me) and then what is theirs (lib/accountData: offers, deals,
  * saved listings, notifications, boosts) are TanStack Queries: tried again
  * when the server cannot be reached, read again now and then (so a ban, say,
@@ -19,26 +20,23 @@ import { useSessionStore, type Viewer } from '@snt/core';
 import { clearAccountData, loadAccountData } from '@/lib/accountData';
 import { noteFirstSource, sendFirstSource } from '@/lib/firstSource';
 import { apiGet } from '@/lib/query';
-import { supabase } from '@/lib/supabase';
+import { onAccountChange, savedAccountId, signOut } from '@/lib/account';
 import { viewerKey } from '@/lib/viewer';
 
 export function SessionRestore() {
-  /** The Supabase user signed in, once Supabase has said. */
+  /** The account signed in, once this browser's note is read. */
   const [authUserId, setAuthUserId] = useState<string | undefined>();
 
-  // Before the first paint: if Supabase has a session saved in this browser,
-  // draw signed in straight away rather than flashing the signed out page.
+  // Before the first paint: if an account is noted as signed in here, draw
+  // signed in straight away rather than flashing the signed out page.
   useLayoutEffect(() => {
     try {
       // The old stand in session, from before real sign in.
       localStorage.removeItem('snt-session');
-      const saved = Object.keys(localStorage).some(
-        (key) => key.startsWith('sb-') && key.endsWith('-auth-token'),
-      );
-      if (saved) useSessionStore.setState({ signedIn: true });
     } catch {
-      // No storage: Supabase will say soon enough.
+      // No storage.
     }
+    if (savedAccountId()) useSessionStore.setState({ signedIn: true });
   }, []);
 
   useEffect(() => {
@@ -46,18 +44,18 @@ export function SessionRestore() {
     noteFirstSource();
     useSessionStore.setState({
       signOut: () =>
-        void supabase.auth.signOut().then(({ error }) => {
-          if (!error) toast.success('Signed out successfully');
+        void signOut().then((done) => {
+          if (done) toast.success('Signed out successfully');
         }),
     });
 
     let current: string | undefined;
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    return onAccountChange((accountId, why) => {
       // The mark the header reads from the first paint (see the layout).
       const html = document.documentElement;
-      if (session) html.setAttribute('data-signed-in', '');
+      if (accountId) html.setAttribute('data-signed-in', '');
       else html.removeAttribute('data-signed-in');
-      if (!session) {
+      if (!accountId) {
         current = undefined;
         setAuthUserId(undefined);
         clearAccountData();
@@ -73,28 +71,26 @@ export function SessionRestore() {
           viewer: null,
           viewerFailed: false,
           restored: true,
-          ...(event === 'SIGNED_OUT' ? { signedOutAt: Date.now() } : {}),
+          ...(why === 'signed-out' ? { signedOutAt: Date.now() } : {}),
         });
         return;
       }
       // Someone else signing in: drop the last name until the API answers,
-      // and the banned mark unless the ban was theirs. A token refreshed for
-      // the same person changes nothing.
-      const changed = session.user.id !== current;
+      // and the banned mark unless the ban was theirs.
+      const changed = accountId !== current;
       try {
-        if (localStorage.getItem('snt-banned') !== session.user.id) html.removeAttribute('data-banned');
+        if (localStorage.getItem('snt-banned') !== accountId) html.removeAttribute('data-banned');
       } catch {
         // No storage.
       }
-      current = session.user.id;
-      setAuthUserId(session.user.id);
+      current = accountId;
+      setAuthUserId(accountId);
       useSessionStore.setState({
         signedIn: true,
         restored: true,
         ...(changed ? { viewer: null, viewerFailed: false } : {}),
       });
     });
-    return () => data.subscription.unsubscribe();
   }, []);
 
   const viewer = useQuery({

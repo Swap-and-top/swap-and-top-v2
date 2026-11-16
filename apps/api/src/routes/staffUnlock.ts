@@ -86,7 +86,7 @@ staffUnlockRoutes.openapi(unlock, async (c) => {
     return c.json({ error: `Too many wrong passwords. Wait ${WINDOW_MINUTES} minutes, then try again.`, code: 'wait' }, 429);
   }
 
-  if (!(await passwordIsRight({ email: user.email, phone: user.phone }, password))) {
+  if (!(await passwordIsRight(user.id, password))) {
     await db.insert(t.staffLog).values({ actorId: person.id, action: 'staff.unlock-failed', detail: {} });
     return c.json({ error: 'That is not your password.', code: 'wrong-password' }, 400);
   }

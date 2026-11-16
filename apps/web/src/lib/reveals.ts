@@ -8,7 +8,6 @@
  */
 
 import type { ContactWay } from '@snt/core';
-import { supabase } from './supabase';
 
 const DEVICE_KEY = 'snt-device';
 
@@ -48,14 +47,11 @@ export async function recordReveal(
   listingId: string,
   way: ContactWay,
 ): Promise<{ limited?: string; refused?: string; failed?: string; contact?: RevealedContact | null }> {
-  const { data } = await supabase.auth.getSession();
-  const token = data.session?.access_token;
   const response = await fetch(`/api/listings/${encodeURIComponent(listingId)}/reveals`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-Device': deviceId(),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ way }),
   }).catch(() => null);
@@ -78,13 +74,10 @@ export async function recordReveal(
 export async function revealStoreContact(
   storeId: string,
 ): Promise<{ limited?: string; failed?: string; contact?: RevealedContact | null }> {
-  const { data } = await supabase.auth.getSession();
-  const token = data.session?.access_token;
   const response = await fetch(`/api/stores/${encodeURIComponent(storeId)}/contact`, {
     method: 'POST',
     headers: {
       'X-Device': deviceId(),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   }).catch(() => null);
   if (!response) return { failed: FAILED };

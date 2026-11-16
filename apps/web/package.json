@@ -16,7 +16,6 @@
     "@snt/assets": "workspace:*",
     "@snt/core": "workspace:*",
     "@snt/ui": "workspace:*",
-    "@supabase/supabase-js": "^2.118.0",
     "@tanstack/react-query": "^5.105.0",
     "next": "^15.1.3",
     "react": "^19.0.0",

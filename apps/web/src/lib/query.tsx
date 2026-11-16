@@ -19,7 +19,7 @@ import { MutationObserver, QueryCache, QueryClient, QueryClientProvider } from '
 import { useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { Button, Panel, Stack } from '@snt/ui';
-import { apiAsViewer } from './supabase';
+import { apiAsViewer } from './account';
 import styles from './query.module.css';
 
 export class ApiError extends Error {

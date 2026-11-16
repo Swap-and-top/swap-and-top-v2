@@ -7,8 +7,9 @@
 import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { cors } from 'hono/cors';
-import { verify } from './auth';
+import { auth } from './accounts';
 import { accountRoutes } from './routes/account';
+import { verify } from './auth';
 import { dealRoutes } from './routes/deals';
 import { healthRoutes } from './routes/health';
 import { listingRoutes } from './routes/listings';
@@ -58,8 +59,7 @@ app.use('*', cors({ origin: ['http://localhost:3000'] }));
 // the ban (the web app shows them only that page).
 const BANNED_MAY = [/^\/api\/me$/, /^\/api\/me\/actions\/[^/]+(\/appeal)?$/];
 app.use('*', async (c, next) => {
-  const header = c.req.header('Authorization') ?? '';
-  const user = header.startsWith('Bearer ') ? await verify(header.slice(7)) : null;
+  const user = await verify(c.req.raw);
   if (user && !BANNED_MAY.some((path) => path.test(c.req.path))) {
     const person = await personFor(user);
     if (person.standing === 'banned') return c.json({ error: 'Your account is banned.', code: 'banned' }, 403);
@@ -77,8 +77,7 @@ app.use('*', async (c, next) => {
 const STAFF_PATH = /^\/api\/(staff|admin)\//;
 app.use('*', async (c, next) => {
   if (!STAFF_PATH.test(c.req.path) || c.req.path === '/api/staff/unlock') return next();
-  const header = c.req.header('Authorization') ?? '';
-  const user = header.startsWith('Bearer ') ? await verify(header.slice(7)) : null;
+  const user = await verify(c.req.raw);
   // No sign in: the route itself says so.
   if (!user) return next();
   const person = await personFor(user);
@@ -87,6 +86,9 @@ app.use('*', async (c, next) => {
   }
   await next();
 });
+
+// Sign in, sign up and sessions: Better Auth's own endpoints (accounts.ts).
+app.on(['GET', 'POST'], '/auth/*', (c) => auth.handler(c.req.raw));
 
 app.route('/', healthRoutes);
 app.route('/', staffUnlockRoutes);
@@ -118,12 +120,11 @@ app.route('/', userRoutes);
 app.route('/', appealRoutes);
 app.route('/', activityRoutes);
 
-// Endpoints for an account take the Supabase sign in token.
+// Endpoints for an account take the sign in's cookie, or its token.
 app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {
   type: 'http',
   scheme: 'bearer',
-  bearerFormat: 'JWT',
-});
+  });
 
 app.doc31('/openapi.json', {
   openapi: '3.1.0',
@@ -131,7 +132,7 @@ app.doc31('/openapi.json', {
     title: 'Swap & Top API',
     version: '0.1.0',
     description:
-      'The system of record for Swap & Top. Public endpoints need no sign in. Endpoints for an account take the Supabase sign in token as a Bearer token.',
+      'The system of record for Swap & Top. Public endpoints need no sign in. Endpoints for an account take the sign in cookie the site sets, or the session token as a Bearer token.',
   },
 });
 

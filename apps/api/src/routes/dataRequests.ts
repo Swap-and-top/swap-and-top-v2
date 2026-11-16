@@ -27,7 +27,6 @@ import { db } from '../db/client';
 import * as t from '../db/schema';
 import { actorOf, mayActOn, targetsOf, type Actor, type Target } from '../moderation';
 import { ErrorSchema } from '../schemas';
-import { supabaseAdmin } from '../supabaseAdmin';
 import { personFor } from './me';
 import { deletePhotos } from '../r2';
 
@@ -346,8 +345,11 @@ dataRequestRoutes.openapi(remove, async (c) => {
 
   // Their sign in, last: if this fails the row still turns them away.
   if (person?.authUserId) {
-    const gone = await supabaseAdmin(`/users/${person.authUserId}`, 'DELETE', {}).catch(() => null);
-    if (!gone?.ok) console.warn(`Could not delete the sign in of ${id}.`);
+    // Its sessions and password go with it.
+    await db
+      .delete(t.authUsers)
+      .where(eq(t.authUsers.id, person.authUserId))
+      .catch(() => console.warn(`Could not delete the sign in of ${id}.`));
   }
   return c.json({ ok: true }, 200);
 });

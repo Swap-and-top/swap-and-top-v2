@@ -6,24 +6,29 @@
  * & Top / password", then its success, "Password reset for / Swap & Top /
  * was successful!".
  *
- * The link signs the visitor in for this one purpose (Supabase reads it from
- * the address as the page loads). They choose a new password and carry on
- * signed in. A link that has expired or was used says so, with a way back.
+ * The link carries a token, good for an hour and for one use, read from
+ * the address as the page loads. They choose a new password, which signs
+ * every device out, and then sign in with it. A link that has expired or
+ * was used says so, with a way back.
  */
 
 import { useEffect, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { ButtonLink, EyeClosed, EyeOpen, Spinner } from '@snt/ui';
 import { CheckIcon } from '@snt/ui/icons';
-import { supabase } from '@/lib/supabase';
+import { resetPassword } from '@/lib/account';
 import { AuthLayout } from '../AuthLayout';
 import styles from '../SignInPage.module.css';
 
 const picture = { hero: '/signin/key-hero.png', icon: '/signin/key.png' };
 
 export function ResetPage() {
-  /** Whether the link worked: unknown until Supabase has read it. */
-  const [linked, setLinked] = useState<boolean | null>(null);
+  /** The link's token, read from the address: none is a link that cannot
+      work. Unknown until read. */
+  const [token, setToken] = useState<string | null | undefined>();
+  /** The API said the link is used up or too old. */
+  const [expired, setExpired] = useState(false);
+  const linked = token === undefined ? null : Boolean(token) && !expired;
   const [password, setPassword] = useState('');
   const [again, setAgain] = useState('');
   /** Each box's eye: whether what is typed is on show. */
@@ -33,14 +38,7 @@ export function ResetPage() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (window.location.hash.includes('error')) {
-      setLinked(false);
-      return;
-    }
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      setLinked(session !== null);
-    });
-    return () => data.subscription.unsubscribe();
+    setToken(new URLSearchParams(window.location.search).get('token'));
   }, []);
 
   async function save(event: FormEvent) {
@@ -53,17 +51,16 @@ export function ResetPage() {
       toast.error('The two passwords do not match.');
       return;
     }
+    if (!token) return;
     setBusy(true);
-    const { error } = await supabase.auth.updateUser({ password });
+    const saved = await resetPassword(token, password);
     setBusy(false);
-    if (error) {
-      toast.error(
-        error.code === 'weak_password'
-          ? 'Choose a longer password, at least 8 characters.'
-          : error.code === 'same_password'
-            ? 'Choose a password you have not used before.'
-            : 'We could not save it. Try again in a minute.',
-      );
+    if (saved === 'expired') {
+      setExpired(true);
+      return;
+    }
+    if (saved === 'failed') {
+      toast.error('We could not save it. Try again in a minute.');
       return;
     }
     setDone(true);
@@ -76,9 +73,9 @@ export function ResetPage() {
           <CheckIcon size={32} />
         </span>
         <h1 className={styles.lead}>Password reset successful</h1>
-        <p className={styles.sent}>Your new password is saved, and you are signed in.</p>
-        <ButtonLink href="/" size="lg" block>
-          Continue
+        <p className={styles.sent}>Your new password is saved. Sign in with it to carry on.</p>
+        <ButtonLink href="/signin" size="lg" block>
+          Sign in
         </ButtonLink>
       </AuthLayout>
     );

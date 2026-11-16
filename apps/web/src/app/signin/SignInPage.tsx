@@ -8,7 +8,7 @@
  * from tablet up the card on the brand gradient beside "Sign in to / Swap &
  * Top" over the large 3D scene; the footer under.
  *
- * Two ways in, through Supabase Auth, the same height so the card does not
+ * Two ways in (lib/account.ts), the same height so the card does not
  * jump between them:
  *
  * - Email (on show first): the email and password they signed up with, or
@@ -38,7 +38,7 @@ import {
   startPageLoad,
 } from '@snt/ui';
 import { MailIcon, PhoneIcon } from '@snt/ui/icons';
-import { supabase, toPhone } from '@/lib/supabase';
+import { sendPhoneCode, signInWithEmail as signInByEmail, signInWithPhoneCode, signOut, toPhone } from '@/lib/account';
 import { toastOnArrival } from '@/components/SignInToast';
 import { AuthLayout } from './AuthLayout';
 import { VerifyEmailStep } from './VerifyEmail';
@@ -86,7 +86,7 @@ export function SignInPage({ next }: { next: string }) {
       router.push(next);
     };
     const fail = () => {
-      void supabase.auth.signOut();
+      void signOut();
       setBusy(false);
       // From the email code step too: back to the card, to sign in again.
       setVerifying(false);
@@ -114,9 +114,9 @@ export function SignInPage({ next }: { next: string }) {
       return;
     }
     setBusy(true);
-    const { error } = await supabase.auth.signInWithOtp({ phone: to });
+    const sent = await sendPhoneCode(to);
     setBusy(false);
-    if (error) {
+    if (!sent) {
       toast.error('We could not send a code to that number. Try again in a minute.');
       return;
     }
@@ -127,12 +127,8 @@ export function SignInPage({ next }: { next: string }) {
   async function checkCode() {
     if (!phone) return;
     setBusy(true);
-    const { error } = await supabase.auth.verifyOtp({
-      phone,
-      token: code.trim(),
-      type: 'sms',
-    });
-    if (error) {
+    const signed = await signInWithPhoneCode(phone, code.trim());
+    if (!signed) {
       setBusy(false);
       toast.error('That code is not right. Check it and try again.');
       return;
@@ -147,11 +143,8 @@ export function SignInPage({ next }: { next: string }) {
     const givenPassword = password || passwordBox.current?.value || '';
     if (!givenEmail || !givenPassword) return;
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: givenEmail,
-      password: givenPassword,
-    });
-    if (error?.code === 'email_not_confirmed') {
+    const { error } = await signInByEmail(givenEmail, givenPassword);
+    if (error === 'unverified') {
       // As the first app did: the card asks for the email's code first.
       setBusy(false);
       setVerifying(true);
@@ -159,7 +152,11 @@ export function SignInPage({ next }: { next: string }) {
     }
     if (error) {
       setBusy(false);
-      toast.error('That email and password do not match an account.');
+      toast.error(
+        error === 'wrong'
+          ? 'That email and password do not match an account.'
+          : 'We could not sign you in. Check your connection and try again.',
+      );
       return;
     }
     signedIn();

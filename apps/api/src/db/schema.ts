@@ -62,7 +62,7 @@ export const people = pgTable(
   'people',
   {
     id: id(),
-    /** The Supabase Auth user, linked at first sign in. */
+    /** The account (`authUsers.id`), linked at first sign in. */
     authUserId: uuid().unique(),
     /** The identity anchor, in international form: +263771234567. */
     phone: text().unique(),
@@ -896,4 +896,86 @@ export const requestIssueMonths = pgTable(
     totalMs: integer().notNull().default(0),
   },
   (t) => [primaryKey({ columns: [t.month, t.route, t.kind] })],
+).enableRLS();
+
+/* ── Sign in ──────────────────────────────────────────────────────────── */
+
+/**
+ * Accounts and sign in, kept by Better Auth (../accounts.ts): our own, in
+ * our own database. These four tables are its, in the shape it asks for;
+ * everything about a user as the platform knows them is in `people`, tied
+ * to the account by `people.authUserId`.
+ *
+ * An account that signed up by phone has a stand in email (Better Auth
+ * needs one), never shown and never written to.
+ */
+export const authUsers = pgTable('auth_users', {
+  id: uuid().primaryKey(),
+  /** The full name given at sign up; `people.displayName` is what is shown. */
+  name: text().notNull(),
+  email: text().notNull().unique(),
+  emailVerified: boolean().notNull().default(false),
+  image: text(),
+  /** In international form: +263771234567. */
+  phoneNumber: text().unique(),
+  phoneNumberVerified: boolean(),
+  /** Their neighbourhood and town from sign up: "Mbare, Harare". */
+  location: text(),
+  createdAt: createdAt(),
+  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+}).enableRLS();
+
+/** One sign in on one device, ended by signing out or by its date. */
+export const authSessions = pgTable(
+  'auth_sessions',
+  {
+    id: text().primaryKey(),
+    userId: uuid()
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    token: text().notNull().unique(),
+    expiresAt: timestamp({ withTimezone: true }).notNull(),
+    ipAddress: text(),
+    userAgent: text(),
+    createdAt: createdAt(),
+    updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index().on(t.userId)],
+).enableRLS();
+
+/** How an account signs in: its password, hashed. */
+export const authAccounts = pgTable(
+  'auth_accounts',
+  {
+    id: text().primaryKey(),
+    userId: uuid()
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    accountId: text().notNull(),
+    providerId: text().notNull(),
+    password: text(),
+    accessToken: text(),
+    refreshToken: text(),
+    idToken: text(),
+    accessTokenExpiresAt: timestamp({ withTimezone: true }),
+    refreshTokenExpiresAt: timestamp({ withTimezone: true }),
+    scope: text(),
+    createdAt: createdAt(),
+    updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index().on(t.userId)],
+).enableRLS();
+
+/** Codes and links waiting to be used: an email code, a password reset. */
+export const authVerifications = pgTable(
+  'auth_verifications',
+  {
+    id: text().primaryKey(),
+    identifier: text().notNull(),
+    value: text().notNull(),
+    expiresAt: timestamp({ withTimezone: true }).notNull(),
+    createdAt: createdAt(),
+    updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index().on(t.identifier)],
 ).enableRLS();

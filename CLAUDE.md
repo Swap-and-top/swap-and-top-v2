@@ -105,6 +105,23 @@ endpoints are in `docs/architecture/backend-plan.md` ("Where it stands").
   the database keeps keys. Migration `0014` (stores' `logo`) is applied.
   The five `R2_...` settings must be in Vercel and Dokploy before this is
   deployed. Details in the handoff's "Photos on R2".
+- **Johannesburg server (2026-11-16):** an Oracle server (the partner's
+  account, 4 cores, 24 GB) with its own Dokploy at
+  `sntdokploy.gretaworksdigital.com`. The project there has a `staging`
+  environment (app on the `staging` branch at
+  `sntstaging.gretaworksdigital.com`, with its own Postgres 17 on the
+  same server) and an empty `production` one. Each environment has its
+  own database: dev is the Supabase one (still shared with the live
+  Vercel site until production moves), staging and production are on
+  the server. Details in the handoff's "Our own server, databases and
+  sign in".
+- **Our own sign in (built 2026-11-16, not committed):** Better Auth in
+  the API (`apps/api/src/accounts.ts`, endpoints under `/api/auth`,
+  tables `auth_...`, migration `0015` applied to dev), replacing
+  Supabase Auth. A sign in is a cookie the page cannot read; the browser
+  side is `apps/web/src/lib/account.ts`. Settings each environment
+  needs: `AUTH_SECRET`, `APP_URL` (and `RESEND_API_KEY`, `EMAIL_FROM`
+  once email is set up). Real email must be set up before production.
 - **Test data left in on purpose:** reports REP 2026 0014 to 0016 (0014
   and 0015 cleared by Hillary, 0016 open) and Farai D.'s ban and removed
   listing, and three test stores asking to be verified (Test Mbare
@@ -199,9 +216,12 @@ These came from repeated feedback. Follow them without being asked.
   (Hillary, 2026-10-30), so only a push to `main` builds and deploys;
   check it with `npx vercel ls`. `turbo.json` must list any new setting,
   or the build will not see it.
-- **Mock codes:** email and phone codes are 123456 until real email and SMS
-  are set up (`MOCK_CODE` in `apps/api/src/supabaseAdmin.ts`). Test phone
-  numbers 077 000 0001 to 0007 (see the handoff).
+- **Mock codes:** until real email and SMS are set up
+  (`apps/api/src/messages.ts`) the code is 123456: for any email, to
+  verify it and nothing else, and for the test phone numbers
+  (077 000 0001 to 0999) only. A real number cannot sign in by code
+  until SMS is set up. Off the live site a password reset link is
+  written to the server's log instead of being emailed.
 - **Connections:** Supabase's session pooler allows 15. One-off scripts use
   the transaction pooler (port 6543); the API keeps one pool across hot
   reloads and one connection per build worker.
@@ -224,10 +244,14 @@ These came from repeated feedback. Follow them without being asked.
 - **A new endpoint** goes in `apps/api/src/routes/<area>.ts` with a
   `createRoute` (so it shows in Swagger at `/api/docs`), is registered in
   `apps/api/src/app.ts`, and is called from the web app with `apiAsViewer`
-  (`apps/web/src/lib/supabase.ts`). Pages built on the server read the API's
+  (`apps/web/src/lib/account.ts`). Pages built on the server read the API's
   own functions (`apps/web/src/lib/listings.ts`, `stores.ts`), not HTTP.
-- **Migrations:** `db:generate` writes one; `db:migrate` changes the shared
-  (live) database, so ask the owner before running it, every time.
+- **Migrations:** `db:generate` writes one; `db:migrate` changes the dev
+  database (shared with the live Vercel site until production moves),
+  so ask the owner before running it, every time. On Dokploy the site
+  applies them itself as it starts (`apps/api/src/db/migrate.ts`), so
+  staging's tables change on "push to staging" and production's on "go
+  live".
 - **Payments are test ones** until a Paynow account is set up: store passes
   and boosts record a `payments` row with provider `test`, paid at once.
   Hillary will open the Paynow merchant account later; what then needs
@@ -236,8 +260,12 @@ These came from repeated feedback. Follow them without being asked.
   (`@snt/ui`), not the mock `currentStore`; its endpoints answer 402 with
   `code: 'pass'` when no pass covers now. Pages use the signed in person
   from `useSessionStore`, never the mock `currentUser`.
-- **Test what you build** against the API (curl with a test number's token)
-  and in the browser, then put the data back.
+- **Test what you build** against the API and in the browser, then put
+  the data back. For curl: sign in a test number
+  (`POST /api/auth/phone-number/send-otp`, then `/phone-number/verify`
+  with the code, both with an `Origin` header and a cookie jar), then
+  send the cookie jar, or the `token` it answers with as a Bearer token.
+  Delete the `auth_sessions` rows after.
 
 ## How the user works
 

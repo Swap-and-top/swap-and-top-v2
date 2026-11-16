@@ -8,20 +8,22 @@
  * (checked in app.ts), or is refused with `code: 'staff-key'`.
  *
  * The pass names the person it is for and when it ends, signed with a key
- * made from the server's own Supabase secret, so nothing new is set up. It
- * is not stored: changing that secret ends every pass.
+ * made from the server's own sign in secret (AUTH_SECRET), so nothing new
+ * is set up. It is not stored: changing that secret ends every pass.
  */
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { and, eq } from 'drizzle-orm';
+import { authSecret, passwordMatches } from './accounts';
+import { db } from './db/client';
+import * as t from './db/schema';
 
 /** How long a pass lasts: a working day. */
 export const STAFF_PASS_HOURS = 12;
 
 function signingKey(): Buffer {
-  const secret = process.env.SUPABASE_SECRET_KEY;
-  if (!secret) throw new Error('SUPABASE_SECRET_KEY is needed for the staff pass.');
   // Its own key, made from the secret, used for nothing else.
-  return createHmac('sha256', secret).update('snt-staff-pass').digest();
+  return createHmac('sha256', authSecret()).update('snt-staff-pass').digest();
 }
 
 const signOf = (body: string) => createHmac('sha256', signingKey()).update(body).digest('base64url');
@@ -47,24 +49,15 @@ export function staffPassValid(key: string | undefined, personId: string): boole
 }
 
 /**
- * Whether this is the account's password, asked of Supabase Auth as a sign
- * in would be (by its email, or its phone when it has none). Nothing is
- * kept from the answer.
+ * Whether this is the account's password: checked against the hash kept
+ * for the account, as a sign in would be. An account with no password
+ * (one that only ever signed in by phone code) has none to give.
  */
-export async function passwordIsRight(
-  account: { email: string | null; phone: string | null },
-  password: string,
-): Promise<boolean> {
-  const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = process.env;
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    throw new Error('SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are needed to check a password.');
-  }
-  const login = account.email ? { email: account.email } : account.phone ? { phone: account.phone } : null;
-  if (!login) return false;
-  const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-    method: 'POST',
-    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...login, password }),
-  }).catch(() => null);
-  return Boolean(response?.ok);
+export async function passwordIsRight(authUserId: string, password: string): Promise<boolean> {
+  const [account] = await db
+    .select({ password: t.authAccounts.password })
+    .from(t.authAccounts)
+    .where(and(eq(t.authAccounts.userId, authUserId), eq(t.authAccounts.providerId, 'credential')));
+  if (!account?.password) return false;
+  return passwordMatches(account.password, password).catch(() => false);
 }

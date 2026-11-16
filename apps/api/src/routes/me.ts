@@ -1,5 +1,5 @@
 /**
- * The signed in person. The first time a phone signs in, the Supabase user is
+ * The signed in person. The first time a phone signs in, the account is
  * linked to the person with that phone (the test accounts, or anyone added
  * before); anyone else signing in for the first time becomes a new person.
  *
@@ -10,14 +10,15 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, isNull, ne } from 'drizzle-orm';
+import { hashOf } from '../accounts';
 import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
 import { dayMonth, paidUntil, settlePasses } from '../passes';
 import { isLiveTestAccount, staffOf } from '../staff';
 import { ErrorSchema, MeSchema } from '../schemas';
-import { MOCK_CODE, supabaseAdmin } from '../supabaseAdmin';
+import { MOCK_CODE } from '../messages';
 import { photoUrl } from '../r2';
 
 export const meRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
@@ -281,12 +282,15 @@ meRoutes.openapi(phone, async (c) => {
   const [other] = await db.select({ id: t.people.id }).from(t.people).where(eq(t.people.phone, number));
   if (other && other.id !== person.id) return c.json({ error: taken }, 409);
   // On the sign in too, so they can also sign in with it.
-  const auth = await supabaseAdmin(`/users/${user.id}`, 'PUT', {
-    phone: number.slice(1),
-    phone_confirm: true,
-  });
-  if (auth.code === 'phone_exists' || auth.status === 422) return c.json({ error: taken }, 409);
-  if (!auth.ok) throw new Error(`Saving the phone failed: ${auth.status}`);
+  const [onAnother] = await db
+    .select({ id: t.authUsers.id })
+    .from(t.authUsers)
+    .where(and(eq(t.authUsers.phoneNumber, number), ne(t.authUsers.id, user.id)));
+  if (onAnother) return c.json({ error: taken }, 409);
+  await db
+    .update(t.authUsers)
+    .set({ phoneNumber: number, phoneNumberVerified: true, updatedAt: new Date() })
+    .where(eq(t.authUsers.id, user.id));
   const [updated] = await db
     .update(t.people)
     .set({ phone: number, phoneVerifiedAt: new Date() })
@@ -294,4 +298,53 @@ meRoutes.openapi(phone, async (c) => {
     .returning();
   rememberPerson(user.id, updated!);
   return c.json(await viewerOut(updated!), 200);
+});
+
+const password = createRoute({
+  method: 'put',
+  path: '/me/password',
+  tags: ['Account'],
+  summary: 'Set the password you sign in with',
+  description:
+    'For Settings. Someone who joined by phone sets their first password here; anyone else changes theirs.',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            password: z.string().min(8, 'Choose a longer password, at least 8 characters.').max(200),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: { description: 'Saved', content: { 'application/json': { schema: z.object({ ok: z.boolean() }) } } },
+    400: { description: 'Too short a password', content: { 'application/json': { schema: ErrorSchema } } },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+meRoutes.openapi(password, async (c) => {
+  const user = c.get('authUser');
+  const hash = await hashOf(c.req.valid('json').password);
+  const mine = and(eq(t.authAccounts.userId, user.id), eq(t.authAccounts.providerId, 'credential'));
+  const [changed] = await db
+    .update(t.authAccounts)
+    .set({ password: hash, updatedAt: new Date() })
+    .where(mine)
+    .returning({ id: t.authAccounts.id });
+  // Joined by phone: their first password.
+  if (!changed) {
+    await db.insert(t.authAccounts).values({
+      id: crypto.randomUUID(),
+      userId: user.id,
+      accountId: user.id,
+      providerId: 'credential',
+      password: hash,
+    });
+  }
+  return c.json({ ok: true }, 200);
 });

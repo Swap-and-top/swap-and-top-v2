@@ -24,7 +24,7 @@ import {
   type Sponsorship,
 } from '@snt/core';
 import { apiSend, refreshAccount, runMutation } from './query';
-import { apiAsViewer } from './supabase';
+import { apiAsViewer } from './account';
 
 /**
  * The shared stores' server calls. Each store shows its change at once and

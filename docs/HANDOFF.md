@@ -1226,6 +1226,111 @@ Before real users join:
 - Test data: none left behind. `db:seed-activity` puts back the sample
   offers, deal checks, saved listings, notifications and boosts.
 
+## Our own server, databases and sign in (2026-11-16)
+
+Hillary wants everything hosted on servers she controls, with outside
+services only where there is no other way (sending email and SMS,
+payments). What is set up, and what is built but not yet committed:
+
+**Branches.** `dev` (all work, localhost), fast forwarded to `staging`
+(tested on the staging site), fast forwarded to `main` (production).
+Each move only when Hillary says. `redesign/pdf-style` is no longer used.
+
+**The Johannesburg server.** Oracle, in the partner's account (South
+Africa Central), VM.Standard.A1.Flex with 4 cores and 24 GB, Ubuntu 24.04,
+reserved public IP. Ports 80 and 443 are open in Oracle's security list
+and in the server's own firewall (iptables, saved with
+netfilter-persistent). Its own Dokploy is at
+`https://sntdokploy.gretaworksdigital.com` (grey cloud in Cloudflare, so
+Let's Encrypt renews). The Phoenix server on Hillary's personal account
+is to be deleted once nothing uses it; a small Melbourne server on that
+account is planned for monitoring (Uptime Kuma, perhaps Beszel).
+
+**Dokploy project "Swap and Top".** Two environments:
+- `staging`: the app on branch `staging`, Dockerfile build, at
+  `https://sntstaging.gretaworksdigital.com`, and Postgres 17 (`snt-db`,
+  database and user `snt`). The app's `DATABASE_URL` is the database's
+  internal address ending `?sslmode=disable`; the build argument
+  `DATABASE_URL` is `10.0.0.224:5433` (the server's private address and
+  the database's external port), also ending `?sslmode=disable`, because
+  a build cannot see the internal name. One firewall rule lets build
+  containers reach it: `iptables -I INPUT 1 -i docker0 -p tcp --dport
+  5433 -j ACCEPT`. Oracle's security list keeps 5433 closed to the
+  internet.
+- `production`: empty until go live. It gets its own Postgres (its
+  external port must differ, say 5434, with the same firewall rule for
+  that port), the app on `main`, the final domain, and nightly backups
+  to a private R2 bucket (Dokploy's own backups), with one practice
+  restore.
+
+**Databases.** One per environment. Dev is the Supabase database (still
+shared with the live Vercel site until production moves). Staging's was
+filled on 2026-11-16 with `pg_dump --schema=public --schema=drizzle`
+from Supabase. `apps/api/src/db/client.ts` connects without SSL when the
+address ends `?sslmode=disable`, with SSL otherwise.
+
+**Table changes on the server.** The image carries `apps/api/drizzle`
+and sets `MIGRATIONS_DIR`; as the site starts
+(`apps/web/src/instrumentation.ts`) it applies what is new
+(`apps/api/src/db/migrate.ts`). Not yet seen running on the server: the
+first push to staging with migration `0015` is its first test.
+
+**Our own sign in (built, tested on localhost, not committed).** Better
+Auth 1.7 inside the API, in place of Supabase Auth:
+- `apps/api/src/accounts.ts`: the set up. Email and password (an email
+  is verified with a code first), phone and a code (a new number makes
+  an account, with a stand in email Better Auth needs, never shown),
+  password reset by an emailed link, change of email by a code sent to
+  the new one. Signing in by an email code and resetting by a code are
+  switched off (`disabledPaths`): with the mock code they would open
+  any account.
+- Tables `auth_users`, `auth_sessions`, `auth_accounts`,
+  `auth_verifications` (migration `0015`, applied to dev). Row level
+  security is on, as for every table, so Supabase's public key cannot
+  read them. `people.auth_user_id` is the account's id, as before.
+- `apps/api/src/auth.ts`: `verify(request)` reads the session from the
+  cookie (or a Bearer token, for scripts). The cookie carries a signed
+  copy good for five minutes, so most requests make no trip to the
+  database for it.
+- `apps/api/src/messages.ts`: codes and email. Email goes through Resend
+  once `RESEND_API_KEY` and `EMAIL_FROM` are set; until then the code is
+  123456 (emails: to verify only; phones: the test numbers only) and a
+  reset link is written to the server's log off the live site.
+- The staff pass is signed with `AUTH_SECRET` and the staff password is
+  checked against our own hash (`apps/api/src/staffPass.ts`). Passwords
+  brought from Supabase are bcrypt and still work; new ones are scrypt.
+- `PUT /api/me/password` (Settings), `POST /api/account/email-taken`
+  (the sign up page's "sign in instead").
+- Web: `apps/web/src/lib/account.ts` (sign in calls, `apiAsViewer`,
+  `toPhone`); the browser notes the signed in account's id under
+  `snt-account` for the first paint. `lib/supabase.ts`,
+  `@supabase/supabase-js`, `jose` and `supabaseAdmin.ts` are gone.
+- Accounts were copied on dev with `pnpm --filter @snt/api
+  db:import-accounts` (12 accounts, 12 passwords). It reads Supabase's
+  `auth.users`, so it runs against the Supabase database only and can be
+  run again to pick up new accounts.
+
+**To put sign in on staging** (after Hillary says push to staging):
+1. In Dokploy's staging app add `AUTH_SECRET` (a long random string she
+   generates), `APP_URL=https://sntstaging.gretaworksdigital.com` and
+   `APP_ENV=staging` to Environment Settings. The image sets
+   `APP_ENV=production`, which is right for production only: on staging
+   it must be overridden, or the test numbers carry no staff powers and
+   a reset link is not written to the log. The Supabase settings and
+   build arguments can then go.
+2. Push; the site applies `0015` as it starts.
+3. Copy the accounts in, on the server:
+   `pg_dump "$SRC" --data-only -t public.auth_users -t public.auth_accounts`
+   from Supabase, piped into the staging database.
+4. Test sign in, sign up, the email code, forgot password (until
+   Resend is set up the link is in the app's log in Dokploy), Settings,
+   and the Staff console.
+
+**Before production:** real email (Resend, or another sender, with the
+domain's DNS records), since a fixed code is only for testing; then the
+production database, app and backups; then retire Vercel. Everyone is
+signed out once when sign in changes over.
+
 ## Hosting on Dokploy (prepared 2026-11-06)
 
 Hillary plans to move the site from Vercel to her own server on Dokploy,

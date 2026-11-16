@@ -20,3 +20,14 @@
 .save {
   margin-top: var(--snt-space-5);
 }
+
+/* Under the code box: that no email is sent yet. */
+.note {
+  margin: var(--snt-space-3) 0 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.cancel {
+  margin-top: var(--snt-space-4);
+}

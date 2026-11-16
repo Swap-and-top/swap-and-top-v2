@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { ButtonLink, Spinner } from '@snt/ui';
-import { supabase } from '@/lib/supabase';
+import { sendPasswordReset } from '@/lib/account';
 import { AuthLayout } from '../AuthLayout';
 import styles from '../SignInPage.module.css';
 
@@ -24,10 +24,7 @@ export function ForgotPage() {
   const [sentTo, setSentTo] = useState<string | null>(null);
 
   async function send(to: string) {
-    const { error } = await supabase.auth.resetPasswordForEmail(to, {
-      redirectTo: `${window.location.origin}/signin/reset`,
-    });
-    if (error) {
+    if (!(await sendPasswordReset(to))) {
       toast.error('We could not send the email. Try again in a minute.');
       return false;
     }

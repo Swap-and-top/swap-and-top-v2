@@ -26,7 +26,7 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { DEFAULT_TOWN, TOWNS, type Town } from '@snt/core';
 import { Button, Dropdown, EyeClosed, EyeOpen, Spinner, startPageLoad, StepBar, type Step } from '@snt/ui';
-import { publicSend } from '@/lib/query';
+import { signUpWithEmail } from '@/lib/account';
 import { AuthLayout } from '../signin/AuthLayout';
 import { VerifyEmailStep } from '../signin/VerifyEmail';
 import styles from '../signin/SignInPage.module.css';
@@ -48,16 +48,18 @@ export function SignUpPage({ next }: { next: string }) {
   const [password, setPassword] = useState('');
   const [again, setAgain] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  /** Makes the account (POST /api/auth/signup), then on to the code. */
+  /** Makes the account (lib/account.ts), then on to the code. */
   const signUp = useMutation({
-    mutationFn: () =>
-      publicSend('/auth/signup', {
-        firstName: firstName.trim(),
-        surname: surname.trim(),
+    mutationFn: async () => {
+      const { error } = await signUpWithEmail({
+        name: `${firstName.trim()} ${surname.trim()}`,
         email: email.trim(),
         password,
         location: `${area.trim()}, ${town}`,
-      }),
+      });
+      if (error === 'taken') throw new Error('That email is already on an account. Sign in instead.');
+      if (error) throw new Error('We could not make the account. Try again in a minute.');
+    },
     onSuccess: () => setStep(3),
     onError: (error) => toast.error(error.message || 'We could not make the account. Try again in a minute.'),
   });

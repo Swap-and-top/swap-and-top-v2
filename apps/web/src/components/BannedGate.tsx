@@ -7,7 +7,7 @@
  * them. The API refuses them everything else too (apps/api/src/app.ts).
  * Once a ban is overturned, the app is theirs again.
  *
- * The browser remembers a ban, for that account only (by its Supabase user
+ * The browser remembers a ban, for that account only (by its account
  * id, matched to the session saved here), so on a reload the ban page shows at once,
  * waiting for the API, rather than the marketplace first. Signing out
  * from it goes home, not to whatever page lay under the ban.
@@ -17,24 +17,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import { useSessionStore } from '@snt/core';
 import AppealPage from '@/app/appeal/[id]/PageContent';
+import { savedAccountId } from '@/lib/account';
 
 const REMEMBERED = 'snt-banned';
-
-/** The Supabase user whose session is saved in this browser. */
-function savedUserId(): string | null {
-  const key = Object.keys(localStorage).find((name) => name.startsWith('sb-') && name.endsWith('-auth-token'));
-  if (!key) return null;
-  try {
-    return (JSON.parse(localStorage.getItem(key) ?? '') as { user?: { id?: string } }).user?.id ?? null;
-  } catch {
-    return null;
-  }
-}
 
 /** Whether the account saved here is the one this browser last saw banned. */
 function rememberedBan(): boolean {
   try {
-    const id = savedUserId();
+    const id = savedAccountId();
     return Boolean(id) && localStorage.getItem(REMEMBERED) === id;
   } catch {
     return false;
@@ -63,7 +53,7 @@ export function BannedGate({ children }: { children: ReactNode }) {
     if (banned) document.documentElement.setAttribute('data-banned', '');
     else document.documentElement.removeAttribute('data-banned');
     try {
-      const id = savedUserId();
+      const id = savedAccountId();
       if (banned && id) localStorage.setItem(REMEMBERED, id);
       else localStorage.removeItem(REMEMBERED);
     } catch {
