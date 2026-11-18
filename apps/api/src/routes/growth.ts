@@ -413,6 +413,17 @@ growthRoutes.openapi(read, async (c) => {
 
   const sum = (counts: Map<string, number>) => [...counts.values()].reduce((a, b) => a + b, 0);
 
+  // Umami lists only visitors sent by another site. Those who typed the
+  // address or used a bookmark came from none: shown as Direct, so the list
+  // adds up to everyone. (Umami counts sources by visitor.)
+  const named = sources.filter((source) => source.name !== 'Direct');
+  const sent = named.reduce((total, source) => total + source.visits, 0);
+  const direct = Math.max(totals.visitors - sent, sources.find((source) => source.name === 'Direct')?.visits ?? 0);
+  const allSources =
+    umamiConnected() && !umamiDown
+      ? [...named, ...(direct > 0 ? [{ name: 'Direct', visits: direct }] : [])].sort((a, b) => b.visits - a.visits)
+      : sources;
+
   return c.json(
     {
       unit,
@@ -427,7 +438,7 @@ growthRoutes.openapi(read, async (c) => {
         visits: { current: totals.visits, previous: previousTotals.visits },
         pageViews: { current: totals.pageViews, previous: previousTotals.pageViews },
         chart: { labels, current: visitChart(visitsNow).slice(0, upTo), previous: visitChart(visitsBefore) },
-        sources,
+        sources: allSources,
       },
       users: {
         newUsers: { current: joined.length, previous: joinedBefore.length },
