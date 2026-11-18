@@ -60,6 +60,7 @@ import { stockKey } from '@/app/console/stock/useConsoleStock';
 import { LimitSheet } from '@/components/LimitSheet';
 import { usePostAs } from '@/components/PostAs';
 import { refreshListing } from '@/lib/refresh';
+import { track } from '@/lib/track';
 import styles from './page.module.css';
 
 /** How people can reach you, as pills, as on the offer form. */
@@ -115,6 +116,7 @@ export default function PostReviewPage() {
       // a moment to open, and this one would meanwhile redraw as a blank
       // form (Hillary, 2026-11-06).
       posted.current = true;
+      track('Posted a listing', { kind, category: draft.category ?? 'other', as: postAs ? 'store' : 'user' });
       toast.success('Your listing is live');
       startPageLoad();
       router.push(`/listing/${data.slug}`);

@@ -25,6 +25,7 @@ import {
 } from '@snt/core';
 import { apiSend, refreshAccount, runMutation } from './query';
 import { apiAsViewer } from './account';
+import { track } from './track';
 
 /**
  * The shared stores' server calls. Each store shows its change at once and
@@ -39,7 +40,11 @@ const saved = <T>(call: () => Promise<T>): Promise<T> =>
   });
 
 connectOfferApi({
-  send: (draft) => saved(() => apiSend<Offer>('/offers', 'POST', draft)),
+  send: (draft) =>
+    saved(() => apiSend<Offer>('/offers', 'POST', draft)).then((offer) => {
+      track('Offered a swap');
+      return offer;
+    }),
   change: (offerId, state) =>
     saved(() => apiSend<Offer>(`/offers/${encodeURIComponent(offerId)}`, 'PATCH', { state })),
 });
@@ -56,9 +61,9 @@ connectDealApi({
 });
 
 connectSavedApi((listingId, keep) =>
-  saved(() => apiSend(`/me/saved/${encodeURIComponent(listingId)}`, keep ? 'PUT' : 'DELETE')).then(
-    () => undefined,
-  ),
+  saved(() => apiSend(`/me/saved/${encodeURIComponent(listingId)}`, keep ? 'PUT' : 'DELETE')).then(() => {
+    if (keep) track('Saved a listing');
+  }),
 );
 
 connectNotificationApi((ids) =>

@@ -8,6 +8,7 @@
  */
 
 import type { ContactWay } from '@snt/core';
+import { track } from './track';
 
 const DEVICE_KEY = 'snt-device';
 
@@ -64,7 +65,10 @@ export async function recordReveal(
   if (response.status === 401 || response.status === 403) {
     return { refused: body.error ?? 'This seller keeps their details back.' };
   }
-  if (response.ok) return { contact: body.contact ?? null };
+  if (response.ok) {
+    track('Showed contact', { way });
+    return { contact: body.contact ?? null };
+  }
   // Anything else: the listing is gone, or the API is away.
   return { failed: body.error ?? FAILED };
 }

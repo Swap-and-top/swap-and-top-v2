@@ -52,6 +52,7 @@ import { apiSend } from '@/lib/query';
 import { stockKey, useConsoleStock } from './useConsoleStock';
 import styles from './StockForm.module.css';
 import { MAX_PHOTOS, PhotoPicker, usePhotoPicker } from '@/components/PhotoPicker';
+import { track } from '@/lib/track';
 
 const CATEGORIES: Category[] = [
   'laptops',
@@ -199,6 +200,7 @@ export function StockForm({ editing }: { editing?: SaleListing }) {
         contactToStores: false,
       });
       await refreshListing(data.slug);
+      if (!draft) track('Posted a listing', { kind: 'sale', category: item.category, as: 'store' });
       return draft ? `${item.title} is saved as a draft.` : `${item.title} is live in your stock.`;
     },
     onSuccess: (message) => {
