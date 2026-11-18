@@ -1364,6 +1364,34 @@ Clarity itself; `data-clarity-mask="true"` also hides the Staff console,
 a seller's revealed contacts, a store's Leads and Me, Settings. A signed
 in user is named to Clarity by account id only.
 
+**Production is up (2026-11-18)** at `https://sntprod.gretaworksdigital.com`:
+the `production` environment of the Dokploy project, app `snt-app-prod`
+on branch `main`, Postgres 17 `snt-db-prod` (external port 5434, with
+`iptables -I INPUT 1 -i docker0 -p tcp --dport 5434 -j ACCEPT` for
+builds). Its Environment Settings `DATABASE_URL` is the database's
+internal address (its service name, port 5432); the build argument is
+`10.0.0.224:5434`; both end `?sslmode=disable`. It started from an empty
+database (no test data). Vercel is disconnected from GitHub. Its own
+`AUTH_SECRET`, Resend key `snt-production`, the same R2 bucket as
+staging, and `NEXT_PUBLIC_CLARITY_PROJECT_ID`. **Super admin:** Hillary
+(hillarymalinga@gmail.com, signed up by email) was made super admin in
+the database on 2026-11-18 (`update people set role = 'super_admin'`,
+run with `docker exec` into the database's container on the server).
+Patrick and Ray are to sign up and be added in Team members.
+Still to do: nightly backups to a private R2 bucket with a practice
+restore, and an Uptime Kuma check on its `/api/health`.
+
+**Send feedback (built 2026-11-18):** a "Send feedback" row at the top
+of the menu's green band opens `/feedback?from=<page>`: one box, no
+account needed, at most 5 an hour from one address (`POST /api/feedback`,
+`apps/api/src/routes/feedback.ts`, table `feedback`, migration `0016`,
+applied to dev with Hillary's yes). The Staff console's **Feedback**
+section (`/staff/feedback`, everyone on the team) lists them as the
+Activity log does; a line opens the whole message, the page and, for a
+signed in user, the account id to filter Clarity's recordings by.
+Tested on localhost (visitor and signed in, the limit, the staff list
+and sheet); test rows deleted.
+
 **Before production** (Hillary, 2026-11-18: production goes up now at
 `sntprod.gretaworksdigital.com`, the final domain, swapandtop.com or
 .co.zw, later; Vercel is retired): a second Resend key and that

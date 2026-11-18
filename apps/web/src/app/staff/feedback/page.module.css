@@ -1,0 +1,39 @@
+/* The opened message: its words, then when, where and who. */
+.message {
+  margin: 0;
+  font-size: var(--snt-text-md);
+  line-height: 1.5;
+  color: var(--snt-control-active);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--snt-space-2) var(--snt-space-6);
+  margin: 0;
+  font-size: var(--snt-text-sm);
+}
+
+.facts dt {
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--snt-card-ink-muted);
+  overflow-wrap: anywhere;
+}
+
+.id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}

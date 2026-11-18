@@ -24,6 +24,7 @@ import {
 } from '@snt/core';
 import {
   CloseIcon,
+  MessageIcon,
   PhoneIcon,
   PinIcon,
   TeamIcon,
@@ -326,6 +327,13 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
 
       {/* Green: help and the rules, in yellow. */}
       <nav className={`${styles.band} ${styles.helpBand}`} aria-label="Help">
+        {/* Where they were goes with it, so our team can see how they got on. */}
+        <MenuRow
+          href={`/feedback?from=${encodeURIComponent(pathname || '/')}`}
+          icon={<MessageIcon size={22} />}
+          label="Send feedback"
+          onNavigate={onNavigate}
+        />
         <MenuRow href="/help" icon={<TipsMark />} label="Safety tips" onNavigate={onNavigate} />
         <MenuRow href="/terms" icon={<TermsMark />} label="Terms of use" onNavigate={onNavigate} />
         <MenuRow href="/privacy" icon={<PrivacyMark />} label="Privacy policy" onNavigate={onNavigate} />

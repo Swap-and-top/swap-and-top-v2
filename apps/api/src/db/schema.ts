@@ -979,3 +979,22 @@ export const authVerifications = pgTable(
   },
   (t) => [index().on(t.identifier)],
 ).enableRLS();
+
+/**
+ * What users tell us from Send feedback (routes/feedback.ts), signed in or
+ * not, read in the Staff console's Feedback section. `page` is where they
+ * were when they opened it, so a recording in Clarity can be found.
+ */
+export const feedback = pgTable(
+  'feedback',
+  {
+    id: id(),
+    /** Who sent it, if they were signed in. */
+    personId: text().references(() => people.id, { onDelete: 'set null' }),
+    message: text().notNull(),
+    /** The page they came from, e.g. "/listing/iphone-12-pro". */
+    page: text(),
+    createdAt: createdAt(),
+  },
+  (t) => [index().on(t.createdAt)],
+).enableRLS();

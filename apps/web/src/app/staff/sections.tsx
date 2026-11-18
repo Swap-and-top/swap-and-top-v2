@@ -19,6 +19,7 @@ import {
   ChartIcon,
   DesktopIcon,
   ListIcon,
+  MegaphoneIcon,
   MessageIcon,
   PersonIcon,
   ReportIcon,
@@ -54,6 +55,8 @@ const SECTIONS: SectionDef[] = [
   { href: '/staff/activity', label: 'Activity log', shortLabel: 'Log', icon: (s) => <ListIcon size={s} />, department: 'trust_safety', built: true },
   { href: '/staff/growth', label: 'Growth', shortLabel: 'Growth', icon: (s) => <TrendIcon size={s} />, department: 'marketing', built: true },
   { href: '/staff/health', label: 'Health', shortLabel: 'Health', icon: (s) => <DesktopIcon size={s} />, department: 'devops', built: true },
+  // What users told us from Send feedback: for everyone on the team.
+  { href: '/staff/feedback', label: 'Feedback', shortLabel: 'Feedback', icon: (s) => <MegaphoneIcon size={s} />, everyone: true, built: true },
 ];
 
 function allowed(section: SectionDef, superAdmin: boolean, staff: StaffMembership[]): boolean {
@@ -77,6 +80,7 @@ export const staffKeys = {
   overview: ['staff', 'overview'] as const,
   growth: ['staff', 'growth'] as const,
   health: ['staff', 'health'] as const,
+  feedback: (page: number, size: string) => ['staff', 'feedback', page, size] as const,
   team: ['staff', 'team'] as const,
   users: (q: string) => ['staff', 'users', q] as const,
   user: (id: string) => ['staff', 'user', id] as const,

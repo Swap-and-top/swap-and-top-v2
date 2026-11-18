@@ -19,6 +19,7 @@ import { leadRoutes } from './routes/leads';
 import { revealRoutes } from './routes/reveals';
 import { statsRoutes } from './routes/stats';
 import { activityRoutes } from './routes/activity';
+import { feedbackRoutes } from './routes/feedback';
 import { appealRoutes } from './routes/appeals';
 import { userRoutes } from './routes/users';
 import { reportRoutes } from './routes/reports';
@@ -119,6 +120,7 @@ app.route('/', reportRoutes);
 app.route('/', userRoutes);
 app.route('/', appealRoutes);
 app.route('/', activityRoutes);
+app.route('/', feedbackRoutes);
 
 // Endpoints for an account take the sign in's cookie, or its token.
 app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {

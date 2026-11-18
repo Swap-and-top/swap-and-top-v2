@@ -1,0 +1,69 @@
+/* One card, as the Safety tips and Terms pages', with the report form's
+   text box; narrower, as it holds one box. */
+.card {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--snt-space-9) var(--snt-card-pad) var(--snt-space-10);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--snt-font-display);
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  line-height: 1.5;
+  color: var(--snt-card-ink-muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-2);
+  min-width: 0;
+}
+
+.label {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+/* The app's pale text box, taller, for a few lines. */
+.textarea {
+  width: 100%;
+  padding: var(--snt-space-5) var(--snt-space-8);
+  border: 0;
+  border-radius: 22px;
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-md);
+  line-height: 1.45;
+  resize: vertical;
+  outline: none;
+}
+
+.textarea::placeholder {
+  color: var(--snt-placeholder);
+  opacity: 1;
+}
+
+.textarea:focus {
+  box-shadow: var(--snt-focus-ring);
+}
+
+.problem {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-alert);
+}
