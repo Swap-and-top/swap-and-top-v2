@@ -33,6 +33,8 @@ type Unit = (typeof UNITS)[number];
 /** Fewer users than this, and the figure is not shown. */
 const FEWEST = 5;
 const CATEGORIES = t.category.enumValues;
+/** Visits when Umami cannot be read. */
+const NO_VISITS = { visitors: 0, visits: 0, pageViews: 0 };
 
 /* ── Recording ────────────────────────────────────────────────────────── */
 
@@ -169,6 +171,9 @@ const read = createRoute({
             visits: z.object({
               /** Sample figures: Umami is not connected yet. */
               sample: z.boolean(),
+              /** Umami could not be reached just now: visits are left at 0
+                  and the rest of the page is still right. */
+              unavailable: z.boolean(),
               visitors: Pair,
               visits: Pair,
               pageViews: Pair,
@@ -288,6 +293,18 @@ growthRoutes.openapi(read, async (c) => {
   const [prevStart, prevEnd] = bounds(unit, before);
   const labels = bucketsOf(unit, period);
   const by = unit === 'month' ? 'day' : 'month';
+  /** Umami could not be read for this request: its figures are left
+      empty and the rest of the page still shows. */
+  let umamiDown = false;
+  const fromUmami = async <T,>(get: () => Promise<T>, fallback: T): Promise<T> => {
+    try {
+      return await get();
+    } catch (error) {
+      umamiDown = true;
+      console.warn('Visits could not be read from Umami.', error);
+      return fallback;
+    }
+  };
   /** A visits key ("2026-11-03" or "2026-11") as its chart bucket. */
   const slot = (key: string) => (by === 'day' ? Number(key.slice(8, 10)) - 1 : Number(key.slice(5, 7)) - 1);
 
@@ -314,11 +331,11 @@ growthRoutes.openapi(read, async (c) => {
     boostsBefore,
     first,
   ] = await Promise.all([
-    visitTotals(start, end),
-    visitTotals(prevStart, prevEnd),
-    visitsBy(by, start, end),
-    visitsBy(by, prevStart, prevEnd),
-    visitSources(start, end),
+    fromUmami(() => visitTotals(start, end), NO_VISITS),
+    fromUmami(() => visitTotals(prevStart, prevEnd), NO_VISITS),
+    fromUmami(() => visitsBy(by, start, end), new Map<string, number>()),
+    fromUmami(() => visitsBy(by, prevStart, prevEnd), new Map<string, number>()),
+    fromUmami(() => visitSources(start, end), []),
     joinedIn(start, end),
     joinedIn(prevStart, prevEnd),
     db
@@ -405,6 +422,7 @@ growthRoutes.openapi(read, async (c) => {
       periods,
       visits: {
         sample: !umamiConnected(),
+        unavailable: umamiDown,
         visitors: { current: totals.visitors, previous: previousTotals.visitors },
         visits: { current: totals.visits, previous: previousTotals.visits },
         pageViews: { current: totals.pageViews, previous: previousTotals.pageViews },

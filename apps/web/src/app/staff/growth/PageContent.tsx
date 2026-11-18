@@ -45,6 +45,8 @@ interface Growth {
   periods: { value: string; label: string }[];
   visits: {
     sample: boolean;
+    /** Umami could not be read just now. */
+    unavailable: boolean;
     visitors: Pair;
     visits: Pair;
     pageViews: Pair;
@@ -169,6 +171,11 @@ export default function GrowthPage() {
           {now.visits.sample ? (
             <p className={shared.testNote} role="status">
               Visits and where visitors come from are sample figures. They will be real once Umami is connected.
+            </p>
+          ) : now.visits.unavailable ? (
+            <p className={shared.testNote} role="status">
+              Visits could not be loaded from Umami just now, so they show as 0. Everything else on this page is up to
+              date. Try again in a few minutes.
             </p>
           ) : null}
 

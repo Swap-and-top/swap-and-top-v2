@@ -153,8 +153,12 @@ These came from repeated feedback. Follow them without being asked.
    the one before (Hillary, 2026-11-16): `dev` (all work, tested on
    localhost), then `staging` (the staging app on Dokploy, tested there),
    then `main` (production). Never commit on `staging` or `main`
-   directly, and move each only when asked ("push to staging", "go
-   live").
+   directly, and move each only when asked. **Every change goes to
+   staging first and stops there until Hillary has tested it on
+   staging** (2026-11-18): "push it" means up to staging, never further.
+   `main` moves only when she says so after testing staging. Staging and
+   production are the same environment; production is never ahead of
+   staging.
 3. **One dev server.** Before previewing, check port 3000
    (`lsof -iTCP:3000 -sTCP:LISTEN`). If something listens, use
    http://localhost:3000. A second `next dev` shares `apps/web/.next` and
@@ -307,9 +311,9 @@ quotes, two spaces.
 6. "Push to staging": `git checkout staging && git merge --ff-only dev`,
    push `staging`, check out `dev` again. Dokploy rebuilds the staging
    app; check it answers before saying it is there.
-7. "Go live", only after staging was tested: check
+7. "Go live", only after Hillary has tested staging and asks for it: check
    `git merge-base --is-ancestor origin/main staging`;
    `git checkout main && git merge --ff-only staging`; push `main`;
-   check out `dev` again. Wait for the build (Vercel, about five
-   minutes, until production moves to Dokploy) and check the live site
+   check out `dev` again. Dokploy rebuilds production (about five
+   minutes); check https://sntprod.gretaworksdigital.com
    answers the new pages or endpoints before saying it is live.
