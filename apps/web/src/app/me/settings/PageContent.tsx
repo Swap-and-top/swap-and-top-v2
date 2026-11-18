@@ -108,107 +108,110 @@ export default function SettingsPage() {
     <Screen>
       <AppHeader />
       <ScreenBody>
-        <SignInGate>
-          <Stack gap={6}>
-            <h1 className={styles.title}>Settings</h1>
+        {/* Their own number and email never show in recordings (components/Clarity). */}
+        <div data-clarity-mask="true" style={{ display: 'contents' }}>
+          <SignInGate>
+            <Stack gap={6}>
+              <h1 className={styles.title}>Settings</h1>
 
-            <Panel padded>
-              <h2 className={styles.heading}>Phone number</h2>
-              {viewer?.phoneVerified && viewer.phone && !changingPhone ? (
-                <>
-                  <p className={styles.lead}>
-                    {shownPhone(viewer.phone)} is verified. You can post listings
-                    and send offers.
-                  </p>
-                  <Button variant="secondary" block onClick={() => setChangingPhone(true)}>
-                    Change number
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <p className={styles.lead}>
-                    Verify your phone number to post listings and send offers.
-                  </p>
-                  <PhoneForm onDone={() => setChangingPhone(false)} />
-                </>
-              )}
-            </Panel>
+              <Panel padded>
+                <h2 className={styles.heading}>Phone number</h2>
+                {viewer?.phoneVerified && viewer.phone && !changingPhone ? (
+                  <>
+                    <p className={styles.lead}>
+                      {shownPhone(viewer.phone)} is verified. You can post listings
+                      and send offers.
+                    </p>
+                    <Button variant="secondary" block onClick={() => setChangingPhone(true)}>
+                      Change number
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <p className={styles.lead}>
+                      Verify your phone number to post listings and send offers.
+                    </p>
+                    <PhoneForm onDone={() => setChangingPhone(false)} />
+                  </>
+                )}
+              </Panel>
 
-            <Panel padded>
-              {pending ? (
-                <form onSubmit={verifyEmail}>
-                  <h2 className={styles.heading}>Verify your email</h2>
-                  <p className={styles.lead}>
-                    Enter the code we sent to <strong>{pending}</strong>.
-                  </p>
-                  <Field
-                    label="Code"
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                    maxLength={6}
-                    placeholder="e.g. 123456"
-                    autoFocus
-                    value={code}
-                    onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
-                  />
-                  <p className={styles.note}>
-                    While email is being set up, no email is sent: the code is 123456.
-                  </p>
-                  <Button type="submit" block className={styles.save} loading={busy} disabled={code.length < 6}>
-                    Verify email
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    block
-                    className={styles.cancel}
-                    onClick={() => {
-                      setPending(null);
-                      setEmail(current ?? '');
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </form>
-              ) : (
-                <form onSubmit={save}>
-                  <h2 className={styles.heading}>Email and password</h2>
-                  <p className={styles.lead}>
-                    {current
-                      ? `You sign in with ${current} and your password.`
-                      : 'Add them to sign in with your email as well as your phone.'}
-                  </p>
-                  <FieldRow>
+              <Panel padded>
+                {pending ? (
+                  <form onSubmit={verifyEmail}>
+                    <h2 className={styles.heading}>Verify your email</h2>
+                    <p className={styles.lead}>
+                      Enter the code we sent to <strong>{pending}</strong>.
+                    </p>
                     <Field
-                      label="Email"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      placeholder="e.g. johndoe@gmail.com"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
+                      label="Code"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                      placeholder="e.g. 123456"
+                      autoFocus
+                      value={code}
+                      onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
                     />
-                    <Field
-                      label={current ? 'New password' : 'Password'}
-                      type="password"
-                      autoComplete="new-password"
-                      placeholder="At least 8 characters"
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                    />
-                  </FieldRow>
-                  <Button type="submit" block className={styles.save} loading={busy}>
-                    Save
-                  </Button>
-                </form>
-              )}
-            </Panel>
+                    <p className={styles.note}>
+                      While email is being set up, no email is sent: the code is 123456.
+                    </p>
+                    <Button type="submit" block className={styles.save} loading={busy} disabled={code.length < 6}>
+                      Verify email
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      block
+                      className={styles.cancel}
+                      onClick={() => {
+                        setPending(null);
+                        setEmail(current ?? '');
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </form>
+                ) : (
+                  <form onSubmit={save}>
+                    <h2 className={styles.heading}>Email and password</h2>
+                    <p className={styles.lead}>
+                      {current
+                        ? `You sign in with ${current} and your password.`
+                        : 'Add them to sign in with your email as well as your phone.'}
+                    </p>
+                    <FieldRow>
+                      <Field
+                        label="Email"
+                        type="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        placeholder="e.g. johndoe@gmail.com"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                      />
+                      <Field
+                        label={current ? 'New password' : 'Password'}
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder="At least 8 characters"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                      />
+                    </FieldRow>
+                    <Button type="submit" block className={styles.save} loading={busy}>
+                      Save
+                    </Button>
+                  </form>
+                )}
+              </Panel>
 
-            <ButtonLink href="/me" variant="secondary" block>
-              Back to my profile
-            </ButtonLink>
-          </Stack>
-        </SignInGate>
+              <ButtonLink href="/me" variant="secondary" block>
+                Back to my profile
+              </ButtonLink>
+            </Stack>
+          </SignInGate>
+        </div>
       </ScreenBody>
     </Screen>
   );

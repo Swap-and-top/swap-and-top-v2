@@ -19,6 +19,7 @@ RUN pnpm install --frozen-lockfile --offline
 # Baked into the pages by Next, so they are needed while building.
 ARG NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
+ARG NEXT_PUBLIC_CLARITY_PROJECT_ID
 # The build reads the database to make the feed, listing and store pages
 # ahead. Used only in this stage; the image that runs has none of them.
 ARG DATABASE_URL

@@ -218,12 +218,15 @@ export function RevealAction({
 
       {open ? (
         <Sheet narrow title="Contact the seller" onClose={() => setOpen(false)}>
-          <ContactWayList
-            ways={ways}
-            only={offered}
-            revealed={shown}
-            onUse={use}
-          />
+          {/* A seller's number never shows in recordings (components/Clarity). */}
+          <div data-clarity-mask="true">
+            <ContactWayList
+              ways={ways}
+              only={offered}
+              revealed={shown}
+              onUse={use}
+            />
+          </div>
           <p className={styles.note}>
             Meet in public, and check the item before you pay.
           </p>

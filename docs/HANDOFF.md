@@ -1242,9 +1242,35 @@ reserved public IP. Ports 80 and 443 are open in Oracle's security list
 and in the server's own firewall (iptables, saved with
 netfilter-persistent). Its own Dokploy is at
 `https://sntdokploy.gretaworksdigital.com` (grey cloud in Cloudflare, so
-Let's Encrypt renews). The Phoenix server on Hillary's personal account
-is to be deleted once nothing uses it; a small Melbourne server on that
-account is planned for monitoring (Uptime Kuma, perhaps Beszel).
+Let's Encrypt renews). Its clock and Dokploy's are on Harare time
+(`timedatectl set-timezone Africa/Harare`; Dokploy's service has
+`TZ=Africa/Harare`). Port 45876 is open, in Oracle and iptables, to
+Melbourne's IP only, for the Beszel agent.
+
+**The Melbourne server (2026-11-17).** Oracle, on Hillary's personal
+account in its home region (Australia Southeast), Always Free: A1.Flex,
+4 cores, 24 GB, 100 GB disk, Ubuntu 24.04, reserved IP `168.138.30.249`,
+SSH key `~/.ssh/snt-monitoring-server.key` (user `ubuntu`). For internal
+tools only; everything users touch stays in Johannesburg, close to
+Zimbabwe, and the watchers sit on a different server from what they
+watch. Its own Dokploy at `https://sntinternal.gretaworksdigital.com`
+(Harare time too), project "Monitoring":
+- Uptime Kuma at `https://sntstatus.gretaworksdigital.com` (SQLite):
+  checks `https://sntstaging.gretaworksdigital.com/api/health` for the
+  keyword `"database":true` and the Johannesburg Dokploy, every minute;
+  alerts by email through Resend's SMTP (its own key, `uptime-kuma`).
+  WhatsApp alerts through WAHA could come later, on a spare number.
+- Beszel 0.21 at `https://sntvitals.gretaworksdigital.com` (image
+  `henrygd/beszel:latest`; the template's old version could not take
+  agents connecting by themselves). Agents installed as binaries: on
+  Johannesburg the hub connects to it on port 45876; on Melbourne the
+  agent connects to the hub by its address and token. Alerts (down,
+  CPU over 80% and memory over 85% for 10 minutes, disk over 80%) go by
+  email: SMTP is set in its admin area (`/_/`, Mail settings) through
+  Resend (key `beszel`, port 465, TLS Always). After the hub was
+  updated, alerts would not save until Hillary signed out and in again.
+The Phoenix server is deleted (instance, disk, network; about EUR 1 of
+disk charges, as it was outside the home region).
 
 **Dokploy project "Swap and Top".** Two environments:
 - `staging`: the app on branch `staging`, Dockerfile build, at
@@ -1275,7 +1301,10 @@ and sets `MIGRATIONS_DIR`; as the site starts
 (`apps/api/src/db/migrate.ts`). Not yet seen running on the server: the
 first push to staging with migration `0015` is its first test.
 
-**Our own sign in (built, tested on localhost, not committed).** Better
+**Our own sign in (committed `efa4ca8`, on staging since 2026-11-16,
+tested there by Hillary; real email through Resend on staging since
+2026-11-17, sending from `noreply@gretaworksdigital.com`, key
+`snt-staging`; localhost has no key and keeps the code 123456).** Better
 Auth 1.7 inside the API, in place of Supabase Auth:
 - `apps/api/src/accounts.ts`: the set up. Email and password (an email
   is verified with a code first), phone and a code (a new number makes
@@ -1326,8 +1355,19 @@ Auth 1.7 inside the API, in place of Supabase Auth:
    Resend is set up the link is in the app's log in Dokploy), Settings,
    and the Staff console.
 
-**Before production:** real email (Resend, or another sender, with the
-domain's DNS records), since a fixed code is only for testing; then the
+**Microsoft Clarity (built 2026-11-18, not committed):** recordings and
+heatmaps, for watching how the first users get on (Hillary chose it over
+PostHog and OpenReplay: light, free, recordings and heatmaps). Loaded by
+`apps/web/src/components/Clarity.tsx` only where the build argument
+`NEXT_PUBLIC_CLARITY_PROJECT_ID` is set (production). Inputs are masked by
+Clarity itself; `data-clarity-mask="true"` also hides the Staff console,
+a seller's revealed contacts, a store's Leads and Me, Settings. A signed
+in user is named to Clarity by account id only.
+
+**Before production** (Hillary, 2026-11-18: production goes up now at
+`sntprod.gretaworksdigital.com`, the final domain, swapandtop.com or
+.co.zw, later; Vercel is retired): a second Resend key and that
+domain added in Resend; then the
 production database, app and backups; then retire Vercel. Everyone is
 signed out once when sign in changes over.
 

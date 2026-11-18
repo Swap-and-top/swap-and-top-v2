@@ -65,7 +65,8 @@ function stageOf(reveal: NumberReveal, answers: Record<string, string>): DealSta
 export function RevealsTable({ reveals }: { reveals: NumberReveal[] }) {
   const answers = useDealStore((store) => store.answers);
   return (
-    <div className={[styles.list, styles.reveals].join(' ')}>
+    // Buyers' numbers never show in recordings (components/Clarity).
+    <div className={[styles.list, styles.reveals].join(' ')} data-clarity-mask="true">
       {/* Wide screens only: the column headings. */}
       <div className={styles.headerRow} aria-hidden>
         <span />

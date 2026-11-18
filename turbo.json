@@ -11,7 +11,8 @@
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
         "NEXT_PUBLIC_UMAMI_SCRIPT_URL",
-        "NEXT_PUBLIC_UMAMI_WEBSITE_ID"
+        "NEXT_PUBLIC_UMAMI_WEBSITE_ID",
+        "NEXT_PUBLIC_CLARITY_PROJECT_ID"
       ],
       "passThroughEnv": [
         "DATABASE_URL",

@@ -12,6 +12,7 @@ import { SignInToast } from '@/components/SignInToast';
 import { VerifyPhoneHost } from '@/components/VerifyPhone';
 import { AppToaster, SignInHost } from '@snt/ui';
 import { BoneContinuity } from '@/components/BoneContinuity';
+import { Clarity } from '@/components/Clarity';
 import { PageLoadBar } from '@/components/PageLoadBar';
 import { ScrollToTop } from '@/components/ScrollToTop';
 
@@ -115,6 +116,8 @@ export default function RootLayout({
         {UMAMI_SCRIPT && UMAMI_SITE && (
           <Script src={UMAMI_SCRIPT} data-website-id={UMAMI_SITE} strategy="afterInteractive" />
         )}
+        {/* Recordings and heatmaps, in production only (components/Clarity). */}
+        <Clarity />
         {/* Each new page opens at its top. */}
         <ScrollToTop />
         {/* A thin bar along the top while a page is on its way. */}

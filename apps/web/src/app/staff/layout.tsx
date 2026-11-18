@@ -63,7 +63,10 @@ function Gate({ children }: { children: ReactNode }) {
           You are using the sealed super admin account. The other super admin has been told.
         </p>
       ) : null}
-      {children}
+      {/* Never in Clarity's recordings (components/Clarity). */}
+      <div data-clarity-mask="true" style={{ display: 'contents' }}>
+        {children}
+      </div>
     </>
   );
 }
