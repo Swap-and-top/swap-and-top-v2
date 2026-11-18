@@ -29,13 +29,15 @@ export function Clarity() {
 
   // Not loading anything: tells Clarity whose session this is, once known.
   useEffect(() => {
-    const clarity = (window as unknown as { clarity?: ClarityCall }).clarity;
-    if (PROJECT && viewerId && clarity) clarity('identify', viewerId);
+    const clarity = (window as unknown as { clarity?: unknown }).clarity;
+    if (PROJECT && viewerId && typeof clarity === 'function') (clarity as ClarityCall)('identify', viewerId);
   }, [viewerId]);
 
   if (!PROJECT) return null;
   return (
-    <Script id="clarity" strategy="afterInteractive">
+    // Not id "clarity": an element's id becomes a name on window, and
+    // window.clarity must stay Clarity's own function.
+    <Script id="clarity-loader" strategy="afterInteractive">
       {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${PROJECT}");`}
     </Script>
   );
