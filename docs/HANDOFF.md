@@ -1392,6 +1392,20 @@ signed in user, the account id to filter Clarity's recordings by.
 Tested on localhost (visitor and signed in, the limit, the staff list
 and sheet); test rows deleted.
 
+**Umami (2026-11-18, on staging):** Umami 3 on the Johannesburg Dokploy,
+project "Analytics", at `https://sntstats.gretaworksdigital.com`, with
+two websites (Swap and Top Staging, Swap and Top Production) in a team
+"Swap & Top": `admin` owns it, `snt-console` is a view only member, the
+user the Growth page signs in as (its password letters and numbers
+only: Dokploy's settings file swallows `#` and `$`). Staging has the
+two `NEXT_PUBLIC_UMAMI_...` build arguments and the four `UMAMI_...`
+settings; production not yet. Growth shows visitors who came from no
+other site as Direct, and keeps working with a note if Umami cannot be
+read. Events (`apps/web/src/lib/track.ts`): Posted a listing (kind,
+category, user or store), Offered a swap, Showed contact (way), Saved a
+listing; seen arriving on staging. Clarity also has a staging project.
+Staging backs up weekly (Sunday 3:00, keeps 4) to the same R2 bucket.
+
 **Before production** (Hillary, 2026-11-18: production goes up now at
 `sntprod.gretaworksdigital.com`, the final domain, swapandtop.com or
 .co.zw, later; Vercel is retired): a second Resend key and that
