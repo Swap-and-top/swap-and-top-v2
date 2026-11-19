@@ -1,0 +1,320 @@
+/**
+ * Chat: the list (one white card, rows parted by pale lines, as
+ * Notifications), and a chat (a white card: its top, the listing, the
+ * messages, the box at the foot).
+ */
+
+/* ── The list ─────────────────────────────────────────────────────────── */
+
+.list {
+  margin: 0;
+  padding: var(--snt-space-3);
+  list-style: none;
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.list > li + li .row {
+  background-image: linear-gradient(var(--snt-bg-app), var(--snt-bg-app));
+  background-size: calc(100% - var(--snt-space-7) * 2) 1px;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-6);
+  padding: var(--snt-space-6) var(--snt-space-7);
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-card-ink);
+}
+
+.row:hover {
+  color: var(--snt-card-ink);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: color-mix(in srgb, var(--snt-control-active) 4%, var(--snt-bg-card));
+  }
+}
+
+.thumb {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--snt-radius-md);
+  object-fit: cover;
+  background: var(--snt-bg-inset);
+}
+
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-1);
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.rowTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--snt-space-4);
+}
+
+.name {
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-accent-bold);
+}
+
+.when {
+  flex-shrink: 0;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.listingTitle,
+.preview {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+/* Unread: the last message bold, in the blue. */
+.unread .preview {
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-control-active);
+}
+
+.rowCount {
+  flex-shrink: 0;
+  display: flex;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-12) var(--snt-space-8);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  text-align: center;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.emptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/* ── A chat ───────────────────────────────────────────────────────────── */
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-6);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.chatTop {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+}
+
+.chatName {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: center;
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  cursor: pointer;
+}
+
+.chatListing {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-4);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  color: var(--snt-card-ink);
+}
+
+.chatListing:hover {
+  color: var(--snt-card-ink);
+}
+
+.chatListingTitle {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  min-height: 40vh;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: var(--snt-space-2) 0;
+}
+
+.safety {
+  margin: 0 0 var(--snt-space-3);
+  padding: var(--snt-space-4) var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: color-mix(in srgb, #f5b70a 16%, var(--snt-bg-card));
+  font-size: var(--snt-text-xs);
+  line-height: 1.45;
+  color: var(--snt-card-ink);
+  text-align: center;
+}
+
+.firstNote,
+.typing {
+  margin: 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.firstNote {
+  text-align: center;
+}
+
+.bubbleRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.bubbleRow.mine {
+  align-items: flex-end;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: var(--snt-space-4) var(--snt-space-6);
+  border-radius: 18px 18px 18px 6px;
+  background: var(--snt-bg-inset);
+  color: var(--snt-card-ink);
+}
+
+.mine .bubble {
+  border-radius: 18px 18px 6px 18px;
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+}
+
+.bubbleText {
+  margin: 0;
+  font-size: var(--snt-text-base);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubbleTime {
+  display: block;
+  margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-xs);
+  opacity: 0.75;
+}
+
+.seen {
+  margin-top: var(--snt-space-1);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--snt-space-4);
+}
+
+/* The app's pale text box, growing a little for longer messages. */
+.input {
+  flex-grow: 1;
+  min-width: 0;
+  max-height: 120px;
+  padding: var(--snt-space-5) var(--snt-space-8);
+  border: 0;
+  border-radius: 22px;
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-md);
+  line-height: 1.4;
+  resize: none;
+  field-sizing: content;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--snt-placeholder);
+  opacity: 1;
+}
+
+.input:focus {
+  box-shadow: var(--snt-focus-ring);
+}
+
+.closed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-inset);
+  text-align: center;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.closed p {
+  margin: 0;
+}
+
+/* A message whose sender deleted their account. */
+.deleted {
+  font-style: italic;
+  opacity: 0.7;
+}

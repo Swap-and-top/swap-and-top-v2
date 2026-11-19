@@ -1406,6 +1406,25 @@ category, user or store), Offered a swap, Showed contact (way), Saved a
 listing; seen arriving on staging. Clarity also has a staging project.
 Staging backs up weekly (Sunday 3:00, keeps 4) to the same R2 bucket.
 
+**Chat (built 2026-11-19, on dev; plan in docs/features/chat.md):** a
+poster can tick "Messages in the app" as a contact way (`message` in
+`contactChannels`); an accepted offer always opens a chat. Rules in
+`apps/api/src/chat.ts`, API in `routes/chats.ts`, tables `chats`,
+`chat_messages`, `chat_blocks` and `reports.chat_id` (migration `0017`,
+applied to dev with Hillary's yes). Live delivery is a separate app,
+`apps/chat` (Socket.IO, port 4100, path `/socket`, health at
+`/socket-health`, `Dockerfile.chat`), on the same database and sign in;
+locally `preview_start` "chat" beside "web", and the browser connects
+to port 4100 when the site is on 3000. Web: `lib/chat.ts`,
+`components/ChatConnection.tsx`, `components/chat/*`, `/messages`,
+`/console/messages`, Messages buttons beside the bells, Message on an
+accepted offer and in Show contact. Reported chats: Read the chat in
+Reports (`GET /api/staff/chats/{id}`, logged as `chat.view`). A chat
+started with Message counts as a contact in a store's Stats. A deleted
+account's messages are blanked ("This message was deleted"). Tested on
+localhost with two users and in the browser; test data removed. Not yet
+on staging: needs the chat app added in Dokploy.
+
 **Before production** (Hillary, 2026-11-18: production goes up now at
 `sntprod.gretaworksdigital.com`, the final domain, swapandtop.com or
 .co.zw, later; Vercel is retired): a second Resend key and that

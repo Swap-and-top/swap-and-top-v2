@@ -27,6 +27,8 @@ export const REASON_WORDS: Record<Reason, string> = {
   offensive: 'offensive',
   'wrong-category': 'in the wrong category',
   'no-show': 'not showing up or backing out of a deal',
+  'asking-money-first': 'asking for money before meeting',
+  'abusive-messages': 'abusive or threatening messages',
   other: 'breaking our rules',
 };
 

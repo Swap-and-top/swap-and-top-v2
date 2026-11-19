@@ -55,7 +55,9 @@ const NewListing = z
     cashDirection: z.enum(['i-add', 'they-add', 'straight']).optional(),
     cashAmount: money.optional(),
     cashUpTo: z.boolean().optional(),
-    contactChannels: z.array(z.enum(['whatsapp', 'call', 'email', 'messenger'])).min(1, 'Choose at least one way to reach you'),
+    contactChannels: z
+      .array(z.enum(['whatsapp', 'call', 'email', 'messenger', 'message']))
+      .min(1, 'Choose at least one way to reach you'),
     allowStoreOffers: z.boolean(),
     contactSignedInOnly: z.boolean(),
     contactShownTo: z.enum(['everyone', 'offers']),

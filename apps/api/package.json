@@ -39,6 +39,8 @@
     "./vercel": "./src/vercel.ts",
     "./listings": "./src/listings.ts",
     "./migrate": "./src/db/migrate.ts",
-    "./stores": "./src/routes/stores.ts"
+    "./stores": "./src/routes/stores.ts",
+    "./chat": "./src/chatKit.ts",
+    "./loadEnv": "./src/loadEnv.ts"
   }
 }

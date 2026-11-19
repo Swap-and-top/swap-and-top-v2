@@ -22,6 +22,7 @@ import {
   getStore,
   getUser,
   setOfferStateOptimistically,
+  useChatStore,
   type ContactWays,
   type OfferableListing,
   type Offer,
@@ -57,6 +58,8 @@ export function OfferCard({
       not which listing. */
   underListing?: boolean;
 }) {
+  /** The chat on its way, so Message shows the spinner. */
+  const [opening, setOpening] = useState(false);
   /** Which answer is on its way, so its button shows the spinner. */
   const [working, setWorking] = useState<OfferState | null>(null);
   const listing = getListing(offer.listingId);
@@ -256,6 +259,21 @@ export function OfferCard({
               message={opener}
               compact
             />
+            {/* Or straight to a chat in the app (docs/features/chat.md). */}
+            <Button
+              variant="secondary"
+              size="sm"
+              loading={opening}
+              onClick={() => {
+                setOpening(true);
+                void useChatStore
+                  .getState()
+                  .open({ offerId: offer.id })
+                  .finally(() => setOpening(false));
+              }}
+            >
+              Message {otherName}
+            </Button>
           </div>
         </>
       ) : null}

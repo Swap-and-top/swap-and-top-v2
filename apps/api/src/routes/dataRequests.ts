@@ -334,6 +334,8 @@ dataRequestRoutes.openapi(remove, async (c) => {
     await tx.delete(t.notifications).where(eq(t.notifications.personId, id));
     await tx.update(t.reveals).set({ viewerId: null }).where(eq(t.reveals.viewerId, id));
     await tx.update(t.storeContacts).set({ viewerId: null }).where(eq(t.storeContacts.viewerId, id));
+    // What they wrote in chats goes; the other side sees it was deleted.
+    await tx.update(t.chatMessages).set({ body: '' }).where(eq(t.chatMessages.senderPersonId, id));
     await tx
       .update(t.people)
       .set({ displayName: DELETED_NAME, phone: null, email: null, location: null, lastSeenAt: null, deletedAt: now })

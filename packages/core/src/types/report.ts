@@ -13,6 +13,8 @@ export type ReportReason =
   | 'wrong-category'
   | 'offensive'
   | 'no-show'
+  | 'asking-money-first'
+  | 'abusive-messages'
   | 'other';
 
 export const REPORT_REASON_LABELS: Record<ReportReason, string> = {
@@ -23,6 +25,8 @@ export const REPORT_REASON_LABELS: Record<ReportReason, string> = {
   'wrong-category': 'Wrong category',
   offensive: 'Offensive',
   'no-show': 'Did not show up or backed out of a deal',
+  'asking-money-first': 'Asking for money before meeting',
+  'abusive-messages': 'Abusive or threatening messages',
   other: 'Something else',
 };
 
@@ -39,6 +43,15 @@ export const LISTING_REPORT_REASONS: ReportReason[] = [
 
 /** The reasons for a person, from a deal check: a no show first. */
 export const PERSON_REPORT_REASONS: ReportReason[] = ['no-show', 'not-as-described', 'fake', 'offensive', 'other'];
+
+/** The reasons for a chat, from its menu: money asked for first. */
+export const CHAT_REPORT_REASONS: ReportReason[] = [
+  'asking-money-first',
+  'abusive-messages',
+  'fake',
+  'not-as-described',
+  'other',
+];
 
 /** What staff can do about a report they find right. */
 export type ReportAction = 'warning' | 'removal' | 'suspension' | 'ban';

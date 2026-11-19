@@ -11,3 +11,4 @@ export * from './useListingStatusStore';
 export * from './useStockStore';
 export * from './useNotificationStore';
 export * from './useSponsorStore';
+export * from './useChatStore';

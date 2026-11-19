@@ -71,6 +71,8 @@ function describe(entry: Entry): string {
       return `cleared ${report} about ${who}`;
     case 'person.view':
       return `looked at ${who}’s record`;
+    case 'chat.view':
+      return `read a reported chat with ${who}`;
     case 'person.warning':
       return `warned ${who}${reason ? ` (${reason})` : ''}`;
     case 'person.suspension':

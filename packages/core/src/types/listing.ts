@@ -34,7 +34,8 @@ export type ListingStatus =
 /** Which way the cash flows in a swap, always from the poster's point of view. */
 export type CashDirection = 'i-add' | 'they-add' | 'straight';
 
-export type ContactChannel = 'whatsapp' | 'call' | 'email' | 'messenger' | 'sms';
+/** `message`: a chat in the app (docs/features/chat.md). */
+export type ContactChannel = 'whatsapp' | 'call' | 'email' | 'messenger' | 'sms' | 'message';
 
 /**
  * Who sees the poster's contact details. `everyone`: anyone who taps Show

@@ -1,0 +1,7 @@
+/** Messages: the title, as Notifications has it. */
+
+.title {
+  font-size: var(--snt-text-2xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}

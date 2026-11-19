@@ -24,6 +24,7 @@ import { requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
 import { ErrorSchema } from '../schemas';
+import { chatFor } from '../chat';
 import { actionText, actorOf, applyAction, mayActOn, mayBan, targetsOf } from '../moderation';
 import { inDepartment } from '../staff';
 import { appealsWaitingFor } from './appeals';
@@ -78,10 +79,16 @@ const send = createRoute({
             .object({
               listingId: z.string().optional(),
               personId: z.string().optional(),
+              /** A chat, from its menu: the other side's user is reported,
+                  and Trust and safety may then read that chat. */
+              chatId: z.string().optional(),
               reason,
               details: z.string().trim().max(500).optional(),
             })
-            .refine((body) => Boolean(body.listingId) !== Boolean(body.personId), 'Report a listing or a person'),
+            .refine(
+              (body) => [body.listingId, body.personId, body.chatId].filter(Boolean).length === 1,
+              'Report a listing, a person or a chat',
+            ),
         },
       },
     },
@@ -99,7 +106,12 @@ reportRoutes.openapi(send, async (c) => {
 
   let personId = body.personId ?? null;
   const listingId = body.listingId ?? null;
-  if (listingId) {
+  const chatId = body.chatId ?? null;
+  if (chatId) {
+    const found = await chatFor(person, chatId);
+    if ('error' in found) return c.json({ error: found.error }, found.status === 403 ? 403 : 404);
+    personId = found.side === 'from' ? found.chat.ownerPersonId : found.chat.fromPersonId;
+  } else if (listingId) {
     const [listing] = await db
       .select({ ownerId: t.listings.ownerId })
       .from(t.listings)
@@ -122,7 +134,11 @@ reportRoutes.openapi(send, async (c) => {
       and(
         eq(t.reports.reporterId, person.id),
         inArray(t.reports.state, ['open', 'claimed']),
-        listingId ? eq(t.reports.listingId, listingId) : and(eq(t.reports.personId, personId!), isNull(t.reports.listingId)),
+        chatId
+          ? eq(t.reports.chatId, chatId)
+          : listingId
+            ? eq(t.reports.listingId, listingId)
+            : and(eq(t.reports.personId, personId!), isNull(t.reports.listingId)),
       ),
     );
   if (already) return c.json({ ok: true }, 201);
@@ -138,6 +154,7 @@ reportRoutes.openapi(send, async (c) => {
   await db.insert(t.reports).values({
     reporterId: person.id,
     listingId,
+    chatId,
     personId: personId!,
     reason: body.reason,
     details: body.details || null,
@@ -211,6 +228,8 @@ const ReportRowSchema = z
     listing: z
       .object({ title: z.string(), slug: z.string(), status: z.string(), photo: z.string().optional() })
       .optional(),
+    /** A reported chat, which Trust and safety may read (GET /staff/chats/{id}). */
+    chatId: z.string().optional(),
     person: z.object({
       id: z.string(),
       name: z.string(),
@@ -371,6 +390,7 @@ reportRoutes.openapi(queue, async (c) => {
       listing: listing
         ? { title: listing.title, slug: listing.slug, status: listing.status, photo: photos.get(listing.id) }
         : undefined,
+      chatId: report.chatId ?? undefined,
       person: {
         id: report.personId,
         name: target?.name || 'No name yet',

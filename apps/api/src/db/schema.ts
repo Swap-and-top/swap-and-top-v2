@@ -15,6 +15,7 @@
 
 import { sql } from 'drizzle-orm';
 import {
+  type AnyPgColumn,
   boolean,
   check,
   index,
@@ -610,6 +611,7 @@ export const notificationKind = pgEnum('notification_kind', [
   'sponsor',
   'account',
   'report',
+  'message',
 ]);
 
 /** One line on a person's list, or on a store's list when storeId is set. */
@@ -707,6 +709,8 @@ export const reportReason = pgEnum('report_reason', [
   'offensive',
   'wrong-category',
   'no-show',
+  'asking-money-first',
+  'abusive-messages',
   'other',
 ]);
 
@@ -729,6 +733,8 @@ export const reports = pgTable(
       .notNull()
       .references(() => people.id),
     listingId: text().references(() => listings.id),
+    /** A chat reported from its menu: staff may then read that chat. */
+    chatId: text().references((): AnyPgColumn => chats.id),
     /** The person reported, or the listing's owner when it is a listing. */
     personId: text()
       .notNull()
@@ -997,4 +1003,81 @@ export const feedback = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index().on(t.createdAt)],
+).enableRLS();
+
+/* ── Chat (docs/features/chat.md) ─────────────────────────────────────── */
+
+/**
+ * A chat between two sides about one listing: whoever started it (from the
+ * listing's Message contact way, or by an offer the owner accepted), and
+ * the listing's owner. A side is a store when `fromStoreId` or
+ * `ownerStoreId` is set, and then any of its members writes as the store.
+ * One chat per listing and person who started it. It is closed, for both
+ * sides, while either user is banned or one has blocked the other: worked
+ * out each time (apps/api/src/chat.ts), never stored, so it reopens by
+ * itself when that ends.
+ */
+export const chats = pgTable(
+  'chats',
+  {
+    id: id(),
+    listingId: text()
+      .notNull()
+      .references(() => listings.id),
+    /** The accepted offer it came from; none when started by Message. */
+    offerId: text().references(() => offers.id),
+    /** Who started it, and the store they wrote as, if any. */
+    fromPersonId: text()
+      .notNull()
+      .references(() => people.id),
+    fromStoreId: text().references(() => stores.id),
+    /** The listing's owner, and its store when it is a store's listing. */
+    ownerPersonId: text()
+      .notNull()
+      .references(() => people.id),
+    ownerStoreId: text().references(() => stores.id),
+    createdAt: createdAt(),
+    lastMessageAt: timestamp({ withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex().on(t.listingId, t.fromPersonId),
+    index().on(t.fromPersonId, t.lastMessageAt),
+    index().on(t.ownerPersonId, t.lastMessageAt),
+    index().on(t.fromStoreId),
+    index().on(t.ownerStoreId),
+  ],
+).enableRLS();
+
+/** One message in a chat. Text only; at most 2,000 characters. */
+export const chatMessages = pgTable(
+  'chat_messages',
+  {
+    id: id(),
+    chatId: text()
+      .notNull()
+      .references(() => chats.id, { onDelete: 'cascade' }),
+    senderPersonId: text().references(() => people.id, { onDelete: 'set null' }),
+    /** Sent as this store, by one of its members. */
+    senderStoreId: text().references(() => stores.id),
+    body: text().notNull(),
+    createdAt: createdAt(),
+    /** When the other side read it. */
+    readAt: timestamp({ withTimezone: true }),
+  },
+  (t) => [index().on(t.chatId, t.createdAt)],
+).enableRLS();
+
+/** A user who blocked another: their chats close until it is undone. */
+export const chatBlocks = pgTable(
+  'chat_blocks',
+  {
+    blockerId: text()
+      .notNull()
+      .references(() => people.id, { onDelete: 'cascade' }),
+    blockedId: text()
+      .notNull()
+      .references(() => people.id, { onDelete: 'cascade' }),
+    createdAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.blockerId, t.blockedId] })],
 ).enableRLS();

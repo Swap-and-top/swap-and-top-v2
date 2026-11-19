@@ -22,6 +22,7 @@ import {
   CheckIcon,
   ClockIcon,
   MegaphoneIcon,
+  MessageIcon,
   SaveStarIcon,
   ShieldCheckIcon,
   TrendIcon,
@@ -38,6 +39,7 @@ const ICON: Record<NotificationKind, React.ReactNode> = {
   saved: <SaveStarIcon size={18} />,
   sponsor: <MegaphoneIcon size={18} weight={1.9} />,
   account: <BellIcon size={18} />,
+  message: <MessageIcon size={18} />,
 };
 
 export function NotificationList({

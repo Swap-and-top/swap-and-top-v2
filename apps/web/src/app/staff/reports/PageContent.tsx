@@ -28,6 +28,7 @@ import {
 } from '@snt/core';
 import { Badge, Bone, Button, ButtonLink, Dropdown, Panel, Sheet, Stack, type BadgeTone } from '@snt/ui';
 import { ImageSmallIcon } from '@snt/ui/icons';
+import { ChatTranscript } from '@/components/chat/ChatTranscript';
 import { refreshListing } from '@/lib/refresh';
 import { apiGet, apiSend, QueryProblem } from '@/lib/query';
 import { useLoadingBar } from '@/lib/loadingBar';
@@ -46,6 +47,8 @@ interface Row {
   agoLabel: string;
   show: Exclude<Show, 'all'>;
   listing?: { title: string; slug: string; status: string; photo?: string };
+  /** A reported chat, which can be read here. */
+  chatId?: string;
   person: { id: string; name: string; standing: string; upheldBefore: number; otherOpen: number };
   reporterName: string;
   reporterId: string;
@@ -323,7 +326,7 @@ export default function ReportsPage({ openFirst }: { openFirst?: string }) {
                   </span>
                   <span className={styles.listing}>
                     <span className={styles.strong}>
-                      {report.listing ? listingLine(report.listing) : 'A user, not a listing'}
+                      {report.listing ? listingLine(report.listing) : report.chatId ? 'A chat' : 'A user, not a listing'}
                     </span>
                   </span>
                   <span className={styles.posted}>
@@ -383,6 +386,8 @@ function ReportDetail({
   onClear: () => void;
   onApprove: () => void;
 }) {
+  /** The reported chat, open over the report. */
+  const [reading, setReading] = useState(false);
   const outcome =
     report.show !== 'open' && report.show !== 'claimed' && report.outcome ? OUTCOME[report.show] : null;
   return (
@@ -439,6 +444,13 @@ function ReportDetail({
             </>
           ) : null}
         </dl>
+        {/* A chat report: the chat itself, each look logged. */}
+        {report.chatId ? (
+          <Button variant="secondary" block onClick={() => setReading(true)}>
+            Read the chat
+          </Button>
+        ) : null}
+        {reading && report.chatId ? <ChatTranscript chatId={report.chatId} onClose={() => setReading(false)} /> : null}
         {report.show === 'open' ? (
           <div className={styles.actions}>
             {report.listing ? (

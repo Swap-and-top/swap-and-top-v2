@@ -8,6 +8,7 @@ import { QueryProvider } from '@/lib/query';
 import { StaffHomeProvider } from '@/components/StaffHomeProvider';
 import { LiveListingsLoader } from '@/components/LiveListingsLoader';
 import { SessionRestore } from '@/components/SessionRestore';
+import { ChatConnection } from '@/components/ChatConnection';
 import { SignInToast } from '@/components/SignInToast';
 import { VerifyPhoneHost } from '@/components/VerifyPhone';
 import { AppToaster, SignInHost } from '@snt/ui';
@@ -83,6 +84,8 @@ export default function RootLayout({
           </StaffHomeProvider>
           {/* A remembered sign in, back before the first paint. */}
           <SessionRestore />
+          {/* Chat's live connection while signed in (lib/chat.ts). */}
+          <ChatConnection />
           {/* The live listings from the database, for the search panel and
               anything else without a page to bring them. */}
           <LiveListingsLoader />

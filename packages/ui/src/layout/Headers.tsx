@@ -21,6 +21,7 @@ import { AutoHideHeader } from './AutoHideHeader';
 import { HomeLink } from './HomeLink';
 import { CompactLogo, Logo } from './Logo';
 import { AccountButton } from './AccountButton';
+import { MessagesButton } from './MessagesButton';
 import { NotificationBell } from './NotificationBell';
 import { PostButton } from './PostButton';
 import styles from './Headers.module.css';
@@ -54,6 +55,8 @@ export function AppHeader({
             <PostButton href={postHref} className={styles.postButton}>
               Post New Item
             </PostButton>
+            {/* Their chats, signed in: unread chats counted. */}
+            <MessagesButton href="/messages" />
             {/* Their notifications, signed in: a bell with its count. */}
             <NotificationBell audience="user" href="/notifications" />
             {/* The account circle, opening the app's menu. */}

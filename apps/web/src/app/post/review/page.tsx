@@ -51,6 +51,7 @@ import {
 } from '@snt/ui';
 import {
   MailIcon,
+  MessageIcon,
   MessengerIcon,
   PhoneIcon,
   WhatsAppIcon,
@@ -69,6 +70,8 @@ const CHANNELS: { value: ContactChannel; label: string; Icon: typeof PhoneIcon }
   { value: 'call', label: 'Calls', Icon: PhoneIcon },
   { value: 'email', label: 'Email', Icon: MailIcon },
   { value: 'messenger', label: 'Messenger', Icon: MessengerIcon },
+  // A chat in the app (docs/features/chat.md).
+  { value: 'message', label: 'Messages in the app', Icon: MessageIcon },
 ];
 
 export default function PostReviewPage() {

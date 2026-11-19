@@ -29,6 +29,7 @@ import {
   BellIcon,
 } from '../icons';
 import { CountBadge } from '../primitives/Badge';
+import { MessagesButton } from './MessagesButton';
 import { NotificationBell } from './NotificationBell';
 import { StoreMark } from '../primitives/Placeholder';
 import { Bone } from '../primitives/Skeleton';
@@ -257,6 +258,8 @@ export function ConsoleShell({
         {/* The way out of the console, as the sidebar's foot is on a
             laptop, the size of the marketplace's Post New Item; it goes to their profile. The store as
             buyers see it is under Store. */}
+        {/* The store's chats, with how many are unread. */}
+        <MessagesButton href="/console/messages" storeId={store.id} />
         {/* The store's notifications, a bell with its unread count. */}
         <NotificationBell audience="store" href={notificationsHref} storeId={store.id} />
         <Link href="/me" className={styles.headerLink}>

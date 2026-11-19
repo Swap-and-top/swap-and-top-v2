@@ -12,6 +12,7 @@ import { useId, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
+  CHAT_REPORT_REASONS,
   LISTING_REPORT_REASONS,
   PERSON_REPORT_REASONS,
   REPORT_REASON_LABELS,
@@ -25,6 +26,7 @@ import styles from './ReportSheet.module.css';
 export function ReportSheet({
   listingId,
   personId,
+  chatId,
   name,
   onClose,
 }: {
@@ -32,18 +34,20 @@ export function ReportSheet({
   listingId?: string;
   /** Or the person reported, from a deal check. */
   personId?: string;
+  /** Or a chat, from its menu: Trust and safety may then read it. */
+  chatId?: string;
   /** The listing's title or the person's name, for the sheet's title. */
   name: string;
   onClose: () => void;
 }) {
-  const reasons = listingId ? LISTING_REPORT_REASONS : PERSON_REPORT_REASONS;
+  const reasons = chatId ? CHAT_REPORT_REASONS : listingId ? LISTING_REPORT_REASONS : PERSON_REPORT_REASONS;
   const [reason, setReason] = useState<ReportReason>(reasons[0]!);
   const [details, setDetails] = useState('');
   const reasonLabel = useId();
 
   const send = useMutation({
     mutationFn: () =>
-      apiSend('/reports', 'POST', { listingId, personId, reason, details: details.trim() || undefined }),
+      apiSend('/reports', 'POST', { listingId, personId, chatId, reason, details: details.trim() || undefined }),
     onSuccess: () => {
       toast.success('Report sent. Our team will look at it.');
       onClose();
@@ -52,10 +56,12 @@ export function ReportSheet({
   });
 
   return (
-    <Sheet narrow title={listingId ? 'Report this listing' : `Report ${name}`} onClose={onClose}>
+    <Sheet narrow title={listingId ? 'Report this listing' : chatId ? 'Report this chat' : `Report ${name}`} onClose={onClose}>
       <Stack gap={5}>
         <p className={styles.lead}>
-          {listingId ? `${name}. ` : ''}Our team looks at every report. The user you report is never told who sent it.
+          {chatId
+            ? `Our team will read this chat with ${name} to look into it. They are never told who reported them.`
+            : `${listingId ? `${name}. ` : ''}Our team looks at every report. The user you report is never told who sent it.`}
         </p>
         <div className={styles.field}>
           <span id={reasonLabel} className={styles.label}>

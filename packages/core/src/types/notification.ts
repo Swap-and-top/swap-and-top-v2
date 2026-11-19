@@ -19,7 +19,8 @@ export type NotificationKind =
   | 'listing'
   | 'saved'
   | 'sponsor'
-  | 'account';
+  | 'account'
+  | 'message';
 
 export interface AppNotification {
   id: string;

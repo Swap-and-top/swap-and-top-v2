@@ -10,6 +10,7 @@
  * (`useConsoleTarget`).
  */
 
+import { StoreChatUnread } from '@/components/ChatConnection';
 import { Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -199,6 +200,8 @@ function Gate({ children }: { children: ReactNode }) {
   return (
     <ConsoleTargetContext.Provider value={store}>
       <ConsoleLeadCountContext.Provider value={newLeads}>{children}</ConsoleLeadCountContext.Provider>
+      {/* The count on the console's Messages button. */}
+      <StoreChatUnread storeId={store.id} />
     </ConsoleTargetContext.Provider>
   );
 }

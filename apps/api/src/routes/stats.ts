@@ -11,7 +11,7 @@
  */
 
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, eq, gt, gte, inArray, lt, sql } from 'drizzle-orm';
+import { and, eq, gt, gte, inArray, isNull, lt, sql } from 'drizzle-orm';
 import { optionalAuth, requireAuth, type AuthUser } from '../auth';
 import { db } from '../db/client';
 import * as t from '../db/schema';
@@ -233,7 +233,7 @@ statsRoutes.openapi(stats, async (c) => {
   }
 
   // Each event's listing and time, from the start of the stretch before.
-  const [views, reveals, offers, deals] = await Promise.all([
+  const [views, shown, chatsStarted, offers, deals] = await Promise.all([
     db
       .select({ listingId: t.listingViews.listingId, at: t.listingViews.viewedAt })
       .from(t.listingViews)
@@ -242,6 +242,19 @@ statsRoutes.openapi(stats, async (c) => {
       .select({ listingId: t.reveals.listingId, at: t.reveals.createdAt, way: t.reveals.way, slot: t.reveals.slot })
       .from(t.reveals)
       .where(and(inArray(t.reveals.listingId, ids), gte(t.reveals.createdAt, before), lt(t.reveals.createdAt, to))),
+    // A chat started from Message is a contact, as a number shown is
+    // (docs/features/chat.md); one from an accepted offer is counted there.
+    db
+      .select({ listingId: t.chats.listingId, at: t.chats.createdAt })
+      .from(t.chats)
+      .where(
+        and(
+          inArray(t.chats.listingId, ids),
+          isNull(t.chats.offerId),
+          gte(t.chats.createdAt, before),
+          lt(t.chats.createdAt, to),
+        ),
+      ),
     db
       .select({ listingId: t.offers.listingId, at: t.offers.createdAt })
       .from(t.offers)
@@ -258,6 +271,10 @@ statsRoutes.openapi(stats, async (c) => {
         ),
       ),
   ]);
+  const reveals = [
+    ...shown,
+    ...chatsStarted.map((chat) => ({ ...chat, way: 'message', slot: null as string | null })),
+  ];
   const events: Record<keyof FiguresT, { listingId: string; at: Date | null }[]> = { views, reveals, offers, deals };
   const metrics = Object.keys(events) as (keyof FiguresT)[];
 

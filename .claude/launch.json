@@ -13,6 +13,16 @@
       "autoPort": false
     },
     {
+      "name": "chat",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@snt/chat",
+        "dev"
+      ],
+      "port": 4100
+    },
+    {
       "name": "api",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": [

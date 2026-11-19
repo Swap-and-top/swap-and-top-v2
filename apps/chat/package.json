@@ -1,0 +1,24 @@
+{
+  "name": "@snt/chat",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Swap & Top's live chat: Socket.IO at /socket, beside the site, on the same database and sign in (docs/features/chat.md).",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo \"@snt/chat: no linter configured yet\"",
+    "clean": "rm -rf .turbo node_modules *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@snt/api": "workspace:*",
+    "socket.io": "4.8.4",
+    "tsx": "4.23.15"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "socket.io-client": "4.8.4",
+    "typescript": "^5.9.3"
+  }
+}

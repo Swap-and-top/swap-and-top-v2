@@ -45,6 +45,7 @@ import {
   requireSignIn,
   revealsLeft,
   useRevealStore,
+  useChatStore,
   useSessionStore,
   useSignInPromptStore,
   useOfferStore,
@@ -55,6 +56,7 @@ import {
   type Listing,
 } from '@snt/core';
 import { Button, ContactWayList, Sheet, WAY_META, waysOffered } from '@snt/ui';
+import { MessageIcon } from '@snt/ui/icons';
 import { recordReveal, revealStoreContact } from '@/lib/reveals';
 import styles from './RevealAction.module.css';
 
@@ -106,6 +108,7 @@ export function RevealAction({
   const signedIn = useSessionStore((state) => state.signedIn);
   const ask = useSignInPromptStore((state) => state.ask);
   const [open, setOpen] = useState(false);
+  const [opening, setOpening] = useState(false);
 
   // The real details once revealed; until then only which ways there are.
   // Calls and WhatsApp are the ways the database holds a number for.
@@ -186,7 +189,34 @@ export function RevealAction({
     void go();
   }
 
-  if (offered.length === 0) return null;
+  /** The seller takes messages in the app (docs/features/chat.md). Not on
+      a store's own page, whose number is the store's. */
+  const messageable = Boolean(channels?.includes('message')) && !storeId;
+  /** Opens the chat with the seller: an account first, as a chat needs one. */
+  const message = () =>
+    requireSignIn('Sign in to message the seller.', () => {
+      setOpening(true);
+      void useChatStore
+        .getState()
+        .open({ listingId })
+        .finally(() => setOpening(false));
+    });
+
+  if (offered.length === 0 && !messageable) return null;
+
+  // Messages only: straight to the chat, no sheet to open first.
+  if (offered.length === 0) {
+    return (
+      <div className={[styles.contactWrap, size === 'sm' ? styles.fit : ''].filter(Boolean).join(' ')}>
+        <Button size={size} block={block} loading={opening} onClick={message}>
+          Message the seller
+          <span className={styles.wayIcons} aria-hidden>
+            <MessageIcon size={size === 'lg' ? 22 : size === 'md' ? 18 : 16} />
+          </span>
+        </Button>
+      </div>
+    );
+  }
 
   // "Show contact" or "Show contacts", with the seller's ways on it. Nothing
   // is opened from here: the sheet reveals each way, and only then offers
@@ -212,6 +242,7 @@ export function RevealAction({
               const px = size === 'lg' ? 22 : size === 'md' ? 18 : 16;
               return <Icon key={way} size={px} weight={24 / px} />;
             })}
+            {messageable ? <MessageIcon size={size === 'lg' ? 22 : size === 'md' ? 18 : 16} /> : null}
           </span>
         </Button>
       </div>
@@ -227,6 +258,12 @@ export function RevealAction({
               onUse={use}
             />
           </div>
+          {/* Or a chat in the app, where the seller takes messages. */}
+          {messageable ? (
+            <Button variant="secondary" size="lg" block loading={opening} onClick={message}>
+              Message in the app
+            </Button>
+          ) : null}
           <p className={styles.note}>
             Meet in public, and check the item before you pay.
           </p>

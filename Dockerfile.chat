@@ -1,0 +1,28 @@
+# syntax=docker/dockerfile:1
+#
+# Swap & Top's live chat (apps/chat, docs/features/chat.md): Socket.IO on
+# port 4100, served at /socket on the site's own address. Its own app in
+# Dokploy, beside the site, with the site's DATABASE_URL (the internal
+# address), AUTH_SECRET and APP_URL.
+
+FROM node:22-alpine
+RUN corepack enable && corepack prepare pnpm@10.20.0 --activate
+WORKDIR /repo
+
+# Packages first, from the lock file alone, so a change to the code does
+# not download them again; then only what the chat app needs.
+COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+RUN pnpm fetch --frozen-lockfile
+COPY . .
+RUN pnpm install --frozen-lockfile --offline --filter @snt/chat... \
+  && chown -R node:node /repo
+
+ENV NODE_ENV=production \
+    PORT=4100 \
+    APP_HOST=Dokploy
+USER node
+WORKDIR /repo/apps/chat
+EXPOSE 4100
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s \
+  CMD wget -qO- http://127.0.0.1:4100/socket-health || exit 1
+CMD ["node", "--import", "tsx", "src/index.ts"]
