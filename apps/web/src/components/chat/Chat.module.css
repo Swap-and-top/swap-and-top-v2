@@ -131,14 +131,16 @@
   background: var(--snt-bg-card);
 }
 
+/* The arrow back, the name in the very middle, and the options: three
+   columns, the two round buttons the same width, so the name is centred. */
 .chatTop {
-  display: flex;
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
   align-items: center;
   gap: var(--snt-space-5);
 }
 
 .chatName {
-  flex-grow: 1;
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -149,7 +151,7 @@
   color: var(--snt-accent-bold);
 }
 
-.more {
+.round {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,6 +163,10 @@
   background: var(--snt-bg-inset);
   color: var(--snt-control-active);
   cursor: pointer;
+}
+
+.round:hover {
+  color: var(--snt-control-active);
 }
 
 .chatListing {
@@ -317,4 +323,9 @@
 .deleted {
   font-style: italic;
   opacity: 0.7;
+}
+
+/* A listing with no photo: its blank tile shows on the pale strip. */
+.chatListing span.thumb {
+  background: var(--snt-bg-card);
 }

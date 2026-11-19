@@ -50,6 +50,10 @@ export interface Offer {
   reachOn?: ContactWay[];
   /** Once accepted, from the server: how to reach the other side. */
   contact?: { phone: string; call: boolean; whatsapp: boolean };
+  /** From the server: the names each side shows as, the sender (or its
+      store) and the listing's owner (or its store). */
+  fromName?: string;
+  ownerName?: string;
   state: OfferState;
   /** Pre-formatted age, as on listings — see `ListingBase.postedLabel`. */
   sentLabel: string;

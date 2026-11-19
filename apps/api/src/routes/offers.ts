@@ -51,6 +51,10 @@ const OfferSchema = z
         listing's seller; the listing's side gets the sender, on the ways
         they chose for the offer. */
     contact: ContactSchema.optional(),
+    /** The names each side shows as: the sender (or the store it sent
+        as), and the listing's owner (or its store). */
+    fromName: z.string().optional(),
+    ownerName: z.string().optional(),
   })
   .openapi('Offer');
 
@@ -73,7 +77,7 @@ async function offerWithContact(
   row: typeof t.offers.$inferSelect,
   sentSide: boolean,
 ): Promise<z.infer<typeof OfferSchema>> {
-  const out = offerOut(row);
+  const out = { ...offerOut(row), ...(await namesOf(row)) };
   if (row.state !== 'accepted') return out;
   let contact = null;
   if (sentSide) {
@@ -84,6 +88,28 @@ async function offerWithContact(
     contact = contactOf(phone, row.reachOn.length ? row.reachOn : ['call', 'whatsapp']);
   }
   return contact ? { ...out, contact } : out;
+}
+
+/** The names each side of an offer shows as. */
+async function namesOf(row: typeof t.offers.$inferSelect): Promise<{ fromName?: string; ownerName?: string }> {
+  const [listing] = await db
+    .select({ ownerId: t.listings.ownerId, storeId: t.listings.storeId })
+    .from(t.listings)
+    .where(eq(t.listings.id, row.listingId));
+  const nameOf = async (personId: string | undefined, storeId: string | null | undefined) => {
+    if (storeId) {
+      const [store] = await db.select({ name: t.stores.name }).from(t.stores).where(eq(t.stores.id, storeId));
+      if (store?.name) return store.name;
+    }
+    if (!personId) return undefined;
+    const [person] = await db.select({ name: t.people.displayName }).from(t.people).where(eq(t.people.id, personId));
+    return person?.name || undefined;
+  };
+  const [fromName, ownerName] = await Promise.all([
+    nameOf(row.fromPersonId, row.fromStoreId),
+    nameOf(listing?.ownerId, listing?.storeId),
+  ]);
+  return { fromName, ownerName };
 }
 
 function offerOut(row: typeof t.offers.$inferSelect): z.infer<typeof OfferSchema> {

@@ -74,7 +74,8 @@ export function OfferCard({
   const otherId = readerIsOwner ? offer.fromUserId : listing.ownerId;
   const other = getUser(otherId);
   const otherStore = getStore(other?.storeId);
-  const otherName = otherStore?.name ?? other?.displayName ?? 'Someone';
+  const otherName =
+    (readerIsOwner ? offer.fromName : offer.ownerName) ?? otherStore?.name ?? other?.displayName ?? 'Someone';
 
   const cash = cashLine(offer, target, readerIsOwner);
   const wanted =

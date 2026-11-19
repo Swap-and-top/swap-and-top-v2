@@ -15,8 +15,8 @@ import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Bone, Button, ButtonLink, Sheet, Stack } from '@snt/ui';
-import { MoreIcon } from '@snt/ui/icons';
+import { Bone, Button, Sheet, Stack } from '@snt/ui';
+import { ChevronLeftIcon, MoreIcon } from '@snt/ui/icons';
 import { ReportSheet } from '@/components/ReportSheet';
 import { apiGet, apiSend, QueryProblem } from '@/lib/query';
 import {
@@ -160,11 +160,11 @@ export function ChatView({ chatId, backHref }: { chatId: string; backHref: strin
   return (
     <div className={styles.chat}>
       <div className={styles.chatTop}>
-        <ButtonLink href={backHref} variant="secondary" size="sm">
-          Back to messages
-        </ButtonLink>
+        <Link href={backHref} className={styles.round} aria-label="Back to messages">
+          <ChevronLeftIcon size={20} />
+        </Link>
         <h1 className={styles.chatName}>{data.other.name}</h1>
-        <button type="button" className={styles.more} aria-label="Chat options" onClick={() => setMenu(true)}>
+        <button type="button" className={styles.round} aria-label="Chat options" onClick={() => setMenu(true)}>
           <MoreIcon size={20} />
         </button>
       </div>
@@ -221,7 +221,7 @@ export function ChatView({ chatId, backHref }: { chatId: string; backHref: strin
             className={styles.input}
             rows={1}
             maxLength={2000}
-            placeholder="e.g. Is it still available?"
+            placeholder="Message"
             aria-label="Your message"
             value={text}
             onChange={(event) => {
@@ -285,8 +285,8 @@ export function ChatBones() {
   return (
     <div className={styles.chat} aria-busy>
       <div className={styles.chatTop}>
-        <Bone width={150} height={36} shape="pill" />
-        <Bone width={110} height={18} />
+        <Bone width={36} height={36} shape="circle" />
+        <Bone width={110} height={18} style={{ justifySelf: 'center' }} />
         <Bone width={36} height={36} shape="circle" />
       </div>
       <div className={styles.chatListing}>
