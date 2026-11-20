@@ -18,6 +18,8 @@ export interface AuthUser {
   /** The verified phone, in international form: +263771234567. */
   phone: string | null;
   email: string | null;
+  /** Whether that email has been verified (a code sent to it). */
+  emailVerified: boolean;
   /** The name given at sign up, if they signed up by email. */
   name: string | null;
   /** Their neighbourhood and town from sign up: "Mbare, Harare". */
@@ -48,6 +50,7 @@ async function read(headers: Headers): Promise<AuthUser | null> {
     id: user.id,
     phone: user.phoneNumberVerified ? text(user.phoneNumber) : null,
     email: isStandInEmail(user.email) ? null : user.email,
+    emailVerified: !isStandInEmail(user.email) && Boolean(user.emailVerified),
     name: text(user.name),
     location: text(user.location),
   };

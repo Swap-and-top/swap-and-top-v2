@@ -54,3 +54,11 @@
   color: var(--snt-ink-muted);
   text-align: center;
 }
+
+/* Where the seller takes messages: Message the seller, and under it the
+   smaller Show contact for the other ways. */
+.pair {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+}

@@ -64,15 +64,18 @@ import { refreshListing } from '@/lib/refresh';
 import { track } from '@/lib/track';
 import styles from './page.module.css';
 
-/** How people can reach you, as pills, as on the offer form. */
+/** How people can reach you, as pills, as on the offer form: a chat in the
+    app first (docs/features/chat.md), the way we lead people to. */
 const CHANNELS: { value: ContactChannel; label: string; Icon: typeof PhoneIcon }[] = [
+  { value: 'message', label: 'Messages in the app', Icon: MessageIcon },
   { value: 'whatsapp', label: 'WhatsApp', Icon: WhatsAppIcon },
   { value: 'call', label: 'Calls', Icon: PhoneIcon },
   { value: 'email', label: 'Email', Icon: MailIcon },
   { value: 'messenger', label: 'Messenger', Icon: MessengerIcon },
-  // A chat in the app (docs/features/chat.md).
-  { value: 'message', label: 'Messages in the app', Icon: MessageIcon },
 ];
+
+/** The ways that need a phone number. */
+const PHONE_WAYS: ContactChannel[] = ['whatsapp', 'call'];
 
 export default function PostReviewPage() {
   /** Posting: the button shows the spinner until the feed opens. */
@@ -81,13 +84,17 @@ export default function PostReviewPage() {
   const kind = draft.kind ?? 'swap';
   /** The store it goes up as, or null for themselves (see Post as). */
   const postAs = usePostAs();
-  const chosen = CHANNELS.filter((channel) =>
+  const viewer = useSessionStore((state) => state.viewer);
+  /** WhatsApp and calls only for someone with a number (a store has its
+      own): until SMS is set up, many sign up by email alone. */
+  const hasNumber = Boolean(postAs || viewer?.phone);
+  const channels = hasNumber ? CHANNELS : CHANNELS.filter(({ value }) => !PHONE_WAYS.includes(value));
+  const chosen = channels.filter((channel) =>
     draft.contactChannels.includes(channel.value),
   );
   /** Contact details only for people whose offer they accept. */
   const afterOffer = draft.contactShownTo === 'offers';
 
-  const viewer = useSessionStore((state) => state.viewer);
   const previewListing = draftListing(draft, postAs, viewer);
 
   /** At a listing limit: the API's message, shown in the limit sheet. */
@@ -156,7 +163,7 @@ export default function PostReviewPage() {
         cashAmount:
           kind === 'swap' && draft.cashDirection !== 'straight' ? amount(draft.cashAmount) : undefined,
         cashUpTo: kind === 'swap' ? draft.cashUpTo : undefined,
-        contactChannels: draft.contactChannels,
+        contactChannels: chosen.length ? chosen.map(({ value }) => value) : ['message'],
         allowStoreOffers: draft.allowStoreOffers,
         contactSignedInOnly: draft.contactSignedInOnly,
         contactShownTo: draft.contactShownTo,
@@ -207,7 +214,7 @@ export default function PostReviewPage() {
               </span>
             </span>
             <div className={styles.pills}>
-              {CHANNELS.map(({ value, label, Icon }) => {
+              {channels.map(({ value, label, Icon }) => {
                 const on = draft.contactChannels.includes(value);
                 // At least one way stays on: a listing must lead somewhere.
                 const last = on && chosen.length === 1;
@@ -229,8 +236,9 @@ export default function PostReviewPage() {
               })}
             </div>
             <p className={styles.small}>
-              Your details stay hidden until someone taps Show contacts. You
-              will see how many people did.
+              Messages in the app keep your number private. Anything else
+              stays hidden until someone taps Show contact, and you will see
+              how many people did.
             </p>
           </div>
 

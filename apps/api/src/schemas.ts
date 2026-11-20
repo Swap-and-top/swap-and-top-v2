@@ -170,8 +170,10 @@ export const MeSchema = z
     /** "Avondale, Harare", once they have said where they are. */
     location: z.string().optional(),
     phone: z.string().optional().openapi({ example: '+263770000001' }),
-    /** Needed to post, make offers and reach other people. */
     phoneVerified: z.boolean(),
+    /** May post, make offers and add photos: a verified phone, or a
+        verified email until SMS is set up. */
+    mayAct: z.boolean(),
     role: z.enum(['user', 'super_admin']),
     /** The departments of our own team they are in, as member or lead. */
     staff: z.array(

@@ -117,7 +117,9 @@ const initial = {
   cashAmount: '',
   cashUpTo: false,
   acceptsSwaps: false,
-  contactChannels: ['whatsapp'] as ContactChannel[],
+  // Messages in the app first: the way we lead people to (a number stays
+  // private, and a chat can be reported).
+  contactChannels: ['message'] as ContactChannel[],
   allowStoreOffers: true,
   contactSignedInOnly: false,
   contactShownTo: 'everyone' as ContactShownTo,

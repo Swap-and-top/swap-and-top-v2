@@ -19,7 +19,7 @@ import { loadListings } from '../listings';
 import { paidUntil } from '../passes';
 import { ContactSchema, contactForListing, contactOf, personPhone, storePhone } from '../contact';
 import { ErrorSchema, ListingSchema } from '../schemas';
-import { personFor } from './me';
+import { mayAct, personFor } from './me';
 import { isMember } from './post';
 import { notify, notifyStore } from './notifications';
 
@@ -210,7 +210,7 @@ const send = createRoute({
 offerRoutes.openapi(send, async (c) => {
   const body = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
-  if (!person.phoneVerifiedAt) return c.json({ error: 'Verify your phone number to send offers.' }, 403);
+  if (!mayAct(person, c.get('authUser'))) return c.json({ error: 'Verify your phone number to send offers.' }, 403);
   if (person.standing === 'suspended' || person.standing === 'banned') {
     return c.json({ error: 'Your account cannot send offers right now.' }, 403);
   }

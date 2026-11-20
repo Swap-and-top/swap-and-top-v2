@@ -15,7 +15,7 @@ import { db } from '../db/client';
 import * as t from '../db/schema';
 import { deletePhotos, photoKey, photoUrl, photosReady, putPhoto } from '../r2';
 import { ErrorSchema } from '../schemas';
-import { personFor } from './me';
+import { mayAct, personFor } from './me';
 
 export const uploadRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -78,8 +78,8 @@ const upload = createRoute({
 uploadRoutes.openapi(upload, async (c) => {
   if (!photosReady) return c.json({ error: 'Photos are not set up yet.' }, 503);
   const person = await personFor(c.get('authUser'));
-  // As for posting: a verified phone, and not suspended or banned.
-  if (!person.phoneVerifiedAt) return c.json({ error: 'Verify your phone number to add photos.' }, 403);
+  // As for posting: a verified phone (or email, until SMS), and not suspended or banned.
+  if (!mayAct(person, c.get('authUser'))) return c.json({ error: 'Verify your phone number to add photos.' }, 403);
   if (person.standing === 'suspended' || person.standing === 'banned') {
     return c.json({ error: 'Your account cannot post listings right now.' }, 403);
   }

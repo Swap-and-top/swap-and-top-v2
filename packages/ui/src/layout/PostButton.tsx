@@ -28,7 +28,7 @@ import { startPageLoad } from '../pageLoad';
 export function useSignInToPost(href: string, then?: () => void) {
   const router = useRouter();
   const signedIn = useSessionStore((state) => state.signedIn);
-  const phoneVerified = useSessionStore((state) => state.viewer?.phoneVerified ?? true);
+  const phoneVerified = useSessionStore((state) => state.viewer?.mayAct ?? true);
 
   function onClick(event: MouseEvent<HTMLAnchorElement>) {
     // Signed in with a verified phone, or opening in a new tab or window: an

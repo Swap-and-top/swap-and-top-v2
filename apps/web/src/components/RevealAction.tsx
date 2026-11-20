@@ -218,6 +218,28 @@ export function RevealAction({
     );
   }
 
+  /** The button for the seller's other ways: "Show contact(s)" with their
+      icons. Where the seller takes messages it is the smaller, second
+      button, under Message the seller: we lead people to the chat. */
+  const iconPx = size === 'lg' ? 22 : size === 'md' ? 18 : 16;
+  const showButton = (variant?: 'secondary') => (
+    <Button
+      size={variant ? (size === 'lg' ? 'md' : size) : size}
+      variant={variant}
+      block={variant ? true : block}
+      onClick={() => setOpen(true)}
+    >
+      {offered.length === 1 ? 'Show contact' : 'Show contacts'}
+      <span className={styles.wayIcons} aria-hidden>
+        {offered.map((way) => {
+          const { Icon } = WAY_META[way];
+          // A line of exactly 1px: the icons are drawn on a 24-unit grid.
+          return <Icon key={way} size={iconPx} weight={24 / iconPx} />;
+        })}
+      </span>
+    </Button>
+  );
+
   // "Show contact" or "Show contacts", with the seller's ways on it. Nothing
   // is opened from here: the sheet reveals each way, and only then offers
   // the chat — no one is sent off to WhatsApp by surprise.
@@ -231,20 +253,21 @@ export function RevealAction({
         className={[styles.contactWrap, size === 'sm' ? styles.fit : '']
           .filter(Boolean)
           .join(' ')}
-        data-stack-on-phone={offered.length > 1 ? '' : undefined}
+        data-stack-on-phone={offered.length > 1 || messageable ? '' : undefined}
       >
-        <Button size={size} block={block} onClick={() => setOpen(true)}>
-          {offered.length === 1 ? 'Show contact' : 'Show contacts'}
-          <span className={styles.wayIcons} aria-hidden>
-            {offered.map((way) => {
-              const { Icon } = WAY_META[way];
-              // A line of exactly 1px: the icons are drawn on a 24-unit grid.
-              const px = size === 'lg' ? 22 : size === 'md' ? 18 : 16;
-              return <Icon key={way} size={px} weight={24 / px} />;
-            })}
-            {messageable ? <MessageIcon size={size === 'lg' ? 22 : size === 'md' ? 18 : 16} /> : null}
-          </span>
-        </Button>
+        {messageable ? (
+          <div className={styles.pair}>
+            <Button size={size} block loading={opening} onClick={message}>
+              Message the seller
+              <span className={styles.wayIcons} aria-hidden>
+                <MessageIcon size={iconPx} />
+              </span>
+            </Button>
+            {showButton('secondary')}
+          </div>
+        ) : (
+          showButton()
+        )}
       </div>
 
       {open ? (
@@ -258,12 +281,6 @@ export function RevealAction({
               onUse={use}
             />
           </div>
-          {/* Or a chat in the app, where the seller takes messages. */}
-          {messageable ? (
-            <Button variant="secondary" size="lg" block loading={opening} onClick={message}>
-              Message in the app
-            </Button>
-          ) : null}
           <p className={styles.note}>
             Meet in public, and check the item before you pay.
           </p>

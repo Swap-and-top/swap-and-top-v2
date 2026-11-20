@@ -30,7 +30,7 @@ import { loadListings } from '../listings';
 import { FREE_STORE_LIMIT, paidUntil, settlePasses } from '../passes';
 import { deletePhotos, photoKey } from '../r2';
 import { ErrorSchema, ListingSchema } from '../schemas';
-import { personFor } from './me';
+import { mayAct, personFor } from './me';
 
 export const postRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
@@ -195,7 +195,7 @@ function slugFor(title: string, area: string): string {
 postRoutes.openapi(post, async (c) => {
   const body = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
-  if (!person.phoneVerifiedAt) {
+  if (!mayAct(person, c.get('authUser'))) {
     return c.json({ error: 'Verify your phone number to post listings.' }, 403);
   }
   if (person.standing === 'suspended' || person.standing === 'banned') {
@@ -346,7 +346,7 @@ postRoutes.openapi(importStock, async (c) => {
   const { id: storeId } = c.req.valid('param');
   const { rows } = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
-  if (!person.phoneVerifiedAt) {
+  if (!mayAct(person, c.get('authUser'))) {
     return c.json({ error: 'Verify your phone number to post listings.' }, 403);
   }
   if (person.standing === 'suspended' || person.standing === 'banned') {

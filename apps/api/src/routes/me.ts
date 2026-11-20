@@ -18,7 +18,7 @@ import * as t from '../db/schema';
 import { dayMonth, paidUntil, settlePasses } from '../passes';
 import { isLiveTestAccount, staffOf } from '../staff';
 import { ErrorSchema, MeSchema } from '../schemas';
-import { MOCK_CODE } from '../messages';
+import { MOCK_CODE, smsReady } from '../messages';
 import { photoUrl } from '../r2';
 
 export const meRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
@@ -68,6 +68,15 @@ function rememberPerson(authUserId: string, person: Person) {
     localhost and previews it keeps its role, for testing. */
 export function withLiveRole(person: Person): Person {
   return person.role !== 'user' && isLiveTestAccount(person.phone) ? { ...person, role: 'user' } : person;
+}
+
+/**
+ * Whether they may post, make offers and add photos: a verified phone, or,
+ * until SMS is set up (messages.ts), a verified email, since no one can
+ * verify a phone yet. Once SMS works, a phone is needed again.
+ */
+export function mayAct(person: Person, user: AuthUser): boolean {
+  return person.phoneVerifiedAt !== null || (!smsReady && user.emailVerified);
 }
 
 /** The person for this sign in, linking or adding them as needed. */
@@ -122,7 +131,7 @@ async function findPerson(user: AuthUser): Promise<Person> {
 }
 
 /** The person as the API returns them, with the stores they belong to. */
-async function viewerOut(person: typeof t.people.$inferSelect) {
+async function viewerOut(person: typeof t.people.$inferSelect, user: AuthUser) {
   await settlePasses();
   const rows = await db
     .select({
@@ -165,6 +174,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
     ...(person.location ? { location: person.location } : {}),
     phone: person.phone ?? undefined,
     phoneVerified: person.phoneVerifiedAt !== null,
+    mayAct: mayAct(person, user),
     role: person.role,
     staff: await staffOf(person),
     standing: person.standing,
@@ -195,7 +205,7 @@ async function viewerOut(person: typeof t.people.$inferSelect) {
 
 meRoutes.openapi(me, async (c) => {
   const person = await personFor(c.get('authUser'));
-  return c.json(await viewerOut(person), 200);
+  return c.json(await viewerOut(person, c.get('authUser')), 200);
 });
 
 const name = createRoute({
@@ -233,7 +243,7 @@ meRoutes.openapi(name, async (c) => {
     .where(eq(t.people.id, person.id))
     .returning();
   rememberPerson(c.get('authUser').id, updated!);
-  return c.json(await viewerOut(updated!), 200);
+  return c.json(await viewerOut(updated!, c.get('authUser')), 200);
 });
 
 /** A Zimbabwe mobile number as +263771234567, or null when it is not one. */
@@ -297,7 +307,7 @@ meRoutes.openapi(phone, async (c) => {
     .where(eq(t.people.id, person.id))
     .returning();
   rememberPerson(user.id, updated!);
-  return c.json(await viewerOut(updated!), 200);
+  return c.json(await viewerOut(updated!, c.get('authUser')), 200);
 });
 
 const password = createRoute({

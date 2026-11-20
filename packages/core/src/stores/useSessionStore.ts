@@ -23,8 +23,10 @@ export interface Viewer {
   /** "Avondale, Harare", once they have said where they are. */
   location?: string;
   phone?: string;
-  /** Needed to post, make offers and reach other people. */
   phoneVerified: boolean;
+  /** May post, make offers and add photos: a verified phone, or a verified
+      email until SMS is set up (the API decides). */
+  mayAct: boolean;
   role: Exclude<Role, 'guest'>;
   /** The departments of our own team they are in; empty for everyone else. */
   staff: StaffMembership[];
@@ -170,7 +172,7 @@ export const usePhonePromptStore = create<PhonePromptState>((set) => ({
 export function hasVerifiedPhone(): boolean {
   const { viewer } = useSessionStore.getState();
   // Still loading who they are: let it through rather than ask twice.
-  return viewer ? viewer.phoneVerified : true;
+  return viewer ? viewer.mayAct : true;
 }
 
 /**
