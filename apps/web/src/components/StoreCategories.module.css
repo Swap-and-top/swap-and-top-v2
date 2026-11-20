@@ -1,0 +1,20 @@
+/* As every form's fields: the label set in to line up with the boxes. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  min-width: 0;
+}
+
+.label {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.hint {
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}

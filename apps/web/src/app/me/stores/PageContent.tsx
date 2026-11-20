@@ -5,11 +5,15 @@
  * row each. A tap opens a store with a pass in its Store console (its
  * details and pass are there, not on Me); a free store, which has no
  * console, on its own page here (`[id]`), with its listings.
+ *
+ * Until the API has said who they are, its skeleton (loading.tsx), never
+ * "You have no stores yet" for a moment.
  */
 
 import { useSessionStore } from '@snt/core';
 import { AppHeader, ButtonLink, ListGroup, ListRow, Screen, ScreenBody, SignInGate, Stack } from '@snt/ui';
 import { BoxIcon } from '@snt/ui/icons';
+import Loading from './loading';
 import styles from './page.module.css';
 
 /** One empty list, so a guest's stores are the same each time they are read. */
@@ -17,6 +21,10 @@ const NO_STORES: never[] = [];
 
 export default function MyStoresPage() {
   const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
+  const signedIn = useSessionStore((state) => state.signedIn);
+  const known = useSessionStore((state) => Boolean(state.viewer));
+
+  if (signedIn && !known) return <Loading />;
 
   return (
     <Screen>

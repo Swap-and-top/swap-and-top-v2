@@ -4,7 +4,7 @@
  * All three sit on the brand gradient with the swept bottom-right corner.
  *
  * `AppHeader` is the branded one on the top-level screens: logo, the yellow
- * "Post New Item" call to action and the account circle, with room underneath
+ * "Add New Listing" call to action and the account circle, with room underneath
  * for whatever the screen needs in the header — search, category chips, type
  * tabs, a title. `ScreenHeader` is the back-button one on a detail screen.
  * `StepHeader` adds a progress bar for the posting flow.
@@ -53,7 +53,7 @@ export function AppHeader({
             </HomeLink>
             {/* Asks a guest to sign in first; see PostButton. */}
             <PostButton href={postHref} className={styles.postButton}>
-              Post New Item
+              Add New Listing
             </PostButton>
             {/* Their chats, signed in: unread chats counted. */}
             <MessagesButton href="/messages" />

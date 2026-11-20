@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * PostButton — "Post New Item" in the header — and `useSignInToPost`, the
+ * PostButton — "Add New Listing" in the header — and `useSignInToPost`, the
  * same rule for any other link into the posting flow (the feed's and
  * search's "Post what you're looking for", the Wanted page's prompt).
  *

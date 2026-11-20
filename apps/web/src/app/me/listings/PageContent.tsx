@@ -109,7 +109,7 @@ export default function MyListingsPage() {
             <EmptyState
               title="Nothing posted here yet"
               body="What you post shows here, and stays out of your own feed."
-              action={<ButtonLink href="/post">Post New Item</ButtonLink>}
+              action={<ButtonLink href="/post">Add New Listing</ButtonLink>}
             />
           )}
         </SignInGate>

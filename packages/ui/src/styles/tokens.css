@@ -140,7 +140,7 @@
   --snt-control-idle: #5791bb;
   /* Idle labels and the search prompt: 4.5:1 on the page and on white. */
   --snt-control-idle-ink: #3e7399;
-  /** "Post New Item" on the header's yellow button: 4.5:1 on it. */
+  /** "Add New Listing" on the header's yellow button: 4.5:1 on it. */
   --snt-post-ink: #14835b;
   --snt-accent-strong: #1d5d85;
   --snt-accent-tint: #e9f0f9;

@@ -68,6 +68,60 @@
   line-height: var(--snt-leading-normal);
 }
 
+/* About the store, where it is, when it opens: a line each, its icon in
+   the blue beside it. */
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--snt-text-base);
+  line-height: var(--snt-leading-normal);
+  color: var(--snt-ink-muted);
+}
+
+.facts li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-4);
+}
+
+.facts svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--snt-control-active);
+}
+
+/* Its owner's "Not verified yet": the Verified store badge's size and
+   shape (Trust.module.css, md), in grey, with Verify store in the blue. */
+.unverified {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+  white-space: nowrap;
+}
+
+.unverifiedDisc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-card-ink-muted);
+}
+
+.verifyLink {
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-control-active);
+}
+
 /* Show contacts and Follow, half each. */
 .actions {
   display: grid;

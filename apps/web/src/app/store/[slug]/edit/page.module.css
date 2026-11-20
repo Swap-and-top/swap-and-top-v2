@@ -89,7 +89,10 @@
 }
 
 /* Close store: red words on the outline button, a red button in the check. */
-.close {
+/* Close store: red, as it takes the store down. Doubled, to outrank the
+   secondary button's own blue. */
+.close.close,
+.close.close:hover:not(:disabled) {
   color: var(--snt-alert);
   border-color: color-mix(in srgb, var(--snt-alert) 45%, transparent);
 }
@@ -105,4 +108,29 @@
 .textBone {
   display: flex;
   align-items: center;
+}
+
+/* The skeleton's chips, wrapping as What you sell's do. */
+.chipBones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--snt-space-3);
+}
+
+/* View as buyer and Close store, side by side. */
+.footButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--snt-space-4);
+}
+
+/* A skeleton button, as tall as the page's own (Button md). */
+.boneButton {
+  height: var(--snt-touch);
+}
+
+@media (min-width: 768px) {
+  .boneButton {
+    height: 40px;
+  }
 }

@@ -256,7 +256,7 @@ export function ConsoleShell({
           <span className={styles.storeKicker}>Store console</span>
         </span>
         {/* The way out of the console, as the sidebar's foot is on a
-            laptop, the size of the marketplace's Post New Item; it goes to their profile. The store as
+            laptop, the size of the marketplace's Add New Listing; it goes to their profile. The store as
             buyers see it is under Store. */}
         {/* The store's chats, with how many are unread. */}
         <MessagesButton href="/console/messages" storeId={store.id} />

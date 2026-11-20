@@ -142,6 +142,8 @@ export const StoreSchema = z
     description: z.string(),
     location: z.string(),
     openingHours: z.string(),
+    /** What it sells, as its owner chose: its page's tabs. */
+    categories: z.array(category),
     /** Its name before a rename, for 30 days after. */
     formerName: z.string().optional(),
     verified: z.boolean(),

@@ -10,7 +10,7 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useId, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Button, Dropdown, Field, Panel, Stack, VerifiedStoreBadge } from '@snt/ui';
 import { apiGet, apiSend } from '@/lib/query';
@@ -36,6 +36,9 @@ const KINDS: { value: Kind; label: string }[] = [
 ];
 
 export function VerifyPanel({ storeId, phone }: { storeId: string; phone?: string }) {
+  /** Arrived from Verify store on the store's page: brought into view,
+      once the form above it has loaded. */
+  const anchor = useRef<HTMLDivElement>(null);
   const kindLabel = useId();
   const [kind, setKind] = useState<Kind>('registered');
   const [reference, setReference] = useState('');
@@ -62,57 +65,65 @@ export function VerifyPanel({ storeId, phone }: { storeId: string; phone?: strin
     send.mutate();
   }
 
+  const shown = Boolean(standing);
+  useEffect(() => {
+    if (shown && window.location.hash === '#verify') anchor.current?.scrollIntoView({ block: 'start' });
+  }, [shown]);
+
   if (!standing) return <VerifyPanelSkeleton />;
   const { verified, request } = standing;
 
   return (
-    <Panel padded>
-      <Stack gap={4}>
-        <h2 className={styles.sectionTitle}>Verified store</h2>
-        {verified ? (
-          <>
-            <VerifiedStoreBadge size="md" label="Verified store" />
-            <p className={styles.lead}>
-              Buyers see that a real business stands behind your store. Changing its name
-              pauses the badge until we check again.
-            </p>
-          </>
-        ) : request?.state === 'pending' ? (
-          <p className={styles.lead}>
-            Your request from {request.askedLabel} is with our team. We will call you
-            {phone ? ` on ${phone}` : ''} to see your documents and arrange a short video
-            call or visit.
-          </p>
-        ) : (
-          <form onSubmit={ask}>
-            <Stack gap={5}>
+    // `#verify`: where Verify store on the store's page leads.
+    <div id="verify" ref={anchor}>
+      <Panel padded>
+        <Stack gap={4}>
+          <h2 className={styles.sectionTitle}>Verified store</h2>
+          {verified ? (
+            <>
+              <VerifiedStoreBadge size="md" label="Verified store" />
               <p className={styles.lead}>
-                {request?.state === 'declined'
-                  ? `We could not verify it last time: ${request.note ?? 'no reason given'}. You can ask again.`
-                  : request?.state === 'approved'
-                    ? 'The badge was paused when the store’s name changed. Ask again to have it back.'
-                    : 'Show buyers a real business stands behind your store. Tell us what you have, and our team will call you to see your documents.'}
+                Buyers see that a real business stands behind your store. Changing its name
+                pauses the badge until we check again.
               </p>
-              <div className={styles.town}>
-                <span id={kindLabel} className={styles.label}>
-                  Your business
-                </span>
-                <Dropdown value={kind} options={KINDS} onChange={setKind} labelledBy={kindLabel} />
-              </div>
-              <Field
-                label={kind === 'registered' ? 'Registration number' : 'Council or market licence number'}
-                placeholder={kind === 'registered' ? 'e.g. 12345/2019' : 'e.g. HCC 004512'}
-                maxLength={60}
-                value={reference}
-                onChange={(event) => setReference(event.target.value)}
-              />
-              <Button type="submit" size="lg" block loading={send.isPending}>
-                Ask to be verified
-              </Button>
-            </Stack>
-          </form>
-        )}
-      </Stack>
-    </Panel>
+            </>
+          ) : request?.state === 'pending' ? (
+            <p className={styles.lead}>
+              Your request from {request.askedLabel} is with our team. We will call you
+              {phone ? ` on ${phone}` : ''} to see your documents and arrange a short video
+              call or visit.
+            </p>
+          ) : (
+            <form onSubmit={ask}>
+              <Stack gap={5}>
+                <p className={styles.lead}>
+                  {request?.state === 'declined'
+                    ? `We could not verify it last time: ${request.note ?? 'no reason given'}. You can ask again.`
+                    : request?.state === 'approved'
+                      ? 'The badge was paused when the store’s name changed. Ask again to have it back.'
+                      : 'Show buyers a real business stands behind your store. Tell us what you have, and our team will call you to see your documents.'}
+                </p>
+                <div className={styles.town}>
+                  <span id={kindLabel} className={styles.label}>
+                    Your business
+                  </span>
+                  <Dropdown value={kind} options={KINDS} onChange={setKind} labelledBy={kindLabel} />
+                </div>
+                <Field
+                  label={kind === 'registered' ? 'Registration number' : 'Council or market licence number'}
+                  placeholder={kind === 'registered' ? 'e.g. 12345/2019' : 'e.g. HCC 004512'}
+                  maxLength={60}
+                  value={reference}
+                  onChange={(event) => setReference(event.target.value)}
+                />
+                <Button type="submit" size="lg" block loading={send.isPending}>
+                  Ask to be verified
+                </Button>
+              </Stack>
+            </form>
+          )}
+        </Stack>
+      </Panel>
+    </div>
   );
 }

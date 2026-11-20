@@ -48,3 +48,42 @@
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
 }
+
+/* A skeleton button, as tall as the page's own (Button md). */
+.boneButton {
+  height: var(--snt-touch);
+}
+
+@media (min-width: 768px) {
+  .boneButton {
+    height: 40px;
+  }
+}
+
+/* The store's line in the skeleton: the text, unseen, keeps its height. */
+.boneLead {
+  position: relative;
+}
+
+.boneLead .lead {
+  visibility: hidden;
+}
+
+.boneLeadFill {
+  position: absolute;
+  inset: 0;
+}
+
+/* Get a store pass: the brand gradient, as Sign in, so it catches the eye.
+   Doubled, to outrank the button's own colour. */
+.passButton.passButton {
+  border: 0;
+  background: linear-gradient(-45deg, var(--snt-brand-blue), var(--snt-brand-green));
+  color: var(--snt-ink-on-dark);
+}
+
+@media (hover: hover) {
+  .passButton.passButton:hover {
+    filter: brightness(0.96);
+  }
+}

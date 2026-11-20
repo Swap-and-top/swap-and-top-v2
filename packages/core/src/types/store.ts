@@ -5,6 +5,8 @@
  * something checkable: a registered business stands behind the listing.
  */
 
+import type { Category } from './listing';
+
 export interface Store {
   id: string;
   slug: string;
@@ -16,6 +18,8 @@ export interface Store {
   description: string;
   location: string;
   openingHours: string;
+  /** What it sells, as its owner chose: its page's tabs. Empty: every one. */
+  categories?: Category[];
   /** Its name before a rename, shown as "formerly …" for 30 days. */
   formerName?: string;
   /** Business registration checked by staff. Paid, bundled with the console. */

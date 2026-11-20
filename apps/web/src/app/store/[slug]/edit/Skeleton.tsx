@@ -76,11 +76,24 @@ export function StoreFormSkeleton({ logo = false }: { logo?: boolean }) {
             <FieldBone />
             <FieldBone />
           </FieldRow>
+          {/* What you sell: its label, the chips and the line under them. */}
+          <div className={styles.field}>
+            <TextBone width={90} />
+            <div className={styles.chipBones}>
+              {[72, 70, 78, 80, 56, 96, 56].map((width, n) => (
+                <Bone key={n} shape="pill" width={width} height={30} />
+              ))}
+            </div>
+            <TextBone width="75%" />
+          </div>
           <Bone shape="pill" height={48} />
         </Stack>
       </Panel>
       <VerifyPanelSkeleton />
-      <Bone shape="pill" height={44} />
+      <div className={styles.footButtons}>
+        <Bone shape="pill" height="" className={styles.boneButton} />
+        <Bone shape="pill" height="" className={styles.boneButton} />
+      </div>
     </>
   );
 }

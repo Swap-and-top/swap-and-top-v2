@@ -2,7 +2,7 @@
 
 /**
  * Open a store: a short form, the store's name and where it is (docs/
- * product/accounts-and-stores.md). It opens as a free store, up to 15 live
+ * product/accounts-and-stores.md). It opens as a free store, up to 5 live
  * listings for sale or swap, run from the person's own account; a pass and
  * the Verified store badge come later, when wanted. Reached from the listing
  * limit message and from Me.
@@ -12,7 +12,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useId, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { DEFAULT_TOWN, TOWNS, type Town } from '@snt/core';
+import { DEFAULT_TOWN, FREE_STORE_LIMIT, TOWNS, type Category, type Town } from '@snt/core';
+import { StoreCategories } from '@/components/StoreCategories';
 import {
   AppHeader,
   Button,
@@ -40,13 +41,16 @@ export default function OpenStorePage() {
   const [name, setName] = useState('');
   const [area, setArea] = useState('');
   const [town, setTown] = useState<Town>(DEFAULT_TOWN);
+  /** What it sells: none until chosen, at least one needed. */
+  const [categories, setCategories] = useState<Category[]>([]);
   const queryClient = useQueryClient();
 
   const openStore = useMutation({
     mutationFn: async () => {
-      const data = await apiSend<{ slug: string }>('/stores', 'POST', {
+      const data = await apiSend<{ id: string; slug: string }>('/stores', 'POST', {
         name: name.trim(),
         location: `${area.trim()}, ${town}`,
+        categories,
       });
       // Who they are now includes the store, for Post as and Me.
       await refreshViewer(queryClient);
@@ -56,7 +60,9 @@ export default function OpenStorePage() {
     onSuccess: (data) => {
       toast.success('Your store is open');
       startPageLoad();
-      router.push(`/store/${data.slug}`);
+      // To the owner's page for it, where they add their first item and
+      // share its link, not the page buyers see.
+      router.push(`/me/stores/${data.id}`);
     },
     onError: (error) => toast.error(error.message || 'We could not open it. Try again in a minute.'),
   });
@@ -65,6 +71,10 @@ export default function OpenStorePage() {
     event.preventDefault();
     if (!name.trim() || !area.trim()) {
       toast.error('Enter the store’s name and neighbourhood.');
+      return;
+    }
+    if (categories.length === 0) {
+      toast.error('Choose what the store sells.');
       return;
     }
     openStore.mutate();
@@ -81,7 +91,7 @@ export default function OpenStorePage() {
               <form onSubmit={open}>
                 <Stack gap={5}>
                   <p className={styles.lead}>
-                    A store has its own page and up to 15 live listings for sale or
+                    A store has its own page and up to {FREE_STORE_LIMIT} live listings for sale or
                     swap. It is free, and you run it from your own account.
                   </p>
                   <Field
@@ -109,6 +119,7 @@ export default function OpenStorePage() {
                       />
                     </div>
                   </FieldRow>
+                  <StoreCategories value={categories} onChange={setCategories} />
                   <Button type="submit" size="lg" block loading={openStore.isPending}>
                     Open store
                   </Button>

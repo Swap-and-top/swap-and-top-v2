@@ -12,7 +12,7 @@
  * initials back.
  * Staff and others are told it is the owner's.
  *
- * At its foot, Close store, with a check first: its page and listings come
+ * At its foot, View as buyer beside Close store, which checks first: its page and listings come
  * down for everyone, staff lose access, any pass time left goes; the owner
  * carries on as a person.
  *
@@ -24,7 +24,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { DEFAULT_TOWN, TOWNS, useSessionStore, type Town } from '@snt/core';
+import { DEFAULT_TOWN, TOWNS, useSessionStore, type Category, type Town } from '@snt/core';
+import { StoreCategories } from '@/components/StoreCategories';
 import {
   AppHeader,
   Button,
@@ -70,6 +71,8 @@ interface StoreDetails {
   description: string;
   openingHours: string;
   location: string;
+  /** What it sells: its page's tabs. */
+  categories?: Category[];
 }
 
 type Mine = { id: string; role: 'owner' | 'staff'; phone?: string; logo?: string };
@@ -82,6 +85,9 @@ export default function EditStorePage({ slug }: { slug: string }) {
     queryKey: ['store', slug, 'page'],
     queryFn: () => publicGet<StoreDetails>(`/stores/${encodeURIComponent(slug)}`),
   });
+  /** Just closed: on its way to Me, so never "Only the store's owner…"
+      as the store leaves their list. */
+  const [closed, setClosed] = useState(false);
 
   return (
     <Screen>
@@ -90,22 +96,29 @@ export default function EditStorePage({ slug }: { slug: string }) {
         <SignInGate>
           <Stack gap={6}>
             <h1 className={styles.title}>Edit store details</h1>
-            {!known ? (
+            {!known || closed ? (
               <StoreFormSkeleton logo={Boolean(mine?.logo)} />
             ) : !owner || !mine ? (
-              <Panel padded>
-                <p className={styles.lead}>Only the store’s owner can change its details.</p>
-              </Panel>
+              <>
+                <Panel padded>
+                  <p className={styles.lead}>Only the store’s owner can change its details.</p>
+                </Panel>
+                <ButtonLink href="/me" variant="secondary" block>
+                  Back to my profile
+                </ButtonLink>
+              </>
             ) : loaded.isError ? (
               <QueryProblem error={loaded.error} onRetry={() => void loaded.refetch()} />
             ) : loaded.data ? (
-              <StoreForm slug={slug} mine={mine} store={loaded.data} />
+              <StoreForm
+                slug={slug}
+                mine={mine}
+                store={loaded.data}
+                onClosed={() => setClosed(true)}
+              />
             ) : (
               <StoreFormSkeleton logo={Boolean(mine?.logo)} />
             )}
-            <ButtonLink href="/me" variant="secondary" block>
-              Cancel
-            </ButtonLink>
           </Stack>
         </SignInGate>
       </ScreenBody>
@@ -114,7 +127,17 @@ export default function EditStorePage({ slug }: { slug: string }) {
 }
 
 /** The form, its Verified store panel and Close store, from the store as loaded. */
-function StoreForm({ slug, mine, store }: { slug: string; mine: Mine; store: StoreDetails }) {
+function StoreForm({
+  slug,
+  mine,
+  store,
+  onClosed,
+}: {
+  slug: string;
+  mine: Mine;
+  store: StoreDetails;
+  onClosed: () => void;
+}) {
   const router = useRouter();
   const townLabel = useId();
   const queryClient = useQueryClient();
@@ -130,8 +153,29 @@ function StoreForm({ slug, mine, store }: { slug: string; mine: Mine; store: Sto
   const [phone, setPhone] = useState(mine.phone ?? '');
   const [description, setDescription] = useState(store.description);
   const [hours, setHours] = useState(store.openingHours);
+  const [categories, setCategories] = useState<Category[]>(store.categories ?? []);
   const [area, setArea] = useState(place.area);
   const [town, setTown] = useState<Town>(place.town);
+
+  /** The details as typed, the way they are saved. */
+  const now = {
+    name: name.trim(),
+    phone: phone.trim(),
+    description: description.trim(),
+    openingHours: hours.trim(),
+    location: `${area.trim()}, ${town}`,
+    categories: [...categories].sort(),
+  };
+  /** As last saved: Save stays off until something differs from it. */
+  const [saved, setSaved] = useState(() => ({
+    name: store.name,
+    phone: (mine.phone ?? '').trim(),
+    description: store.description,
+    openingHours: store.openingHours,
+    location: `${place.area}, ${place.town}`,
+    categories: [...(store.categories ?? [])].sort(),
+  }));
+  const changed = JSON.stringify(now) !== JSON.stringify(saved);
   /** The check before closing it is open. */
   const [closing, setClosing] = useState(false);
   /** The owner's own number, "077 123 4567", for "we will call you". */
@@ -142,28 +186,44 @@ function StoreForm({ slug, mine, store }: { slug: string; mine: Mine; store: Sto
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const sent = now;
       await apiSend(`/stores/${encodeURIComponent(mine.id)}`, 'PATCH', {
-        name: name.trim(),
-        phone: phone.trim(),
-        description: description.trim(),
-        openingHours: hours.trim(),
-        location: `${area.trim()}, ${town}`,
+        name: sent.name,
+        phone: sent.phone,
+        description: sent.description,
+        openingHours: sent.openingHours,
+        location: sent.location,
+        // None chosen (a store from before): left as it is.
+        ...(sent.categories.length ? { categories: sent.categories } : {}),
       });
+      // What is saved is what this page shows next time, at once.
+      queryClient.setQueryData<StoreDetails>(['store', slug, 'page'], (old) =>
+        old
+          ? {
+              ...old,
+              name: sent.name,
+              description: sent.description,
+              openingHours: sent.openingHours,
+              location: sent.location,
+              categories: sent.categories.length ? sent.categories : old.categories,
+            }
+          : old,
+      );
+      setSaved(sent);
       // A new name shows on Me and in the console at once.
       await refreshViewer(queryClient);
       await refreshStore(slug);
     },
-    onSuccess: () => {
-      toast.success('Store details saved');
-      startPageLoad();
-      router.push(`/store/${slug}`);
-    },
+    // They stay here, to change anything else; the store's page is a tap
+    // away when they want to see it.
+    onSuccess: () => toast.success('Changes saved'),
     onError: (error) => toast.error(error.message),
   });
 
   const closeMutation = useMutation({
     mutationFn: async () => {
       await apiSend(`/stores/${encodeURIComponent(mine.id)}/close`, 'POST');
+      onClosed();
       // Who they are now leaves the store out, for Me and Post as.
       await refreshViewer(queryClient);
       await refreshStore(slug);
@@ -171,7 +231,8 @@ function StoreForm({ slug, mine, store }: { slug: string; mine: Mine; store: Sto
     onSuccess: () => {
       toast.success(`${savedName} is closed`);
       startPageLoad();
-      router.push('/me');
+      // Replaced, so Back does not return to a closed store's details.
+      router.replace('/me');
     },
     onError: (error) => toast.error(error.message),
   });
@@ -251,16 +312,24 @@ function StoreForm({ slug, mine, store }: { slug: string; mine: Mine; store: Sto
                 <Dropdown value={town} options={TOWN_OPTIONS} onChange={setTown} labelledBy={townLabel} />
               </div>
             </FieldRow>
-            <Button type="submit" size="lg" block loading={saveMutation.isPending} disabled={busy}>
+            <StoreCategories value={categories} onChange={setCategories} />
+            {/* Off until something differs from what is saved. */}
+            <Button type="submit" size="lg" block loading={saveMutation.isPending} disabled={busy || !changed}>
               Save
             </Button>
           </Stack>
         </form>
       </Panel>
       <VerifyPanel storeId={mine.id} phone={ownerPhone} />
-      <Button variant="secondary" block className={styles.close} onClick={() => setClosing(true)}>
-        Close store
-      </Button>
+      {/* At the foot: the store as buyers see it, and closing it. */}
+      <div className={styles.footButtons}>
+        <ButtonLink href={`/store/${slug}`} variant="secondary">
+          View as buyer
+        </ButtonLink>
+        <Button variant="secondary" className={styles.close} onClick={() => setClosing(true)}>
+          Close store
+        </Button>
+      </div>
       {closing ? (
         <Sheet narrow title={`Close ${savedName}`} onClose={() => setClosing(false)}>
           <Stack gap={4}>

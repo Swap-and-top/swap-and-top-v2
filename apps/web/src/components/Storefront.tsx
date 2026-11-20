@@ -8,11 +8,18 @@
  * far stronger signal than a date.
  *
  * Wireframe artboard: `Shopfront` (its name in the design file).
+ *
+ * Its owner and members see Add a listing and Manage store in place of Show
+ * contacts and Follow, which are a buyer's.
  */
 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   CATEGORY_LABELS,
+  usePostDraftStore,
+  useSessionStore,
   type Category,
   type Listing,
   type Store,
@@ -21,6 +28,7 @@ import {
   AppHeader,
   Bone,
   Button,
+  ButtonLink,
   GridCardList,
   GridCardListSkeleton,
   Screen,
@@ -32,9 +40,10 @@ import {
   VerifiedStoreBadge,
   replyShort,
   shareLink,
+  startPageLoad,
   type TabItem,
 } from '@snt/ui';
-import { ShareIcon } from '@snt/ui/icons';
+import { CheckIcon, ClockIcon, InfoIcon, PinIcon, ShareIcon } from '@snt/ui/icons';
 import { RevealAction } from './RevealAction';
 import styles from './Storefront.module.css';
 
@@ -75,9 +84,24 @@ export function StorefrontBody({
   own?: boolean;
 }) {
   const [tab, setTab] = useState<StoreTab>('all');
+  const router = useRouter();
+  /** The viewer's own store (owner or member), as Me knows it. */
+  const mine = useSessionStore((state) => state.viewer?.stores.find((each) => each.id === store.id));
 
-  const categories = Array.from(
-    new Set(listings.map((listing) => listing.category)),
+  /** Posting, as this store: chosen by pressing Add a listing. */
+  function addItem() {
+    usePostDraftStore.getState().setPostAs(store.id);
+    startPageLoad();
+    router.push('/post');
+  }
+
+  // What the store sells, as its owner chose, with its count even at none,
+  // and any other category it has listings in; every one when it has not
+  // chosen yet. In the usual order.
+  const chosen = store.categories ?? [];
+  const categories = (Object.keys(CATEGORY_LABELS) as Category[]).filter(
+    (category) =>
+      chosen.length === 0 || chosen.includes(category) || listings.some((listing) => listing.category === category),
   );
 
   const tabs: TabItem<StoreTab>[] = [
@@ -116,6 +140,27 @@ export function StorefrontBody({
               <div className={styles.badgeRow}>
                 <VerifiedStoreBadge size="md" label="Verified store" />
               </div>
+            ) : mine?.role === 'owner' && !own ? (
+              // Its owner only: where the Verified store badge will be, the
+              // same size and shape in grey, and the way to ask (small blue
+              // words, as Hillary asked, 2026-11-20).
+              <div className={styles.badgeRow}>
+                <span className={styles.unverified}>
+                  <span className={styles.unverifiedDisc} aria-hidden>
+                    <CheckIcon size={12} weight={3} />
+                  </span>
+                  {mine.verifyPending ? (
+                    'Verification asked'
+                  ) : (
+                    <>
+                      Not verified yet ·{' '}
+                      <Link href={`/store/${store.slug}/edit#verify`} className={styles.verifyLink}>
+                        Verify store
+                      </Link>
+                    </>
+                  )}
+                </span>
+              </div>
             ) : null}
           </div>
           <button
@@ -128,12 +173,26 @@ export function StorefrontBody({
           </button>
         </div>
 
-        <p className={styles.description}>
-          {store.description}
-          <br />
-          {/* A new store has no opening hours yet: just where it is. */}
-          {store.openingHours ? `${store.location} · ${store.openingHours}` : store.location}
-        </p>
+        {/* What the owner wrote, where it is and when it opens, each with
+            its icon; a new store has only where it is. */}
+        <ul className={styles.facts}>
+          {store.description ? (
+            <li>
+              <InfoIcon size={15} />
+              <span>{store.description}</span>
+            </li>
+          ) : null}
+          <li>
+            <PinIcon size={15} />
+            <span>{store.location}</span>
+          </li>
+          {store.openingHours ? (
+            <li>
+              <ClockIcon size={15} />
+              <span>{store.openingHours}</span>
+            </li>
+          ) : null}
+        </ul>
 
         <StatStrip
           stats={[
@@ -147,8 +206,23 @@ export function StorefrontBody({
           ]}
         />
 
-        {/* Two actions, half each; a buyer's, so not on the store's own view. */}
-        {own ? null : (
+        {/* Two actions, half each; a buyer's, so not on the store's own view.
+            Its owner and members get theirs instead. */}
+        {own ? null : mine ? (
+          <div className={styles.actions}>
+            <Button size="lg" block onClick={addItem}>
+              Add a listing
+            </Button>
+            <ButtonLink
+              href={mine.paidUntil ? `/console/stock?store=${store.id}` : `/me/stores/${store.id}`}
+              variant="secondary"
+              size="lg"
+              block
+            >
+              Manage store
+            </ButtonLink>
+          </div>
+        ) : (
           <div className={styles.actions}>
             {/* The store's own number, else its owner's, from the API: calls
                 and WhatsApp. Whose it is is the store itself. */}

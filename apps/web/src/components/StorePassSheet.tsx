@@ -13,6 +13,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { FREE_STORE_LIMIT } from '@snt/core';
 import { Button, Sheet, useCloseSheet } from '@snt/ui';
 import { refreshStorePass } from '@/lib/refresh';
 import { apiSend } from '@/lib/query';
@@ -86,7 +87,7 @@ function PassForm({ store }: { store: PassStore }) {
       <p className={styles.note}>
         {store.paidUntil
           ? `${store.name} is paid until ${store.paidUntil}. A new pass starts when that ends.`
-          : `${store.name} is a free store, with up to 15 live listings. A pass gives it no listing limit, the Store console and lead alerts.`}
+          : `${store.name} is a free store, with up to ${FREE_STORE_LIMIT} live listings. A pass gives it no listing limit, the Store console and lead alerts.`}
       </p>
 
       <fieldset className={styles.group}>

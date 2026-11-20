@@ -38,7 +38,7 @@ never a login of its own.
 | | Person | Free store | Paid store |
 |---|---|---|---|
 | Costs | Nothing, always | Nothing | A prepaid pass (below) |
-| Live listings for sale or swap | **5** | **15** | No limit |
+| Live listings for sale or swap | **3** (was 5) | **5** (was 15) | No limit |
 | Wanted listings | Not counted | Not counted | Not counted |
 | Store page (`/store/<slug>`) | No | Yes | Yes |
 | Boosts | Yes, paid per boost | Yes, paid per boost | Yes, paid per boost |
@@ -91,8 +91,8 @@ stay separate, because they are about one listing, not the store.
 
 The store becomes a free store, gently:
 
-- Its **15 most recently updated** listings stay live; the rest are
-  **paused**, never deleted. The owner can choose which 15 stay live
+- Its **5 most recently updated** listings stay live; the rest are
+  **paused**, never deleted. The owner can choose which 5 stay live
   instead.
 - The moment a new pass is bought, everything paused by the lapse goes live
   again.
@@ -155,6 +155,15 @@ staff do is recorded against their name.
   pauses until the new owner is checked.
 
 ---
+
+### What a store sells (2026-11-20)
+
+Opening a store asks **What you sell**: one or more of Phones, Laptops,
+Desktops, Consoles, Parts, Accessories and Other (at least one). They are
+the tabs on the store's page, each with its count even at none, plus any
+other category it has listings in. The owner changes them in **Edit store
+details**. A store from before this, with none chosen, shows every tab.
+Kept in `stores.categories` (migration `0018`).
 
 ## Verification
 

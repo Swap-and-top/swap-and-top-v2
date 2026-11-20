@@ -77,6 +77,7 @@ export async function storeBySlug(slug: string) {
     description: store.description,
     location: store.location,
     openingHours: store.openingHours,
+    categories: store.categories,
     // Shown as "formerly …" for 30 days after a rename.
     formerName:
       store.formerName && store.renamedAt && Date.now() - store.renamedAt.getTime() < RENAME_DAYS * DAY_MS
@@ -115,13 +116,16 @@ function initialsOf(name: string): string {
   return letters.toUpperCase();
 }
 
+/** A category a store can say it sells. */
+const StoreCategory = z.enum(['phones', 'laptops', 'desktops', 'consoles', 'parts', 'accessories', 'other']);
+
 const open = createRoute({
   method: 'post',
   path: '/stores',
   tags: ['Stores'],
   summary: 'Open a store',
   description:
-    'A person opens a store from their account and becomes its owner. It starts as a free store: up to 15 live listings for sale or swap. A person can own up to 3 stores.',
+    'A person opens a store from their account and becomes its owner. It starts as a free store: up to 5 live listings for sale or swap. A person can own up to 3 stores.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -131,6 +135,8 @@ const open = createRoute({
           schema: z.object({
             name: z.string().trim().min(2, 'Give the store a name').max(60),
             location: z.string().trim().min(2, 'Say where the store is').max(100),
+            /** What it sells: at least one, its page's tabs. */
+            categories: z.array(StoreCategory).min(1, 'Choose what the store sells').max(7),
           }),
         },
       },
@@ -148,7 +154,7 @@ const open = createRoute({
 });
 
 storeRoutes.openapi(open, async (c) => {
-  const { name, location } = c.req.valid('json');
+  const { name, location, categories } = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
   const [owned] = await db
     .select({ n: count() })
@@ -177,7 +183,7 @@ storeRoutes.openapi(open, async (c) => {
   const made = await db.transaction(async (tx) => {
     const [store] = await tx
       .insert(t.stores)
-      .values({ slug, name, initials: initialsOf(name), location })
+      .values({ slug, name, initials: initialsOf(name), location, categories: [...new Set(categories)] })
       .returning({ id: t.stores.id, slug: t.stores.slug });
     await tx.insert(t.storeMembers).values({ storeId: store!.id, personId: person.id, role: 'owner' });
     return store!;
@@ -488,7 +494,7 @@ const details = createRoute({
   tags: ['Stores'],
   summary: 'Change the store’s details',
   description:
-    'The owner only: the name, phone number, description, opening hours and area (docs/product/accounts-and-stores.md). A new name keeps the old one, shown as "formerly …" for 30 days; renaming again within them keeps the first. An empty phone number means the owner\'s is used. The web address does not change.',
+    'The owner only: the name, phone number, description, opening hours, area and what it sells (docs/product/accounts-and-stores.md). A new name keeps the old one, shown as "formerly …" for 30 days; renaming again within them keeps the first. An empty phone number means the owner\'s is used. The web address does not change.',
   security: [{ Bearer: [] }],
   middleware: [requireAuth] as const,
   request: {
@@ -503,6 +509,8 @@ const details = createRoute({
             description: z.string().trim().max(300).optional(),
             openingHours: z.string().trim().max(80).optional(),
             location: z.string().trim().min(2, 'Say where the store is').max(100).optional(),
+            /** What it sells: its page's tabs. */
+            categories: z.array(StoreCategory).min(1, 'Choose what the store sells').max(7).optional(),
           }),
         },
       },
@@ -557,6 +565,7 @@ storeRoutes.openapi(details, async (c) => {
       ...(body.description !== undefined ? { description: body.description } : {}),
       ...(body.openingHours !== undefined ? { openingHours: body.openingHours } : {}),
       ...(body.location !== undefined ? { location: body.location } : {}),
+      ...(body.categories !== undefined ? { categories: [...new Set(body.categories)] } : {}),
     })
     .where(eq(t.stores.id, id))
     .returning({ slug: t.stores.slug });

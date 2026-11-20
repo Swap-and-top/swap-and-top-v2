@@ -96,6 +96,17 @@ export const people = pgTable(
 
 /* ── Stores ───────────────────────────────────────────────────────────── */
 
+/** A gadget's kind: what a listing is, and what a store sells. */
+export const category = pgEnum('category', [
+  'phones',
+  'laptops',
+  'desktops',
+  'consoles',
+  'parts',
+  'accessories',
+  'other',
+]);
+
 export const stores = pgTable('stores', {
   id: id(),
   slug: text().notNull().unique(),
@@ -104,6 +115,9 @@ export const stores = pgTable('stores', {
   description: text().notNull().default(''),
   location: text().notNull(),
   openingHours: text().notNull().default(''),
+  /** What it sells, chosen by its owner: the tabs its page shows (with any
+      category it has listings in). None chosen: every tab. */
+  categories: category().array().notNull().default([]),
   /** For calls and WhatsApp, in the +263 form. Empty: the owner's number. */
   phone: text(),
   /** The name before the last change, shown as "formerly …" for 30 days
@@ -257,16 +271,6 @@ export const storePasses = pgTable(
 ).enableRLS();
 
 /* ── Items and listings ───────────────────────────────────────────────── */
-
-export const category = pgEnum('category', [
-  'phones',
-  'laptops',
-  'desktops',
-  'consoles',
-  'parts',
-  'accessories',
-  'other',
-]);
 
 export const condition = pgEnum('condition', [
   'boxed-new',

@@ -29,7 +29,7 @@ export const PASSES: Record<PassKind, { days: number; price: number; label: stri
 };
 
 /** How many live listings for sale or swap a store without a pass keeps. */
-export const FREE_STORE_LIMIT = 15;
+export const FREE_STORE_LIMIT = 5;
 
 const DAY = 24 * 60 * 60 * 1000;
 

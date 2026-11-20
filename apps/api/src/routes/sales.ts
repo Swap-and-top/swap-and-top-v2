@@ -24,10 +24,10 @@ import { personFor } from './me';
 
 export const salesRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
-/** How close to a limit counts as near it: three listings short for a
-    store, one for a user. */
-const NEAR_STORE = FREE_STORE_LIMIT - 3;
-const USER_LIMIT = 5;
+/** How close to a limit counts as near it: one listing short, for a
+    store and for a user. */
+const NEAR_STORE = FREE_STORE_LIMIT - 1;
+const USER_LIMIT = 3;
 const NEAR_USER = USER_LIMIT - 1;
 /** How soon a pass ending counts as ending soon. */
 const ENDING_DAYS = 3;

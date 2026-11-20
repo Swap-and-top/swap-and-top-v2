@@ -16,7 +16,7 @@
  * for its members with `GET /me/listings?store=<id>`.
  *
  * The limits (docs/product/accounts-and-stores.md): live listings for sale or
- * swap, 5 for a person and 15 for a free store; a store with a pass that
+ * swap, 3 for a person and 5 for a free store; a store with a pass that
  * covers today has none. Wanted listings never count. At a limit the answer
  * is a 403 with `code: 'limit'`, which the app turns into its limit message.
  */
@@ -72,7 +72,9 @@ const NewListing = z
   })
   .openapi('NewListing');
 
-const PERSON_LIMIT = 5;
+/** A user's own live listings for sale or swap (Hillary, 2026-11-20: 3,
+    so that more belongs in a free store, and more again in a paid one). */
+const PERSON_LIMIT = 3;
 
 /** The most photos a listing keeps. */
 const MAX_PHOTOS = 8;

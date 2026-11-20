@@ -1,0 +1,1 @@
+ALTER TABLE "stores" ADD COLUMN "categories" "category"[] DEFAULT '{}' NOT NULL;
