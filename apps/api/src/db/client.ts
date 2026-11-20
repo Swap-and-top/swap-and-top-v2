@@ -28,8 +28,8 @@ const shared = globalThis as { sntSql?: ReturnType<typeof postgres> };
  * Postgres sits on the same server as the site and has none: its address
  * says so by ending in `?sslmode=disable`.
  */
-const url = process.env.DATABASE_URL ?? '';
-const ssl = /[?&]sslmode=disable\b/.test(url) ? false : 'require';
+export const url = process.env.DATABASE_URL ?? '';
+export const ssl = /[?&]sslmode=disable\b/.test(url) ? false : 'require';
 
 export const sql = (shared.sntSql ??= postgres(url, {
   ssl,
