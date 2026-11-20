@@ -11,6 +11,12 @@ body {
   min-height: 100%;
 }
 
+/* The narrowest page is 320px, the smallest phone: a narrower window keeps
+   that width and scrolls sideways, rather than squeezing the page. */
+body {
+  min-width: 320px;
+}
+
 /*
  * The page is white at every width. The header runs full-bleed and the content
  * sits in a centred column — see Screen.module.css and

@@ -275,6 +275,15 @@
   --snt-transition: 120ms ease;
 }
 
+/* The smallest phones (down to 320px wide): less space at the sides, so
+   forms and cards keep room for their words. */
+@media (max-width: 360px) {
+  :root {
+    --snt-gutter: 8px;
+    --snt-card-pad: 12px;
+  }
+}
+
 /* From tablet up the design's desktop measurements apply. */
 @media (min-width: 768px) {
   :root {

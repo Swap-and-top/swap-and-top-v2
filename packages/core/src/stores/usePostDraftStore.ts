@@ -122,7 +122,8 @@ const initial = {
   contactChannels: ['message'] as ContactChannel[],
   allowStoreOffers: true,
   contactSignedInOnly: false,
-  contactShownTo: 'everyone' as ContactShownTo,
+  // Offers first, then a chat: on unless the poster turns it off.
+  contactShownTo: 'offers' as ContactShownTo,
   contactToStores: false,
 };
 

@@ -158,6 +158,7 @@ export function RequestDetail({
           {/* What to do about it, right under who posted it. */}
           {mine ? null : (
             <ListingActions
+              rows
               caption={
                 <Caption>
                   {keptBack
@@ -179,7 +180,7 @@ export function RequestDetail({
                   ownerId={listing.ownerId}
                   channels={listing.contactChannels}
                   signedInOnly={listing.contactSignedInOnly}
-                  block={false}
+                  offerFirst
                 />
               )}
             </ListingActions>

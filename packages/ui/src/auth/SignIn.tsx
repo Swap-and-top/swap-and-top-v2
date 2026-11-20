@@ -18,7 +18,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useSessionStore, useSignInPromptStore } from '@snt/core';
+import { PHONE_SIGN_IN, useSessionStore, useSignInPromptStore } from '@snt/core';
 import { Button } from '../primitives/Button';
 import { CompactLogo } from '../layout/Logo';
 import { Sheet, useCloseSheet } from '../primitives/Sheet';
@@ -106,7 +106,7 @@ function SignInBody({ reason }: { reason: string }) {
       {/* The main way in: email and password, or a phone, on the sign in
           page. */}
       <Button size="lg" block onClick={toSignInPage}>
-        Continue with email or phone
+        {PHONE_SIGN_IN ? 'Continue with email or phone' : 'Continue with email'}
       </Button>
     </>
   );

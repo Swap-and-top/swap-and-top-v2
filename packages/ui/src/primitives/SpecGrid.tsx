@@ -93,7 +93,7 @@ const ORDER: Record<string, SpecField[]> = {
     { key: 'controllers', label: 'Controllers', example: '2', optional: true },
   ],
   parts: [
-    { key: 'partType', label: 'Type', example: 'Graphics card' },
+    { key: 'partType', label: 'Type', example: 'RAM' },
     { key: 'capacity', label: 'Capacity', example: '8GB', optional: true },
   ],
   accessories: [{ key: 'colour', label: 'Colour', example: 'White', optional: true }],

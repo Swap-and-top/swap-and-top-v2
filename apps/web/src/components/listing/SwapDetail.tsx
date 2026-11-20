@@ -185,7 +185,7 @@ export function SwapDetail({
             {/* What to do about it, right under who posted it. */}
             <div className={styles.actions}>
               <ListingActions
-                stack
+                rows
                 caption={
                   <Caption>
                     {keptBack
@@ -208,7 +208,7 @@ export function SwapDetail({
                     ownerId={listing.ownerId}
                     channels={listing.contactChannels}
                     signedInOnly={listing.contactSignedInOnly}
-                    block={false}
+                    offerFirst
                   />
                 )}
               </ListingActions>

@@ -13,7 +13,7 @@
  * page stops and says so, and anywhere else a toast does.
  */
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useSessionStore, type Viewer } from '@snt/core';
@@ -26,6 +26,7 @@ import { viewerKey } from '@/lib/viewer';
 export function SessionRestore() {
   /** The account signed in, once this browser's note is read. */
   const [authUserId, setAuthUserId] = useState<string | undefined>();
+  const queryClient = useQueryClient();
 
   // Before the first paint: if an account is noted as signed in here, draw
   // signed in straight away rather than flashing the signed out page.
@@ -58,6 +59,11 @@ export function SessionRestore() {
       if (!accountId) {
         current = undefined;
         setAuthUserId(undefined);
+        // Forget who they were and what was theirs: signing straight back in
+        // to the same account then asks the API again, rather than finding
+        // a copy too fresh to read again, which left the sign in page
+        // waiting for a minute.
+        queryClient.removeQueries({ queryKey: ['viewer'] });
         clearAccountData();
         // A ban seen here belonged to whoever has signed out.
         html.removeAttribute('data-banned');
@@ -91,7 +97,7 @@ export function SessionRestore() {
         ...(changed ? { viewer: null, viewerFailed: false } : {}),
       });
     });
-  }, []);
+  }, [queryClient]);
 
   const viewer = useQuery({
     queryKey: viewerKey(authUserId),

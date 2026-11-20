@@ -43,8 +43,17 @@
   height: 36px;
 }
 
+@media (max-width: 360px) {
+  .appTop {
+    gap: var(--snt-space-3);
+  }
+}
+
+/* The logo keeps its size at every width; on a narrow phone the gaps
+   between the buttons give way instead (below). */
 .logo {
   display: flex;
+  flex-shrink: 0;
   margin-right: auto;
   color: var(--snt-ink-on-dark);
 }
@@ -113,6 +122,15 @@
 .postButton:hover {
   color: var(--snt-post-ink);
   filter: brightness(0.96);
+}
+
+/* On a phone, smaller, so the icons beside it keep their room. */
+@media (max-width: 579px) {
+  .postButton {
+    height: 32px;
+    padding: 0 var(--snt-space-6);
+    font-size: var(--snt-text-sm);
+  }
 }
 
 /* A banned account cannot post: the button stays, faded. */

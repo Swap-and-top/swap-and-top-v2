@@ -67,7 +67,7 @@ import styles from './page.module.css';
 /** How people can reach you, as pills, as on the offer form: a chat in the
     app first (docs/features/chat.md), the way we lead people to. */
 const CHANNELS: { value: ContactChannel; label: string; Icon: typeof PhoneIcon }[] = [
-  { value: 'message', label: 'Messages in the app', Icon: MessageIcon },
+  { value: 'message', label: 'Messages on this site', Icon: MessageIcon },
   { value: 'whatsapp', label: 'WhatsApp', Icon: WhatsAppIcon },
   { value: 'call', label: 'Calls', Icon: PhoneIcon },
   { value: 'email', label: 'Email', Icon: MailIcon },
@@ -236,22 +236,15 @@ export default function PostReviewPage() {
               })}
             </div>
             <p className={styles.small}>
-              Messages in the app keep your number private. Anything else
+              Messages on this site keep your number private. Anything else
               stays hidden until someone taps Show contact, and you will see
               how many people did.
             </p>
           </div>
 
-          {/* Consent, not a surprise. Keeps the lead product honest. */}
-          <TickTile
-            checked={draft.allowStoreOffers}
-            onChange={draft.setAllowStoreOffers}
-            label="Let stores send me offers"
-            hint="Stores that stock what you want can make you an offer."
-          />
-
           {/* The toggle: show the details to anyone who asks, or only to
-              people whose offer they accept. Off by default. */}
+              people whose offer they accept. First, and on by default: we lead
+              people to offers, then a chat. */}
           <TickTile
             checked={afterOffer}
             onChange={(on) =>
@@ -259,6 +252,14 @@ export default function PostReviewPage() {
             }
             label="Only share my contact details after I accept an offer"
             hint="People make an offer first. Only those you accept see your number."
+          />
+
+          {/* Consent, not a surprise. Keeps the lead product honest. */}
+          <TickTile
+            checked={draft.allowStoreOffers}
+            onChange={draft.setAllowStoreOffers}
+            label="Let stores send me offers"
+            hint="Stores that stock what you want can make you an offer."
           />
 
           {afterOffer ? (

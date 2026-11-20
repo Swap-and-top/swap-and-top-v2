@@ -62,9 +62,13 @@ export function ListingActions({
   children,
   caption,
   stack = false,
+  rows = false,
 }: {
   children: ReactNode;
   caption?: ReactNode;
+  /** One action above the other at every width: the first, the main one,
+      on top (Make an offer, with the seller's contact under it). */
+  rows?: boolean;
   /**
    * On a phone, one action above the other, each the full width — for two
    * worded buttons that are too long to share a line there.
@@ -73,7 +77,7 @@ export function ListingActions({
 }) {
   return (
     <div
-      className={[styles.listingActions, stack ? styles.listingActionsStack : '']
+      className={[styles.listingActions, stack ? styles.listingActionsStack : '', rows ? styles.listingActionsRows : '']
         .filter(Boolean)
         .join(' ')}
     >

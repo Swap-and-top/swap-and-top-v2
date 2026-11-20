@@ -27,7 +27,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRef, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { useSessionStore } from '@snt/core';
+import { PHONE_SIGN_IN, useSessionStore } from '@snt/core';
 import {
   Button,
   EyeClosed,
@@ -362,20 +362,23 @@ export function SignInPage({ next }: { next: string }) {
         <span className={styles.orLine} />
       </div>
 
-      {/* The other of the two ways in, first among the others. */}
+      {/* The other of the two ways in, first among the others. Hidden
+          while phone sign in is off (PHONE_SIGN_IN, until SMS is set up). */}
+      {PHONE_SIGN_IN ? (
+        <button
+          type="button"
+          className={`${styles.platform} ${styles.other}`}
+          onClick={() => setWay(way === 'email' ? 'phone' : 'email')}
+        >
+          <span className={styles.platformLogo}>
+            {way === 'email' ? <PhoneIcon size={18} /> : <MailIcon size={18} />}
+          </span>
+          {way === 'email' ? 'Continue with phone' : 'Continue with email'}
+        </button>
+      ) : null}
       <button
         type="button"
-        className={`${styles.platform} ${styles.other}`}
-        onClick={() => setWay(way === 'email' ? 'phone' : 'email')}
-      >
-        <span className={styles.platformLogo}>
-          {way === 'email' ? <PhoneIcon size={18} /> : <MailIcon size={18} />}
-        </span>
-        {way === 'email' ? 'Continue with phone' : 'Continue with email'}
-      </button>
-      <button
-        type="button"
-        className={`${styles.platform} ${styles.google} ${styles.next}`}
+        className={`${styles.platform} ${styles.google} ${PHONE_SIGN_IN ? styles.next : ''}`}
         onClick={notYet('Signing in with Google')}
       >
         <span className={styles.platformLogo}>

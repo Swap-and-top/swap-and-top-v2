@@ -69,6 +69,35 @@ const KINDS = {
   request: { label: 'Looking for something', tone: 'wanted' },
 } as const;
 
+/** The examples in the title boxes, for the category chosen. */
+const HAVE: Record<Category, string> = {
+  laptops: 'MacBook Air 2017',
+  phones: 'Samsung Galaxy A54 128GB',
+  desktops: 'HP EliteDesk 800 G4',
+  consoles: 'PlayStation 4 Slim 1TB',
+  parts: '8GB DDR4 laptop RAM',
+  accessories: 'AirPods Pro',
+  other: 'Canon EOS 200D camera',
+};
+const LOOKING_FOR: Record<Category, string> = {
+  laptops: 'Any Core i7, 16GB',
+  phones: 'Any iPhone 11 or newer',
+  desktops: 'Any Core i5 with 16GB',
+  consoles: 'PS5 with two controllers',
+  parts: '512GB SSD',
+  accessories: 'Original Samsung charger',
+  other: 'A Canon camera',
+};
+const WANT: Record<Category, string> = {
+  laptops: 'Any i7, 16GB, SSD',
+  phones: 'Any iPhone 12 or newer',
+  desktops: 'A gaming PC with a GTX 1660',
+  consoles: 'Xbox Series S',
+  parts: '1TB SSD',
+  accessories: 'JBL speaker',
+  other: 'A Bluetooth speaker',
+};
+
 export default function PostDetailsPage() {
   const draft = usePostDraftStore();
   const kind = draft.kind ?? 'swap';
@@ -131,9 +160,9 @@ export default function PostDetailsPage() {
             label={
               kind === 'request' ? 'What you are looking for' : 'What you have'
             }
-            placeholder={
-              kind === 'request' ? 'e.g. Any Core i7, 16GB' : 'e.g. MacBook Air 2017'
-            }
+            placeholder={`e.g. ${
+              (kind === 'request' ? LOOKING_FOR : HAVE)[draft.category ?? 'laptops']
+            }`}
             value={kind === 'request' ? draft.wantTitle : draft.haveTitle}
             onChange={(event) =>
               draft.setField(
@@ -215,7 +244,7 @@ export default function PostDetailsPage() {
             <Field
               label="What you want"
               hint="Loose is fine: it matches more than one exact model."
-              placeholder="e.g. Any i7, 16GB, SSD"
+              placeholder={`e.g. ${WANT[draft.category ?? 'laptops']}`}
               value={draft.wantTitle}
               onChange={(event) =>
                 draft.setField('wantTitle', event.target.value)

@@ -211,6 +211,7 @@ export function SaleDetail({
             {/* What to do about it, right under who is selling it. */}
             <div className={styles.contact}>
               <ListingActions
+                rows={takesOffers(listing)}
                 caption={
                   <Caption>
                     {keptBack
@@ -236,7 +237,7 @@ export function SaleDetail({
                     ownerId={listing.ownerId}
                     channels={listing.contactChannels}
                     signedInOnly={listing.contactSignedInOnly}
-                    block={!takesOffers(listing)}
+                    offerFirst={takesOffers(listing)}
                   />
                 )}
               </ListingActions>

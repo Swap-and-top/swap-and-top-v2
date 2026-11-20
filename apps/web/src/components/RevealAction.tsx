@@ -90,6 +90,7 @@ export function RevealAction({
   signedInOnly = false,
   block = true,
   size = 'lg',
+  offerFirst = false,
 }: {
   listingId: string;
   ownerId: string;
@@ -103,6 +104,10 @@ export function RevealAction({
   block?: boolean;
   /** Smaller where it sits beside a name, as on a lead in the console. */
   size?: 'sm' | 'md' | 'lg';
+  /** The listing takes offers: Make an offer comes first, and a chat opens
+      once the offer is accepted, so there is no Message button here; only
+      the seller's other ways, as a smaller button under the offer. */
+  offerFirst?: boolean;
 }) {
   const { reveal, revealed, usedToday, contacts, setContact } = useRevealStore();
   const signedIn = useSessionStore((state) => state.signedIn);
@@ -191,7 +196,7 @@ export function RevealAction({
 
   /** The seller takes messages in the app (docs/features/chat.md). Not on
       a store's own page, whose number is the store's. */
-  const messageable = Boolean(channels?.includes('message')) && !storeId;
+  const messageable = Boolean(channels?.includes('message')) && !storeId && !offerFirst;
   /** Opens the chat with the seller: an account first, as a chat needs one. */
   const message = () =>
     requireSignIn('Sign in to message the seller.', () => {
@@ -201,22 +206,6 @@ export function RevealAction({
         .open({ listingId })
         .finally(() => setOpening(false));
     });
-
-  if (offered.length === 0 && !messageable) return null;
-
-  // Messages only: straight to the chat, no sheet to open first.
-  if (offered.length === 0) {
-    return (
-      <div className={[styles.contactWrap, size === 'sm' ? styles.fit : ''].filter(Boolean).join(' ')}>
-        <Button size={size} block={block} loading={opening} onClick={message}>
-          Message the seller
-          <span className={styles.wayIcons} aria-hidden>
-            <MessageIcon size={size === 'lg' ? 22 : size === 'md' ? 18 : 16} />
-          </span>
-        </Button>
-      </div>
-    );
-  }
 
   /** The button for the seller's other ways: "Show contact(s)" with their
       icons. Where the seller takes messages it is the smaller, second
@@ -239,6 +228,50 @@ export function RevealAction({
       </span>
     </Button>
   );
+
+  /** The sheet of the seller's ways, each revealed on a tap. */
+  const sheet = open ? (
+    <Sheet narrow title="Contact the seller" onClose={() => setOpen(false)}>
+      {/* A seller's number never shows in recordings (components/Clarity). */}
+      <div data-clarity-mask="true">
+        <ContactWayList
+          ways={ways}
+          only={offered}
+          revealed={shown}
+          onUse={use}
+        />
+      </div>
+      <p className={styles.note}>
+        Meet in public, and check the item before you pay.
+      </p>
+    </Sheet>
+  ) : null;
+
+  if (offered.length === 0 && !messageable) return null;
+
+  // Under Make an offer: only the seller's other ways, the smaller button.
+  if (offerFirst) {
+    return (
+      <>
+        <div className={styles.contactWrap}>{showButton('secondary')}</div>
+        {sheet}
+      </>
+    );
+  }
+
+  // Messages only: straight to the chat, no sheet to open first.
+  if (offered.length === 0) {
+    return (
+      <div className={[styles.contactWrap, size === 'sm' ? styles.fit : ''].filter(Boolean).join(' ')}>
+        <Button size={size} block={block} loading={opening} onClick={message}>
+          Message the seller
+          <span className={styles.wayIcons} aria-hidden>
+            <MessageIcon size={size === 'lg' ? 22 : size === 'md' ? 18 : 16} />
+          </span>
+        </Button>
+      </div>
+    );
+  }
 
   // "Show contact" or "Show contacts", with the seller's ways on it. Nothing
   // is opened from here: the sheet reveals each way, and only then offers
@@ -270,22 +303,7 @@ export function RevealAction({
         )}
       </div>
 
-      {open ? (
-        <Sheet narrow title="Contact the seller" onClose={() => setOpen(false)}>
-          {/* A seller's number never shows in recordings (components/Clarity). */}
-          <div data-clarity-mask="true">
-            <ContactWayList
-              ways={ways}
-              only={offered}
-              revealed={shown}
-              onUse={use}
-            />
-          </div>
-          <p className={styles.note}>
-            Meet in public, and check the item before you pay.
-          </p>
-        </Sheet>
-      ) : null}
+      {sheet}
     </>
   );
 }

@@ -47,6 +47,13 @@
   grid-column: 1 / -1;
 }
 
+/* On a phone, one above the other: two boxes are too narrow to read there. */
+@media (max-width: 519px) {
+  .specs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* --- labels, as on the offer form ----------------------------------------- */
 
 .group {

@@ -74,6 +74,12 @@
   grid-auto-columns: minmax(0, 1fr);
 }
 
+/* The main action on top and the rest under it, at every width. */
+.listingActionsRows .footerActions {
+  grid-auto-flow: row;
+  gap: var(--snt-space-3);
+}
+
 /* Two long buttons cannot share a phone's width: one above the other. */
 @media (max-width: 519px) {
   .listingActionsStack .footerActions,
