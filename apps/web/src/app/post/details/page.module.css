@@ -195,6 +195,18 @@
   text-align: center;
 }
 
+.nextNoteMissing {
+  color: var(--snt-alert);
+}
+
+/* What is missing, in red, under a part that is not a text box (the
+   photos), as under a box (Field's error). */
+.missing {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-alert);
+}
+
 /* Back and Next, side by side, as Edit details and Post listing. */
 .actions {
   display: grid;

@@ -59,13 +59,16 @@ export function StockFormSkeleton({
 
         <div className={styles.group}>
           <Bone width={90} height={12} />
-          <div className={styles.photos}>
-            {/* An item's photos and the square to add more, wrapping as
-                the real ones do. */}
-            {Array.from({ length: editing ? 5 : 1 }).map((_, i) => (
-              <Bone key={i} shape="block" width={68} height={68} />
-            ))}
-          </div>
+          {/* The dashed box to add photos, then an item's photos under
+              it, as the real ones are (PhotoPicker). */}
+          <Bone shape="block" height={96} />
+          {editing ? (
+            <div className={styles.photos}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Bone key={i} shape="block" width={68} height={68} />
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <FieldBones wide />

@@ -28,6 +28,8 @@ export interface FieldProps
   pill?: boolean;
   /** Filled background, for a search box on a white header. */
   filled?: boolean;
+  /** What is missing or wrong: the box turns red and this shows under it. */
+  error?: string;
   className?: string;
 }
 
@@ -39,6 +41,7 @@ export function Field({
   strong = false,
   pill = false,
   filled = false,
+  error,
   className,
   ...rest
 }: FieldProps) {
@@ -57,9 +60,11 @@ export function Field({
         pill ? styles.inputPill : '',
         filled ? styles.inputFilled : '',
         password ? styles.inputPassword : '',
+        error ? styles.inputError : '',
       ]
         .filter(Boolean)
         .join(' ')}
+      aria-invalid={error ? true : undefined}
       {...rest}
       type={password && shown ? 'text' : rest.type}
     />
@@ -89,6 +94,7 @@ export function Field({
       ) : (
         input
       )}
+      {error ? <span className={styles.error}>{error}</span> : null}
     </div>
   );
 }

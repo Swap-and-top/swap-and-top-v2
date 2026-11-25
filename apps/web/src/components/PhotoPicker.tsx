@@ -11,13 +11,16 @@
  * the review step and back; one the listing already had goes when the
  * listing is saved without it.
  *
+ * Photos come from the plus (several at once) or dropped onto the row from
+ * the computer, with a dashed outline while they are held over it.
+ *
  * The same photo is added once: each is known by a fingerprint of its
  * bytes (whatever its name), and one already added, or going up, is left
  * out with a message.
  */
 
 import { useMutation } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { useRef, useState, type DragEvent } from 'react';
 import { toast } from 'sonner';
 import { Img, Spinner } from '@snt/ui';
 import { CloseIcon, PlusIcon } from '@snt/ui/icons';
@@ -116,40 +119,77 @@ export function PhotoPicker({ picking }: { picking: PhotoPicking }) {
   const input = useRef<HTMLInputElement>(null);
   const { photos, pending } = picking;
   const full = photos.length + pending.length >= MAX_PHOTOS;
+  /** Files held over the row, about to be dropped. */
+  const [over, setOver] = useState(false);
+  const holdsFiles = (event: DragEvent) => Array.from(event.dataTransfer.types).includes('Files');
   return (
-    <div className={styles.photos}>
-      {photos.map((url, index) => (
-        <div key={url} className={styles.thumb}>
-          <Img src={url} alt={`Photo ${index + 1}`} className={styles.photo} />
-          <button
-            type="button"
-            aria-label={`Remove photo ${index + 1}`}
-            className={styles.remove}
-            onClick={() => picking.remove(url)}
-          >
-            <CloseIcon size={12} weight={2.4} />
-          </button>
-        </div>
-      ))}
-      {pending.map(({ id, preview }) => (
-        <div key={id} className={styles.thumb} aria-busy>
-          {/* The photo as chosen, faded, until it is kept. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt="" className={[styles.photo, styles.going].join(' ')} />
-          <span className={styles.spinner}>
-            <Spinner size={20} label="Adding photo" />
-          </span>
-        </div>
-      ))}
+    <div
+      className={styles.picker}
+      onDragOver={(event) => {
+        if (!holdsFiles(event)) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = full ? 'none' : 'copy';
+        setOver(true);
+      }}
+      onDragLeave={(event) => {
+        // Only on leaving the area itself, not moving between its parts.
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false);
+      }}
+      onDrop={(event) => {
+        if (!holdsFiles(event)) return;
+        event.preventDefault();
+        setOver(false);
+        if (!full) void picking.pick(Array.from(event.dataTransfer.files));
+      }}
+    >
+      {/* Where photos go: a dashed box with a plus, saying they can be
+          dragged in, or tapped to choose. Full at 8. */}
       <button
         type="button"
-        aria-label="Add photos"
-        className={styles.add}
+        className={[styles.drop, over ? styles.over : ''].filter(Boolean).join(' ')}
         onClick={() => input.current?.click()}
         disabled={full}
       >
-        <PlusIcon size={21} />
+        <span className={styles.dropPlus} aria-hidden>
+          <PlusIcon size={20} />
+        </span>
+        {full ? (
+          <span className={styles.dropTitle}>{MAX_PHOTOS} photos added, the most a listing takes</span>
+        ) : (
+          <>
+            <span className={[styles.dropTitle, styles.onComputer].join(' ')}>Drag photos here, or click to choose</span>
+            <span className={[styles.dropTitle, styles.onPhone].join(' ')}>Tap to add photos</span>
+            <span className={styles.dropHint}>Up to {MAX_PHOTOS}, several at once</span>
+          </>
+        )}
       </button>
+      {photos.length || pending.length ? (
+        <div className={styles.photos}>
+          {photos.map((url, index) => (
+            <div key={url} className={styles.thumb}>
+              <Img src={url} alt={`Photo ${index + 1}`} className={styles.photo} />
+              <button
+                type="button"
+                aria-label={`Remove photo ${index + 1}`}
+                className={styles.remove}
+                onClick={() => picking.remove(url)}
+              >
+                <CloseIcon size={12} weight={2.4} />
+              </button>
+            </div>
+          ))}
+          {pending.map(({ id, preview }) => (
+            <div key={id} className={styles.thumb} aria-busy>
+              {/* The photo as chosen, faded, until it is kept. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={preview} alt="" className={[styles.photo, styles.going].join(' ')} />
+              <span className={styles.spinner}>
+                <Spinner size={20} label="Adding photo" />
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <input
         ref={input}
         type="file"

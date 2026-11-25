@@ -19,7 +19,7 @@
  * Wireframe artboard: `PostDetails`.
  */
 
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import {
   CASH_AMOUNT_LABELS,
   CASH_DIRECTION_LABELS,
@@ -38,7 +38,6 @@ import {
   ChipRow,
   Dropdown,
   Field,
-  POST_STEPS,
   Screen,
   ScreenBody,
   specFieldsFor,
@@ -48,6 +47,7 @@ import {
   withUnit,
 } from '@snt/ui';
 import { MAX_PHOTOS, PhotoPicker, usePhotoPicker } from '@/components/PhotoPicker';
+import { PostingAs, postStart, usePostAs, usePostSteps } from '@/components/PostAs';
 import styles from './page.module.css';
 
 const CATEGORIES: Category[] = [
@@ -106,7 +106,25 @@ export default function PostDetailsPage() {
   const fields = draft.category ? specFieldsFor(draft.category) : [];
   const conditionLabel = useId();
   const picking = usePhotoPicker(draft.photos, draft.setPhotos);
-  const ready = detailsReady(draft, kind);
+  const steps = usePostSteps();
+  const postAs = usePostAs();
+  /** What is still needed, each with what to say beside it. */
+  const missing = missingDetails(draft, kind);
+  const ready = Object.keys(missing).length === 0;
+  /** Next was pressed with something missing: those parts show in red, and
+      clear one by one as they are filled in. */
+  const [checked, setChecked] = useState(false);
+  const errorFor = (key: string) => (checked ? missing[key] : undefined);
+
+  /** Next with something missing: mark it, and bring the first into view. */
+  function showMissing() {
+    setChecked(true);
+    window.setTimeout(() => {
+      document
+        .querySelector('[aria-invalid="true"], [data-missing]')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 0);
+  }
 
   return (
     <Screen surface>
@@ -115,7 +133,8 @@ export default function PostDetailsPage() {
       <AppHeader />
 
       <ScreenBody>
-        <StepBar current={2} steps={POST_STEPS} />
+        <StepBar current={2} steps={steps} />
+        <PostingAs />
 
         <div className={styles.form}>
           {/* What is being posted, in its own colour. To choose again,
@@ -153,6 +172,11 @@ export default function PostDetailsPage() {
                 </span>
               </span>
               <PhotoPicker picking={picking} />
+              {errorFor('photos') ? (
+                <span className={styles.missing} data-missing="">
+                  {errorFor('photos')}
+                </span>
+              ) : null}
             </div>
           ) : null}
 
@@ -170,6 +194,7 @@ export default function PostDetailsPage() {
                 event.target.value,
               )
             }
+            error={errorFor('title')}
           />
 
           {/* The details this category asks for, two to a row, with the
@@ -186,6 +211,7 @@ export default function PostDetailsPage() {
                   onChange={(event) =>
                     draft.setSpec(field.key, event.target.value)
                   }
+                  error={errorFor(`spec:${field.key}`)}
                   onBlur={(event) => {
                     const done = withUnit(field, event.target.value);
                     if (done !== event.target.value) draft.setSpec(field.key, done);
@@ -224,6 +250,7 @@ export default function PostDetailsPage() {
                   onChange={(event) =>
                     draft.setField('price', event.target.value)
                   }
+                  error={errorFor('price')}
                 />
               ) : null}
               {draft.category === 'other' ? (
@@ -249,6 +276,7 @@ export default function PostDetailsPage() {
               onChange={(event) =>
                 draft.setField('wantTitle', event.target.value)
               }
+              error={errorFor('want')}
             />
           ) : null}
 
@@ -286,6 +314,7 @@ export default function PostDetailsPage() {
                     onChange={(event) =>
                       draft.setField('cashAmount', event.target.value)
                     }
+                    error={errorFor('cash')}
                   />
                   {/* When they pay, it can be a ceiling: "+ up to $600", for
                       someone who knows what they will spend. */}
@@ -324,19 +353,25 @@ export default function PostDetailsPage() {
               placeholder="e.g. $300"
               value={draft.budget}
               onChange={(event) => draft.setField('budget', event.target.value)}
+              error={errorFor('budget')}
             />
           ) : null}
 
           {/* Back to Choose beside Next, as Edit details sits beside Post
-              listing (the draft is kept). Next is off until everything
-              asked for is in, and while photos are still going up. */}
+              listing (the draft is kept). Next is always on, but while
+              photos are still going up: pressed with something missing,
+              the missing parts turn red and say what is needed. */}
           <Stack gap={4} className={styles.next}>
             <div className={styles.actions}>
-              <ButtonLink href="/post" variant="secondary" size="lg" block>
+              <ButtonLink href={postStart(postAs)} variant="secondary" size="lg" block>
                 Back
               </ButtonLink>
-              {picking.busy || !ready ? (
-                <Button size="lg" block loading={picking.busy} disabled>
+              {picking.busy ? (
+                <Button size="lg" block loading disabled>
+                  Next
+                </Button>
+              ) : !ready ? (
+                <Button size="lg" block onClick={showMissing}>
                   Next
                 </Button>
               ) : (
@@ -345,11 +380,9 @@ export default function PostDetailsPage() {
                 </ButtonLink>
               )}
             </div>
-            {!ready ? (
-              <p className={styles.nextNote}>
-                {kind === 'request'
-                  ? 'Fill in everything to carry on.'
-                  : `Upload at least ${MIN_PHOTOS} photos and fill in everything not marked optional to carry on.`}
+            {checked && !ready ? (
+              <p className={[styles.nextNote, styles.nextNoteMissing].join(' ')}>
+                Fill in the parts marked in red to carry on.
               </p>
             ) : null}
           </Stack>
@@ -366,27 +399,36 @@ const MIN_PHOTOS = 2;
 const amountOf = (typed: string) => Number(typed.replace(/[^0-9.]/g, '')) || 0;
 
 /**
- * Whether everything the listing needs is filled in (Hillary, 2026-11-06):
+ * What the listing still needs, each with the line shown under it in red once Next is pressed (Hillary, 2026-11-06 and 2026-11-25):
  * what they have, the details its category asks for but those marked
  * optional (Other's description is optional too), and the price; for a swap,
  * what they want and, unless it is straight, how much; for a Wanted
  * listing, what they are looking for and the budget; and, but for a Wanted
  * listing, at least two photos. Condition always has one chosen.
  */
-function detailsReady(
+function missingDetails(
   draft: ReturnType<typeof usePostDraftStore.getState>,
   kind: 'sale' | 'swap' | 'request',
-): boolean {
-  if (!draft.category) return false;
-  if (kind === 'request') return Boolean(draft.wantTitle.trim()) && amountOf(draft.budget) > 0;
-  if (!draft.haveTitle.trim()) return false;
-  if (draft.photos.length < MIN_PHOTOS) return false;
-  const specsIn = specFieldsFor(draft.category).every(
-    (field) => field.optional || Boolean(draft.specs[field.key]?.trim()),
-  );
-  if (!specsIn) return false;
-  if (kind === 'sale') return amountOf(draft.price) > 0;
-  if (!draft.wantTitle.trim()) return false;
+): Record<string, string> {
+  const missing: Record<string, string> = {};
+  if (kind === 'request') {
+    if (!draft.wantTitle.trim()) missing.title = 'Say what you are looking for.';
+    if (!(amountOf(draft.budget) > 0)) missing.budget = 'Enter your budget.';
+    return missing;
+  }
+  if (draft.photos.length < MIN_PHOTOS) missing.photos = `Add at least ${MIN_PHOTOS} photos.`;
+  if (!draft.haveTitle.trim()) missing.title = 'Say what you have.';
+  for (const field of draft.category ? specFieldsFor(draft.category) : []) {
+    if (!field.optional && !draft.specs[field.key]?.trim()) {
+      missing[`spec:${field.key}`] = `Enter the ${field.label.toLowerCase()}.`;
+    }
+  }
+  if (kind === 'sale') {
+    if (!(amountOf(draft.price) > 0)) missing.price = 'Enter a price.';
+    return missing;
+  }
+  if (!draft.wantTitle.trim()) missing.want = 'Say what you want.';
   const direction = draft.cashDirection ?? 'straight';
-  return direction === 'straight' || amountOf(draft.cashAmount) > 0;
+  if (direction !== 'straight' && !(amountOf(draft.cashAmount) > 0)) missing.cash = 'Enter the amount.';
+  return missing;
 }

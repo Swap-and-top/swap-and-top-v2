@@ -12,7 +12,7 @@
 
 import { useSessionStore } from '@snt/core';
 import { AppHeader, ButtonLink, ListGroup, ListRow, Screen, ScreenBody, SignInGate, Stack } from '@snt/ui';
-import { BoxIcon } from '@snt/ui/icons';
+import { StorefrontIcon } from '@snt/ui/icons';
 import Loading from './loading';
 import styles from './page.module.css';
 
@@ -41,7 +41,7 @@ export default function MyStoresPage() {
                   <ListRow
                     key={store.id}
                     href={store.paidUntil ? `/console/stock?store=${store.id}` : `/me/stores/${store.id}`}
-                    icon={<BoxIcon size={19} />}
+                    icon={<StorefrontIcon size={19} />}
                     label={store.name}
                     value={
                       store.paidUntil

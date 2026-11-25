@@ -41,7 +41,6 @@ import {
   Button,
   ButtonLink,
   ListingCard,
-  POST_STEPS,
   Screen,
   ScreenBody,
   specFieldsFor,
@@ -59,7 +58,7 @@ import {
 import { ApiError, apiSend } from '@/lib/query';
 import { stockKey } from '@/app/console/stock/useConsoleStock';
 import { LimitSheet } from '@/components/LimitSheet';
-import { usePostAs } from '@/components/PostAs';
+import { PostingAs, usePostAs, usePostSteps } from '@/components/PostAs';
 import { refreshListing } from '@/lib/refresh';
 import { track } from '@/lib/track';
 import styles from './page.module.css';
@@ -84,6 +83,7 @@ export default function PostReviewPage() {
   const kind = draft.kind ?? 'swap';
   /** The store it goes up as, or null for themselves (see Post as). */
   const postAs = usePostAs();
+  const steps = usePostSteps();
   const viewer = useSessionStore((state) => state.viewer);
   /** WhatsApp and calls only for someone with a number (a store has its
       own): until SMS is set up, many sign up by email alone. */
@@ -178,7 +178,8 @@ export default function PostReviewPage() {
       <AppHeader />
 
       <ScreenBody>
-        <StepBar current={3} steps={POST_STEPS} />
+        <StepBar current={3} steps={steps} />
+        <PostingAs />
 
         <span className={styles.label}>How it will look in the feed</span>
 

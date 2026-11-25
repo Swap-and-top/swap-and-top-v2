@@ -18,7 +18,6 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   CATEGORY_LABELS,
-  usePostDraftStore,
   useSessionStore,
   type Category,
   type Listing,
@@ -44,6 +43,7 @@ import {
   type TabItem,
 } from '@snt/ui';
 import { CheckIcon, ClockIcon, InfoIcon, PinIcon, ShareIcon } from '@snt/ui/icons';
+import { postStart } from './PostAs';
 import { RevealAction } from './RevealAction';
 import styles from './Storefront.module.css';
 
@@ -90,9 +90,8 @@ export function StorefrontBody({
 
   /** Posting, as this store: chosen by pressing Add a listing. */
   function addItem() {
-    usePostDraftStore.getState().setPostAs(store.id);
     startPageLoad();
-    router.push('/post');
+    router.push(postStart(store.id));
   }
 
   // What the store sells, as its owner chose, with its count even at none,

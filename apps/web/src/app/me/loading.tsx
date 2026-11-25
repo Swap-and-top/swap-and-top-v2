@@ -22,7 +22,7 @@ import {
   StatStripSkeleton,
 } from '@snt/ui';
 import {
-  BoxIcon,
+  StorefrontIcon,
   CheckIcon,
   InfoIcon,
   ListIcon,
@@ -91,7 +91,7 @@ export default function Loading() {
 
           <h2 className={styles.section}>For stores</h2>
           <ListGroup>
-            <ListRow href="/me/stores" icon={<BoxIcon size={19} />} label="My stores" />
+            <ListRow href="/me/stores" icon={<StorefrontIcon size={19} />} label="My stores" />
           </ListGroup>
 
           {/* Our own team's row, for them, as the page has it. */}

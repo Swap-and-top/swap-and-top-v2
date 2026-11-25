@@ -8,15 +8,27 @@
  * the listing goes live straight away; both reduce hesitation.
  *
  * Wireframe artboard: `PostType`.
+ *
+ * Started from a store (`/post?as=<store id>`), it posts as that store,
+ * said in a fixed line at the top; from anywhere else, as the person.
+ *
+ * The listing limit is told here, before any work, not at the end
+ * (Hillary, 2026-11-25): at 2 of 3 live listings for sale or swap, a line
+ * that the next is the last; at 3, a note with My listings and Open a store,
+ * and Sell and Swap faded; a free store the same at 4 and 5 of 5. Looking
+ * for something never counts. The API still checks at the end.
  */
 
-import { useRouter } from 'next/navigation';
-import { usePostDraftStore, type PostKind } from '@snt/core';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { usePostDraftStore, useSessionStore, type PostKind } from '@snt/core';
 import {
   AppHeader,
   Body,
+  Bone,
+  ButtonLink,
   Note,
-  POST_STEPS,
   Screen,
   ScreenBody,
   startPageLoad,
@@ -29,7 +41,8 @@ import {
   StoreIcon,
   SwapIcon,
 } from '@snt/ui/icons';
-import { PostAsChoice } from '@/components/PostAs';
+import { PostingAs, usePostAs, usePostSteps } from '@/components/PostAs';
+import { apiGet } from '@/lib/query';
 import styles from './page.module.css';
 
 interface Option {
@@ -68,8 +81,53 @@ const OPTIONS: Option[] = [
 ];
 
 export default function PostTypePage() {
+  // The address says who it goes up as, read in the browser.
+  return (
+    <Suspense>
+      <PostType />
+    </Suspense>
+  );
+}
+
+function PostType() {
   const router = useRouter();
   const setKind = usePostDraftStore((state) => state.setKind);
+  const setPostAs = usePostDraftStore((state) => state.setPostAs);
+  /** A store's Add a listing: `?as=<store id>`. Anywhere else: themselves. */
+  const as = useSearchParams().get('as');
+  useEffect(() => setPostAs(as), [as, setPostAs]);
+  const steps = usePostSteps();
+  const signedIn = useSessionStore((state) => state.signedIn);
+  /** Whether this browser's sign in has been read yet: before that (and in
+      the page built ahead on the server) it is not known who this is. */
+  const restored = useSessionStore((state) => state.restored);
+  const viewer = useSessionStore((state) => state.viewer);
+  const postAs = usePostAs();
+  /** Still settling who it goes up as: the address and the draft agree. */
+  const settling = (as ?? null) !== usePostDraftStore((state) => state.postAs ?? null);
+  const storeName = viewer?.stores.find((store) => store.id === postAs)?.name;
+  /** Live listings for sale or swap against the limit, theirs or the
+      store's: read afresh each time this page opens, one quick count, so
+      the choices never show as open when they are not. */
+  const limit = useQuery({
+    queryKey: ['me', viewer?.id, 'listing-limit', postAs],
+    queryFn: () =>
+      apiGet<{ live: number; limit: number | null }>(
+        `/me/listing-limit${postAs ? `?storeId=${encodeURIComponent(postAs)}` : ''}`,
+      ),
+    enabled: Boolean(viewer) && !settling,
+    refetchOnMount: 'always',
+  });
+  /** Waiting to know who they are and the count, so the line at the top,
+      any note and the choices come together (if it cannot be read, the
+      choices show: the API still checks at the end). */
+  const waiting =
+    !restored ||
+    (signedIn && (!viewer || settling || (!limit.isError && !limit.isFetchedAfterMount)));
+  const live = limit.data?.live ?? null;
+  const max = limit.data?.limit ?? null;
+  const atLimit = live !== null && max !== null && live >= max;
+  const lastOne = live !== null && max !== null && live === max - 1;
 
   const choose = (kind: PostKind) => {
     setKind(kind);
@@ -84,23 +142,83 @@ export default function PostTypePage() {
       <AppHeader />
 
       <ScreenBody>
-        <StepBar current={1} steps={POST_STEPS} />
-        {/* For someone with a store only: who it goes up as. */}
-        <PostAsChoice />
+        <StepBar current={1} steps={steps} />
+        {/* Posting as a store: said, never chosen here. */}
+        {waiting ? null : <PostingAs />}
         <h1 className={styles.heading}>What do you want to do?</h1>
         <Body className={styles.intro}>
           Posting is free. Your listing goes live straight away.
         </Body>
 
+        {waiting ? null : atLimit && postAs ? (
+          <div className={styles.limit}>
+            <p className={styles.limitTitle}>Listing limit reached</p>
+            <p>A free store can have {max} live listings at a time, and {storeName} has {live}.</p>
+            <p>For unlimited listings, get a store pass. Or mark one as sold to make room.</p>
+            <p className={styles.limitSmall}>Looking for something doesn&apos;t count towards the limit.</p>
+            <div className={styles.limitActions}>
+              <ButtonLink href={`/me/stores/${postAs}`} variant="secondary">
+                Get a store pass
+              </ButtonLink>
+            </div>
+          </div>
+        ) : atLimit ? (
+          <div className={styles.limit}>
+            <p className={styles.limitTitle}>Listing limit reached</p>
+            <p>A personal account can only have up to {max} live listings at a time.</p>
+            <p>
+              {viewer?.stores.length
+                ? 'To post more, add them from your store, which takes up to 5. For unlimited listings, get a store pass.'
+                : 'To post more, open a free store, which takes up to 5. For unlimited listings, get a store pass.'}{' '}
+              Or mark one as sold to make room.
+            </p>
+            <p className={styles.limitSmall}>"Looking for something" doesn&apos;t count towards the limit.</p>
+            <div className={styles.limitActions}>
+              <ButtonLink href="/me/listings" variant="secondary">
+                My listings
+              </ButtonLink>
+              {viewer?.stores.length ? (
+                <ButtonLink href="/me/stores" variant="secondary">
+                  My stores
+                </ButtonLink>
+              ) : (
+                <ButtonLink href="/store/new" variant="secondary">
+                  Open a store
+                </ButtonLink>
+              )}
+            </div>
+          </div>
+        ) : lastOne ? (
+          <p className={styles.heads}>
+            {postAs
+              ? `This will be the store's last listing for sale or swap: a free store keeps ${max} live.`
+              : `This will be your last listing for sale or swap: a personal account keeps ${max} live.`}
+          </p>
+        ) : null}
+
+        {waiting ? (
+          // Until their count is in: the three choices as bones, the same
+          // size, so nothing can be chosen before it is known.
+          <div className={styles.options} aria-busy>
+            {OPTIONS.map((option) => (
+              <Bone key={option.kind} shape="block" height="" className={styles.optionBone} />
+            ))}
+          </div>
+        ) : (
         <div className={styles.options}>
-          {OPTIONS.map((option) => (
+          {OPTIONS.map((option) => {
+            /** At the limit, only Looking for something is open. */
+            const closed = atLimit && option.kind !== 'request';
+            return (
             <button
               key={option.kind}
               type="button"
               onClick={() => choose(option.kind)}
+              disabled={closed}
               className={[
                 styles.option,
                 styles[option.tone],
+                closed ? styles.closed : '',
               ]
                 .filter(Boolean)
                 .join(' ')}
@@ -118,17 +236,22 @@ export default function PostTypePage() {
                 <ChevronRightIcon size={18} />
               </span>
             </button>
-          ))}
+            );
+          })}
         </div>
+        )}
 
-        <Note
-          icon={<InfoIcon size={17} />}
-          tone="subtle"
-          className={styles.storeNote}
-        >
-          Selling a lot? Open a store for a store page, bulk stock upload
-          and lead alerts.
-        </Note>
+        {/* Not while posting as a store: they have one. */}
+        {postAs ? null : (
+          <Note
+            icon={<InfoIcon size={17} />}
+            tone="subtle"
+            className={styles.storeNote}
+          >
+            Selling a lot? Open a store for a store page, bulk stock upload
+            and lead alerts.
+          </Note>
+        )}
       </ScreenBody>
     </Screen>
   );

@@ -40,7 +40,7 @@ import {
   SignInGate,
 } from '@snt/ui';
 import {
-  BoxIcon,
+  StorefrontIcon,
   CheckIcon,
   InfoIcon,
   ListIcon,
@@ -189,12 +189,12 @@ export default function MePage() {
               {stores.length ? (
                 <ListRow
                   href="/me/stores"
-                  icon={<BoxIcon size={19} />}
+                  icon={<StorefrontIcon size={19} />}
                   label="My stores"
                   value={String(stores.length)}
                 />
               ) : (
-                <ListRow href="/store/new" icon={<BoxIcon size={19} />} label="Open a store" value="Free" />
+                <ListRow href="/store/new" icon={<StorefrontIcon size={19} />} label="Open a store" value="Free" />
               )}
             </ListGroup>
 

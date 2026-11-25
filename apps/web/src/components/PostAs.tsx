@@ -1,17 +1,18 @@
 'use client';
 
 /**
- * Post as: for someone with a store, one choice at the top of posting,
- * starting on themselves, their name first and then their stores
- * (docs/product/accounts-and-stores.md). A store's listings are the
- * store's, not in their My listings, so posting to a store is the choice
- * they make, never one made for them (Hillary, 2026-10-30). Nobody without
- * a store sees it.
+ * Who a new listing goes up as. Add New Listing (the header, the feeds, My
+ * listings) always posts as the person; a store's own Add a listing opens
+ * the same steps at `/post?as=<store id>`, and they post as that store
+ * (Hillary, 2026-11-25: no Post as dropdown, so nothing is posted under the
+ * wrong account by mistake). The choice is kept in the draft for the steps
+ * after, and a fixed line says it at the top. A store's listings are the
+ * store's, not in their My listings.
  */
 
-import { useId } from 'react';
-import { usePostDraftStore, useSessionStore, viewerName } from '@snt/core';
-import { Dropdown } from '@snt/ui';
+import { POST_STEPS } from '@snt/ui';
+import { usePostDraftStore, useSessionStore } from '@snt/core';
+import { StorefrontIcon } from '@snt/ui/icons';
 import styles from './PostAs.module.css';
 
 /** One empty list, so a guest's stores are the same each time they are read. */
@@ -21,36 +22,33 @@ const NO_STORES: never[] = [];
 export function usePostAs(): string | null {
   const stores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES);
   const postAs = usePostDraftStore((state) => state.postAs);
-  // Not chosen yet, or a store they are no longer in: themselves.
+  // Not a store, or a store they are no longer in: themselves.
   if (!postAs) return null;
   return stores.some((store) => store.id === postAs) ? postAs : null;
 }
 
-const ME = 'me';
+/** Where posting starts: as the person, or as a store. */
+export const postStart = (storeId: string | null) =>
+  storeId ? `/post?as=${encodeURIComponent(storeId)}` : '/post';
 
-export function PostAsChoice() {
-  const label = useId();
-  const viewer = useSessionStore((state) => state.viewer);
-  const setPostAs = usePostDraftStore((state) => state.setPostAs);
+/** The steps, with Choose going back to the same start (as the store, when
+    posting as one). */
+export function usePostSteps() {
   const postAs = usePostAs();
-  if (!viewer || viewer.stores.length === 0) return null;
+  return POST_STEPS.map((step) => (step.href === '/post' ? { ...step, href: postStart(postAs) } : step));
+}
 
-  const options = [
-    { value: ME, label: viewerName(viewer) },
-    ...viewer.stores.map((store) => ({ value: store.id, label: store.name })),
-  ];
+/** "Posting as Kopje Computers": a fixed line while posting as a store. */
+export function PostingAs() {
+  const postAs = usePostAs();
+  const name = useSessionStore((state) => state.viewer?.stores.find((store) => store.id === postAs)?.name);
+  if (!postAs || !name) return null;
   return (
-    <div className={styles.postAs}>
-      <span id={label} className={styles.label}>
-        Post as
+    <p className={styles.postingAs}>
+      <StorefrontIcon size={16} />
+      <span>
+        Posting as <b>{name}</b>
       </span>
-      <Dropdown
-        value={postAs ?? ME}
-        options={options}
-        onChange={(value) => setPostAs(value === ME ? null : value)}
-        labelledBy={label}
-        className={styles.choice}
-      />
-    </div>
+    </p>
   );
 }

@@ -58,6 +58,30 @@
   outline: none;
 }
 
+/* Missing or wrong: the whole box in red (a pale red fill, a red ring,
+   red writing and a paler red example), and a red line under it saying
+   what is needed. */
+.inputError,
+.inputError:focus {
+  background: color-mix(in srgb, var(--snt-alert) 8%, var(--snt-bg-card));
+  box-shadow: 0 0 0 1.5px var(--snt-alert);
+  color: var(--snt-alert);
+}
+
+.inputError::placeholder {
+  color: color-mix(in srgb, var(--snt-alert) 55%, var(--snt-bg-card));
+  opacity: 1;
+}
+
+.error {
+  display: block;
+  margin-top: var(--snt-space-2);
+  padding-left: var(--snt-space-8);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-alert);
+}
+
 /* A password box: the eye at its end, as on the sign in page, and room
    for it so the writing never runs under it. */
 .passwordBox {

@@ -4,10 +4,89 @@
  * blue plus to add more.
  */
 
+/* The box to add photos, then the photos added, under it. */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+}
+
 .photos {
   display: flex;
   flex-wrap: wrap;
   gap: var(--snt-space-5);
+}
+
+/* Where photos go: dashed, with a plus and what to do. Blue and tinted
+   while photos are held over it. */
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-2);
+  width: 100%;
+  min-height: 96px;
+  padding: var(--snt-space-6);
+  border: 1.5px dashed color-mix(in srgb, var(--snt-control-active) 45%, transparent);
+  border-radius: var(--snt-radius-lg);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--snt-transition), background-color var(--snt-transition);
+}
+
+.drop.over {
+  border-color: var(--snt-control-active);
+  background: color-mix(in srgb, var(--snt-control-active) 10%, var(--snt-bg-card));
+}
+
+@media (hover: hover) {
+  .drop:not(:disabled):hover {
+    border-color: var(--snt-control-active);
+  }
+}
+
+.drop:disabled {
+  color: var(--snt-control-idle);
+  cursor: not-allowed;
+}
+
+.dropPlus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+}
+
+.dropTitle {
+  font-size: var(--snt-text-md);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.dropHint {
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+}
+
+/* Drag and drop on a computer; a phone only taps. */
+.onPhone {
+  display: none;
+}
+
+@media (hover: none) {
+  .onComputer {
+    display: none;
+  }
+
+  .onPhone {
+    display: inline;
+  }
 }
 
 .thumb {
@@ -36,31 +115,6 @@
   align-items: center;
   justify-content: center;
   color: var(--snt-control-active);
-}
-
-/** Add photos: a pale rounded square with a blue plus. */
-.add {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 68px;
-  height: 68px;
-  flex-shrink: 0;
-  border-radius: var(--snt-radius-md);
-  background: var(--snt-bg-inset);
-  color: var(--snt-control-active);
-  transition: box-shadow var(--snt-transition);
-}
-
-@media (hover: hover) {
-  .add:hover:not(:disabled) {
-    box-shadow: var(--snt-focus-ring);
-  }
-}
-
-.add:disabled {
-  color: var(--snt-control-idle);
-  cursor: not-allowed;
 }
 
 /** Remove a photo: a small white circle with a blue cross, on its corner. */

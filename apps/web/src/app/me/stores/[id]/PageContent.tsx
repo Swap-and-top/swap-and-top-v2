@@ -22,7 +22,6 @@ import {
   FREE_STORE_LIMIT,
   statusOf,
   useListingStatusStore,
-  usePostDraftStore,
   useSessionStore,
   type Listing,
 } from '@snt/core';
@@ -43,6 +42,7 @@ import {
 import { StatusTag } from '@/components/listing/OwnerTools';
 import { StorePassSheet } from '@/components/StorePassSheet';
 import { apiGet, QueryProblem } from '@/lib/query';
+import { postStart } from '@/components/PostAs';
 import listStyles from '../../listings/page.module.css';
 import Loading from './loading';
 import styles from '../page.module.css';
@@ -58,9 +58,8 @@ export default function MyStorePage({ id }: { id: string }) {
   /** Posting, as this store: chosen here, by pressing Add a listing. */
   function addItem() {
     if (!store) return;
-    usePostDraftStore.getState().setPostAs(store.id);
     startPageLoad();
-    router.push('/post');
+    router.push(postStart(store.id));
   }
 
   const listings = useQuery({

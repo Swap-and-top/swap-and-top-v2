@@ -31,7 +31,7 @@
    barely there, so the card keeps its look. Only with a mouse, so it does
    not stay on after a tap on a phone. */
 @media (hover: hover) {
-  .option:hover {
+  .option:not(:disabled):hover {
     background: color-mix(in srgb, var(--option-ink) 4%, var(--snt-bg-card));
   }
 }
@@ -102,4 +102,64 @@
 
 .storeNote {
   margin-top: var(--snt-space-12);
+}
+
+/* At the listing limit: what to do, above the choices. */
+.limit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-3);
+  margin-top: var(--snt-space-8);
+  padding: var(--snt-space-7) var(--snt-card-pad);
+  border-radius: var(--snt-radius-xl);
+  background: color-mix(in srgb, #f5b70a 16%, var(--snt-bg-card));
+  font-size: var(--snt-text-md);
+  line-height: 1.45;
+  color: var(--snt-card-ink);
+}
+
+.limit p {
+  margin: 0;
+}
+
+.limitTitle {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+}
+
+.limitSmall {
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+.limitActions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--snt-space-4);
+  margin-top: var(--snt-space-4);
+}
+
+/* One short of the limit: a quiet line. */
+.heads {
+  margin: var(--snt-space-6) 0 0;
+  font-size: var(--snt-text-sm);
+  color: var(--snt-card-ink-muted);
+}
+
+/* A choice closed by the limit: faded, and does nothing. */
+.option.closed {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* A choice while the count loads: a card the size of the real one. */
+.optionBone {
+  height: 97px;
+  border-radius: var(--snt-radius-xl);
+}
+
+@media (min-width: 768px) {
+  .optionBone {
+    height: 95px;
+  }
 }

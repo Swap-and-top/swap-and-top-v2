@@ -194,6 +194,59 @@ function slugFor(title: string, area: string): string {
   return `${words}-${crypto.randomUUID().slice(0, 4)}`;
 }
 
+/** How many of their own listings for sale or swap are live, against the
+    limit: what the first posting step shows before any work (Hillary,
+    2026-11-25). One count, so it answers fast. */
+const listingLimit = createRoute({
+  method: 'get',
+  path: '/me/listing-limit',
+  tags: ['Listings'],
+  summary: 'Your live listings against your limit',
+  description:
+    'Live listings for sale or swap (Wanted never counts) and the most allowed: the signed in user\'s own, or with `storeId` a store they are in (no limit while a pass covers now).',
+  security: [{ Bearer: [] }],
+  middleware: [requireAuth] as const,
+  request: { query: z.object({ storeId: z.string().optional() }) },
+  responses: {
+    200: {
+      description: 'The count and the limit (null: none)',
+      content: {
+        'application/json': {
+          schema: z.object({ live: z.number().int(), limit: z.number().int().nullable() }),
+        },
+      },
+    },
+    401: { description: 'No valid sign in', content: { 'application/json': { schema: ErrorSchema } } },
+    403: { description: 'Not their store', content: { 'application/json': { schema: ErrorSchema } } },
+  },
+});
+
+postRoutes.openapi(listingLimit, async (c) => {
+  const { storeId } = c.req.valid('query');
+  const person = await personFor(c.get('authUser'));
+  if (storeId && !(await isMember(person.id, storeId))) {
+    return c.json({ error: 'That store is not yours.' }, 403);
+  }
+  const [live] = await db
+    .select({ n: count() })
+    .from(t.listings)
+    .where(
+      and(
+        eq(t.listings.status, 'live'),
+        inArray(t.listings.type, ['sale', 'swap']),
+        storeId
+          ? eq(t.listings.storeId, storeId)
+          : and(eq(t.listings.ownerId, person.id), isNull(t.listings.storeId)),
+      ),
+    );
+  let limit: number | null = PERSON_LIMIT;
+  if (storeId) {
+    await settlePasses();
+    limit = (await paidUntil(storeId)) ? null : FREE_STORE_LIMIT;
+  }
+  return c.json({ live: live?.n ?? 0, limit }, 200);
+});
+
 postRoutes.openapi(post, async (c) => {
   const body = c.req.valid('json');
   const person = await personFor(c.get('authUser'));
