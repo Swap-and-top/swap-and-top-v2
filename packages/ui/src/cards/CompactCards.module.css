@@ -110,9 +110,16 @@
   align-content: start;
 }
 
+/* A card fills its row's height: the tallest card in a row sets how tall
+   the others beside it are, so the row lines up. */
 .grid {
-  display: block;
+  display: flex;
+  flex-direction: column;
   color: var(--snt-ink);
+}
+
+.grid > * {
+  flex-grow: 1;
 }
 
 .grid:hover {
@@ -123,14 +130,37 @@
   transform: scale(0.99);
 }
 
+.gridPanel {
+  display: flex;
+  flex-direction: column;
+}
+
 .gridBody {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: var(--snt-space-1);
   padding: var(--snt-space-4) var(--snt-space-4) var(--snt-space-5);
 }
 
 .gridTitle {
   font-size: var(--snt-text-sm);
-  margin-top: var(--snt-space-1);
   line-height: var(--snt-leading-tight);
+}
+
+/* Its details, one line, in grey. */
+.gridSpecs {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-ink-muted);
+}
+
+/* The price at the foot of the card, level with its neighbours'. */
+.gridPrice {
+  margin-top: auto;
+  padding-top: var(--snt-space-3);
 }
 
 @media (min-width: 640px) {

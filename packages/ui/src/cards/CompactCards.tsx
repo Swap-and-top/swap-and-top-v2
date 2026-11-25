@@ -180,10 +180,13 @@ export function GridCardListSkeleton({ count = 4 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <Panel key={i} clip>
           <Bone shape="block" height={82} style={{ borderRadius: 0 }} />
+          {/* As the card: the name, its details, then the price at the foot. */}
           <div className={styles.gridBody}>
-            <Bone width={48} height={16} />
-            <Bone width="90%" height={11} style={{ marginTop: 8 }} />
-            <Bone width="60%" height={11} style={{ marginTop: 5 }} />
+            <Bone width="85%" height={12} />
+            <Bone width="60%" height={10} />
+            <div className={styles.gridPrice}>
+              <Bone width={48} height={16} />
+            </div>
           </div>
         </Panel>
       ))}
@@ -200,16 +203,32 @@ export function GridCard({ listing }: { listing: Listing }) {
         : undefined;
 
   return (
+    // As a feed card, made small: the name first, in bold, its details in
+    // grey on the line under it, and the price at the foot, level across
+    // the row.
     <Link href={`/listing/${listing.slug}`} className={styles.grid}>
-      <Panel clip>
+      <Panel clip className={styles.gridPanel}>
         <ImagePlaceholder src={listingPhoto(listing)} height={82} flush small />
         <div className={styles.gridBody}>
-          {price !== undefined ? <Price amount={price} size="sm" /> : null}
-          {listing.type === 'swap' && listing.cashAmount ? (
-            <CashAmount amount={listing.cashAmount} />
-          ) : null}
-          <div className={styles.gridTitle}>
-            <ListingName listing={listing} specLimit={2} />
+          {listing.type === 'sale' || listing.type === 'auction' ? (
+            <>
+              <div className={styles.gridTitle}>
+                <ItemName side="owned" bold className={styles.nameBold}>
+                  {listing.item.name}
+                </ItemName>
+              </div>
+              {specParts(listing.item, 2).length > 0 ? (
+                <div className={styles.gridSpecs}>{specParts(listing.item, 2).join(' · ')}</div>
+              ) : null}
+            </>
+          ) : (
+            <div className={styles.gridTitle}>
+              <ListingName listing={listing} specLimit={2} bold />
+            </div>
+          )}
+          <div className={styles.gridPrice}>
+            {price !== undefined ? <Price amount={price} size="sm" /> : null}
+            {listing.type === 'swap' && listing.cashAmount ? <CashAmount amount={listing.cashAmount} /> : null}
           </div>
         </div>
       </Panel>

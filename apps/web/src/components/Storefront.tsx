@@ -35,12 +35,12 @@ import {
   StoreMark,
   StatStrip,
   StatStripSkeleton,
-  Tabs,
+  Chip,
+  ChipRow,
   VerifiedStoreBadge,
   replyShort,
   shareLink,
   startPageLoad,
-  type TabItem,
 } from '@snt/ui';
 import { CheckIcon, ClockIcon, InfoIcon, PinIcon, ShareIcon } from '@snt/ui/icons';
 import { postStart } from './PostAs';
@@ -103,14 +103,8 @@ export function StorefrontBody({
       chosen.length === 0 || chosen.includes(category) || listings.some((listing) => listing.category === category),
   );
 
-  const tabs: TabItem<StoreTab>[] = [
-    { value: 'all', label: 'All', count: listings.length },
-    ...categories.map((category) => ({
-      value: category as StoreTab,
-      label: CATEGORY_LABELS[category],
-      count: listings.filter((l) => l.category === category).length,
-    })),
-  ];
+  /** All, then what it sells: pills, as the feed's categories are. */
+  const pills: StoreTab[] = ['all', ...categories];
 
   const shown =
     tab === 'all'
@@ -238,8 +232,16 @@ export function StorefrontBody({
         )}
       </section>
 
+      {/* What it sells, as the feed's category pills: filling the width
+          where they fit, scrolling sideways on a phone where they don't. */}
       <div className={styles.tabs}>
-        <Tabs tabs={tabs} active={tab} onChange={setTab} label="Store stock" />
+        <ChipRow fill label="Store stock by category">
+          {pills.map((value) => (
+            <Chip key={value} selected={tab === value} onClick={() => setTab(value)}>
+              {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
+            </Chip>
+          ))}
+        </ChipRow>
       </div>
 
       <div className={styles.grid}>
@@ -283,9 +285,9 @@ export function StorefrontBodySkeleton({ own = false }: { own?: boolean }) {
       </section>
 
       <div className={[styles.tabs, styles.tabsLoading].join(' ')} aria-hidden>
-        <Bone width={50} height={14} />
-        <Bone width={80} height={14} />
-        <Bone width={70} height={14} />
+        {[44, 70, 72, 82].map((width, n) => (
+          <Bone key={n} shape="pill" width={width} height={30} />
+        ))}
       </div>
 
       <div className={styles.grid}>
