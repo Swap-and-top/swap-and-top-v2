@@ -148,12 +148,15 @@
 }
 
 /* Signed in, before the app has loaded: the account circle, not the
-   outlined person, from the first paint (the mark on <html>). */
-:global(html[data-signed-in]) .signIn:not(.menuOpen) {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--snt-radius-pill);
-  background: var(--snt-bg-surface);
+   outlined person, from the first paint (the mark on <html>). From tablet
+   up only: a phone shows its three lines throughout, signed in or not. */
+@media (min-width: 768px) {
+  :global(html[data-signed-in]) .signIn:not(.menuOpen) {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--snt-radius-pill);
+    background: var(--snt-bg-surface);
+  }
 }
 
 :global(html[data-signed-in]) .signInMark {
@@ -406,6 +409,43 @@
 @media (hover: hover) {
   .bell:hover {
     background-color: color-mix(in srgb, white 26%, transparent);
+  }
+}
+
+/* On a narrow phone (460px and under) Messages and the bell are in the
+   menu instead (AppMenu). Not the console's, which has its own room. */
+@media (max-width: 460px) {
+  .userBell {
+    display: none;
+  }
+}
+
+/* The red dot on the menu's three lines, on a narrow phone only, when
+   something in Messages or Notifications is unread (see AccountButton). */
+.menuDot {
+  display: none;
+}
+
+@media (max-width: 460px) {
+  .menuButton {
+    position: relative;
+  }
+
+  .menuDot {
+    position: absolute;
+    top: 3px;
+    right: 1px;
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: var(--snt-radius-pill);
+    background: var(--snt-alert);
+    box-shadow: 0 0 0 2px var(--snt-brand-green);
+    pointer-events: none;
+  }
+
+  .menuOpen .menuDot {
+    display: none;
   }
 }
 

@@ -14,7 +14,7 @@
  */
 
 import { useRef, useState } from 'react';
-import { useSessionStore, viewerName } from '@snt/core';
+import { useChatStore, useSessionStore, useUnreadCount, viewerName } from '@snt/core';
 import { AppMenu } from './AppMenu';
 import { BurgerLines } from './BurgerLines';
 import { GuestMark } from './GuestMark';
@@ -26,6 +26,7 @@ export function AccountButton() {
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   const name = signedIn && viewer ? viewerName(viewer) : undefined;
+  const unread = useChatStore((state) => state.unread) + useUnreadCount('user');
 
   return (
     <>
@@ -59,6 +60,9 @@ export function AccountButton() {
         <span className={styles.burger}>
           <BurgerLines />
         </span>
+        {/* On a narrow phone, where Messages and the bell are in the menu
+            and not the header: a red dot while anything there is unread. */}
+        {signedIn && unread > 0 ? <span className={styles.menuDot} aria-hidden /> : null}
       </button>
       {open ? (
         <AppMenu anchor={button.current} onClose={() => setOpen(false)} />

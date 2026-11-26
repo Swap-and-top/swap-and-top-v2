@@ -126,17 +126,40 @@
   transform: scale(0.92);
 }
 
-/* The list scrolls if the screen is short; its own card look is the
+/* The rows scroll if the screen is short; their own card look is the
    panel's here. */
 .list {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+}
+
+.rows {
   border-radius: 0;
 }
 
 .foot {
-  padding: var(--snt-space-2) var(--snt-space-8) var(--snt-space-8);
+  display: flex;
+  justify-content: center;
+  /* Close under the last notification and close to the card's foot. */
+  padding: 0 var(--snt-space-8) var(--snt-space-4);
+}
+
+/* See all notifications: small blue words, the size of a notification's
+   time, no outline and no line under them. */
+.all {
+  padding: var(--snt-space-1) var(--snt-space-4);
+  border-radius: var(--snt-radius-sm);
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .all:hover {
+    color: var(--snt-accent-strong);
+  }
 }
 
 @keyframes snt-notes-fade-in {

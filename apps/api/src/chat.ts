@@ -264,6 +264,17 @@ export async function sideName(chat: Chat, side: Side): Promise<string> {
   return row?.name ?? 'A user';
 }
 
+/** A side's name, and its logo when it is a store that has one: the round
+    beside a chat in the header's Messages drop down. */
+export async function sideFace(chat: Chat, side: Side): Promise<{ name: string; logo: string | null }> {
+  const store = side === 'from' ? chat.fromStoreId : chat.ownerStoreId;
+  if (store) {
+    const [row] = await db.select({ name: t.stores.name, logo: t.stores.logo }).from(t.stores).where(eq(t.stores.id, store));
+    return { name: row?.name ?? 'A store', logo: row?.logo ? photoUrl(row.logo) : null };
+  }
+  return { name: await sideName(chat, side), logo: null };
+}
+
 /** Tells the side a message went to, unless it already has an unread note
     about this chat (one note however many messages). */
 export async function notifyMessage(chat: Chat, to: Side): Promise<void> {
@@ -288,7 +299,8 @@ export interface ChatSummary {
   id: string;
   /** This viewer's side. */
   side: Side;
-  other: { name: string };
+  /** Who it is with; `logo` when that is a store with one. */
+  other: { name: string; logo: string | null };
   listing: { slug: string; title: string; photo: string | null };
   last: { body: string; side: Side; at: string } | null;
   unread: number;
@@ -316,8 +328,8 @@ export async function chatList(person: Person, storeId?: string): Promise<ChatSu
   return Promise.all(
     chats.map(async (chat) => {
       const side = sideOf(chat, person.id, viewerStores)!;
-      const [name, listing, [last], [unread], closed] = await Promise.all([
-        sideName(chat, otherSide(side)),
+      const [other, listing, [last], [unread], closed] = await Promise.all([
+        sideFace(chat, otherSide(side)),
         listingCard(chat.listingId),
         db
           .select()
@@ -335,7 +347,7 @@ export async function chatList(person: Person, storeId?: string): Promise<ChatSu
       return {
         id: chat.id,
         side,
-        other: { name },
+        other,
         listing,
         last: lastOut ? { body: lastOut.body, side: lastOut.side, at: lastOut.at } : null,
         unread: unread?.n ?? 0,

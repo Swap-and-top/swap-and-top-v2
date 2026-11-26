@@ -392,6 +392,46 @@
   background: rgb(255 255 139 / 0.3);
 }
 
+/* A count sits right after the word it belongs to, a little closer than
+   the icon is. */
+.rowLabel + * {
+  margin-left: calc(var(--snt-space-2) * -1);
+}
+
+/* Messages and Notifications in the white band, on a narrow phone only:
+   the green band's rows, in the menu's blue. */
+.phoneRows {
+  display: none;
+}
+
+@media (max-width: 460px) {
+  .phoneRows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--snt-space-1);
+    margin-inline: calc(var(--snt-space-4) * -1);
+  }
+}
+
+.rowOnWhite,
+.rowOnWhite:hover {
+  color: var(--menu-deep);
+}
+
+.rowOnWhite .rowIcon {
+  background: color-mix(in srgb, var(--menu-deep) 12%, transparent);
+}
+
+@media (hover: hover) {
+  .rowOnWhite:hover {
+    background: var(--snt-bg-inset);
+  }
+}
+
+.rowOnWhite:active {
+  background: var(--snt-bg-inset);
+}
+
 /* Each icon on a soft tile of its own colour, a rounded square as in the
    Store console. */
 .rowIcon,
@@ -462,6 +502,36 @@
   gap: var(--snt-space-1);
 }
 
+/* Send feedback: a button, outlined in the yellow on the deep blue, so it
+   plainly takes a tap without vying with the solid yellow Add New
+   Listing. Filled pale yellow under a finger or the mouse. */
+.feedbackButton,
+.feedbackButton:hover {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  margin: var(--snt-space-3) auto 0;
+  padding: 0 var(--snt-space-9);
+  border: 1.6px solid var(--menu-yellow);
+  border-radius: var(--snt-radius-pill);
+  color: var(--menu-yellow);
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+  text-decoration: none;
+  transition: background-color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .feedbackButton:hover {
+    background: rgb(255 255 139 / 0.15);
+  }
+}
+
+.feedbackButton:active {
+  background: rgb(255 255 139 / 0.25);
+}
+
 /* The first app's link: yellow, a yellow underline growing from the middle. */
 .yellowLink,
 .yellowLink:hover {
@@ -486,6 +556,8 @@
   flex-direction: column;
   gap: var(--snt-space-4);
   width: 100%;
+  /* Apart from the feedback above: two groups, each tight within. */
+  margin-top: var(--snt-space-5);
 }
 
 .socials {
@@ -680,21 +752,32 @@
 }
 
 /*
- * On a phone the bands start from the top: the white band padded as the
- * coloured ones are, the green, light blue and deep blue straight under it.
- * The spare room goes inside the deep blue band, between the socials and the
- * fine print, which keeps to the foot. View profile and Sign out take half
- * the width each.
+ * On a phone the bands run the full height of the screen. Any spare room is
+ * shared out between all four, each with its contents in the middle of its
+ * share, so the menu fills the screen evenly and is never heavy at the top;
+ * the fine print keeps to the foot. View profile and Sign out take half the
+ * width each.
  */
 @media (max-width: 767px) {
   .profileBand {
-    flex-grow: 0;
-    justify-content: flex-start;
+    flex-grow: 1;
+    justify-content: center;
     padding-top: var(--snt-space-10);
+  }
+
+  .helpBand {
+    flex-grow: 1;
+    justify-content: center;
+  }
+
+  .contactBand {
+    flex-grow: 1;
+    align-items: center;
   }
 
   .socialBand {
     flex-grow: 1;
+    justify-content: center;
   }
 
   .disclosure {
@@ -724,40 +807,41 @@
   }
 }
 
-/* On a short phone, the bands sit a little closer, so it all fits. */
-@media (max-width: 767px) and (max-height: 720px) {
-  .band {
+/* When it would not fit (`data-compact`): the bands closer still, and
+ * the picture small, beside the name. */
+@media (max-width: 767px) {
+  .panel[data-compact] .band {
     padding-top: var(--snt-space-7);
     padding-bottom: calc(22px + var(--snt-space-7));
   }
 
-  .socialBand {
+  .panel[data-compact] .socialBand {
     gap: var(--snt-space-6);
     padding-bottom: var(--snt-space-4);
   }
 
   /* No room to spare: no mark above the welcome. */
-  .guestMark {
+  .panel[data-compact] .guestMark {
     display: none;
   }
 
   /* No room to spare: the picture stays small, beside the name. */
-  .who {
+  .panel[data-compact] .who {
     flex-direction: row;
     align-items: center;
     text-align: left;
   }
 
-  .who .whoText {
+  .panel[data-compact] .who .whoText {
     align-items: flex-start;
   }
 
-  .whoAvatar > span {
+  .panel[data-compact] .whoAvatar > span {
     width: 56px !important;
     height: 56px !important;
   }
 
-  .whoAvatar > span > span {
+  .panel[data-compact] .whoAvatar > span > span {
     font-size: 20px !important;
   }
 }
@@ -886,4 +970,48 @@
 .teamPill:focus-visible {
   outline: 2px solid var(--snt-control-active);
   outline-offset: 2px;
+}
+
+/*
+ * On a phone where the whole menu would not fit without scrolling, which
+ * the menu measures as it opens (`data-compact`, see AppMenu.tsx; a short
+ * screen, a long name, the staff pill), everything a little tighter:
+ * slimmer View profile and Sign out, less room round them, and less in
+ * each band. Where it fits, it keeps the roomier spacing above.
+ */
+@media (max-width: 767px) {
+  /* The picture and name up beside the cross at the top right, kept clear
+     of it on the right. */
+  .panel[data-compact] .profileBand {
+    gap: var(--snt-space-3);
+    padding-top: var(--snt-space-8);
+    padding-bottom: calc(22px + var(--snt-space-4));
+  }
+
+  .panel[data-compact] .profileBand .who {
+    padding-right: 44px;
+  }
+
+  .panel[data-compact] .pair > * {
+    height: 34px;
+    min-height: 34px;
+  }
+
+  .panel[data-compact] .band {
+    padding-top: var(--snt-space-5);
+    padding-bottom: calc(22px + var(--snt-space-5));
+  }
+
+  .panel[data-compact] .helpBand {
+    gap: 0;
+  }
+
+  .panel[data-compact] .row {
+    min-height: 32px;
+  }
+
+  .panel[data-compact] .socialBand {
+    gap: var(--snt-space-5);
+    padding-bottom: var(--snt-space-5);
+  }
 }

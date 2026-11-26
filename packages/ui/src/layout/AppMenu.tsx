@@ -18,17 +18,21 @@ import { createPortal } from 'react-dom';
 import {
   COMPANY,
   telHref,
+  useChatStore,
+  useUnreadCount,
   useDealStore,
   useSessionStore,
   viewerName,
 } from '@snt/core';
 import {
+  BellIcon,
   CloseIcon,
   MessageIcon,
   PhoneIcon,
   PinIcon,
 } from '../icons';
 import { Button, ButtonLink } from '../primitives/Button';
+import { CountBadge } from '../primitives/Badge';
 import { Avatar } from '../primitives/Placeholder';
 import { ConfirmedDealsBadge } from '../primitives/Trust';
 import { SocialMark } from './SocialMarks';
@@ -97,6 +101,24 @@ export function AppMenu({
       cancelAnimationFrame(frame);
     };
   }, [anchor]);
+
+  // On a phone, whether the whole menu fits the screen as it is: if it
+  // would have to scroll (a short screen, the browser's own bars, a long
+  // name, the staff pill), it takes its tighter spacing instead. Measured
+  // before it is drawn, and again as the window changes size: a listener,
+  // not loading.
+  useLayoutEffect(() => {
+    const el = panel.current;
+    if (!el) return;
+    const fit = () => {
+      el.removeAttribute('data-compact');
+      const phone = window.matchMedia('(max-width: 767px)').matches;
+      if (phone && el.scrollHeight > el.clientHeight + 1) el.setAttribute('data-compact', '');
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
 
   // When the menu is taller than the screen leaves room for, a thin blue
   // bar in from its right edge, as the dropdowns' (the browser's own is
@@ -229,6 +251,8 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
   const signOut = useSessionStore((state) => state.signOut);
   const user = useSessionStore((state) => state.viewer);
   const { confirmedDeals } = useDealStore();
+  const chatsUnread = useChatStore((state) => state.unread);
+  const notesUnread = useUnreadCount('user');
   const staffHome = useStaffHomeHref();
   /** Their place on our team, for the pill under their name: none when
       they are not on it. */
@@ -293,6 +317,28 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
                 Sign out
               </Button>
             </div>
+            {/* On a narrow phone (460px and under) Messages and
+                Notifications are here, not in the header. */}
+            {user.standing === 'banned' ? null : (
+              <nav className={styles.phoneRows} aria-label="Messages and notifications">
+                <MenuRow
+                  href="/messages"
+                  icon={<MessageIcon size={20} />}
+                  label="Messages"
+                  count={chatsUnread}
+                  onNavigate={onNavigate}
+                  onWhite
+                />
+                <MenuRow
+                  href="/notifications"
+                  icon={<BellIcon size={20} />}
+                  label="Notifications"
+                  count={notesUnread}
+                  onNavigate={onNavigate}
+                  onWhite
+                />
+              </nav>
+            )}
           </>
         ) : (
           <>
@@ -325,13 +371,6 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
 
       {/* Green: help and the rules, in yellow. */}
       <nav className={`${styles.band} ${styles.helpBand}`} aria-label="Help">
-        {/* Where they were goes with it, so our team can see how they got on. */}
-        <MenuRow
-          href={`/feedback?from=${encodeURIComponent(pathname || '/')}`}
-          icon={<MessageIcon size={22} />}
-          label="Send feedback"
-          onNavigate={onNavigate}
-        />
         <MenuRow href="/help" icon={<TipsMark />} label="Safety tips" onNavigate={onNavigate} />
         <MenuRow href="/terms" icon={<TermsMark />} label="Terms of use" onNavigate={onNavigate} />
         <MenuRow href="/privacy" icon={<PrivacyMark />} label="Privacy policy" onNavigate={onNavigate} />
@@ -365,11 +404,17 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
 
       {/* Deep blue: feedback, socials, the company. */}
       <section className={`${styles.band} ${styles.socialBand}`} aria-label="Feedback and social">
+        {/* Feedback is sent from its own page; where they were goes with it,
+            so our team can see how they got on. */}
         <div className={styles.feedback}>
-          <p>Your feedback matters to us. Email us at</p>
-          <a href={`mailto:${COMPANY.feedbackEmail}`} className={styles.yellowLink}>
-            {COMPANY.feedbackEmail}
-          </a>
+          <p>Got ideas to improve Swap &amp; Top?</p>
+          <Link
+            href={`/feedback?from=${encodeURIComponent(pathname || '/')}`}
+            className={styles.feedbackButton}
+            onClick={onNavigate}
+          >
+            Send feedback
+          </Link>
         </div>
         <div className={styles.socialsWrap}>
           <p>Find us on social</p>
@@ -399,22 +444,32 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
   );
 }
 
-/** A link in the green band: the icon and the name, in yellow. */
+/** A link in the green band: the icon and the name, in yellow. `onWhite`:
+    the same row in the white band, in the menu's blue, with a count. */
 function MenuRow({
   href,
   icon,
   label,
+  count,
   onNavigate,
+  onWhite = false,
 }: {
   href: string;
   icon: ReactNode;
   label: string;
+  count?: number;
   onNavigate: () => void;
+  onWhite?: boolean;
 }) {
   return (
-    <Link href={href} className={styles.row} onClick={onNavigate}>
+    <Link
+      href={href}
+      className={[styles.row, onWhite ? styles.rowOnWhite : ''].filter(Boolean).join(' ')}
+      onClick={onNavigate}
+    >
       <span className={styles.rowIcon}>{icon}</span>
-      <span>{label}</span>
+      <span className={styles.rowLabel}>{label}</span>
+      {count ? <CountBadge count={count} /> : null}
     </Link>
   );
 }

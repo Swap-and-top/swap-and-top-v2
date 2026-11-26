@@ -50,7 +50,7 @@ const Summary = z
   .object({
     id: z.string(),
     side: Side,
-    other: z.object({ name: z.string() }),
+    other: z.object({ name: z.string(), logo: z.string().nullable() }),
     listing: Listing,
     last: z.object({ body: z.string(), side: Side, at: z.string() }).nullable(),
     unread: z.number(),

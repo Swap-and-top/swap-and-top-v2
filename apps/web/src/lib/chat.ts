@@ -27,7 +27,8 @@ export interface ChatMessage {
 export interface ChatSummary {
   id: string;
   side: Side;
-  other: { name: string };
+  /** `logo` when the other side is a store with one. */
+  other: { name: string; logo: string | null };
   listing: { slug: string; title: string; photo: string | null };
   last: { body: string; side: Side; at: string } | null;
   unread: number;

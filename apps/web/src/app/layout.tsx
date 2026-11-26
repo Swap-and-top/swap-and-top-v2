@@ -5,6 +5,7 @@ import { ToastOffset } from '@/components/ToastOffset';
 import { AskName } from '@/components/AskName';
 import { BannedGate } from '@/components/BannedGate';
 import { QueryProvider } from '@/lib/query';
+import { MessagesPreviewProvider } from '@/components/chat/MessagesPreview';
 import { StaffHomeProvider } from '@/components/StaffHomeProvider';
 import { LiveListingsLoader } from '@/components/LiveListingsLoader';
 import { SessionRestore } from '@/components/SessionRestore';
@@ -79,8 +80,11 @@ export default function RootLayout({
         <QueryProvider>
           {/* A banned account sees only their ban, and can appeal it. */}
           {/* Where the account menu's staff pill opens the console. */}
+          {/* The newest chats, for the header's Messages drop down. */}
           <StaffHomeProvider>
-            <BannedGate>{children}</BannedGate>
+            <MessagesPreviewProvider>
+              <BannedGate>{children}</BannedGate>
+            </MessagesPreviewProvider>
           </StaffHomeProvider>
           {/* A remembered sign in, back before the first paint. */}
           <SessionRestore />
