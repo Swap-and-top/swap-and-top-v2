@@ -171,7 +171,7 @@ export default function PostDetailsPage() {
                   ({draft.photos.length} of {MAX_PHOTOS}, upload at least {MIN_PHOTOS})
                 </span>
               </span>
-              <PhotoPicker picking={picking} />
+              <PhotoPicker picking={picking} error={Boolean(errorFor('photos'))} />
               {errorFor('photos') ? (
                 <span className={styles.missing} data-missing="">
                   {errorFor('photos')}

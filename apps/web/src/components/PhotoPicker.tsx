@@ -114,8 +114,9 @@ export function usePhotoPicker(
   return { photos, pending, pick, remove, busy: pending.length > 0 };
 }
 
-/** The row of photos, each with a cross to take it off, and the plus. */
-export function PhotoPicker({ picking }: { picking: PhotoPicking }) {
+/** The row of photos, each with a cross to take it off, and the plus.
+    `error`: too few photos, shown in red like a missing text box. */
+export function PhotoPicker({ picking, error = false }: { picking: PhotoPicking; error?: boolean }) {
   const input = useRef<HTMLInputElement>(null);
   const { photos, pending } = picking;
   const full = photos.length + pending.length >= MAX_PHOTOS;
@@ -146,7 +147,7 @@ export function PhotoPicker({ picking }: { picking: PhotoPicking }) {
           dragged in, or tapped to choose. Full at 8. */}
       <button
         type="button"
-        className={[styles.drop, over ? styles.over : ''].filter(Boolean).join(' ')}
+        className={[styles.drop, error && !over ? styles.dropError : '', over ? styles.over : ''].filter(Boolean).join(' ')}
         onClick={() => input.current?.click()}
         disabled={full}
       >

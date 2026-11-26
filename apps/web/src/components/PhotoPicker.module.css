@@ -54,6 +54,24 @@
   cursor: not-allowed;
 }
 
+/* Too few photos: red like a missing text box (a pale red fill, the
+   soft red of its ring, red words), until they are added. */
+.drop.dropError {
+  border-color: color-mix(in srgb, var(--snt-alert) 35%, transparent);
+  background: color-mix(in srgb, var(--snt-alert) 8%, var(--snt-bg-card));
+  color: var(--snt-alert);
+}
+
+@media (hover: hover) {
+  .drop.dropError:not(:disabled):hover {
+    border-color: color-mix(in srgb, var(--snt-alert) 60%, transparent);
+  }
+}
+
+.dropError .dropHint {
+  color: color-mix(in srgb, var(--snt-alert) 55%, var(--snt-bg-card));
+}
+
 .dropPlus {
   display: flex;
   align-items: center;

@@ -58,13 +58,13 @@
   outline: none;
 }
 
-/* Missing or wrong: the whole box in red (a pale red fill, a red ring,
-   red writing and a paler red example), and a red line under it saying
-   what is needed. */
+/* Missing or wrong: the whole box in red (a pale red fill, a soft red
+   ring faded like the blue one while typing, red writing and a paler red
+   example), and a red line under it saying what is needed. */
 .inputError,
 .inputError:focus {
   background: color-mix(in srgb, var(--snt-alert) 8%, var(--snt-bg-card));
-  box-shadow: 0 0 0 1.5px var(--snt-alert);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--snt-alert) 35%, transparent);
   color: var(--snt-alert);
 }
 

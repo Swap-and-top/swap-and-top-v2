@@ -165,12 +165,16 @@ function PostType() {
         ) : atLimit ? (
           <div className={styles.limit}>
             <p className={styles.limitTitle}>Listing limit reached</p>
-            <p>A personal account can only have up to {max} live listings at a time.</p>
             <p>
-              {viewer?.stores.length
-                ? 'To post more, add them from your store, which takes up to 5. For unlimited listings, get a store pass.'
-                : 'To post more, open a free store, which takes up to 5. For unlimited listings, get a store pass.'}{' '}
-              Or mark one as sold to make room.
+              A personal account can only have up to {max} live listings at a time.{' '}
+              {viewer?.stores.length ? (
+                'To post more listings, add them from your store, or mark a live listing as sold.'
+              ) : (
+                <>
+                  To post more listings, create a <strong>free</strong> store account, or mark a live
+                  listing as sold.
+                </>
+              )}
             </p>
             <p className={styles.limitSmall}>"Looking for something" doesn&apos;t count towards the limit.</p>
             <div className={styles.limitActions}>
@@ -183,7 +187,7 @@ function PostType() {
                 </ButtonLink>
               ) : (
                 <ButtonLink href="/store/new" variant="secondary">
-                  Open a store
+                  Create a store
                 </ButtonLink>
               )}
             </div>
@@ -241,8 +245,9 @@ function PostType() {
         </div>
         )}
 
-        {/* Not while posting as a store: they have one. */}
-        {postAs ? null : (
+        {/* Only for someone with no store, and not beside the limit note,
+            which already says to create one. */}
+        {waiting || postAs || atLimit || viewer?.stores.length ? null : (
           <Note
             icon={<InfoIcon size={17} />}
             tone="subtle"
