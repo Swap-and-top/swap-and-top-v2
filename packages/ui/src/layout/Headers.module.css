@@ -116,12 +116,19 @@
   font-size: var(--snt-text-base);
   font-weight: var(--snt-weight-bold);
   white-space: nowrap;
-  transition: filter var(--snt-transition);
+  transition: background-color var(--snt-transition);
 }
 
 .postButton:hover {
   color: var(--snt-post-ink);
-  filter: brightness(0.96);
+}
+
+/* Hovered: a lighter yellow, still plainly the same button, the words
+   still green. */
+@media (hover: hover) {
+  .postButton:not([aria-disabled='true']):hover {
+    background: color-mix(in srgb, var(--snt-brand-yellow) 60%, white);
+  }
 }
 
 /* On a phone, smaller, so the icons beside it keep their room. */
@@ -384,7 +391,8 @@
   padding: 0;
   border: none;
   border-radius: var(--snt-radius-pill);
-  background: none;
+  /* Always on a faint white round, the icon solid white. */
+  background: color-mix(in srgb, white 14%, transparent);
   color: var(--snt-ink-on-dark);
   cursor: pointer;
   transition: background-color var(--snt-transition);
@@ -394,9 +402,10 @@
   color: var(--snt-ink-on-dark);
 }
 
+/* Hovered: the round a little brighter, the icon as it is. */
 @media (hover: hover) {
   .bell:hover {
-    background-color: color-mix(in srgb, white 14%, transparent);
+    background-color: color-mix(in srgb, white 26%, transparent);
   }
 }
 

@@ -25,8 +25,10 @@
     z-index: 3;
   }
 
+  /* The type tabs on white, as the cards and the search bar are. */
   .stickyHeader [role='tablist'] {
     display: flex;
+    background: var(--snt-bg-card);
   }
 
   /* The feed keeps its 12px under the tabs, as between the chips and

@@ -24,14 +24,10 @@
   }
 
   /* Level with the search bar at first (the header's 78px and the band's
-     16px above it), then held 8px from the top, level with the type tabs,
-     and down to 8px from the bottom of the screen (its height is fitted
-     as the page scrolls, see CategorySide.tsx). */
+     16px above it), then held 8px from the top, level with the type tabs.
+     As tall as its items. */
   .card {
     position: sticky;
-    box-sizing: border-box;
-    height: calc(100dvh - var(--snt-space-4) * 2);
-    overflow-y: auto;
     top: var(--snt-space-4);
     margin-top: 94px;
     padding: var(--snt-space-6);
