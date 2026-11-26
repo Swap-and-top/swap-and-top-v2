@@ -40,6 +40,12 @@
   color: var(--snt-control-active);
 }
 
+/* While the search is open, the bar sits above its panel, which comes
+   down from behind it. */
+.barRaised {
+  z-index: 21;
+}
+
 .bar svg {
   flex-shrink: 0;
 }
@@ -85,10 +91,14 @@
 /* --- the panel: everything beneath the bar -------------------------------- */
 
 /*
- * Fixed from just under the bar (its `top` is measured) to the bottom of the
- * screen, over the chips, the feed and the bottom nav. It slides down out of
- * the bar: revealed from its top edge while it eases into place. Closing is
- * the same in reverse: it slides back up into the bar.
+ * Fixed from the foot of the header (16px above the bar; measured) to the
+ * bottom of the screen: behind the bar, over everything else on the page,
+ * the categories, the chips, the tabs, the feed and the bottom nav. Its
+ * top padding (set with it) brings what is in it to just under the bar.
+ *
+ * It comes and goes as a quick fade, the usual way for a search over a
+ * page: in 200ms, what is in it rising 8px into place as it does; out in
+ * 150ms, all at once.
  */
 .panel {
   position: fixed;
@@ -96,40 +106,38 @@
   right: 0;
   bottom: 0;
   z-index: 20;
-  padding-top: 6px;
   background: var(--snt-bg-app);
   color: var(--snt-ink);
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* The app's one pace for things opening over the page: 420ms in. */
-  animation: drop 420ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-@keyframes drop {
-  from {
-    clip-path: inset(0 0 100% 0);
-    transform: translateY(-12px);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-    transform: translateY(0);
-  }
+  animation: fadeIn 200ms ease-out both;
 }
 
 .panelClosing {
-  /* And 380ms out, easing to rest, as the sheets and photos do. */
-  animation: rise 380ms cubic-bezier(0.3, 0, 0, 1) forwards;
+  animation: fadeOut 150ms ease-in forwards;
   pointer-events: none;
+}
+
+.column {
+  animation: rise 240ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes rise {
   from {
-    clip-path: inset(0 0 0 0);
-    transform: translateY(0);
-  }
-  to {
-    clip-path: inset(0 0 100% 0);
-    transform: translateY(-12px);
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 
@@ -143,6 +151,35 @@
   margin-inline: auto;
   padding: 0 var(--snt-gutter) var(--snt-space-12);
   margin-top: 12px;
+}
+
+/*
+ * From 768px up, laid out as the feed: the results under the bar, from
+ * after the filters' 200px and a 16px gap to the header's right edge, and
+ * the filters down the left, level with the bar, where the feed has its
+ * categories (.side, placed over the page beside the panel).
+ */
+@media (min-width: 768px) {
+  .column {
+    max-width: calc(var(--snt-header-max) + var(--snt-gutter) * 2);
+    padding-left: calc(var(--snt-gutter) + 216px);
+  }
+
+  /* Under the bar only, clear of the filters beside it. */
+  .column .terms {
+    left: calc(var(--snt-gutter) + 216px);
+  }
+
+  .side {
+    position: fixed;
+    left: max(var(--snt-gutter), calc(50% - var(--snt-header-max) / 2));
+    z-index: 21;
+    animation: rise 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .side.panelClosing {
+    animation: fadeOut 150ms ease-in forwards;
+  }
 }
 
 .body {

@@ -4,8 +4,9 @@
  * The heading over a list of search results, and the filters it can open.
  *
  * The heading says what the list is and how many listings are in it; at its
- * right end a "Filter" button opens and closes the filters beneath it — a
- * category and a listing-type dropdown, then a price range. They start
+ * right end a "Filter" button opens and closes the filters beneath it: a
+ * category and a listing type dropdown (the app's own, as in the Filters
+ * card on a laptop), then a price range. They start
  * closed, so the results come first, and slide down and back up like the
  * search panel itself. While closed, the button counts the
  * filters that are narrowing the list, so none of them is hidden.
@@ -13,9 +14,8 @@
 
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 import type { SearchCategory, TypeFilter } from '@snt/core';
-import { Bone, Eyebrow, Field } from '@snt/ui';
+import { Bone, Dropdown, Eyebrow, Field } from '@snt/ui';
 import { FilterIcon } from '@snt/ui/icons';
-import { FilterSelect } from './FilterSelect';
 import { CATEGORY_OPTIONS, quoteQuery, TYPE_OPTIONS } from './searchParams';
 import styles from './SearchFilters.module.css';
 
@@ -140,17 +140,17 @@ export function SearchFilters({
           <div className={styles.filters}>
             {/* Category on the left, listing type on the right. */}
             <div className={styles.pair}>
-              <FilterSelect
-                label="Category"
+              <Dropdown
                 value={values.category}
                 options={CATEGORY_OPTIONS}
                 onChange={(category) => onChange({ category })}
+                className={styles.dropdown}
               />
-              <FilterSelect
-                label="Listing type"
+              <Dropdown
                 value={values.type}
                 options={TYPE_OPTIONS}
                 onChange={(type) => onChange({ type })}
+                className={styles.dropdown}
               />
             </div>
 

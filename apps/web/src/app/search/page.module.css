@@ -23,3 +23,56 @@
     margin-top: -19px;
   }
 }
+
+/* The whole page under the header's row, so the filters down the left can
+   run its full height. */
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* The filters down the left, from 768px up: as the feed's categories, as
+   tall as the page so the card can stick, level with the search bar at
+   first and then 8px from the top. The search, open, covers it with its
+   own. */
+.side {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .side {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: max(var(--snt-gutter), calc(50% - var(--snt-header-max) / 2));
+    z-index: 4;
+    width: 200px;
+    pointer-events: none;
+  }
+
+  .sideCard {
+    position: sticky;
+    top: var(--snt-space-4);
+    margin-top: 94px;
+    pointer-events: auto;
+  }
+
+  /* The search bar and the results: from after the filters' 200px and a
+     16px gap to the header's right edge, under the account circle. */
+  .page [data-app-below] > div {
+    max-width: calc(var(--snt-header-max) + var(--snt-gutter) * 2);
+    padding-left: calc(var(--snt-gutter) + 216px);
+  }
+
+  .page [data-app-below] + div {
+    padding-inline: max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2));
+    padding-left: calc(max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2)) + 216px);
+  }
+
+  .page [data-app-below] + div > div {
+    max-width: none;
+  }
+}

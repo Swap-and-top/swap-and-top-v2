@@ -22,6 +22,7 @@ import {
   SearchFilters,
   type SearchFilterValues,
 } from '@/components/SearchFilters';
+import { FilterSide } from '@/components/FilterSide';
 import { parseSearchQuery } from '@/components/searchParams';
 import styles from './page.module.css';
 
@@ -61,44 +62,55 @@ function SearchSkeleton({ params }: { params: Record<string, string> }) {
 
   return (
     <Screen>
-      <AppHeader>
-        <SearchEntry
-          query={initial.q}
-          category={initial.category}
-          type={initial.type}
-          min={initial.min}
-          max={initial.max}
-        />
-      </AppHeader>
-
-      <ScreenBody>
-        <div className={styles.heading}>
-          <SearchFilters
-            heading={
-              initial.q ? (
-                <>
-                  Search results for <QuotedQuery q={initial.q} bold />
-                </>
-              ) : (
-                'All listings'
-              )
-            }
-            count="loading"
-            open={false}
-            onToggle={() => {}}
+      <div className={styles.page}>
+        {/* From 768px up: the filters down the left, as the feed's categories. */}
+        <div className={styles.side}>
+          <FilterSide
+            className={styles.sideCard}
             values={values}
-            onChange={(change) => setValues((now) => ({ ...now, ...change }))}
+            onChange={(change) =>
+              setValues((now) => ({ ...now, ...change }))
+            }
           />
         </div>
+        <AppHeader>
+          <SearchEntry
+            query={initial.q}
+            category={initial.category}
+            type={initial.type}
+            min={initial.min}
+            max={initial.max}
+          />
+        </AppHeader>
 
-        <div className={styles.feed} aria-busy aria-label="Loading results">
-          {Array.from({ length: 4 }).map((_, i) => {
-            const Card = kinds[i % kinds.length]!;
-            return <Card key={i} />;
-          })}
-        </div>
-      </ScreenBody>
+        <ScreenBody>
+          <div className={styles.heading}>
+            <SearchFilters
+              heading={
+                initial.q ? (
+                  <>
+                    Search results for <QuotedQuery q={initial.q} bold />
+                  </>
+                ) : (
+                  'All listings'
+                )
+              }
+              count="loading"
+              open={false}
+              onToggle={() => {}}
+              values={values}
+              onChange={(change) => setValues((now) => ({ ...now, ...change }))}
+            />
+          </div>
 
+          <div className={styles.feed} aria-busy aria-label="Loading results">
+            {Array.from({ length: 4 }).map((_, i) => {
+              const Card = kinds[i % kinds.length]!;
+              return <Card key={i} />;
+            })}
+          </div>
+        </ScreenBody>
+      </div>
     </Screen>
   );
 }

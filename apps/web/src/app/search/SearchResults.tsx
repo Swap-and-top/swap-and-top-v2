@@ -27,6 +27,7 @@ import {
   ScreenBody,
   useSignInToPost,
 } from '@snt/ui';
+import { FilterSide } from '../../components/FilterSide';
 import { SearchEntry } from '../../components/SearchEntry';
 import {
   QuotedQuery,
@@ -79,59 +80,70 @@ export function SearchResults({
 
   return (
     <Screen>
-      <AppHeader>
-        <SearchEntry
-          query={initial.q}
-          category={category}
-          type={type}
-          min={min}
-          max={max}
-        />
-      </AppHeader>
-
-      <ScreenBody>
-        <div className={styles.heading}>
-          <SearchFilters
-            heading={
-              initial.q ? (
-                <>
-                  Search results for <QuotedQuery q={initial.q} bold />
-                </>
-              ) : (
-                'All listings'
-              )
-            }
-            count={results.length}
-            open={filtersOpen}
-            onToggle={() => setFiltersOpen((current) => !current)}
+      <div className={styles.page}>
+        {/* From 768px up: the filters down the left, as the feed's categories. */}
+        <div className={styles.side}>
+          <FilterSide
+            className={styles.sideCard}
             values={filters}
             onChange={(change) =>
               setFilters((current) => ({ ...current, ...change }))
             }
           />
         </div>
-
-        {results.length > 0 ? (
-          <div className={styles.feed}>
-            {results.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        ) : (
-          // A dead end becomes a lead.
-          <EmptyState
-            title="Nothing matched"
-            body="Try another category, widen the price range, or post what you are looking for and let sellers come to you."
-            action={
-              // Green like the post button in the bottom menu, no border.
-              <ButtonLink href="/post" variant="primary" {...postGate}>
-                Post what you are looking for
-              </ButtonLink>
-            }
+        <AppHeader>
+          <SearchEntry
+            query={initial.q}
+            category={category}
+            type={type}
+            min={min}
+            max={max}
           />
-        )}
-      </ScreenBody>
+        </AppHeader>
 
+        <ScreenBody>
+          <div className={styles.heading}>
+            <SearchFilters
+              heading={
+                initial.q ? (
+                  <>
+                    Search results for <QuotedQuery q={initial.q} bold />
+                  </>
+                ) : (
+                  'All listings'
+                )
+              }
+              count={results.length}
+              open={filtersOpen}
+              onToggle={() => setFiltersOpen((current) => !current)}
+              values={filters}
+              onChange={(change) =>
+                setFilters((current) => ({ ...current, ...change }))
+              }
+            />
+          </div>
+
+          {results.length > 0 ? (
+            <div className={styles.feed}>
+              {results.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+          ) : (
+            // A dead end becomes a lead.
+            <EmptyState
+              title="Nothing matched"
+              body="Try another category, widen the price range, or post what you are looking for and let sellers come to you."
+              action={
+                // Green like the post button in the bottom menu, no border.
+                <ButtonLink href="/post" variant="primary" {...postGate}>
+                  Post what you are looking for
+                </ButtonLink>
+              }
+            />
+          )}
+        </ScreenBody>
+      </div>
     </Screen>
   );
 }

@@ -116,6 +116,17 @@
   overflow: hidden;
 }
 
+/* Once fully open, a dropdown's list may hang out below it. */
+.revealOpen .revealInner {
+  animation: overflowShown 0s 420ms forwards;
+}
+
+@keyframes overflowShown {
+  to {
+    overflow: visible;
+  }
+}
+
 .filters {
   display: flex;
   flex-direction: column;
@@ -129,6 +140,13 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--snt-space-5);
+}
+
+/* The dropdowns: the app's own, white here on the page's pale blue, as
+   the price boxes are, and as tall as them. */
+.filters .dropdown {
+  height: 36px;
+  background: var(--snt-bg-surface);
 }
 
 /*
@@ -152,6 +170,15 @@
   font-weight: var(--snt-weight-bold);
   letter-spacing: 0;
   text-transform: none;
+}
+
+/* From 768px up the filters are a card down the left (FilterSide), not
+   behind the Filter button here. */
+@media (min-width: 768px) {
+  .toggle,
+  .reveal {
+    display: none;
+  }
 }
 
 /* The search quoted back: regular blue in ordinary text, bold blue in bold. */

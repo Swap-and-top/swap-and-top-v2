@@ -16,6 +16,11 @@
  * taking room in it.
  * Before anything is typed it shows the latest listings, so it is never blank.
  *
+ * From 768px up the filters are not behind that button: they are a card
+ * down the left, over where the feed has its categories, and the results
+ * are on the right, under the bar (FilterSide). The panel's background
+ * comes down from behind the bar and covers the rest of the page.
+ *
  * Only "View all results", a suggested term or Enter goes to the results
  * page. Tapping a listing opens that listing. Escape, the cross or a tap on
  * the header puts everything back: the panel slides back up into the bar. The
@@ -48,6 +53,7 @@ import {
   SearchFilters,
   type SearchFilterValues,
 } from './SearchFilters';
+import { FilterSide } from './FilterSide';
 import { publicSend } from '@/lib/query';
 import { MAX_QUERY, searchHref } from './searchParams';
 import styles from './SearchEntry.module.css';
@@ -82,6 +88,8 @@ export function SearchEntry({
   const bar = useRef<HTMLFormElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  /** The filters down the left, from 768px up. */
+  const side = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState(false);
   /** Sliding back up: still on screen, but the bar is already at rest. */
@@ -95,8 +103,12 @@ export function SearchEntry({
     min: currentMin,
     max: currentMax,
   });
-  /** Where the panel starts: just under the bar, wherever the bar is. */
+  /** Where the panel starts: the foot of the header, behind the bar. */
   const [top, setTop] = useState(0);
+  /** From there to just under the bar, where what is in it starts. */
+  const [inset, setInset] = useState(0);
+  /** Where the bar's top is: the filters down the left start level with it. */
+  const [barTop, setBarTop] = useState(0);
 
   function activate() {
     if (open && !closing) return;
@@ -136,12 +148,29 @@ export function SearchEntry({
     if (!open) return;
     const measure = () => {
       const rect = bar.current?.getBoundingClientRect();
-      if (rect) setTop(rect.bottom + GAP);
+      if (rect) {
+        // The header's foot: the band's 16px above the bar.
+        const from = Math.max(0, rect.top - 16);
+        setTop(from);
+        setInset(rect.bottom + GAP - from);
+        setBarTop(rect.top);
+      }
     };
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
   }, [open]);
+
+  // While it is open, the page says so: the feed raises its header over the
+  // panel, so the panel comes from behind the bar, and hides its type tabs
+  // under it. Closing says so at once, so the tabs come back straight away
+  // while the panel goes.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!open) return;
+    root.setAttribute('data-search-open', closing ? 'closing' : 'open');
+    return () => root.removeAttribute('data-search-open');
+  }, [open, closing]);
 
   useEffect(() => {
     if (!open || closing) return;
@@ -154,7 +183,11 @@ export function SearchEntry({
     // A tap anywhere that is not the bar or the panel — the header — closes.
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
-      if (bar.current?.contains(target) || panel.current?.contains(target)) {
+      if (
+        bar.current?.contains(target) ||
+        panel.current?.contains(target) ||
+        side.current?.contains(target)
+      ) {
         return;
       }
       close();
@@ -197,7 +230,11 @@ export function SearchEntry({
       <form
         ref={bar}
         role="search"
-        className={[styles.bar, active ? styles.barActive : '']
+        className={[
+          styles.bar,
+          active ? styles.barActive : '',
+          open ? styles.barRaised : '',
+        ]
           .filter(Boolean)
           .join(' ')}
         onSubmit={onSubmit}
@@ -243,7 +280,10 @@ export function SearchEntry({
         ? createPortal(
             <SearchPanel
               ref={panel}
+              sideRef={side}
               top={top}
+              inset={inset}
+              barTop={barTop}
               typed={closing ? leaving.current : typed}
               closing={closing}
               onClosed={dismiss}
@@ -263,7 +303,10 @@ export function SearchEntry({
 
 function SearchPanel({
   ref,
+  sideRef,
   top,
+  inset,
+  barTop,
   typed,
   closing,
   onClosed,
@@ -273,7 +316,10 @@ function SearchPanel({
   onPick,
 }: {
   ref: React.Ref<HTMLDivElement>;
+  sideRef: React.Ref<HTMLDivElement>;
   top: number;
+  inset: number;
+  barTop: number;
   typed: string;
   /** Sliding back up into the bar; `onClosed` is called once it has gone. */
   closing: boolean;
@@ -312,108 +358,121 @@ function SearchPanel({
     typed !== '' && terms.length > 0 && dismissedFor !== typed && !closing;
 
   return (
-    <div
-      ref={ref}
-      id="search-panel"
-      role="dialog"
-      aria-label="Search"
-      className={[styles.panel, closing ? styles.panelClosing : '']
-        .filter(Boolean)
-        .join(' ')}
-      style={{ top }}
-      onAnimationEnd={(event) => {
-        if (closing && event.target === event.currentTarget) onClosed();
-      }}
-      onPointerDown={(event) => {
-        if (showTerms && !termList.current?.contains(event.target as Node)) {
-          setDismissedFor(typed);
-        }
-      }}
-    >
-      <div className={styles.column}>
-        {showTerms ? (
-          <ul
-            ref={termList}
-            className={styles.terms}
-            aria-label="Suggested searches"
-          >
-            {terms.map((term) => (
-              <li key={term}>
+    <>
+      {/* From 768px up: the filters down the left, level with the bar. */}
+      <FilterSide
+        ref={sideRef}
+        className={[styles.side, closing ? styles.panelClosing : ''].filter(Boolean).join(' ')}
+        style={{ top: barTop }}
+        values={filters}
+        onChange={onFilters}
+        onSubmit={() => {
+          if (typed) onResults(typed);
+        }}
+      />
+      <div
+        ref={ref}
+        id="search-panel"
+        role="dialog"
+        aria-label="Search"
+        className={[styles.panel, closing ? styles.panelClosing : '']
+          .filter(Boolean)
+          .join(' ')}
+        style={{ top, paddingTop: inset }}
+        onAnimationEnd={(event) => {
+          if (closing && event.target === event.currentTarget) onClosed();
+        }}
+        onPointerDown={(event) => {
+          if (showTerms && !termList.current?.contains(event.target as Node)) {
+            setDismissedFor(typed);
+          }
+        }}
+      >
+        <div className={styles.column}>
+          {showTerms ? (
+            <ul
+              ref={termList}
+              className={styles.terms}
+              aria-label="Suggested searches"
+            >
+              {terms.map((term) => (
+                <li key={term}>
+                  <button
+                    type="button"
+                    className={styles.term}
+                    onClick={() => onResults(term)}
+                  >
+                    <SearchIcon size={16} />
+                    <span>{term}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          <div className={styles.body}>
+            <section className={styles.results}>
+              {/* Says what the list is — the results for exactly what was
+                  typed, and how many — with the filters behind a button. */}
+              <SearchFilters
+                heading={
+                  typed ? (
+                    <>
+                      Search results for <QuotedQuery q={typed} bold />
+                    </>
+                  ) : (
+                    'Latest listings'
+                  )
+                }
+                count={typed ? matches.length : undefined}
+                open={filtersOpen}
+                onToggle={() => setFiltersOpen((current) => !current)}
+                values={filters}
+                onChange={onFilters}
+                // Enter in the max price is Enter in the search bar.
+                onSubmit={() => {
+                  if (typed) onResults(typed);
+                }}
+              />
+
+              {preview.length > 0 ? (
+                // A tap on a listing opens it; the search closes behind it.
+                <div className={styles.rows} onClick={onPick}>
+                  {preview.map((listing) => (
+                    <CompactListingRow key={listing.id} listing={listing} />
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.none}>
+                  {typed ? (
+                    <>
+                      Nothing matches <QuotedQuery q={typed} bold />
+                    </>
+                  ) : (
+                    'Nothing matches'
+                  )}
+                  {category === 'all'
+                    ? ''
+                    : ` in ${CATEGORY_LABELS[category as Category]}`}
+                  . Try a shorter search or change the filters.
+                </p>
+              )}
+
+              {typed && matches.length > 0 ? (
                 <button
                   type="button"
-                  className={styles.term}
-                  onClick={() => onResults(term)}
+                  className={styles.more}
+                  onClick={() => onResults(typed)}
                 >
-                  <SearchIcon size={16} />
-                  <span>{term}</span>
+                  {matches.length > PREVIEW
+                    ? `View all ${matches.length} search results`
+                    : 'View more search results'}
                 </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
-        <div className={styles.body}>
-          <section className={styles.results}>
-            {/* Says what the list is — the results for exactly what was
-                typed, and how many — with the filters behind a button. */}
-            <SearchFilters
-              heading={
-                typed ? (
-                  <>
-                    Search results for <QuotedQuery q={typed} bold />
-                  </>
-                ) : (
-                  'Latest listings'
-                )
-              }
-              count={typed ? matches.length : undefined}
-              open={filtersOpen}
-              onToggle={() => setFiltersOpen((current) => !current)}
-              values={filters}
-              onChange={onFilters}
-              // Enter in the max price is Enter in the search bar.
-              onSubmit={() => {
-                if (typed) onResults(typed);
-              }}
-            />
-
-            {preview.length > 0 ? (
-              // A tap on a listing opens it; the search closes behind it.
-              <div className={styles.rows} onClick={onPick}>
-                {preview.map((listing) => (
-                  <CompactListingRow key={listing.id} listing={listing} />
-                ))}
-              </div>
-            ) : (
-              <p className={styles.none}>
-                {typed ? (
-                  <>
-                    Nothing matches <QuotedQuery q={typed} bold />
-                  </>
-                ) : (
-                  'Nothing matches'
-                )}
-                {category === 'all'
-                  ? ''
-                  : ` in ${CATEGORY_LABELS[category as Category]}`}
-                . Try a shorter search or change the filters.
-              </p>
-            )}
-
-            {typed && matches.length > 0 ? (
-              <button
-                type="button"
-                className={styles.more}
-                onClick={() => onResults(typed)}
-              >
-                {matches.length > PREVIEW
-                  ? `View all ${matches.length} search results`
-                  : 'View more search results'}
-              </button>
-            ) : null}
-          </section>
+              ) : null}
+            </section>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

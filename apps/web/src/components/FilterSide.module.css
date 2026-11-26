@@ -1,0 +1,88 @@
+/**
+ * A search's filters down the left (see FilterSide.tsx): a white card as
+ * wide as the feed's categories menu, with the same heading. Only from
+ * 768px up.
+ */
+
+.card {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .card {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    padding: var(--snt-space-6);
+    border-radius: var(--snt-radius-xl);
+    background: var(--snt-bg-card);
+  }
+}
+
+/* As the categories menu's heading: its icon on a pale blue tile. */
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-2) var(--snt-space-2) var(--snt-space-5);
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-accent-bold);
+}
+
+.headingIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/* How many filters are on: the phone Filter button's small round. */
+.badge {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  line-height: 18px;
+  text-align: center;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-6);
+  padding: 0 var(--snt-space-2) var(--snt-space-2);
+}
+
+/* The price boxes' labels: sentence case, bold, in the bold blue. */
+.prices label {
+  padding-left: var(--snt-space-2);
+  color: var(--snt-accent-bold);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Min and max side by side, on the pale blue so they show on the white. */
+.prices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--snt-space-4);
+}
+
+.prices input,
+.prices input:hover {
+  padding: 0 var(--snt-space-6);
+  border: 1px solid transparent;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+}

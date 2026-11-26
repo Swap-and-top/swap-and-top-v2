@@ -79,6 +79,25 @@
   .chips {
     display: none;
   }
+
+  /* While the search is open its panel comes from behind the search bar:
+     this block, bar and all, goes above it, see through, and the type
+     tabs under the bar fade away under the panel. */
+  :global(html[data-search-open]) .stickyHeader {
+    z-index: 21;
+  }
+
+  :global(html[data-search-open]) .stickyHeader [data-app-below] {
+    background: transparent;
+  }
+
+  .stickyHeader [role='tablist'] {
+    transition: opacity 120ms ease;
+  }
+
+  :global(html[data-search-open='open']) .stickyHeader [role='tablist'] {
+    opacity: 0;
+  }
 }
 
 /** Gap between feed cards, per the design. */
