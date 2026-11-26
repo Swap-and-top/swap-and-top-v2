@@ -122,6 +122,7 @@ export {
 export { EyeClosed, EyeOpen } from './primitives/PasswordEye';
 export { Sheet, useCloseSheet } from './primitives/Sheet';
 export { NotificationBell } from './layout/NotificationBell';
+export { NotificationList, useMarkAllRead } from './layout/NotificationList';
 export { MessagesButton } from './layout/MessagesButton';
 export { AppToaster } from './primitives/AppToaster';
 export { Img, type ImgProps } from './primitives/Img';

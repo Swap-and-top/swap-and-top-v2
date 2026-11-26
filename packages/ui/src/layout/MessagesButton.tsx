@@ -21,7 +21,7 @@ export function MessagesButton({ href, storeId }: { href: string; storeId?: stri
       className={[styles.bell, storeId ? '' : styles.userBell].filter(Boolean).join(' ')}
       aria-label={unread > 0 ? `Messages, ${unread} unread` : 'Messages'}
     >
-      <MessageIcon size={22} />
+      <MessageIcon size={22} fill="currentColor" />
       <span className={styles.bellCount} aria-hidden>
         <CountBadge count={unread} />
       </span>

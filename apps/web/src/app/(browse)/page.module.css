@@ -42,6 +42,43 @@
   padding-top: 0;
 }
 
+/* The whole page under the header's row, so the categories down the left
+   on a laptop (CategorySide) can run its full height. */
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/*
+ * From 768px up (where the header shows all its buttons, not the three
+ * lines) the header's row is shared, at every width: the categories at its
+ * left, under the logo, and the search, the type tabs and the listings
+ * filling the rest, after the menu's 200px and a 16px gap (the same as
+ * above it), to the header's right edge, under the account circle. The
+ * pills are not shown.
+ */
+@media (min-width: 768px) {
+  .page [data-app-below] > div {
+    max-width: calc(var(--snt-header-max) + var(--snt-gutter) * 2);
+    padding-left: calc(var(--snt-gutter) + 216px);
+  }
+
+  .stickyHeader + div {
+    padding-inline: max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2));
+    padding-left: calc(max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2)) + 216px);
+  }
+
+  .stickyHeader + div > div {
+    max-width: none;
+  }
+
+  .chips {
+    display: none;
+  }
+}
+
 /** Gap between feed cards, per the design. */
 .feed {
   display: flex;

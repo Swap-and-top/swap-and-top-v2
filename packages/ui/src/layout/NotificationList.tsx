@@ -4,7 +4,8 @@
  * A list of notifications, newest first: a person's on their Notifications
  * page, or the store's in the console. One white card; each row its kind's
  * icon on a pale tile, one short line, the time, and a blue dot while it is
- * unread. A tap reads it and goes to what it is about.
+ * unread. A tap reads it and goes to what it is about. The bell's drop
+ * down shows the newest few the same way (`limit`, see NotificationMenu).
  */
 
 import Link from 'next/link';
@@ -26,7 +27,7 @@ import {
   SaveStarIcon,
   ShieldCheckIcon,
   TrendIcon,
-} from '@snt/ui/icons';
+} from '../icons';
 import styles from './NotificationList.module.css';
 
 const ICON: Record<NotificationKind, React.ReactNode> = {
@@ -45,18 +46,30 @@ const ICON: Record<NotificationKind, React.ReactNode> = {
 export function NotificationList({
   audience,
   storeId,
+  limit,
+  onNavigate,
+  className,
+  icons = true,
 }: {
   audience: NotificationAudience;
   /** On a store's list: which store's. */
   storeId?: string;
+  /** Only the newest this many (the bell's drop down). */
+  limit?: number;
+  /** Also on a tap: the drop down closes. */
+  onNavigate?: () => void;
+  /** Each row's kind icon (the drop down has none: only words and time). */
+  icons?: boolean;
+  className?: string;
 }) {
   const readIds = useNotificationStore((state) => state.readIds);
   const markRead = useNotificationStore((state) => state.markRead);
-  const list = useNotifications(audience, storeId);
+  const all = useNotifications(audience, storeId);
+  const list = limit ? all.slice(0, limit) : all;
 
   if (list.length === 0) {
     return (
-      <p className={styles.none}>
+      <p className={[styles.none, className].filter(Boolean).join(' ')}>
         Nothing yet. Offers, deal checks and anything else worth knowing will
         appear here.
       </p>
@@ -64,7 +77,7 @@ export function NotificationList({
   }
 
   return (
-    <ol className={styles.list}>
+    <ol className={[styles.list, className].filter(Boolean).join(' ')}>
       {list.map((n) => {
         const unread = isUnread(n, readIds);
         return (
@@ -74,22 +87,30 @@ export function NotificationList({
               className={[styles.row, unread ? styles.unread : '']
                 .filter(Boolean)
                 .join(' ')}
-              onClick={() => markRead(n.id)}
+              onClick={() => {
+                markRead(n.id);
+                onNavigate?.();
+              }}
             >
-              <span
-                className={[
-                  styles.icon,
-                  n.kind === 'lead' ? styles.iconWanted : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                aria-hidden
-              >
-                {ICON[n.kind]}
-              </span>
+              {icons ? (
+                <span
+                  className={[
+                    styles.icon,
+                    n.kind === 'lead' ? styles.iconWanted : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  aria-hidden
+                >
+                  {ICON[n.kind]}
+                </span>
+              ) : null}
               <span className={styles.body}>
                 <span className={styles.text}>{n.text}</span>
-                <span className={styles.when}>{n.atLabel}</span>
+                <span className={styles.when}>
+                  <ClockIcon size={12} weight={1.5} />
+                  {n.atLabel}
+                </span>
               </span>
               {unread ? (
                 <span className={styles.dot} aria-label="Unread" />

@@ -51,14 +51,15 @@ export function AppHeader({
               <CompactLogo height={36} className={styles.logoCompact} />
               <Logo height={36} className={styles.logoArt} />
             </HomeLink>
-            {/* Asks a guest to sign in first; see PostButton. */}
-            <PostButton href={postHref} className={styles.postButton}>
-              Add New Listing
-            </PostButton>
             {/* Their chats, signed in: unread chats counted. */}
             <MessagesButton href="/messages" />
             {/* Their notifications, signed in: a bell with its count. */}
             <NotificationBell audience="user" href="/notifications" />
+            {/* Asks a guest to sign in first; see PostButton. Next to the
+                menu, the chats and the bell before it. */}
+            <PostButton href={postHref} className={styles.postButton}>
+              Add New Listing
+            </PostButton>
             {/* The account circle, opening the app's menu. */}
             <AccountButton />
           </div>

@@ -27,7 +27,6 @@ import {
   MessageIcon,
   PhoneIcon,
   PinIcon,
-  TeamIcon,
 } from '../icons';
 import { Button, ButtonLink } from '../primitives/Button';
 import { Avatar } from '../primitives/Placeholder';
@@ -263,7 +262,6 @@ function MenuContent({ onNavigate }: { onNavigate: () => void }) {
                     title="Go to the Staff console"
                     onClick={onNavigate}
                   >
-                    <TeamIcon size={12} />
                     {teamPill}
                   </Link>
                 ) : null}

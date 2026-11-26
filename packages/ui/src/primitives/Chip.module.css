@@ -10,6 +10,11 @@
   display: flex;
   gap: var(--snt-space-3);
   overflow-x: auto;
+  /* Side to side only: a row that scrolls sideways can otherwise be pulled
+     up and down a little on a phone, and stretch. A drag up or down on it
+     still scrolls the page. */
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
   /* Bleed to the screen edge so the last chip does not look clipped. */

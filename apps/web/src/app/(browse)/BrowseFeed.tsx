@@ -8,6 +8,9 @@
  * and wanted; thin inventory split three ways produces three dead-looking
  * feeds — the types switch the view over one feed, they do not switch route.
  *
+ * From 768px up the categories are a menu down the left that stays in
+ * view (CategorySide), not the row of pills.
+ *
  * The four types are a tab row above the listings from tablet up, where it
  * sticks to the top as the feed scrolls. On a phone they are the bottom bar
  * instead, and the tab row is not shown.
@@ -44,6 +47,7 @@ import { BinocularsIcon, GridIcon, SwapIcon, TagIcon } from '@snt/ui/icons';
 import type { FeedFilterParams } from '@/components/feedFilterParams';
 import { SearchEntry } from '@/components/SearchEntry';
 import { useFeedFiltersInUrl } from '@/components/useFeedFiltersInUrl';
+import { CategorySide } from './CategorySide';
 import styles from './page.module.css';
 
 export const CATEGORIES: (Category | 'all')[] = [
@@ -92,64 +96,70 @@ export function BrowseFeed({
 
   return (
     <Screen>
-      {/* Search, category and type sit under the brand header. From tablet up
-          the whole block sticks, pulled up so only the type tabs stay in view
-          while the feed scrolls. On a phone it scrolls away: the types are in
-          the bottom bar. */}
-      <div
-        ref={stickyTop.ref}
-        className={styles.stickyHeader}
-        style={{ top: stickyTop.offset }}
-      >
-        <AppHeader>
-          {/* Opens the full-screen search over this page. */}
-          <SearchEntry />
+      <div className={styles.page}>
+        {/* From 768px up the categories are down the left instead. */}
+        <CategorySide categories={CATEGORIES} active={category} onChange={setCategory} />
+        {/* Search, category and type sit under the brand header. From tablet up
+            the whole block sticks, pulled up so only the type tabs stay in view
+            while the feed scrolls. On a phone it scrolls away: the types are in
+            the bottom bar. */}
+        <div
+          ref={stickyTop.ref}
+          className={styles.stickyHeader}
+          style={{ top: stickyTop.offset }}
+        >
+          <AppHeader>
+            {/* Opens the full-screen search over this page. */}
+            <SearchEntry />
 
-          <ChipRow fill label="Filter by category">
-            {CATEGORIES.map((value) => (
-              <Chip
-                key={value}
-                selected={category === value}
-                onClick={() => setCategory(value)}
-              >
-                {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
-              </Chip>
-            ))}
-          </ChipRow>
+            <div className={styles.chips}>
+              <ChipRow fill label="Filter by category">
+                {CATEGORIES.map((value) => (
+                  <Chip
+                    key={value}
+                    selected={category === value}
+                    onClick={() => setCategory(value)}
+                  >
+                    {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
+                  </Chip>
+                ))}
+              </ChipRow>
+            </div>
 
-          {/* Type is a tab bar, not a chip row: the four values are exhaustive
-              and mutually exclusive, so they should read as one control
-              switching the view rather than as four independent toggles.
-              Hidden on a phone, where the bottom bar carries them. */}
-          <Tabs
-            fill
-            tabs={TYPES}
-            active={type}
-            onChange={setType}
-            label="Filter by listing type"
-          />
-        </AppHeader>
+            {/* Type is a tab bar, not a chip row: the four values are exhaustive
+                and mutually exclusive, so they should read as one control
+                switching the view rather than as four independent toggles.
+                Hidden on a phone, where the bottom bar carries them. */}
+            <Tabs
+              fill
+              tabs={TYPES}
+              active={type}
+              onChange={setType}
+              label="Filter by listing type"
+            />
+          </AppHeader>
+        </div>
+
+        <ScreenBody>
+          {feed.length > 0 ? (
+            <div className={styles.feed}>
+              {feed.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title="Nothing here yet"
+              body="No listings match those filters. Clear them, or post what you are looking for and let stores come to you."
+              action={
+                <ButtonLink href="/post" variant="primary" {...postGate}>
+                  Post what you are looking for
+                </ButtonLink>
+              }
+            />
+          )}
+        </ScreenBody>
       </div>
-
-      <ScreenBody>
-        {feed.length > 0 ? (
-          <div className={styles.feed}>
-            {feed.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            title="Nothing here yet"
-            body="No listings match those filters. Clear them, or post what you are looking for and let stores come to you."
-            action={
-              <ButtonLink href="/post" variant="primary" {...postGate}>
-                Post what you are looking for
-              </ButtonLink>
-            }
-          />
-        )}
-      </ScreenBody>
 
       {/* On a phone the listing types are here, not in the tab row. */}
       <BottomNav type={type} onType={setType} />

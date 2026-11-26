@@ -97,7 +97,7 @@
 .secondary {
   background: transparent;
   color: var(--snt-control-active);
-  border: 1px solid rgb(47 117 153 / 0.4);
+  border: 1.6px solid rgb(47 117 153 / 0.4);
 }
 
 .secondary:hover:not(:disabled) {
@@ -110,7 +110,7 @@
 .outline {
   background: transparent;
   color: var(--snt-ink);
-  border: 1px solid var(--snt-ink);
+  border: 1.6px solid var(--snt-ink);
 }
 
 .outline:hover:not(:disabled) {
@@ -121,7 +121,7 @@
 .subtle {
   background: var(--snt-bg-card);
   color: var(--snt-ink-muted);
-  border: 1px solid var(--snt-line);
+  border: 1.6px solid var(--snt-line);
   font-weight: var(--snt-weight-normal);
 }
 
@@ -168,7 +168,7 @@
 .dashed {
   background: var(--snt-accent-tint);
   color: var(--snt-accent-bold);
-  border: 1px dashed var(--snt-accent);
+  border: 1.6px dashed var(--snt-accent);
 }
 
 .dashed:hover:not(:disabled) {

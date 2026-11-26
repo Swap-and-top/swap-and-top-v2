@@ -381,8 +381,12 @@
   justify-content: center;
   width: 36px;
   height: 36px;
+  padding: 0;
+  border: none;
   border-radius: var(--snt-radius-pill);
+  background: none;
   color: var(--snt-ink-on-dark);
+  cursor: pointer;
   transition: background-color var(--snt-transition);
 }
 

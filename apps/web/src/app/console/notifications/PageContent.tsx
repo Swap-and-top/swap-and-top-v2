@@ -8,11 +8,7 @@
  */
 
 import { currentStore } from '@snt/core';
-import { Button, ConsoleShell, useConsoleTarget } from '@snt/ui';
-import {
-  NotificationList,
-  useMarkAllRead,
-} from '@/components/notifications/NotificationList';
+import { Button, ConsoleShell, NotificationList, useConsoleTarget, useMarkAllRead } from '@snt/ui';
 import styles from './page.module.css';
 
 export default function ConsoleNotificationsPage() {

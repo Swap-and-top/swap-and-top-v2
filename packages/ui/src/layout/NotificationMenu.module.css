@@ -1,0 +1,166 @@
+/**
+ * The bell's drop down (see NotificationMenu.tsx): a white card under the
+ * bell, as the account menu's card on a laptop. A title, the newest few
+ * notifications in the Notifications page's rows, and See all at the foot.
+ */
+
+/* On a phone, a pale veil over the page, as behind the account menu. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  background: rgb(193 225 255 / 0.7);
+  animation: snt-notes-fade-in 200ms ease-out;
+}
+
+/* On a phone, the width of the screen under the header, a gutter in at
+   each side. */
+.panel {
+  position: fixed;
+  top: var(--menu-top, 64px);
+  right: var(--snt-gutter);
+  left: var(--snt-gutter);
+  z-index: 960;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - var(--menu-top, 64px) - 16px);
+  border-radius: 22px;
+  background: var(--snt-bg-card);
+  box-shadow: 15px 10px 30px rgb(34 126 155 / 0.3);
+  outline: none;
+  overflow: hidden;
+  animation: snt-notes-drop-in 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* From tablet up: no veil, and a card 360px wide floating under the
+   bell, its right edge level with the bell's. */
+@media (min-width: 768px) {
+  .backdrop {
+    background: transparent;
+  }
+
+  .panel {
+    right: var(--menu-right, 24px);
+    left: auto;
+    width: 360px;
+  }
+}
+
+.backdrop.closing {
+  animation: snt-notes-fade-out 200ms ease-in forwards;
+}
+
+.closing {
+  animation: snt-notes-drop-out 200ms ease-in forwards;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  padding: var(--snt-space-8) var(--snt-space-10) var(--snt-space-2);
+}
+
+.titleText {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-semibold);
+  color: var(--snt-accent-bold);
+}
+
+/* The bell on a pale blue tile, as the notifications' icons are. */
+.titleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.new {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  /* The count of new ones, under the title, in the green. */
+  color: var(--snt-success);
+}
+
+/* The cross, at the right: as every other cross (the sheets', the
+   menu's), a pale blue circle with the cross in blue, going solid blue
+   with the cross white on hover. */
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  cursor: pointer;
+  transition:
+    background var(--snt-transition),
+    color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .close:hover {
+    background: var(--snt-control-active);
+    color: var(--snt-ink-on-dark);
+  }
+}
+
+.close:active {
+  transform: scale(0.92);
+}
+
+/* The list scrolls if the screen is short; its own card look is the
+   panel's here. */
+.list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  border-radius: 0;
+}
+
+.foot {
+  padding: var(--snt-space-2) var(--snt-space-8) var(--snt-space-8);
+}
+
+@keyframes snt-notes-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes snt-notes-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes snt-notes-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes snt-notes-drop-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}

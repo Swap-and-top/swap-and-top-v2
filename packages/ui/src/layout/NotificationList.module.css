@@ -73,13 +73,27 @@
   line-height: var(--snt-leading-snug);
 }
 
-/* Unread: the line in the blue, and bold. Read, it is plain. */
+/* Read: the line and its icon in a lighter grey, so the unread ones
+   stand out. */
+.row:not(.unread) .text {
+  color: var(--snt-card-ink-muted);
+}
+
+.row:not(.unread) .icon {
+  color: #a3a3a3;
+}
+
+/* Unread: the line in the blue, and bold. */
 .unread .text {
   font-weight: var(--snt-weight-semibold);
   color: var(--snt-control-active);
 }
 
 .when {
+  /* A small clock before the time. */
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-2);
   font-size: var(--snt-text-xs);
   color: var(--snt-card-ink-muted);
 }

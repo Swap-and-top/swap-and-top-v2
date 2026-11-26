@@ -9,14 +9,12 @@
 import {
   AppHeader,
   Button,
+  NotificationList,
   Screen,
   ScreenBody,
   SignInGate,
-} from '@snt/ui';
-import {
-  NotificationList,
   useMarkAllRead,
-} from '@/components/notifications/NotificationList';
+} from '@snt/ui';
 import styles from './page.module.css';
 
 export default function NotificationsPage() {

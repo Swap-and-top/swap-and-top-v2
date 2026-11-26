@@ -22,6 +22,7 @@ import {
 } from '@snt/ui';
 import { SearchEntry } from '@/components/SearchEntry';
 import { CATEGORIES, TYPES } from './BrowseFeed';
+import { CategorySide } from './CategorySide';
 import styles from './page.module.css';
 
 const CARDS = {
@@ -37,38 +38,43 @@ export default function Loading() {
 
   return (
     <Screen>
-      <div className={styles.stickyHeader}>
-        <AppHeader>
-          <SearchEntry />
-          <ChipRow fill label="Filter by category">
-            {CATEGORIES.map((value) => (
-              <Chip
-                key={value}
-                selected={category === value}
-                onClick={() => setCategory(value)}
-              >
-                {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
-              </Chip>
-            ))}
-          </ChipRow>
-          <Tabs
-            fill
-            tabs={TYPES}
-            active={type}
-            onChange={setType}
-            label="Filter by listing type"
-          />
-        </AppHeader>
-      </div>
-
-      <ScreenBody>
-        <div className={styles.feed} aria-busy aria-label="Loading listings">
-          {Array.from({ length: 4 }).map((_, i) => {
-            const Card = kinds[i % kinds.length]!;
-            return <Card key={i} />;
-          })}
+      <div className={styles.page}>
+        <CategorySide categories={CATEGORIES} active={category} onChange={setCategory} />
+        <div className={styles.stickyHeader}>
+          <AppHeader>
+            <SearchEntry />
+            <div className={styles.chips}>
+              <ChipRow fill label="Filter by category">
+                {CATEGORIES.map((value) => (
+                  <Chip
+                    key={value}
+                    selected={category === value}
+                    onClick={() => setCategory(value)}
+                  >
+                    {value === 'all' ? 'All' : CATEGORY_LABELS[value]}
+                  </Chip>
+                ))}
+              </ChipRow>
+            </div>
+            <Tabs
+              fill
+              tabs={TYPES}
+              active={type}
+              onChange={setType}
+              label="Filter by listing type"
+            />
+          </AppHeader>
         </div>
-      </ScreenBody>
+
+        <ScreenBody>
+          <div className={styles.feed} aria-busy aria-label="Loading listings">
+            {Array.from({ length: 4 }).map((_, i) => {
+              const Card = kinds[i % kinds.length]!;
+              return <Card key={i} />;
+            })}
+          </div>
+        </ScreenBody>
+      </div>
 
       <BottomNav type={type} onType={setType} />
     </Screen>
