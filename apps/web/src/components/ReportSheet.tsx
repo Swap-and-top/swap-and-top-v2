@@ -20,6 +20,7 @@ import {
   type ReportReason,
 } from '@snt/core';
 import { Button, Dropdown, Sheet, Stack } from '@snt/ui';
+import { ReportIcon } from '@snt/ui/icons';
 import { apiSend } from '@/lib/query';
 import styles from './ReportSheet.module.css';
 
@@ -55,8 +56,23 @@ export function ReportSheet({
     onError: (error) => toast.error(error.message || 'We could not send it. Try again in a minute.'),
   });
 
+  const title = listingId ? 'Report this listing' : chatId ? 'Report this chat' : `Report ${name}`;
   return (
-    <Sheet narrow title={listingId ? 'Report this listing' : chatId ? 'Report this chat' : `Report ${name}`} onClose={onClose}>
+    <Sheet
+      narrow
+      title={title}
+      heading={
+        // The report icon on a pale tile before the title, as the other
+        // sheets' headings with icons.
+        <span className={styles.heading}>
+          <span className={styles.headingIcon} aria-hidden>
+            <ReportIcon size={18} />
+          </span>
+          {title}
+        </span>
+      }
+      onClose={onClose}
+    >
       <Stack gap={5}>
         <p className={styles.lead}>
           {chatId

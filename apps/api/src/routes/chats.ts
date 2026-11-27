@@ -21,7 +21,9 @@ import {
   otherSide,
   reportedChat,
   setBlock,
+  sideFace,
   sideName,
+  soldClosesAt,
   startChat,
   unreadChats,
 } from '../chat';
@@ -34,8 +36,14 @@ import { personFor } from './me';
 export const chatRoutes = new OpenAPIHono<{ Variables: { authUser: AuthUser } }>();
 
 const Side = z.enum(['from', 'owner']);
-const Closed = z.enum(['banned', 'blocked']).nullable();
-const Listing = z.object({ slug: z.string(), title: z.string(), photo: z.string().nullable() });
+const Closed = z.enum(['banned', 'blocked', 'sold']).nullable();
+const Listing = z.object({
+  slug: z.string(),
+  title: z.string(),
+  photo: z.string().nullable(),
+  type: z.enum(['sale', 'swap', 'request', 'auction']),
+  terms: z.string(),
+});
 const Message = z
   .object({
     id: z.string(),
@@ -44,17 +52,22 @@ const Message = z
     side: Side,
     at: z.string(),
     readAt: z.string().nullable(),
+    replyTo: z.object({ id: z.string(), body: z.string(), side: Side }).nullable(),
+    editedAt: z.string().nullable(),
+    /** What it first said, when changed: on a reported chat, for our team. */
+    original: z.string().optional(),
   })
   .openapi('ChatMessage');
 const Summary = z
   .object({
     id: z.string(),
     side: Side,
-    other: z.object({ name: z.string(), logo: z.string().nullable() }),
+    other: z.object({ name: z.string(), logo: z.string().nullable(), store: z.boolean() }),
     listing: Listing,
     last: z.object({ body: z.string(), side: Side, at: z.string() }).nullable(),
     unread: z.number(),
     closed: Closed,
+    closesAt: z.string().nullable(),
   })
   .openapi('ChatSummary');
 const errors = {
@@ -148,9 +161,11 @@ const Detail = z
     side: Side,
     /** The store this viewer writes as, if a store's chat. */
     asStoreId: z.string().nullable(),
-    other: z.object({ name: z.string() }),
+    other: z.object({ name: z.string(), logo: z.string().nullable(), store: z.boolean() }),
     listing: Listing,
     closed: Closed,
+    /** The listing is sold: when this chat closes. */
+    closesAt: z.string().nullable(),
     blockedByMe: z.boolean(),
     messages: z.array(Message),
     more: z.boolean(),
@@ -177,21 +192,23 @@ chatRoutes.openapi(read, async (c) => {
   const found = await chatFor(person, c.req.valid('param').id);
   if ('error' in found) return c.json({ error: found.error }, found.status === 404 ? 404 : 403);
   const { chat, side } = found;
-  const [name, listing, closed, blocked, page] = await Promise.all([
-    sideName(chat, otherSide(side)),
+  const [other, listing, closed, blocked, page, closesAt] = await Promise.all([
+    sideFace(chat, otherSide(side)),
     listingCard(chat.listingId),
     closedReason(chat),
     blockedByMe(person, chat, side),
     messagesOf(chat),
+    soldClosesAt(chat),
   ]);
   return c.json(
     {
       id: chat.id,
       side,
       asStoreId: (side === 'from' ? chat.fromStoreId : chat.ownerStoreId) ?? null,
-      other: { name },
+      other,
       listing,
       closed,
+      closesAt: closed ? null : (closesAt?.toISOString() ?? null),
       blockedByMe: blocked,
       messages: page.messages,
       more: page.more,
@@ -314,7 +331,7 @@ chatRoutes.openapi(staffRead, async (c) => {
     sideName(chat, 'from'),
     sideName(chat, 'owner'),
     listingCard(chat.listingId),
-    messagesOf(chat, undefined, 200),
+    messagesOf(chat, undefined, 200, true),
   ]);
   await db.insert(t.staffLog).values({
     actorId: viewer.id,

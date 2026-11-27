@@ -138,6 +138,11 @@
     color-mix(in srgb, var(--snt-control-active) 35%, transparent);
   /* Idle outlines, icons and the rule under the tabs: 3:1 on the page. */
   --snt-control-idle: #5791bb;
+  /** Every scroll indicator the app draws (sheets, dropdown lists, a
+      chat's messages and its box): the idle blue at half strength, so it
+      shows without drawing the eye; a little stronger under the pointer. */
+  --snt-scroll-thumb: color-mix(in srgb, var(--snt-control-idle) 50%, transparent);
+  --snt-scroll-thumb-hover: color-mix(in srgb, var(--snt-control-idle) 80%, transparent);
   /* Idle labels and the search prompt: 4.5:1 on the page and on white. */
   --snt-control-idle-ink: #3e7399;
   /** "Add New Listing" on the header's yellow button: 4.5:1 on it. */

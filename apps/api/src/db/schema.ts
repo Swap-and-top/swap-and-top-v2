@@ -1067,6 +1067,13 @@ export const chatMessages = pgTable(
     createdAt: createdAt(),
     /** When the other side read it. */
     readAt: timestamp({ withTimezone: true }),
+    /** The message this one answers, shown quoted above it. */
+    replyToId: text().references((): AnyPgColumn => chatMessages.id, { onDelete: 'set null' }),
+    /** When its sender last changed it (within 15 minutes of sending). */
+    editedAt: timestamp({ withTimezone: true }),
+    /** What it first said, before any change: for our team only, when the
+        chat is reported, so a change can never hide what was said. */
+    originalBody: text(),
   },
   (t) => [index().on(t.chatId, t.createdAt)],
 ).enableRLS();

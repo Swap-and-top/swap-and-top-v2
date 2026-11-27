@@ -52,6 +52,12 @@
   font-weight: var(--snt-weight-bold);
 }
 
+.avatarSmall {
+  width: 28px;
+  height: 28px;
+  font-size: var(--snt-text-2xs);
+}
+
 /* A store's logo fills the round, on white, with a fine line round it. */
 .logo {
   object-fit: cover;

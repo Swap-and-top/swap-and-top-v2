@@ -355,6 +355,14 @@ export const PlayIcon = (props: IconProps) => (
   </Svg>
 );
 
+/** Send: a solid arrow head pointing right, notched at its back, as the
+    send button in chat apps. */
+export const SendIcon = (props: IconProps) => (
+  <Svg fill="currentColor" stroke="none" {...props}>
+    <path d="M3.4 20.4 20.85 12.92a1 1 0 0 0 0-1.84L3.4 3.6a1 1 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z" />
+  </Svg>
+);
+
 /** Two upright bars, for pausing. */
 export const PauseIcon = (props: IconProps) => (
   <Svg weight={1.8} {...props}>

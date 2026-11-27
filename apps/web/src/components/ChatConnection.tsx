@@ -14,7 +14,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { connectChatOpener, useChatStore, useSessionStore } from '@snt/core';
-import { addMessage, chatKeys, chatSocket, useTypingStore, type ChatDetail, type ChatMessage } from '@/lib/chat';
+import { addMessage, chatKeys, chatSocket, updateMessage, useTypingStore, type ChatDetail, type ChatMessage } from '@/lib/chat';
 import { apiGet, apiSend } from '@/lib/query';
 
 export function ChatConnection() {
@@ -72,7 +72,10 @@ export function ChatConnection() {
     const onTyping = ({ chatId }: { chatId: string }) => useTypingStore.getState().set(chatId);
     // Back after a gap: anything missed is read again.
     const onReconnect = () => refreshCounts();
+    // A message changed by its sender: put in place of the old one.
+    const onEdited = (message: ChatMessage) => updateMessage(client, message);
     live.on('message', onMessage);
+    live.on('edited', onEdited);
     live.on('read', onRead);
     live.on('read-mine', onReadMine);
     live.on('typing', onTyping);
@@ -80,6 +83,7 @@ export function ChatConnection() {
     live.connect();
     return () => {
       live.off('message', onMessage);
+      live.off('edited', onEdited);
       live.off('read', onRead);
       live.off('read-mine', onReadMine);
       live.off('typing', onTyping);

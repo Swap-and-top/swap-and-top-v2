@@ -11,6 +11,7 @@
  */
 
 import { useState } from 'react';
+import { ConfirmSold } from '@/components/listing/ConfirmSold';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import {
@@ -70,6 +71,8 @@ export default function ConsoleStockPage() {
     setStockTab,
   } = useConsoleStore();
   const [filtering, setFiltering] = useState(false);
+  /** Being marked sold: asked first, as its chats close 48 hours later. */
+  const [markingSold, setMarkingSold] = useState<Listing | null>(null);
   /** The boost sheet, when open: on one item, or to pick one. */
   const [sponsoring, setSponsoring] = useState<{ listingId?: string } | null>(
     null,
@@ -160,7 +163,7 @@ export default function ConsoleStockPage() {
           {
             label: 'Mark as sold',
             icon: <CheckIcon size={17} weight={2.2} />,
-            onSelect: () => change(listing, 'sold', `${name} is marked sold.`),
+            onSelect: () => setMarkingSold(listing),
           },
           remove,
         ];
@@ -219,7 +222,7 @@ export default function ConsoleStockPage() {
           {
             label: 'Mark as sold',
             icon: <CheckIcon size={17} weight={2.2} />,
-            onSelect: () => change(listing, 'sold', `${name} is marked sold.`),
+            onSelect: () => setMarkingSold(listing),
           },
           { label: 'View as a buyer', icon: <EyeIcon size={17} />, href: view },
           remove,
@@ -473,6 +476,15 @@ export default function ConsoleStockPage() {
         />
       ) : null}
 
+      {markingSold ? (
+        <ConfirmSold
+          type={markingSold.type}
+          onConfirm={() =>
+            change(markingSold, 'sold', `${markingSold.title} is marked sold.`)
+          }
+          onClose={() => setMarkingSold(null)}
+        />
+      ) : null}
       {sponsoring ? (
         <SponsorSheet
           listingId={sponsoring.listingId}

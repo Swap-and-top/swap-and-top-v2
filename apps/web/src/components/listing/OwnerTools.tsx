@@ -16,6 +16,7 @@
  */
 
 import { useState } from 'react';
+import { soldAction, soldWarning } from './ConfirmSold';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -208,6 +209,8 @@ function ManageBody({
   const saveStatus = useSaveStatus();
   const queryClient = useQueryClient();
   const done = DONE[listing.type];
+  /** Asking first: its chats close 48 hours after it is marked sold. */
+  const [confirmSold, setConfirmSold] = useState(false);
   /** The stores they own, which a personal listing can move into. */
   const ownStores = useSessionStore((state) => state.viewer?.stores ?? NO_STORES).filter(
     (store) => store.role === 'owner',
@@ -260,6 +263,22 @@ function ManageBody({
     router.push('/me/listings');
   }
 
+  if (confirmSold) {
+    return (
+      <div className={styles.confirm}>
+        <p className={styles.confirmText}>{soldWarning(listing.type)}</p>
+        <div className={styles.controls}>
+          <Button variant="secondary" size="lg" block onClick={() => setConfirmSold(false)}>
+            Not yet
+          </Button>
+          <Button size="lg" block onClick={() => change('sold', `${done.told}. It’s off the feed and search now.`)}>
+            {soldAction(listing.type)}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (confirmDelete) {
     return (
       <div className={styles.confirm}>
@@ -293,9 +312,7 @@ function ManageBody({
             <button
               type="button"
               className={styles.row}
-              onClick={() =>
-                change('sold', `${done.told}. It’s off the feed and search now.`)
-              }
+              onClick={() => setConfirmSold(true)}
             >
               <span className={styles.rowIcon}>
                 <CheckIcon size={18} />

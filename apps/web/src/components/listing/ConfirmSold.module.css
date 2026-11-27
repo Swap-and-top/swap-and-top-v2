@@ -1,0 +1,8 @@
+/** Before marking a listing sold (ConfirmSold). */
+
+.note {
+  margin: 0;
+  color: var(--snt-card-ink);
+  font-size: var(--snt-text-md);
+  line-height: var(--snt-leading-normal);
+}

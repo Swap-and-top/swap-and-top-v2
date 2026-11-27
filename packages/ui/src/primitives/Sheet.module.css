@@ -79,7 +79,7 @@
   right: 3px;
   width: 4px;
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-control-idle);
+  background: var(--snt-scroll-thumb);
   cursor: grab;
   touch-action: none;
   transition: background var(--snt-transition);
@@ -94,7 +94,7 @@
 
 @media (hover: hover) {
   .thumb:hover {
-    background: var(--snt-control-active);
+    background: var(--snt-scroll-thumb-hover);
   }
 }
 

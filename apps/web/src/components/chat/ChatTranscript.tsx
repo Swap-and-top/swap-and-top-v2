@@ -4,7 +4,7 @@
  * A reported chat, for Trust and safety (GET /api/staff/chats/{id}): only a
  * chat a report names, and each look is logged in the Activity log. Each
  * message with who sent it and when, oldest first, as a sheet over the
- * report.
+ * report. A message changed after sending shows what it first said too.
  */
 
 import { useQuery } from '@tanstack/react-query';
@@ -54,7 +54,14 @@ export function ChatTranscript({ chatId, onClose }: { chatId: string; onClose: (
               <span className={styles.seen}>{message.side === 'from' ? data.from.name : data.owner.name}</span>
               <div className={styles.bubble}>
                 <p className={styles.bubbleText}>{message.body}</p>
-                <span className={styles.bubbleTime}>{chatTime(message.at)}</span>
+                {/* Changed after sending: what it first said, for our team. */}
+                {message.original ? (
+                  <p className={styles.original}>First said: {message.original}</p>
+                ) : null}
+                <span className={styles.bubbleTime}>
+                  {chatTime(message.at)}
+                  {message.editedAt ? ' · Edited' : ''}
+                </span>
               </div>
             </div>
           ))}

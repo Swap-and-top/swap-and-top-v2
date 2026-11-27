@@ -42,3 +42,25 @@
 .textarea:focus {
   box-shadow: var(--snt-focus-ring);
 }
+
+/* The heading: the report icon on a pale tile, then the title. */
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  font-size: var(--snt-text-xl);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.headingIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}

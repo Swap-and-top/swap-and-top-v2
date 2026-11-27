@@ -141,14 +141,150 @@
 }
 
 .chatName {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-4);
+  min-width: 0;
+  font-size: var(--snt-text-lg);
+  font-weight: var(--snt-weight-bold);
+  color: var(--snt-accent-bold);
+}
+
+.chatNameText {
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: center;
-  font-size: var(--snt-text-lg);
+}
+
+/* Who it is with, before the name: a store's logo, or a small person or
+   shop on a pale blue round. */
+.chatFace {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--snt-radius-pill);
+  background: color-mix(in srgb, var(--snt-control-active) 12%, transparent);
+  color: var(--snt-control-active);
+  object-fit: cover;
+}
+
+img.chatFace {
+  background: var(--snt-bg-card);
+  box-shadow: inset 0 0 0 1px var(--snt-line-subtle);
+}
+
+/* The options sheet's heading: its icon on a pale tile, as the other
+   headings with icons. */
+.sheetHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  font-size: var(--snt-text-xl);
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
+}
+
+.sheetIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/*
+ * The user's chat page: the chat as tall as the screen leaves room for
+ * under the header (with 16px above and below), the messages scrolling in
+ * the middle and the box to write in always at its foot.
+ */
+.chatFill {
+  --chat-top: 76px;
+  /* The part of the screen that shows (above a phone's keyboard, when it
+     is open; set by ChatView), or the whole screen. */
+  height: calc(var(--chat-vh, 100dvh) - var(--chat-top) - var(--snt-space-8));
+  min-height: 240px;
+}
+
+/* Holds the scrolling part and, beside it, its bar. */
+.chatFill .middleWrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The listing, the note and the messages scroll together, so the
+   listing goes up out of the way and the messages get the room. */
+.chatFill .chatBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.chatFill .chatBody::-webkit-scrollbar {
+  display: none;
+}
+
+/* What scrolls: the listing, the note and the messages, stretched at the
+   ends (ChatView). No edge effect of the phone's own. */
+.chatInner {
+  display: contents;
+}
+
+.chatFill .chatInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-5);
+  flex: 1 0 auto;
+}
+
+.chatFill .chatBody {
+  overscroll-behavior: none;
+}
+
+.chatFill .chatListing {
+  flex-shrink: 0;
+}
+
+.chatFill .messages {
+  flex: 1 0 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+/* Its own thin blue bar, as the box to write in and the menus have:
+   beside the messages, never over them, in the middle of the card's 12px
+   to their right, and clear of the rounded corners. */
+.middleBar {
+  position: absolute;
+  right: 4px;
+  width: 4px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-scroll-thumb);
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .chatFill {
+    --chat-top: 94px;
+  }
 }
 
 .round {
@@ -279,15 +415,19 @@
 .input {
   flex-grow: 1;
   min-width: 0;
+  /* One line is as tall as the Send button beside it (44px); the ring
+     when typing is drawn outside, so the height never changes. */
+  box-sizing: border-box;
+  min-height: var(--snt-touch);
   max-height: 120px;
-  padding: var(--snt-space-5) var(--snt-space-8);
+  padding: var(--snt-space-6) var(--snt-space-8);
   border: 0;
   border-radius: 22px;
   background: var(--snt-bg-inset);
   color: var(--snt-control-active);
   font: inherit;
   font-size: var(--snt-text-md);
-  line-height: 1.4;
+  line-height: 20px;
   resize: none;
   field-sizing: content;
   outline: none;
@@ -300,6 +440,34 @@
 
 .input:focus {
   box-shadow: var(--snt-focus-ring);
+}
+
+/* The browser's own scroll bar is hidden: the box draws its own. */
+.input {
+  scrollbar-width: none;
+}
+
+.input::-webkit-scrollbar {
+  display: none;
+}
+
+/* The box and its own scroll bar. */
+.inputWrap {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* A thin blue bar inside the box, in from its right edge and clear of its
+   rounded ends: the same shape and blue as the menus' bars. */
+.inputBar {
+  position: absolute;
+  right: 6px;
+  width: 4px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-scroll-thumb);
+  pointer-events: none;
 }
 
 .closed {
@@ -328,4 +496,491 @@
 /* A listing with no photo: its blank tile shows on the pale strip. */
 .chatListing span.thumb {
   background: var(--snt-bg-card);
+}
+
+/* The back arrow where the chats are down the left (from 768px up): kept
+   in its place, so the name stays in the middle, but not shown. */
+@media (min-width: 768px) {
+  .phoneOnly {
+    visibility: hidden;
+  }
+}
+
+/* The listing strip: its name over its kind and price, and View listing
+   with an arrow at the end, so it plainly opens the listing. */
+.chatListingText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--snt-space-1);
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.chatListingText .chatListingTitle {
+  max-width: 100%;
+}
+
+/* "For sale · $160", "Swap · + $40", "Wanted · up to $300": a small white
+   pill in the swap's teal. */
+.terms {
+  padding: 1px var(--snt-space-4);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+  color: var(--snt-swap-ink);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  white-space: nowrap;
+}
+
+.viewListing {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-1);
+  flex-shrink: 0;
+  color: var(--snt-control-active);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+}
+
+@media (hover: hover) {
+  .chatListing:hover .viewListing {
+    color: var(--snt-accent-strong);
+  }
+}
+
+/* The box to write in, with ready messages above it in a new chat. */
+.composerWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
+  flex-shrink: 0;
+}
+
+/* Ready messages: outlined pills that send at a tap, scrolling sideways
+   when they do not all fit. */
+.starters {
+  display: flex;
+  gap: var(--snt-space-3);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.starters::-webkit-scrollbar {
+  display: none;
+}
+
+.starter {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 var(--snt-space-7);
+  border: 1.6px solid color-mix(in srgb, var(--snt-control-active) 40%, transparent);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-card);
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: var(--snt-text-base);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color var(--snt-transition),
+    background-color var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .starter:hover:not(:disabled) {
+    border-color: var(--snt-control-active);
+  }
+}
+
+.starter:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* The listing and the messages, and around them the place for their
+   scroll bar. Elsewhere no box of their own: they sit in the chat's white
+   card as before. */
+.chatBody,
+.middleWrap {
+  display: contents;
+}
+
+/*
+ * The user's chat page, on a phone and a laptop alike (as the feed lays out
+ * its pages): the name with the back arrow and the options on the page
+ * above, the listing and the messages in the one white card, and the box
+ * to write in (with any ready messages) on the page below it.
+ */
+.chatFill {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}
+
+/* The 12px round the listing and the messages is a white border, not
+   padding: the scrolling stops at its inner edge on all four sides, so
+   nothing slides out to the card's edge. Their scroll bar sits in the
+   middle of it, on the right, inside the card. */
+.chatFill .chatBody {
+  border: var(--snt-space-6) solid var(--snt-bg-card);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+}
+
+.chatFill .middleBar {
+  right: 4px;
+}
+
+/* On the page's pale blue, the box to write in, the round buttons and the
+   person's round by the name are white. */
+.chatFill .input,
+.chatFill .round,
+.chatFill .chatFace {
+  background: var(--snt-bg-card);
+}
+
+/* The scroll bars show only while their part scrolls, and fade out 2
+   seconds after it stops (ChatView). */
+.inputBar,
+.middleBar {
+  opacity: 0;
+  /* Fading away gently. */
+  transition: opacity 600ms ease-in-out;
+}
+
+.barShown {
+  opacity: 1;
+  /* And in, a little quicker. */
+  transition: opacity 250ms ease-out;
+}
+
+/* Over the first message of each day: the day in a small soft yellow
+   pill, in the middle, as WhatsApp has it. */
+.dayPill {
+  display: flex;
+  justify-content: center;
+  margin: var(--snt-space-4) 0 var(--snt-space-2);
+}
+
+.dayPill span {
+  padding: 3px var(--snt-space-6);
+  border-radius: var(--snt-radius-pill);
+  /* The safety note's soft yellow, with its words' colour: a quiet label,
+     not to be mistaken for the green new message button. */
+  background: color-mix(in srgb, #f5b70a 16%, var(--snt-bg-card));
+  color: var(--snt-card-ink);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/* On a laptop the name and its round sit at the top left, with the room
+   between them and the options at the right (no back arrow there: the
+   list is beside it). */
+@media (min-width: 768px) {
+  .chatFill .chatTop {
+    grid-template-columns: 1fr 36px;
+  }
+
+  .chatFill .chatTop .phoneOnly {
+    display: none;
+  }
+
+  .chatFill .chatName {
+    justify-content: flex-start;
+    padding-left: var(--snt-space-2);
+  }
+
+  .chatFill .chatNameBone {
+    justify-self: start;
+  }
+}
+
+/* The skeleton's name, where the name will be: in the middle, or at the
+   top left on a laptop (above). */
+.chatNameBone {
+  justify-self: center;
+}
+
+/* A message tapped: a faint ring, with Reply (and Edit) under it. */
+.bubble {
+  cursor: pointer;
+  /* A long press picks it: no text selection or phone menu meanwhile. */
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* Picked: the ring drawn inside its edge, so the card's edge never cuts
+   it off. */
+.bubblePicked {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--snt-control-active) 45%, transparent);
+}
+
+.mine .bubblePicked {
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.55);
+}
+
+.msgActions {
+  display: flex;
+  gap: var(--snt-space-1);
+  /* Close under the message they belong to. */
+  margin-top: -2px;
+}
+
+.mine .msgActions {
+  justify-content: flex-end;
+}
+
+/* Reply and Edit: plain words, no outline, in the teal from the middle of
+   the header's blue to green gradient (its readable shade), with room round
+   them for a finger. */
+.msgAction {
+  height: 26px;
+  padding: 0 var(--snt-space-4);
+  border: 0;
+  border-radius: var(--snt-radius-sm);
+  background: none;
+  color: var(--snt-swap-ink);
+  font: inherit;
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  cursor: pointer;
+}
+
+/* Under the pointer: the word a little fainter, no background. */
+.msgAction {
+  transition: opacity var(--snt-transition);
+}
+
+@media (hover: hover) {
+  .msgAction:hover {
+    opacity: 0.7;
+  }
+}
+
+
+/* The message a reply answers, quoted at the top of the reply: who, and
+   its words on two lines at most, behind a line in the swap's teal. */
+.quote {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: var(--snt-space-2);
+  padding: var(--snt-space-2) var(--snt-space-4);
+  position: relative;
+  padding-left: calc(var(--snt-space-4) + 3px);
+  border-radius: var(--snt-radius-sm);
+  background: rgb(0 0 0 / 0.06);
+}
+
+.mine .quote {
+  background: rgb(255 255 255 / 0.16);
+}
+
+/* The straight line at the left of a quote and of the strip over the box:
+   the whole height, square, cut off by their rounded corners. */
+.quote,
+.replyBar {
+  overflow: hidden;
+}
+
+.quote::before,
+.replyBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--snt-swap-ink);
+}
+
+.mine .quote::before {
+  background: rgb(255 255 255 / 0.8);
+}
+
+.quoteWho {
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+}
+
+.quoteText {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--snt-text-xs);
+  opacity: 0.85;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Over the box: what is being answered, or the message being changed. */
+.replyBar {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-3) var(--snt-space-3) var(--snt-space-3) var(--snt-space-6);
+  position: relative;
+  padding-left: calc(var(--snt-space-6) + 3px);
+  border-radius: var(--snt-radius-md);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink);
+}
+
+.replyBarText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.replyBarText .quoteWho {
+  color: var(--snt-swap-ink);
+}
+
+.replyBarClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-active);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .replyBarClose:hover {
+    background: var(--snt-control-active);
+    color: var(--snt-ink-on-dark);
+  }
+}
+
+/* A sold listing: when this chat closes, under the safety note. */
+.soldNote {
+  margin: 0;
+  padding: var(--snt-space-4) var(--snt-space-6);
+  border-radius: var(--snt-radius-md);
+  background: color-mix(in srgb, var(--snt-alert) 8%, var(--snt-bg-card));
+  color: var(--snt-alert);
+  font-size: var(--snt-text-sm);
+  font-weight: var(--snt-weight-semibold);
+  text-align: center;
+}
+
+/* For our team, on a reported chat: what a changed message first said. */
+.original {
+  margin: var(--snt-space-2) 0 0;
+  font-size: var(--snt-text-xs);
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Typing: a small bubble of theirs with three dots rising one after
+   another. Still for anyone who asks for less motion. */
+.typingBubble {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 var(--snt-space-6);
+  border-radius: 18px 18px 18px 6px;
+  background: var(--snt-bg-inset);
+}
+
+.typingBubble span {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-idle);
+  animation: typingDot 1.2s ease-in-out infinite;
+}
+
+.typingBubble span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typingBubble span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typingDot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typingBubble span {
+    animation: none;
+  }
+}
+
+/* The name with, under it, "typing…" while they are scrolled up. */
+.chatNameLines {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.chatTyping {
+  color: var(--snt-swap-ink);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+}
+
+/* New messages while they were scrolled up: a green pill at the foot of
+   the messages, with an arrow down, that takes them there. */
+.newMessages {
+  position: absolute;
+  bottom: var(--snt-space-6);
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-2);
+  height: 30px;
+  padding: 0 var(--snt-space-6) 0 var(--snt-space-7);
+  border: 0;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-success);
+  color: var(--snt-ink-on-dark);
+  font: inherit;
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-semibold);
+  box-shadow: 0 4px 12px rgb(20 60 90 / 0.2);
+  transform: translateX(-50%);
+  cursor: pointer;
+  animation: newIn 200ms ease-out;
+}
+
+.newMessagesArrow {
+  transform: rotate(90deg);
+}
+
+@keyframes newIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+}
+
+/* Chat options: the outlined buttons, one under another. */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--snt-space-4);
 }

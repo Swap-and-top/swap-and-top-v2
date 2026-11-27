@@ -21,6 +21,11 @@ export type Side = 'from' | 'owner';
 
 /** At most this long, a message. */
 export const MAX_MESSAGE = 2000;
+/** How long a message can be changed after it is sent, as WhatsApp: 15 minutes. */
+export const EDIT_WINDOW_MS = 15 * 60_000;
+/** How long the chats about a listing stay open once it is marked sold
+    (or swapped, or found): time to agree where to meet and to pay. */
+export const SOLD_GRACE_MS = 48 * 60 * 60_000;
 
 /** The stores this person is a current member of. */
 export async function storesOf(personId: string): Promise<string[]> {
@@ -51,8 +56,19 @@ export function roomOf(chat: Chat, side: Side): string {
 }
 
 /** Why the chat is closed for both, if it is. */
-export async function closedReason(chat: Chat): Promise<'banned' | 'blocked' | null> {
-  const [people, blocks] = await Promise.all([
+/** When the chats about a sold listing close: 48 hours after it was
+    marked sold. None while it is not sold. */
+export async function soldClosesAt(chat: Chat): Promise<Date | null> {
+  const [listing] = await db
+    .select({ status: t.listings.status, soldAt: t.listings.soldAt })
+    .from(t.listings)
+    .where(eq(t.listings.id, chat.listingId));
+  if (listing?.status !== 'sold' || !listing.soldAt) return null;
+  return new Date(listing.soldAt.getTime() + SOLD_GRACE_MS);
+}
+
+export async function closedReason(chat: Chat): Promise<'banned' | 'blocked' | 'sold' | null> {
+  const [people, blocks, closesAt] = await Promise.all([
     db
       .select({ standing: t.people.standing, deletedAt: t.people.deletedAt })
       .from(t.people)
@@ -66,9 +82,11 @@ export async function closedReason(chat: Chat): Promise<'banned' | 'blocked' | n
           and(eq(t.chatBlocks.blockerId, chat.ownerPersonId), eq(t.chatBlocks.blockedId, chat.fromPersonId)),
         ),
       ),
+    soldClosesAt(chat),
   ]);
   if (people.some((person) => person.standing === 'banned' || person.deletedAt)) return 'banned';
   if ((blocks[0]?.n ?? 0) > 0) return 'blocked';
+  if (closesAt && closesAt.getTime() <= Date.now()) return 'sold';
   return null;
 }
 
@@ -187,21 +205,48 @@ export interface MessageOut {
   side: Side;
   at: string;
   readAt: string | null;
+  /** The message it answers, quoted: its words and who sent it. */
+  replyTo: { id: string; body: string; side: Side } | null;
+  /** When its sender last changed it. */
+  editedAt: string | null;
+  /** What it first said, when it has been changed: for our team only, on a
+      reported chat. */
+  original?: string;
 }
 
-export function messageOut(chat: Chat, message: typeof t.chatMessages.$inferSelect): MessageOut {
+type MessageRow = typeof t.chatMessages.$inferSelect;
+
+/** Which side sent a message. */
+function sideOfMessage(chat: Chat, message: MessageRow): Side {
   // Written as a store: whichever side that store is. Otherwise the user
   // who started it, unless they wrote for a store on that side.
   const fromSide = message.senderStoreId
     ? message.senderStoreId === chat.fromStoreId
     : !chat.fromStoreId && message.senderPersonId === chat.fromPersonId;
+  return fromSide ? 'from' : 'owner';
+}
+
+/** Messages as they go out, with the ones they answer quoted. */
+async function messagesOut(chat: Chat, rows: MessageRow[], staff = false): Promise<MessageOut[]> {
+  const replyIds = [...new Set(rows.map((row) => row.replyToId).filter((id): id is string => Boolean(id)))];
+  const replied = replyIds.length
+    ? await db.select().from(t.chatMessages).where(inArray(t.chatMessages.id, replyIds))
+    : [];
+  const byId = new Map(replied.map((row) => [row.id, row]));
+  return rows.map((row) => messageOut(chat, row, row.replyToId ? byId.get(row.replyToId) : undefined, staff));
+}
+
+export function messageOut(chat: Chat, message: MessageRow, replied?: MessageRow, staff = false): MessageOut {
   return {
     id: message.id,
     chatId: message.chatId,
     body: message.body,
-    side: fromSide ? 'from' : 'owner',
+    side: sideOfMessage(chat, message),
     at: message.createdAt.toISOString(),
     readAt: message.readAt?.toISOString() ?? null,
+    replyTo: replied ? { id: replied.id, body: replied.body, side: sideOfMessage(chat, replied) } : null,
+    editedAt: message.editedAt?.toISOString() ?? null,
+    ...(staff && message.originalBody ? { original: message.originalBody } : {}),
   };
 }
 
@@ -209,6 +254,50 @@ export function messageOut(chat: Chat, message: typeof t.chatMessages.$inferSele
 export async function sendMessage(
   person: Person,
   chatId: string,
+  typed: string,
+  replyToId?: string,
+): Promise<{ chat: Chat; side: Side; message: MessageOut } | Refusal> {
+  const body = typed.trim();
+  if (!body) return { error: 'Write something first.', status: 400 };
+  if (body.length > MAX_MESSAGE) return { error: 'Keep it under 2,000 characters.', status: 400 };
+  const refused = cannotWrite(person);
+  if (refused) return refused;
+  const found = await chatFor(person, chatId);
+  if ('error' in found) return found;
+  const { chat, side } = found;
+  if (await closedReason(chat)) return { error: 'This chat is closed.', status: 403 };
+  // What it answers must be in this chat.
+  let replied: MessageRow | undefined;
+  if (replyToId) {
+    [replied] = await db
+      .select()
+      .from(t.chatMessages)
+      .where(and(eq(t.chatMessages.id, replyToId), eq(t.chatMessages.chatId, chat.id)));
+    if (!replied) return { error: 'That message is gone.', status: 400 };
+  }
+  const store = side === 'from' ? chat.fromStoreId : chat.ownerStoreId;
+  const now = new Date();
+  const [saved] = await db
+    .insert(t.chatMessages)
+    .values({
+      chatId: chat.id,
+      senderPersonId: person.id,
+      senderStoreId: store,
+      body,
+      createdAt: now,
+      replyToId: replied?.id ?? null,
+    })
+    .returning();
+  await db.update(t.chats).set({ lastMessageAt: now }).where(eq(t.chats.id, chat.id));
+  return { chat, side, message: messageOut(chat, saved!, replied) };
+}
+
+/** Changes a message: its sender only, within 15 minutes of sending, in a
+    chat still open. What it first said is kept for our team. */
+export async function editMessage(
+  person: Person,
+  chatId: string,
+  messageId: string,
   typed: string,
 ): Promise<{ chat: Chat; side: Side; message: MessageOut } | Refusal> {
   const body = typed.trim();
@@ -220,14 +309,24 @@ export async function sendMessage(
   if ('error' in found) return found;
   const { chat, side } = found;
   if (await closedReason(chat)) return { error: 'This chat is closed.', status: 403 };
-  const store = side === 'from' ? chat.fromStoreId : chat.ownerStoreId;
-  const now = new Date();
+  const [message] = await db
+    .select()
+    .from(t.chatMessages)
+    .where(and(eq(t.chatMessages.id, messageId), eq(t.chatMessages.chatId, chat.id)));
+  if (!message) return { error: 'That message is gone.', status: 404 };
+  if (message.senderPersonId !== person.id || sideOfMessage(chat, message) !== side) {
+    return { error: 'You can only change your own messages.', status: 403 };
+  }
+  if (Date.now() - message.createdAt.getTime() > EDIT_WINDOW_MS) {
+    return { error: 'A message can only be changed within 15 minutes of sending it.', status: 403 };
+  }
+  if (body === message.body) return { chat, side, message: (await messagesOut(chat, [message]))[0]! };
   const [saved] = await db
-    .insert(t.chatMessages)
-    .values({ chatId: chat.id, senderPersonId: person.id, senderStoreId: store, body, createdAt: now })
+    .update(t.chatMessages)
+    .set({ body, editedAt: new Date(), originalBody: message.originalBody ?? message.body })
+    .where(eq(t.chatMessages.id, message.id))
     .returning();
-  await db.update(t.chats).set({ lastMessageAt: now }).where(eq(t.chats.id, chat.id));
-  return { chat, side, message: messageOut(chat, saved!) };
+  return { chat, side, message: (await messagesOut(chat, [saved!]))[0]! };
 }
 
 /** Marks the other side's messages read; how many were. */
@@ -266,13 +365,13 @@ export async function sideName(chat: Chat, side: Side): Promise<string> {
 
 /** A side's name, and its logo when it is a store that has one: the round
     beside a chat in the header's Messages drop down. */
-export async function sideFace(chat: Chat, side: Side): Promise<{ name: string; logo: string | null }> {
+export async function sideFace(chat: Chat, side: Side): Promise<{ name: string; logo: string | null; store: boolean }> {
   const store = side === 'from' ? chat.fromStoreId : chat.ownerStoreId;
   if (store) {
     const [row] = await db.select({ name: t.stores.name, logo: t.stores.logo }).from(t.stores).where(eq(t.stores.id, store));
-    return { name: row?.name ?? 'A store', logo: row?.logo ? photoUrl(row.logo) : null };
+    return { name: row?.name ?? 'A store', logo: row?.logo ? photoUrl(row.logo) : null, store: true };
   }
-  return { name: await sideName(chat, side), logo: null };
+  return { name: await sideName(chat, side), logo: null, store: false };
 }
 
 /** Tells the side a message went to, unless it already has an unread note
@@ -300,11 +399,13 @@ export interface ChatSummary {
   /** This viewer's side. */
   side: Side;
   /** Who it is with; `logo` when that is a store with one. */
-  other: { name: string; logo: string | null };
-  listing: { slug: string; title: string; photo: string | null };
+  other: { name: string; logo: string | null; store: boolean };
+  listing: ListingCard;
   last: { body: string; side: Side; at: string } | null;
   unread: number;
-  closed: 'banned' | 'blocked' | null;
+  closed: 'banned' | 'blocked' | 'sold' | null;
+  /** The listing is sold: when this chat closes. */
+  closesAt: string | null;
 }
 
 /** The chats a viewer sees: their own, or a store's they belong to. */
@@ -328,7 +429,7 @@ export async function chatList(person: Person, storeId?: string): Promise<ChatSu
   return Promise.all(
     chats.map(async (chat) => {
       const side = sideOf(chat, person.id, viewerStores)!;
-      const [other, listing, [last], [unread], closed] = await Promise.all([
+      const [other, listing, [last], [unread], closed, closesAt] = await Promise.all([
         sideFace(chat, otherSide(side)),
         listingCard(chat.listingId),
         db
@@ -342,6 +443,7 @@ export async function chatList(person: Person, storeId?: string): Promise<ChatSu
           .from(t.chatMessages)
           .where(and(eq(t.chatMessages.chatId, chat.id), isNull(t.chatMessages.readAt), theirMessages(chat, side))),
         closedReason(chat),
+        soldClosesAt(chat),
       ]);
       const lastOut = last ? messageOut(chat, last) : null;
       return {
@@ -352,6 +454,7 @@ export async function chatList(person: Person, storeId?: string): Promise<ChatSu
         last: lastOut ? { body: lastOut.body, side: lastOut.side, at: lastOut.at } : null,
         unread: unread?.n ?? 0,
         closed,
+        closesAt: closed ? null : (closesAt?.toISOString() ?? null),
       };
     }),
   );
@@ -364,27 +467,66 @@ export async function unreadChats(person: Person, storeId?: string): Promise<num
 }
 
 /** A listing as a chat shows it at the top: its title and first photo. */
-export async function listingCard(listingId: string): Promise<{ slug: string; title: string; photo: string | null }> {
+export type ListingCard = {
+  slug: string;
+  title: string;
+  photo: string | null;
+  /** For sale, a swap or wanted: the Messages page sorts chats by it. */
+  type: (typeof t.listings.$inferSelect)['type'];
+  /** Its terms in a few words, for the badge in the chat: "For sale ·
+      $160", "Swap · + $40", "Wanted · up to $300". */
+  terms: string;
+};
+
+/** Whole dollars, as the cards show them. */
+const dollars = (amount: number) => `$${Math.round(amount)}`;
+
+export async function listingCard(listingId: string): Promise<ListingCard> {
   const [row] = await db
     .select({
       slug: t.listings.slug,
       title: t.listings.title,
+      type: t.listings.type,
       sale: t.saleDetails.itemId,
       swap: t.swapDetails.hasItemId,
+      price: t.saleDetails.price,
+      cashDirection: t.swapDetails.cashDirection,
+      cashAmount: t.swapDetails.cashAmount,
+      budget: t.requestDetails.budget,
     })
     .from(t.listings)
     .leftJoin(t.saleDetails, eq(t.saleDetails.listingId, t.listings.id))
     .leftJoin(t.swapDetails, eq(t.swapDetails.listingId, t.listings.id))
+    .leftJoin(t.requestDetails, eq(t.requestDetails.listingId, t.listings.id))
     .where(eq(t.listings.id, listingId));
-  if (!row) return { slug: '', title: 'A listing', photo: null };
+  if (!row) return { slug: '', title: 'A listing', photo: null, type: 'sale', terms: '' };
   const itemId = row.sale ?? row.swap;
   const [item] = itemId ? await db.select({ images: t.items.images }).from(t.items).where(eq(t.items.id, itemId)) : [];
   const photo = item?.images[0];
-  return { slug: row.slug, title: row.title, photo: photo ? photoUrl(photo) : null };
+  const terms =
+    row.type === 'sale' && row.price !== null
+      ? `For sale · ${dollars(row.price)}`
+      : row.type === 'swap'
+        ? row.cashAmount && row.cashDirection === 'i-add'
+          ? `Swap · + ${dollars(row.cashAmount)}`
+          : row.cashAmount && row.cashDirection === 'they-add'
+            ? `Swap · they add ${dollars(row.cashAmount)}`
+            : 'Swap'
+        : row.type === 'request' && row.budget !== null
+          ? `Wanted · up to ${dollars(row.budget)}`
+          : row.type === 'request'
+            ? 'Wanted'
+            : 'For sale';
+  return { slug: row.slug, title: row.title, photo: photo ? photoUrl(photo) : null, type: row.type, terms };
 }
 
 /** A page of a chat's messages, oldest first, before a time if given. */
-export async function messagesOf(chat: Chat, before?: Date, limit = 50): Promise<{ messages: MessageOut[]; more: boolean }> {
+export async function messagesOf(
+  chat: Chat,
+  before?: Date,
+  limit = 50,
+  staff = false,
+): Promise<{ messages: MessageOut[]; more: boolean }> {
   const rows = await db
     .select()
     .from(t.chatMessages)
@@ -392,7 +534,7 @@ export async function messagesOf(chat: Chat, before?: Date, limit = 50): Promise
     .orderBy(desc(t.chatMessages.createdAt))
     .limit(limit + 1);
   const more = rows.length > limit;
-  return { messages: rows.slice(0, limit).reverse().map((row) => messageOut(chat, row)), more };
+  return { messages: await messagesOut(chat, rows.slice(0, limit).reverse(), staff), more };
 }
 
 /** Blocks the other side's user, or lifts it. */

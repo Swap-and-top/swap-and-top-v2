@@ -49,7 +49,7 @@ function MessagesPreview({ onNavigate }: { onNavigate: () => void }) {
 
   const chats = list.data.chats.slice(0, SHOWN);
   if (chats.length === 0) {
-    return <p className={styles.none}>No messages yet. A chat opens when you message a seller, or when an offer is accepted.</p>;
+    return <p className={styles.none}>No messages yet. Your chats show here when you message a seller, when you accept an offer, or when someone accepts yours.</p>;
   }
 
   return (
@@ -61,15 +61,7 @@ function MessagesPreview({ onNavigate }: { onNavigate: () => void }) {
             className={[styles.row, chat.unread ? styles.unread : ''].filter(Boolean).join(' ')}
             onClick={onNavigate}
           >
-            {/* A store's logo, or the initials of the store or user. */}
-            {chat.other.logo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={chat.other.logo} alt="" className={[styles.avatar, styles.logo].join(' ')} />
-            ) : (
-              <span className={styles.avatar} aria-hidden>
-                {initialsOf(chat.other.name)}
-              </span>
-            )}
+            <ChatAvatar other={chat.other} />
             <span className={styles.body}>
               <span className={styles.name}>{chat.other.name}</span>
               <span className={styles.text}>
@@ -91,6 +83,21 @@ function MessagesPreview({ onNavigate }: { onNavigate: () => void }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+/** The other side of a chat in a round: a store's logo, or the initials
+    of the store or user. 36px, or `small` (28px) in the chats down the
+    left of a chat (ChatSide). */
+export function ChatAvatar({ other, small = false }: { other: ChatSummary['other']; small?: boolean }) {
+  const size = small ? styles.avatarSmall : '';
+  return other.logo ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={other.logo} alt="" className={[styles.avatar, styles.logo, size].filter(Boolean).join(' ')} />
+  ) : (
+    <span className={[styles.avatar, size].filter(Boolean).join(' ')} aria-hidden>
+      {initialsOf(other.name)}
+    </span>
   );
 }
 

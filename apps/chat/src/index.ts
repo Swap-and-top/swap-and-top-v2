@@ -7,8 +7,11 @@
  * A connection is signed in or refused. It joins its user's room and its
  * stores' rooms, so a message reaches every device and every member at
  * once. Events, each answered through the acknowledgement:
- * - `send` { chatId, body }: saved first, then passed to both sides; the
- *   receiving side is notified when none of its devices has the chat open.
+ * - `send` { chatId, body, replyToId? }: saved first, then passed to both
+ *   sides; the receiving side is notified when none of its devices has the
+ *   chat open. `replyToId`: the message it answers, quoted above it.
+ * - `edit` { chatId, messageId, body }: a message changed by its sender
+ *   within 15 minutes; passed to both sides as `edited`.
  * - `open` / `close` { chatId }: which chat this device is looking at.
  * - `read` { chatId }: the other side's messages are marked Seen.
  * - `typing` { chatId }: passed to the other side.
@@ -23,6 +26,7 @@ import { createServer } from 'node:http';
 import { Server, type Socket } from 'socket.io';
 import {
   chatFor,
+  editMessage,
   markRead,
   notifyMessage,
   otherSide,
@@ -110,34 +114,63 @@ io.on('connection', (socket) => {
     data.viewing = undefined;
   });
 
-  socket.on('send', async ({ chatId, body }: { chatId?: string; body?: string } = {}, ack?: unknown) => {
-    const reply = answer(ack);
-    if (typeof chatId !== 'string' || typeof body !== 'string') return reply({ error: 'Something went wrong.' });
-    const now = Date.now();
-    const mine = sent.get(data.personId);
-    const count = !mine || now - mine.at > 60_000 ? { at: now, n: 0 } : mine;
-    count.n += 1;
-    sent.set(data.personId, count);
-    if (sent.size > 10_000) sent.clear();
-    if (count.n > A_MINUTE) return reply({ error: 'You are sending a lot of messages. Wait a minute.' });
+  socket.on(
+    'send',
+    async (
+      { chatId, body, replyToId }: { chatId?: string; body?: string; replyToId?: string } = {},
+      ack?: unknown,
+    ) => {
+      const reply = answer(ack);
+      if (typeof chatId !== 'string' || typeof body !== 'string') return reply({ error: 'Something went wrong.' });
+      const now = Date.now();
+      const mine = sent.get(data.personId);
+      const count = !mine || now - mine.at > 60_000 ? { at: now, n: 0 } : mine;
+      count.n += 1;
+      sent.set(data.personId, count);
+      if (sent.size > 10_000) sent.clear();
+      if (count.n > A_MINUTE) return reply({ error: 'You are sending a lot of messages. Wait a minute.' });
 
-    const person = await personOf(socket);
-    if (!person) return reply({ error: 'Sign in again to carry on.' });
-    const result = await sendMessage(person, chatId, body).catch(() => null);
-    if (!result) return reply({ error: 'It did not send. Try again.' });
-    if ('error' in result) return reply({ error: result.error });
+      const person = await personOf(socket);
+      if (!person) return reply({ error: 'Sign in again to carry on.' });
+      const result = await sendMessage(person, chatId, body, typeof replyToId === 'string' ? replyToId : undefined).catch(
+        () => null,
+      );
+      if (!result) return reply({ error: 'It did not send. Try again.' });
+      if ('error' in result) return reply({ error: result.error });
 
-    const { chat, side, message } = result;
-    const to = otherSide(side);
-    io.to(roomOf(chat, side)).to(roomOf(chat, to)).emit('message', message);
-    reply({ ok: true, message });
+      const { chat, side, message } = result;
+      const to = otherSide(side);
+      io.to(roomOf(chat, side)).to(roomOf(chat, to)).emit('message', message);
+      reply({ ok: true, message });
 
-    // Notified unless one of their devices has this chat open.
-    const theirs = await io.in(roomOf(chat, to)).fetchSockets();
-    if (!theirs.some((other) => (other.data as Data).viewing === chat.id)) {
-      await notifyMessage(chat, to).catch(() => undefined);
-    }
-  });
+      // Notified unless one of their devices has this chat open.
+      const theirs = await io.in(roomOf(chat, to)).fetchSockets();
+      if (!theirs.some((other) => (other.data as Data).viewing === chat.id)) {
+        await notifyMessage(chat, to).catch(() => undefined);
+      }
+    },
+  );
+
+  socket.on(
+    'edit',
+    async (
+      { chatId, messageId, body }: { chatId?: string; messageId?: string; body?: string } = {},
+      ack?: unknown,
+    ) => {
+      const reply = answer(ack);
+      if (typeof chatId !== 'string' || typeof messageId !== 'string' || typeof body !== 'string') {
+        return reply({ error: 'Something went wrong.' });
+      }
+      const person = await personOf(socket);
+      if (!person) return reply({ error: 'Sign in again to carry on.' });
+      const result = await editMessage(person, chatId, messageId, body).catch(() => null);
+      if (!result) return reply({ error: 'It did not save. Try again.' });
+      if ('error' in result) return reply({ error: result.error });
+      const { chat, side, message } = result;
+      io.to(roomOf(chat, side)).to(roomOf(chat, otherSide(side))).emit('edited', message);
+      reply({ ok: true, message });
+    },
+  );
 
   socket.on('read', async ({ chatId }: { chatId?: string } = {}, ack?: unknown) => {
     const reply = answer(ack);

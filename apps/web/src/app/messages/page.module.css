@@ -1,7 +1,157 @@
 /** Messages: the title, as Notifications has it. */
 
 .title {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
   font-size: var(--snt-text-2xl);
   font-weight: var(--snt-weight-bold);
   color: var(--snt-accent-bold);
+}
+
+/* The icon on a pale blue tile, as the drop downs' headings have it. */
+.titleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--snt-radius-md);
+  color: var(--snt-control-active);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/* The whole page under the header's row, so the menu down the left can
+   run its full height. */
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* From 768px up (where the header shows its buttons, not the three lines)
+   Messages and a chat are the same two panels: the list down the left,
+   280px and a 16px gap, under the logo, and the chat filling the rest to
+   the header's right edge, under the account circle. */
+@media (min-width: 768px) {
+  /* Messages: no heading or pills of its own there (the list has both). */
+  .page.inbox [data-app-below] {
+    display: none;
+  }
+
+  .page.inbox [data-app-below] + div {
+    padding-top: var(--snt-space-8);
+    padding-inline: max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2));
+    padding-left: calc(max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2)) + 296px);
+  }
+
+  .page.inbox [data-app-below] + div > div {
+    max-width: none;
+  }
+
+  .phoneOnly {
+    display: none;
+  }
+
+  /* A chat: no band under the header, so the chat follows the header
+     itself, and moves over for the chats down the left, which are wider
+     here (280px and the 16px gap). */
+  .page.chatPage header + div {
+    /* 16px under the header, so the chat's top is level with the list's. */
+    padding-top: var(--snt-space-8);
+    padding-inline: max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2));
+    padding-left: calc(max(var(--snt-gutter), calc((100% - var(--snt-header-max)) / 2)) + 296px);
+  }
+
+  .page.chatPage header + div > div {
+    max-width: none;
+  }
+}
+
+/* A chat fills the screen exactly: 16px under it, and no more, so the
+   page itself never scrolls; only the messages do. */
+.page.chatPage header + div {
+  padding-bottom: var(--snt-space-8);
+}
+
+@media (max-width: 767px) {
+  .laptopOnly {
+    display: none;
+  }
+}
+
+.page.inbox [data-app-below] + div {
+  padding-bottom: var(--snt-space-8);
+}
+
+/* No chats yet, from 768px up: a note in the right panel, as tall as a
+   chat would be. */
+.noChat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--snt-space-6);
+  height: calc(100dvh - 94px - var(--snt-space-8));
+  padding: var(--snt-space-10);
+  border-radius: var(--snt-radius-xl);
+  background: var(--snt-bg-card);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-md);
+  text-align: center;
+}
+
+.noChat p {
+  max-width: 360px;
+}
+
+/* The search box on a phone's Messages page: the home page's search bar,
+   a white pill with its icon, the box being typed in ringed in blue. */
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-5);
+  height: 40px;
+  padding: 0 var(--snt-space-9);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-surface);
+  color: var(--snt-control-idle-ink);
+}
+
+.search svg {
+  flex-shrink: 0;
+}
+
+.search:focus-within {
+  box-shadow: var(--snt-focus-ring);
+  color: var(--snt-control-active);
+}
+
+/* 16px, so a phone does not zoom the page as it is tapped, drawn at
+   three quarters so it reads as the home page's bar does (12px). */
+.searchInput {
+  flex: 0 0 auto;
+  width: calc((100% - 18px - var(--snt-space-5)) / 0.75);
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--snt-control-active);
+  font: inherit;
+  font-size: 16px;
+  transform: scale(0.75);
+  transform-origin: left center;
+}
+
+.searchInput::placeholder {
+  color: var(--snt-control-idle-ink);
+}
+
+.searchInput::-webkit-search-cancel-button,
+.searchInput::-webkit-search-decoration {
+  display: none;
 }

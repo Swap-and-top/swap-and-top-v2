@@ -103,7 +103,7 @@
 @supports not selector(::-webkit-scrollbar) {
   .scroll {
     scrollbar-width: thin;
-    scrollbar-color: var(--snt-control-idle) transparent;
+    scrollbar-color: var(--snt-scroll-thumb) transparent;
   }
 }
 
@@ -120,11 +120,11 @@
 .scroll::-webkit-scrollbar-thumb {
   border: 3px solid transparent;
   border-radius: var(--snt-radius-pill);
-  background: var(--snt-control-idle) padding-box;
+  background: var(--snt-scroll-thumb) padding-box;
 }
 
 .scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--snt-control-active) padding-box;
+  background: var(--snt-scroll-thumb-hover) padding-box;
 }
 
 /* A count after an option's name, in a small round tinted with its own

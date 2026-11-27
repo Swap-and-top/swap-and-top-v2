@@ -1,0 +1,203 @@
+/**
+ * The chats down the left of a chat (ChatSide), in the side menu's card:
+ * a row a chat, its round and name; long lists scroll inside the card.
+ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Wider than the other pages' side menus (280px, not 200px), so a chat's
+   name, listing and last message have room. */
+@media (min-width: 768px) {
+  .side.side {
+    width: 280px;
+  }
+}
+
+/* As tall as the chat beside it: from 16px under the header to 16px from
+   the foot of the screen, the list scrolling inside. */
+@media (min-width: 768px) {
+  .card {
+    height: calc(100dvh - 94px - var(--snt-space-8));
+  }
+}
+
+/* The heading opens the Messages page. */
+.heading,
+.heading:hover {
+  color: var(--snt-accent-bold);
+  text-decoration: none;
+}
+
+.list {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Doubled, so it wins over the side menu's own one line rows. */
+.item.item {
+  align-items: flex-start;
+  gap: var(--snt-space-4);
+  height: auto;
+  padding: var(--snt-space-4) var(--snt-space-3);
+  text-decoration: none;
+}
+
+.item > :first-child {
+  margin-top: 2px;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.top,
+.bottom {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  min-width: 0;
+}
+
+.when {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: var(--snt-text-2xs);
+  color: var(--snt-card-ink-muted);
+}
+
+/* The listing it is about, in the swap's teal, quieter than the name. */
+.listing {
+  overflow: hidden;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-swap-ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--snt-text-xs);
+  color: var(--snt-card-ink-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* How many are unread: a small blue pill. */
+.count {
+  flex-shrink: 0;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-control-active);
+  color: var(--snt-ink-on-dark);
+  font-size: var(--snt-text-2xs);
+  font-weight: var(--snt-weight-bold);
+  line-height: 18px;
+  text-align: center;
+}
+
+/* On the open chat's blue fill, every line in white. */
+.item[aria-current='page'] .when,
+.item[aria-current='page'] .listing,
+.item[aria-current='page'] .preview {
+  color: rgb(255 255 255 / 0.85);
+}
+
+/* The names in the card's ink, not the blue; under the pointer only a
+   light wash. The open chat stays filled in the blue, with no hover. */
+.item:not([aria-current='page']),
+.item:not([aria-current='page']):hover {
+  color: var(--snt-card-ink);
+}
+
+/* The filter: the app's dropdown, under the search, as slim as it. */
+.filter {
+  flex-shrink: 0;
+  margin: 0 var(--snt-space-1) var(--snt-space-4);
+}
+
+.filter button {
+  height: 34px;
+  font-size: var(--snt-text-base);
+}
+
+/* Find a chat: the app's pale pill box. */
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--snt-space-3);
+  height: 34px;
+  margin: 0 var(--snt-space-1) var(--snt-space-4);
+  padding: 0 var(--snt-space-5);
+  border-radius: var(--snt-radius-pill);
+  background: var(--snt-bg-inset);
+  color: var(--snt-control-idle);
+}
+
+.search:focus-within {
+  box-shadow: var(--snt-focus-ring);
+}
+
+.searchInput {
+  flex-grow: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--snt-ink);
+  font: inherit;
+  font-size: var(--snt-text-base);
+}
+
+.searchInput::placeholder {
+  color: var(--snt-placeholder);
+}
+
+.searchInput::-webkit-search-cancel-button {
+  display: none;
+}
+
+.none {
+  margin: 0;
+  padding: var(--snt-space-4) var(--snt-space-3);
+  color: var(--snt-card-ink-muted);
+  font-size: var(--snt-text-base);
+}
+
+.name {
+  flex-grow: 1;
+  min-width: 0;
+  font-size: var(--snt-text-base);
+  font-weight: var(--snt-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boneRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--snt-space-4);
+  padding: var(--snt-space-4) var(--snt-space-3);
+}
+
+.boneRound {
+  flex-shrink: 0;
+  border-radius: var(--snt-radius-pill);
+}
+
+/* The open chat's round on white, so it shows on the blue fill. */
+.item[aria-current='page'] > :first-child {
+  background: var(--snt-bg-card);
+}

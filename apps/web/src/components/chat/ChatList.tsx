@@ -16,16 +16,79 @@ import { apiGet, QueryProblem } from '@/lib/query';
 import { chatKeys, chatTime, type ChatSummary } from '@/lib/chat';
 import styles from './Chat.module.css';
 
-export function ChatList({ storeId, hrefFor }: { storeId?: string; hrefFor: (id: string) => string }) {
-  const list = useQuery({
+/** Which chats to show (the Messages page's side menu): all, those with
+    unread messages, or those about a swap, a listing for sale, or a
+    wanted listing, as the feed sorts listings. */
+export type ChatShow = 'all' | 'unread' | 'swap' | 'sale' | 'request';
+
+/** Whether a chat holds what was typed in a search: the other side's
+    name, the listing, or the last message. */
+export function chatMatches(chat: ChatSummary, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return [chat.other.name, chat.listing.title, chat.last?.body ?? ''].some((text) => text.toLowerCase().includes(q));
+}
+
+/** The choices, in order, with their names. */
+export const CHAT_SHOWS: { value: ChatShow; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'unread', label: 'Unread' },
+  { value: 'swap', label: 'Swaps' },
+  { value: 'sale', label: 'For sale' },
+  { value: 'request', label: 'Wanted' },
+];
+
+/** Whether a chat is one to show. */
+export function chatShown(chat: ChatSummary, show: ChatShow): boolean {
+  if (show === 'all') return true;
+  if (show === 'unread') return chat.unread > 0;
+  return chat.listing.type === show;
+}
+
+/** The chats, the user's or a store's: one query, shared by the list and
+    anything counting them. */
+export function useChatList(storeId?: string) {
+  return useQuery({
     queryKey: chatKeys.list(storeId),
     queryFn: () =>
       apiGet<{ chats: ChatSummary[] }>(`/chats${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`),
   });
+}
+
+const NONE_SHOWN: Record<Exclude<ChatShow, 'all'>, string> = {
+  unread: 'No unread messages. You are all caught up.',
+  swap: 'No chats about swaps yet.',
+  sale: 'No chats about listings for sale yet.',
+  request: 'No chats about wanted listings yet.',
+};
+
+export function ChatList({
+  storeId,
+  hrefFor,
+  show = 'all',
+  query = '',
+}: {
+  storeId?: string;
+  hrefFor: (id: string) => string;
+  show?: ChatShow;
+  /** What is typed in the search box over the list. */
+  query?: string;
+}) {
+  const list = useChatList(storeId);
 
   if (list.isError && !list.data) return <QueryProblem error={list.error} onRetry={() => void list.refetch()} />;
   if (!list.data) return <ChatListBones />;
-  const chats = list.data.chats;
+  const chats = list.data.chats.filter((chat) => chatShown(chat, show) && chatMatches(chat, query));
+  if (chats.length === 0 && list.data.chats.length > 0 && (show !== 'all' || query.trim())) {
+    return (
+      <div className={styles.empty}>
+        <span className={styles.emptyIcon}>
+          <MessageIcon size={22} />
+        </span>
+        <p>{query.trim() ? 'No messages match your search.' : NONE_SHOWN[show as Exclude<ChatShow, 'all'>]}</p>
+      </div>
+    );
+  }
   if (chats.length === 0) {
     return (
       <div className={styles.empty}>
@@ -33,7 +96,7 @@ export function ChatList({ storeId, hrefFor }: { storeId?: string; hrefFor: (id:
           <MessageIcon size={22} />
         </span>
         <p>
-          No messages yet. A chat opens when you message a seller who takes messages, or when an offer is accepted.
+          No messages yet. Your chats show here when you message a seller, when you accept an offer, or when someone accepts yours.
         </p>
       </div>
     );

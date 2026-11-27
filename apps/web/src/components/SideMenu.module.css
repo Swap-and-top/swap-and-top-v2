@@ -1,8 +1,9 @@
 /**
- * The categories down the left of the feed, from 768px up (see
- * CategorySide.tsx). The menu and the feed share the header's row: the
- * menu 200px at its left, under the logo, a 16px gap (the same as under
- * the header), and the feed to the right, under the account circle.
+ * A side menu down the left of a page, from 768px up (see SideMenu.tsx):
+ * the feed's categories, the Messages page's chats to show. The menu and
+ * the page share the header's row: the menu 200px at its left, under the
+ * logo, a 16px gap (the same as under the header), and the page to the
+ * right, under the account circle.
  */
 
 .side {
@@ -23,9 +24,9 @@
     pointer-events: none;
   }
 
-  /* Level with the search bar at first (the header's 78px and the band's
-     16px above it), then held 8px from the top, level with the type tabs.
-     As tall as its items. */
+  /* Level with the first thing under the header at first (the header's
+     78px and the band's 16px above it), then held 8px from the top. As
+     tall as its items. */
   .card {
     position: sticky;
     top: var(--snt-space-4);
@@ -100,4 +101,18 @@
   background: var(--snt-control-active);
   color: var(--snt-ink-on-dark);
   font-weight: var(--snt-weight-semibold);
+}
+
+/* A count after the label, as on the app's tabs: in the blue, or white on
+   the chosen one. */
+.count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: var(--snt-radius-pill);
+  background: color-mix(in srgb, currentColor 18%, transparent);
+  font-size: var(--snt-text-xs);
+  font-weight: var(--snt-weight-bold);
+  line-height: 20px;
+  text-align: center;
 }

@@ -34,6 +34,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   // The design assumes a real mobile viewport; do not lock zoom.
   maximumScale: 5,
+  // An Android phone's keyboard shrinks the page to the room left above it,
+  // rather than covering it, so nothing can slide up into the space behind
+  // the keys (a chat's box stays on top of them).
+  interactiveWidget: 'resizes-content',
 };
 
 /**
